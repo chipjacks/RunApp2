@@ -2,9 +2,11 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Calendar
 import Html
+import Skeleton
 import Url
-import Url.Parser as Parser exposing (Parser, oneOf, top)
+import Url.Parser as Parser exposing (Parser, oneOf, s, top)
 
 
 
@@ -35,6 +37,7 @@ type alias Model =
 type Page
     = NotFound
     | Calendar
+    | Blocks
 
 
 
@@ -59,8 +62,11 @@ view model =
             }
 
         Calendar ->
-            { title = "Calendar"
-            , body = [ Html.div [] [ Html.text "Calendar" ] ]
+            Skeleton.view "Calendar" Calendar.view
+
+        Blocks ->
+            { title = "Blocks"
+            , body = [ Html.div [] [ Html.text "Blocks" ] ]
             }
 
 
@@ -87,6 +93,10 @@ stepUrl url model =
             oneOf
                 [ route top
                     ( { model | page = Calendar }
+                    , Cmd.none
+                    )
+                , route (s "blocks")
+                    ( { model | page = Blocks }
                     , Cmd.none
                     )
                 ]
