@@ -4,7 +4,6 @@ import Browser
 import Browser.Navigation as Nav
 import Calendar
 import Html
-import Router exposing (Page(..), route)
 import Skeleton
 import Url
 import Url.Parser as Parser exposing (Parser, oneOf, s, top)
@@ -33,6 +32,12 @@ type alias Model =
     { key : Nav.Key
     , page : Page
     }
+
+
+type Page
+    = NotFound
+    | Calendar
+    | Blocks
 
 
 
@@ -71,15 +76,44 @@ view model =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
+    stepUrl url
+        { key = key
+        , page = NotFound
+        }
+
+
+
+-- ROUTER
+
+
+stepUrl : Url.Url -> Model -> ( Model, Cmd Msg )
+stepUrl url model =
     let
-        page =
-            route url
+        parser =
+            oneOf
+                [ route top
+                    ( { model | page = Calendar }
+                    , Cmd.none
+                    )
+                , route (s "blocks")
+                    ( { model | page = Blocks }
+                    , Cmd.none
+                    )
+                ]
     in
-    ( { key = key
-      , page = page
-      }
-    , Cmd.none
-    )
+    case Parser.parse parser url of
+        Just result ->
+            result
+
+        Nothing ->
+            ( { model | page = NotFound }
+            , Cmd.none
+            )
+
+
+route : Parser a b -> a -> Parser (b -> c) c
+route parser handler =
+    Parser.map handler parser
 
 
 
@@ -111,4 +145,4 @@ update message model =
                     )
 
         UrlChanged url ->
-            ( { model | page = route url }, Cmd.none )
+            stepUrl url model

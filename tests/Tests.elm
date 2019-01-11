@@ -1,4 +1,4 @@
-module CalendarTests exposing (suite)
+module Tests exposing (suite)
 
 import Calendar
 import Expect exposing (Expectation)
