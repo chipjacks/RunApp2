@@ -8,7 +8,7 @@ npm install --global elm elm-live
 ### Run
 
 ```
-elm-live src/Main.elm
+elm-live src/Main.elm -u
 ```
 
 ### Test

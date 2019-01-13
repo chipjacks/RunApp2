@@ -1,16 +1,13 @@
 module Main exposing (main)
 
+import Blocks
 import Browser
 import Browser.Navigation as Nav
 import Calendar
 import Html
 import Skeleton
 import Url
-import Url.Parser as Parser exposing (Parser, oneOf, s, top)
-
-
-
--- MAIN
+import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, top)
 
 
 main =
@@ -36,17 +33,76 @@ type alias Model =
 
 type Page
     = NotFound
-    | Calendar
-    | Blocks
+    | Calendar Calendar.Model
+    | Blocks Blocks.Model
 
 
 
--- SUBSCRIPTIONS
+-- INIT
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
+    updateUrl url
+        { key = key
+        , page = NotFound
+        }
+
+
+
+-- UPDATE
+
+
+type Msg
+    = LinkClicked Browser.UrlRequest
+    | UrlChanged Url.Url
+    | CalendarMsg Calendar.Msg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update message model =
+    case ( message, model.page ) of
+        -- GLOBAL COMMUNICATION
+        ( UrlChanged url, _ ) ->
+            updateUrl url model
+
+        -- LOCAL COMMUNICATION
+        ( CalendarMsg subMsg, Calendar subModel ) ->
+            Calendar.update subMsg subModel
+                |> Tuple.mapBoth
+                    (\cmodel -> { model | page = Calendar cmodel })
+                    (\cmsg -> Cmd.map CalendarMsg cmsg)
+
+        -- EXTERNAL COMMUNICATION
+        ( LinkClicked urlRequest, _ ) ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.pushUrl model.key (Url.toString url)
+                    )
+
+                Browser.External href ->
+                    ( model
+                    , Nav.load href
+                    )
+
+        ( _, _ ) ->
+            ( model, Cmd.none )
+
+
+updateUrl : Url.Url -> Model -> ( Model, Cmd Msg )
+updateUrl url model =
+    oneOf
+        [ Parser.map Calendar (s "calendar" </> Calendar.urlParser)
+        , Parser.map Blocks (s "blocks" </> Blocks.urlParser)
+        ]
+        |> (\parser -> Parser.parse parser url)
+        |> Maybe.withDefault NotFound
+        |> (\page ->
+                ( { model | page = page }
+                , Cmd.none
+                )
+           )
 
 
 
@@ -61,88 +117,17 @@ view model =
             , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
             }
 
-        Calendar ->
-            Skeleton.view "Calendar" Calendar.view
+        Calendar subModel ->
+            Skeleton.view "Calendar" (Calendar.view subModel)
 
-        Blocks ->
-            { title = "Blocks"
-            , body = [ Html.div [] [ Html.text "Blocks" ] ]
-            }
+        Blocks subModel ->
+            Skeleton.view "Blocks" (Blocks.view subModel)
 
 
 
--- INIT
+-- SUBSCRIPTIONS
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    stepUrl url
-        { key = key
-        , page = NotFound
-        }
-
-
-
--- ROUTER
-
-
-stepUrl : Url.Url -> Model -> ( Model, Cmd Msg )
-stepUrl url model =
-    let
-        parser =
-            oneOf
-                [ route top
-                    ( { model | page = Calendar }
-                    , Cmd.none
-                    )
-                , route (s "blocks")
-                    ( { model | page = Blocks }
-                    , Cmd.none
-                    )
-                ]
-    in
-    case Parser.parse parser url of
-        Just result ->
-            result
-
-        Nothing ->
-            ( { model | page = NotFound }
-            , Cmd.none
-            )
-
-
-route : Parser a b -> a -> Parser (b -> c) c
-route parser handler =
-    Parser.map handler parser
-
-
-
--- UPDATE
-
-
-type Msg
-    = NoOp
-    | LinkClicked Browser.UrlRequest
-    | UrlChanged Url.Url
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update message model =
-    case message of
-        NoOp ->
-            ( model, Cmd.none )
-
-        LinkClicked urlRequest ->
-            case urlRequest of
-                Browser.Internal url ->
-                    ( model
-                    , Nav.pushUrl model.key (Url.toString url)
-                    )
-
-                Browser.External href ->
-                    ( model
-                    , Nav.load href
-                    )
-
-        UrlChanged url ->
-            stepUrl url model
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none

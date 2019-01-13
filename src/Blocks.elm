@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Msg, init, update, urlParser, view)
+module Blocks exposing (Model, Msg, init, update, urlParser, view)
 
 import Html exposing (Html)
 import Html.Attributes
@@ -7,7 +7,7 @@ import Url.Parser exposing (Parser, custom)
 
 
 type alias Model =
-    { date : String
+    { blocks : String
     }
 
 
@@ -17,14 +17,14 @@ type Msg
 
 urlParser : Parser (Model -> a) a
 urlParser =
-    custom "CALENDAR" <|
+    custom "BLOCKS" <|
         \segment ->
             Just (Model segment)
 
 
 init : Model
 init =
-    Model "today"
+    Model "block"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -34,4 +34,4 @@ update msg model =
 
 view : Model -> Html msg
 view model =
-    Html.div [] [ Html.text ("Calendar " ++ model.date), Html.a [ Html.Attributes.href (Url.Builder.absolute [ "blocks", "block" ] []) ] [ Html.text "Blocks" ] ]
+    Html.div [] [ Html.text ("Blocks " ++ model.blocks), Html.a [ Html.Attributes.href (Url.Builder.absolute [ "calendar", "yesterday" ] []) ] [ Html.text "Calendar" ] ]
