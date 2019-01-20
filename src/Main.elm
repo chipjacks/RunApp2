@@ -1,17 +1,13 @@
-module Main exposing
-    ( Page(..)
-    , main
-    , parseUrl
-    )
+module Main exposing (main)
 
 import BlockList
 import Browser
 import Browser.Navigation as Nav
 import Calendar
 import Html
+import Page exposing (Page(..))
 import Skeleton
 import Url
-import Url.Parser as Parser exposing ((<?>), Parser, oneOf, s, top)
 
 
 main =
@@ -35,22 +31,13 @@ type alias Model =
     }
 
 
-type Page
-    = NotFound
-    | Calendar Calendar.Model
-    | BlockList BlockList.Model
-
-
 
 -- INIT
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    updateUrl url
-        { key = key
-        , page = NotFound
-        }
+    ( { key = key, page = Page.parseUrl url }, Cmd.none )
 
 
 
@@ -68,7 +55,7 @@ update message model =
     case ( message, model.page ) of
         -- GLOBAL COMMUNICATION
         ( UrlChanged url, _ ) ->
-            updateUrl url model
+            ( { model | page = Page.parseUrl url }, Cmd.none )
 
         -- LOCAL COMMUNICATION
         ( CalendarMsg subMsg, Calendar subModel ) ->
@@ -92,35 +79,6 @@ update message model =
 
         ( _, _ ) ->
             ( model, Cmd.none )
-
-
-updateUrl : Url.Url -> Model -> ( Model, Cmd Msg )
-updateUrl url model =
-    parseUrl url
-        |> (\page ->
-                ( { model | page = page }
-                , Cmd.none
-                )
-           )
-
-
-parseUrl : Url.Url -> Page
-parseUrl url =
-    let
-        toPage page maybeSubModel =
-            case maybeSubModel of
-                Just subModel ->
-                    page subModel
-
-                Nothing ->
-                    NotFound
-    in
-    oneOf
-        [ Parser.map (toPage Calendar) (s "calendar" <?> Calendar.urlParser)
-        , Parser.map (toPage BlockList) (s "blocks" <?> BlockList.urlParser)
-        ]
-        |> (\parser -> Parser.parse parser url)
-        |> Maybe.withDefault NotFound
 
 
 

@@ -2,7 +2,7 @@ module LinkTests exposing (suite)
 
 import Expect exposing (Expectation)
 import Link
-import Main exposing (Page(..), parseUrl)
+import Page exposing (Page(..), parseUrl)
 import Test exposing (..)
 import Url
 
@@ -42,4 +42,9 @@ suite =
                 Link.toCalendar { date = "date" }
                     |> parseLink
                     |> matchesPage "calendar"
+        , test ".toBlockList" <|
+            \_ ->
+                Link.toBlockList { date = "date" }
+                    |> parseLink
+                    |> matchesPage "blocklist"
         ]
