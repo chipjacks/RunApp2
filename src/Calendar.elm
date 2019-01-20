@@ -1,9 +1,9 @@
-module Calendar exposing (Model, Msg, init, update, urlParser, view)
+module Calendar exposing (Model, Msg, init, update, urlBuilder, urlParser, view)
 
 import Html exposing (Html)
-import Html.Attributes
-import Url.Builder
-import Url.Parser exposing (Parser, custom)
+import Html.Attributes exposing (href)
+import Link
+import Url.Parser.Query as Query
 
 
 type alias Model =
@@ -15,11 +15,16 @@ type Msg
     = NoOp
 
 
-urlParser : Parser (Model -> a) a
+urlBuilder : Model -> String
+urlBuilder model =
+    Link.toCalendar model
+
+
+urlParser : Query.Parser (Maybe Model)
 urlParser =
-    custom "CALENDAR" <|
-        \segment ->
-            Just (Model segment)
+    Query.map
+        (Maybe.map Model)
+        (Query.string "date")
 
 
 init : Model
@@ -34,4 +39,8 @@ update msg model =
 
 view : Model -> Html msg
 view model =
-    Html.div [] [ Html.text ("Calendar " ++ model.date), Html.a [ Html.Attributes.href (Url.Builder.absolute [ "blocks", "block" ] []) ] [ Html.text "Blocks" ] ]
+    Html.div []
+        [ Html.text ("Calendar " ++ model.date)
+        , Html.a [ Link.toBlockList { date = "1/19/2019" } |> href ]
+            [ Html.text "Blocks" ]
+        ]

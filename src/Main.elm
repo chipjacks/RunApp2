@@ -1,13 +1,17 @@
-module Main exposing (main)
+module Main exposing
+    ( Page(..)
+    , main
+    , parseUrl
+    )
 
-import Blocks
+import BlockList
 import Browser
 import Browser.Navigation as Nav
 import Calendar
 import Html
 import Skeleton
 import Url
-import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, top)
+import Url.Parser as Parser exposing ((<?>), Parser, oneOf, s, top)
 
 
 main =
@@ -34,7 +38,7 @@ type alias Model =
 type Page
     = NotFound
     | Calendar Calendar.Model
-    | Blocks Blocks.Model
+    | BlockList BlockList.Model
 
 
 
@@ -92,17 +96,31 @@ update message model =
 
 updateUrl : Url.Url -> Model -> ( Model, Cmd Msg )
 updateUrl url model =
-    oneOf
-        [ Parser.map Calendar (s "calendar" </> Calendar.urlParser)
-        , Parser.map Blocks (s "blocks" </> Blocks.urlParser)
-        ]
-        |> (\parser -> Parser.parse parser url)
-        |> Maybe.withDefault NotFound
+    parseUrl url
         |> (\page ->
                 ( { model | page = page }
                 , Cmd.none
                 )
            )
+
+
+parseUrl : Url.Url -> Page
+parseUrl url =
+    let
+        toPage page maybeSubModel =
+            case maybeSubModel of
+                Just subModel ->
+                    page subModel
+
+                Nothing ->
+                    NotFound
+    in
+    oneOf
+        [ Parser.map (toPage Calendar) (s "calendar" <?> Calendar.urlParser)
+        , Parser.map (toPage BlockList) (s "blocks" <?> BlockList.urlParser)
+        ]
+        |> (\parser -> Parser.parse parser url)
+        |> Maybe.withDefault NotFound
 
 
 
@@ -120,8 +138,8 @@ view model =
         Calendar subModel ->
             Skeleton.view "Calendar" (Calendar.view subModel)
 
-        Blocks subModel ->
-            Skeleton.view "Blocks" (Blocks.view subModel)
+        BlockList subModel ->
+            Skeleton.view "BlockList" (BlockList.view subModel)
 
 
 
