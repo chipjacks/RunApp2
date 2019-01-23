@@ -89,15 +89,15 @@ view : Model -> Browser.Document Msg
 view model =
     case model.page of
         NotFound ->
-            { title = "Not Found"
+            { title = Page.title model.page
             , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
             }
 
         Calendar subModel ->
-            Skeleton.view "Calendar" (Calendar.view subModel)
+            Skeleton.view (Page.title model.page) (Calendar.view subModel)
 
         BlockList subModel ->
-            Skeleton.view "BlockList" (BlockList.view subModel)
+            Skeleton.view (Page.title model.page) (BlockList.view subModel)
 
 
 

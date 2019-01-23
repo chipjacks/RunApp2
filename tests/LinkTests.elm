@@ -7,17 +7,26 @@ import Test exposing (..)
 import Url
 
 
-matchesPage : String -> Page -> Expectation
-matchesPage expectedPage actualPage =
-    case actualPage of
-        Calendar _ ->
-            Expect.equal expectedPage "calendar"
+suite : Test
+suite =
+    describe "Link"
+        [ test ".toCalendar" <|
+            \_ ->
+                Link.toCalendar { date = "date" }
+                    |> parseLink
+                    |> Page.title
+                    |> Expect.equal "Calendar"
+        , test ".toBlockList" <|
+            \_ ->
+                Link.toBlockList { date = "date" }
+                    |> parseLink
+                    |> Page.title
+                    |> Expect.equal "Block List"
+        ]
 
-        BlockList _ ->
-            Expect.equal expectedPage "blocklist"
 
-        NotFound ->
-            Expect.equal expectedPage "notfound"
+
+-- INTERNAL
 
 
 parseLink : String -> Page
@@ -32,19 +41,3 @@ parseLink link =
                     Nothing ->
                         Debug.todo ("Failed to build url from link: " ++ link)
            )
-
-
-suite : Test
-suite =
-    describe "Link"
-        [ test ".toCalendar" <|
-            \_ ->
-                Link.toCalendar { date = "date" }
-                    |> parseLink
-                    |> matchesPage "calendar"
-        , test ".toBlockList" <|
-            \_ ->
-                Link.toBlockList { date = "date" }
-                    |> parseLink
-                    |> matchesPage "blocklist"
-        ]

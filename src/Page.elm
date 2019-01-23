@@ -1,4 +1,4 @@
-module Page exposing (Page(..), parseUrl)
+module Page exposing (Page(..), parseUrl, title)
 
 import BlockList
 import Calendar
@@ -12,6 +12,19 @@ type Page
     = NotFound
     | Calendar Calendar.Model
     | BlockList BlockList.Model
+
+
+title : Page -> String
+title page =
+    case page of
+        Calendar _ ->
+            "Calendar"
+
+        BlockList _ ->
+            "Block List"
+
+        NotFound ->
+            "Not Found"
 
 
 parseUrl : Url.Url -> Page
