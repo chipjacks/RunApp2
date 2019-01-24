@@ -37,7 +37,7 @@ type alias Model =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    ( { key = key, page = Page.parseUrl url }, Cmd.none )
+    loadPage url { key = key, page = NotFound }
 
 
 
@@ -55,7 +55,7 @@ update message model =
     case ( message, model.page ) of
         -- GLOBAL COMMUNICATION
         ( UrlChanged url, _ ) ->
-            ( { model | page = Page.parseUrl url }, Cmd.none )
+            loadPage url model
 
         -- LOCAL COMMUNICATION
         ( CalendarMsg subMsg, Calendar subModel ) ->
@@ -79,6 +79,28 @@ update message model =
 
         ( _, _ ) ->
             ( model, Cmd.none )
+
+
+loadPage : Url.Url -> Model -> ( Model, Cmd Msg )
+loadPage url model =
+    let
+        page =
+            Page.parseUrl url
+    in
+    ( { model | page = page }, initCmd page )
+
+
+initCmd : Page -> Cmd Msg
+initCmd page =
+    case page of
+        Calendar model ->
+            Calendar.initCmd model |> Cmd.map CalendarMsg
+
+        BlockList _ ->
+            Cmd.none
+
+        NotFound ->
+            Cmd.none
 
 
 

@@ -30,7 +30,7 @@ title page =
 parseUrl : Url.Url -> Page
 parseUrl url =
     oneOf
-        [ Parser.map (toPage Calendar) (s "calendar" <?> Calendar.urlParser)
+        [ Parser.map Calendar (s "calendar" <?> Calendar.urlParser)
         , Parser.map (toPage BlockList) (s "blocks" <?> BlockList.urlParser)
         ]
         |> (\parser -> Parser.parse parser url)

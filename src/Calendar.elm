@@ -1,46 +1,73 @@
-module Calendar exposing (Model, Msg, init, update, urlBuilder, urlParser, view)
+module Calendar exposing (Model, Msg, initCmd, update, urlParser, view)
 
+import Date exposing (Date)
 import Html exposing (Html)
 import Html.Attributes exposing (href)
 import Link
+import Task exposing (Task)
 import Url.Parser.Query as Query
 
 
-type alias Model =
-    { date : String
-    }
+type Model
+    = Loading
+    | Problem String
+    | Loaded String
 
 
 type Msg
-    = NoOp
+    = ReceiveDate Date
 
 
-urlBuilder : Model -> String
-urlBuilder model =
-    Link.toCalendar model
-
-
-urlParser : Query.Parser (Maybe Model)
+urlParser : Query.Parser Model
 urlParser =
     Query.map
-        (Maybe.map Model)
-        (Query.string "date")
+        parseDate
+        (Query.int "date")
 
 
-init : Model
-init =
-    Model "today"
+initCmd : Model -> Cmd Msg
+initCmd model =
+    case model of
+        Loading ->
+            Date.today |> Task.perform ReceiveDate
+
+        _ ->
+            Cmd.none
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        ReceiveDate date ->
+            ( Loaded (Date.toIsoString date), Cmd.none )
 
 
 view : Model -> Html msg
 view model =
-    Html.div []
-        [ Html.text ("Calendar " ++ model.date)
-        , Html.a [ Link.toBlockList { date = "1/19/2019" } |> href ]
-            [ Html.text "Blocks" ]
-        ]
+    case model of
+        Loaded date ->
+            Html.div []
+                [ Html.text ("Calendar " ++ date)
+                , Html.a [ Link.toBlockList { date = "1/19/2019" } |> href ]
+                    [ Html.text "Blocks" ]
+                ]
+
+        Loading ->
+            Html.div [] [ Html.text "Loading Calendar" ]
+
+        Problem message ->
+            Html.div [] [ Html.text message ]
+
+
+
+-- INTERNAL
+
+
+parseDate : Maybe Int -> Model
+parseDate rataDie =
+    case rataDie of
+        Just int ->
+            Loaded (Date.fromRataDie int |> Date.toIsoString)
+
+        Nothing ->
+            Loading
