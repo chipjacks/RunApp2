@@ -116,7 +116,7 @@ view model =
             }
 
         Calendar subModel ->
-            Skeleton.view (Page.title model.page) (Calendar.view subModel)
+            Skeleton.view (Page.title model.page) (Calendar.view subModel |> Html.map CalendarMsg)
 
         BlockList subModel ->
             Skeleton.view (Page.title model.page) (BlockList.view subModel)
