@@ -1,7 +1,7 @@
 module Calendar exposing (Model, Msg, initCmd, update, urlParser, view)
 
 import Date exposing (Date, Interval(..), Unit(..))
-import Element exposing (Element, alignBottom, column, el, fill, link, px, row, spaceEvenly, text, width)
+import Element exposing (Element, above, alignBottom, column, el, fill, link, px, row, spaceEvenly, text, width)
 import Html exposing (Html)
 import Link
 import Task exposing (Task)
@@ -93,33 +93,25 @@ viewWeek start =
 titleWeek : Date -> Element Msg
 titleWeek start =
     let
-        monthStart date =
-            daysOfWeek date
+        monthStart =
+            daysOfWeek start
                 |> List.filter (\d -> Date.day d == 1)
                 |> List.head
+                |> Maybe.map (Date.format "MMMM")
+                |> Maybe.withDefault ""
 
-        yearEnd =
-            let
-                nextMonthStart =
-                    monthStart (Date.add Weeks 1 start)
-            in
-            case nextMonthStart |> Maybe.map Date.month of
-                Just Jan ->
-                    nextMonthStart
-
-                _ ->
-                    Nothing
+        yearStart =
+            daysOfWeek start
+                |> List.filter (\d -> Date.ordinalDay d == 1)
+                |> List.head
+                |> Maybe.map (Date.format "yyyy")
+                |> Maybe.withDefault ""
     in
-    case ( monthStart start, yearEnd ) of
-        ( Just date, Nothing ) ->
-            el [ width (px 100) ] (text <| Date.format "MMMM" date)
-
-        ( Nothing, Just date ) ->
-            column [ width (px 100) ] [ text <| Date.format "yyyy" date ]
-
-        _ ->
-            el [ width (px 100) ] (text "")
-
+    el
+        [ width (px 100)
+        , above (text yearStart)
+        ]
+        (text monthStart)
 
 
 weekList : Date -> List Date
