@@ -116,10 +116,14 @@ view model =
             }
 
         Calendar subModel ->
-            Skeleton.view (Page.title model.page) (Calendar.view subModel |> Html.map CalendarMsg)
+            { title = Page.title model.page
+            , body = Calendar.view subModel |> Skeleton.layout |> Html.map CalendarMsg |> List.singleton
+            }
 
         BlockList subModel ->
-            Skeleton.view (Page.title model.page) (BlockList.view subModel)
+            { title = Page.title model.page
+            , body = BlockList.view subModel |> Skeleton.layout |> List.singleton
+            }
 
 
 

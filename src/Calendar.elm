@@ -43,18 +43,17 @@ update msg model =
             ( Loaded date, Cmd.none )
 
 
-view : Model -> Html Msg
+view : Model -> Element Msg
 view model =
-    Element.layout [] <|
-        case model of
-            Loaded date ->
-                viewLoaded date
+    case model of
+        Loaded date ->
+            viewLoaded date
 
-            Loading ->
-                el [] (text "Loading Calendar")
+        Loading ->
+            el [] (text "Loading Calendar")
 
-            Problem message ->
-                el [] (text message)
+        Problem message ->
+            el [] (text message)
 
 
 
@@ -83,11 +82,17 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    row [ spaceEvenly, width fill, alignBottom ] <|
+    row [ spaceEvenly, width fill ] <|
         titleWeek start
-            :: (days
-                    |> List.map (\day -> Date.format "d" day |> text)
-               )
+            :: List.map viewDay days
+
+
+viewDay : Date -> Element Msg
+viewDay date =
+    link []
+        { url = Link.toBlockList { date = Date.toIsoString date }
+        , label = Date.format "d" date |> text
+        }
 
 
 titleWeek : Date -> Element Msg

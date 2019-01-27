@@ -1,7 +1,6 @@
 module BlockList exposing (Model, Msg, init, update, urlBuilder, urlParser, view)
 
-import Html exposing (Html)
-import Html.Attributes exposing (href)
+import Element exposing (Element, column, link, text)
 import Link
 import Url.Parser.Query as Query
 
@@ -72,12 +71,14 @@ update msg model =
     ( model, Cmd.none )
 
 
-view : Model -> Html msg
+view : Model -> Element msg
 view model =
-    Html.div []
-        [ Html.text ("Blocks " ++ currentDate model)
-        , Html.a [ Link.toCalendar { date = "yesterday" } |> href ]
-            [ Html.text "Calendar" ]
+    column []
+        [ text ("Blocks " ++ currentDate model)
+        , link []
+            { url = Link.toCalendar { date = "yesterday" }
+            , label = text "Calendar"
+            }
         ]
 
 
