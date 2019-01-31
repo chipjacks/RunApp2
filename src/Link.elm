@@ -1,14 +1,14 @@
 module Link exposing (toBlockList, toCalendar)
 
 import Html exposing (Attribute)
-import Url.Builder exposing (absolute, string)
+import Url.Builder exposing (absolute, int)
 
 
-toCalendar : { date : String } -> String
+toCalendar : { date : Int } -> String
 toCalendar args =
-    absolute [ "calendar" ] [ string "date" args.date ]
+    absolute [ "calendar" ] [ int "date" args.date ]
 
 
-toBlockList : { date : String } -> String
+toBlockList : { date : Int } -> String
 toBlockList args =
-    absolute [ "blocks" ] [ string "date" args.date ]
+    absolute [ "blocks" ] [ int "date" args.date ]

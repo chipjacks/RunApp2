@@ -1,29 +1,18 @@
 module Skeleton exposing (layout)
 
 import Browser
-import Element exposing (Element, centerX, fill, row, width)
+import Element exposing (Element, centerX, fill, height, px, row, width)
 import Html exposing (Html)
 
 
 
 {-
-
-   DESKTOP
-   calendar    list    library
-
-   TABLET
-   calendar    list    <->   list        library
-
-   PHONE PORTRAIT
-   calendar <-> list <-> library
-
-   PHONE LANDSCAPE
-   calendar    list <->  list  library
-
+   TODO: use the off-canvas pattern for responsiveness
+   https://developers.google.com/web/fundamentals/design-and-ux/responsive/patterns#off_canvas
 -}
 
 
 layout : Element msg -> Html msg
 layout body =
     Element.layout [ width fill, Element.explain Debug.todo ]
-        (row [ centerX ] [ body ])
+        (row [ centerX, width (px 320), height (px 568) ] [ body ])

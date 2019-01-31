@@ -1,82 +1,18 @@
-module Calendar exposing (Model, Msg, initCmd, update, urlParser, view)
+module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Element exposing (Element, above, alignBottom, column, el, fill, link, px, row, spaceEvenly, text, width)
-import Html exposing (Html)
 import Link
-import Task exposing (Task)
 import Time exposing (Month(..))
-import Url.Parser.Query as Query
 
 
-type Model
-    = Loading
-    | Problem String
-    | Loaded Date
-
-
-type Msg
-    = ReceiveDate Date
-
-
-urlParser : Query.Parser Model
-urlParser =
-    Query.map
-        parseDate
-        (Query.int "date")
-
-
-initCmd : Model -> Cmd Msg
-initCmd model =
-    case model of
-        Loading ->
-            Date.today |> Task.perform ReceiveDate
-
-        _ ->
-            Cmd.none
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        ReceiveDate date ->
-            ( Loaded date, Cmd.none )
-
-
-view : Model -> Element Msg
-view model =
-    case model of
-        Loaded date ->
-            viewLoaded date
-
-        Loading ->
-            el [] (text "Loading Calendar")
-
-        Problem message ->
-            el [] (text message)
-
-
-
--- INTERNAL
-
-
-parseDate : Maybe Int -> Model
-parseDate rataDie =
-    case rataDie of
-        Just int ->
-            Loaded (Date.fromRataDie int)
-
-        Nothing ->
-            Loading
-
-
-viewLoaded : Date -> Element Msg
-viewLoaded date =
+view : Date -> Element msg
+view date =
     column []
         (weekList date |> List.map viewWeek)
 
 
-viewWeek : Date -> Element Msg
+viewWeek : Date -> Element msg
 viewWeek start =
     let
         days =
@@ -87,15 +23,15 @@ viewWeek start =
             :: List.map viewDay days
 
 
-viewDay : Date -> Element Msg
+viewDay : Date -> Element msg
 viewDay date =
     link []
-        { url = Link.toBlockList { date = Date.toIsoString date }
+        { url = Link.toBlockList { date = Date.toRataDie date }
         , label = Date.format "d" date |> text
         }
 
 
-titleWeek : Date -> Element Msg
+titleWeek : Date -> Element msg
 titleWeek start =
     let
         monthStart =

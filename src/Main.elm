@@ -4,21 +4,14 @@ import BlockList
 import Browser
 import Browser.Navigation as Nav
 import Calendar
+import Date exposing (Date)
+import Home
 import Html
-import Page exposing (Page(..))
 import Skeleton
+import Task exposing (Task)
 import Url
-
-
-main =
-    Browser.application
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        , onUrlRequest = LinkClicked
-        , onUrlChange = UrlChanged
-        }
+import Url.Parser as Parser exposing ((<?>), Parser)
+import Url.Parser.Query as Query
 
 
 
@@ -31,13 +24,31 @@ type alias Model =
     }
 
 
+type Page
+    = Home Home.Model
+    | NotFound
+
+
 
 -- INIT
 
 
+main =
+    Browser.application
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        , onUrlRequest = LinkClicked
+        , onUrlChange = parseUrl
+        }
+
+
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    loadPage url { key = key, page = NotFound }
+    update
+        (parseUrl url)
+        { key = key, page = Home Home.init }
 
 
 
@@ -46,25 +57,30 @@ init _ url key =
 
 type Msg
     = LinkClicked Browser.UrlRequest
-    | UrlChanged Url.Url
-    | CalendarMsg Calendar.Msg
+    | HomeMsg Home.Msg
+    | SelectDate Date
+    | LoadDate
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case ( message, model.page ) of
-        -- GLOBAL COMMUNICATION
-        ( UrlChanged url, _ ) ->
-            loadPage url model
-
-        -- LOCAL COMMUNICATION
-        ( CalendarMsg subMsg, Calendar subModel ) ->
-            Calendar.update subMsg subModel
+        ( HomeMsg subMsg, Home subModel ) ->
+            Home.update subMsg subModel
                 |> Tuple.mapBoth
-                    (\cmodel -> { model | page = Calendar cmodel })
-                    (\cmsg -> Cmd.map CalendarMsg cmsg)
+                    (\cmodel -> { model | page = Home cmodel })
+                    (\cmsg -> Cmd.map HomeMsg cmsg)
 
-        -- EXTERNAL COMMUNICATION
+        ( SelectDate date, Home subModel ) ->
+            Home.update (Home.ReceiveDate date) subModel
+                |> Tuple.mapBoth
+                    (\cmodel -> { model | page = Home cmodel })
+                    (\cmsg -> Cmd.map HomeMsg cmsg)
+
+        ( LoadDate, _ ) ->
+            ( model, Date.today |> Task.perform SelectDate )
+
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
@@ -81,26 +97,63 @@ update message model =
             ( model, Cmd.none )
 
 
-loadPage : Url.Url -> Model -> ( Model, Cmd Msg )
-loadPage url model =
-    let
-        page =
-            Page.parseUrl url
-    in
-    ( { model | page = page }, initCmd page )
+
+{-
+   ## Routing
+
+   /<view>?<opts>
+
+   view - calendar, blocklist
+
+   opts - date, block
+
+   ### Examples
+   # TODO: Instead of documenting behaviour, code it using feature tests
+
+   click calendar
+       -> change url to "/blocks?date=12345"
+       -> trigger messages "SelectView blocks, SelectDate 12345"
+       -> highlight date on calendar, scroll blocklist
+
+   scroll blocklist
+       -> change url to "/blocks?date=12345"
+       -> trigger message "SelectDate 12345"
+       -> highlight date on calendar
+
+   click block on blocklist
+       -> change url to "/blocks?block=67890"
+       -> trigger messages "SelectView blocks, SelectBlock 67890"
+       -> open block view
+
+   load url "/blocks?date=12345&block=67890"
+       -> trigger messages "SelectView, SelectDate, SelectBlock"
+       -> highlight date on calendar, scroll blocklist, open block view
+
+   load url "/"
+       -> TODO: specify this behavior
+
+-}
 
 
-initCmd : Page -> Cmd Msg
-initCmd page =
-    case page of
-        Calendar model ->
-            Calendar.initCmd model |> Cmd.map CalendarMsg
+parseUrl : Url.Url -> Msg
+parseUrl url =
+    Parser.oneOf
+        [ Parser.map selectDate (Parser.s "calendar" <?> Query.int "date")
+        , Parser.map selectDate (Parser.s "blocks" <?> Query.int "date")
+        , Parser.map LoadDate Parser.top
+        ]
+        |> (\parser -> Parser.parse parser url)
+        |> Maybe.withDefault NoOp
 
-        BlockList _ ->
-            Cmd.none
 
-        NotFound ->
-            Cmd.none
+selectDate : Maybe Int -> Msg
+selectDate rataDie =
+    case rataDie of
+        Just int ->
+            SelectDate (Date.fromRataDie int)
+
+        Nothing ->
+            LoadDate
 
 
 
@@ -111,18 +164,13 @@ view : Model -> Browser.Document Msg
 view model =
     case model.page of
         NotFound ->
-            { title = Page.title model.page
+            { title = "Not Found"
             , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
             }
 
-        Calendar subModel ->
-            { title = Page.title model.page
-            , body = Calendar.view subModel |> Skeleton.layout |> Html.map CalendarMsg |> List.singleton
-            }
-
-        BlockList subModel ->
-            { title = Page.title model.page
-            , body = BlockList.view subModel |> Skeleton.layout |> List.singleton
+        Home subModel ->
+            { title = "Home"
+            , body = Home.view subModel |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
             }
 
 
