@@ -1,7 +1,7 @@
 module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
-import Element exposing (Element, above, alignBottom, column, el, fill, link, px, row, spaceEvenly, text, width)
+import Element exposing (Element, above, column, el, fill, link, px, row, spaceEvenly, text, width)
 import Link
 import Time exposing (Month(..))
 

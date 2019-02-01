@@ -4,7 +4,6 @@ import BlockList
 import Calendar
 import Date exposing (Date)
 import Element exposing (Element, el, row, text)
-import Task exposing (Task)
 
 
 type Model

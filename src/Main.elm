@@ -1,16 +1,14 @@
 module Main exposing (main)
 
-import BlockList
 import Browser
 import Browser.Navigation as Nav
-import Calendar
 import Date exposing (Date)
 import Home
 import Html
 import Skeleton
-import Task exposing (Task)
+import Task
 import Url
-import Url.Parser as Parser exposing ((<?>), Parser)
+import Url.Parser as Parser exposing ((<?>))
 import Url.Parser.Query as Query
 
 

@@ -1,6 +1,5 @@
 module Link exposing (toBlockList, toCalendar)
 
-import Html exposing (Attribute)
 import Url.Builder exposing (absolute, int)
 
 

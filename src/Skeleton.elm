@@ -1,6 +1,5 @@
 module Skeleton exposing (layout)
 
-import Browser
 import Element exposing (Element, centerX, fill, height, px, row, width)
 import Html exposing (Html)
 
