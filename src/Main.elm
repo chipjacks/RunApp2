@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Msg(..), parseUrl)
 
 import Browser
 import Browser.Navigation as Nav
@@ -110,12 +110,12 @@ update message model =
 
    click calendar
        -> change url to "/blocks?date=12345"
-       -> trigger messages "SelectView blocks, SelectDate 12345"
+       -x trigger messages "SelectView blocks, SelectDate 12345"
        -> highlight date on calendar, scroll blocklist
 
    scroll blocklist
        -> change url to "/blocks?date=12345"
-       -> trigger message "SelectDate 12345"
+       -x trigger message "SelectDate 12345"
        -> highlight date on calendar
 
    click block on blocklist

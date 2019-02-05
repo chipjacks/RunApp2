@@ -1,27 +1,26 @@
-module LinkTests exposing (suite)
+module MainTests exposing (suite)
 
+import Date
 import Expect exposing (Expectation)
 import Link
-import Page exposing (Page(..), parseUrl)
+import Main exposing (Msg(..), parseUrl)
 import Test exposing (..)
 import Url
 
 
 suite : Test
 suite =
-    describe "Link"
-        [ test ".toCalendar" <|
+    describe ".parseUrl"
+        [ test "Generates a SelectDate msg for calendar urls" <|
             \_ ->
-                Link.toCalendar { date = "date" }
+                Link.toCalendar (Date.fromRataDie 123)
                     |> parseLink
-                    |> Page.title
-                    |> Expect.equal "Calendar"
-        , test ".toBlockList" <|
+                    |> Expect.equal (SelectDate (Date.fromRataDie 123))
+        , test "Generates a SelectDate msg of blocklist urls" <|
             \_ ->
-                Link.toBlockList { date = "date" }
+                Link.toBlockList (Date.fromRataDie 123)
                     |> parseLink
-                    |> Page.title
-                    |> Expect.equal "Block List"
+                    |> Expect.equal (SelectDate (Date.fromRataDie 123))
         ]
 
 
@@ -29,7 +28,7 @@ suite =
 -- INTERNAL
 
 
-parseLink : String -> Page
+parseLink : String -> Msg
 parseLink link =
     ("http://example.com" ++ link)
         |> Url.fromString

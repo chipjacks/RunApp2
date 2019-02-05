@@ -10,7 +10,7 @@ view date =
     column []
         [ text ("Blocks " ++ Date.toIsoString date)
         , link []
-            { url = Link.toCalendar { date = Date.toRataDie date }
+            { url = Link.toCalendar date
             , label = text "Calendar"
             }
         ]

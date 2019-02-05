@@ -26,7 +26,7 @@ viewWeek start =
 viewDay : Date -> Element msg
 viewDay date =
     link []
-        { url = Link.toBlockList { date = Date.toRataDie date }
+        { url = Link.toBlockList date
         , label = Date.format "d" date |> text
         }
 
