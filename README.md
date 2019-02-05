@@ -2,17 +2,17 @@
 ### Setup
 
 ```
-npm install --global elm elm-live elm-test elm-verify-examples
+yarn install
 ```
 
 ### Run
 
 ```
-elm-live src/Main.elm -u
+yarn serve
 ```
 
 ### Test
 
 ```
-elm-test && elm-verify-examples
+yarn test
 ```
