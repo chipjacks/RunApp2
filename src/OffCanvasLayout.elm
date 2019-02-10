@@ -1,17 +1,19 @@
-module OffCanvasLayout exposing (Focus(..), OffCanvasLayout, Visible(..), changeFocus, resize)
+module OffCanvasLayout exposing (Focus(..), view)
 
 import Element exposing (Device, DeviceClass(..), Element, Orientation(..), el)
 
 
 
 {-
-   TODO: use the off-canvas pattern for responsiveness
-   https://developers.google.com/web/fundamentals/design-and-ux/responsive/patterns#off_canvas
+   Uses the [off-canvas](https://developers.google.com/web/fundamentals/design-and-ux/responsive/patterns#off_canvas)
+   pattern for responsiveness.
+
 -}
 
 
 type alias OffCanvasLayout msg =
     { visible : Visible
+    , focus : Focus
     , col1 : Element msg
     , col2 : Element msg
     , col3 : Element msg
@@ -33,93 +35,95 @@ type Focus
     | Third
 
 
+view : Device -> Focus -> Element msg -> Element msg -> Element msg -> Element msg
+view device focus col1 col2 col3 =
+    let
+        layout =
+            resize device (OffCanvasLayout AllThree focus col1 col2 col3)
+    in
+    case layout.visible of
+        AllThree ->
+            Element.row []
+                [ col1
+                , col2
+                , col3
+                ]
 
--- init |> resize |> changeFocus
+        FirstTwo ->
+            Element.row []
+                [ col1
+                , col2
+                ]
 
+        LastTwo ->
+            Element.row []
+                [ col2
+                , col3
+                ]
 
-init : Element msg -> Element msg -> Element msg -> OffCanvasLayout msg
-init col1 col2 col3 =
-    OffCanvasLayout AllThree col1 col2 col3
+        FirstOne ->
+            Element.row []
+                [ col1
+                ]
 
+        SecondOne ->
+            Element.row []
+                [ col2
+                ]
 
-{-|
-
-    import Element
-
-    changeFocus First (OffCanvasLayout LastTwo Element.none Element.none Element.none)
-    --> OffCanvasLayout FirstTwo Element.none Element.none Element.none
-
--}
-changeFocus : Focus -> OffCanvasLayout msg -> OffCanvasLayout msg
-changeFocus focus layout =
-    { layout | visible = updateVisible focus layout.visible }
-
-
-{-|
-
-    import Element exposing (Device, DeviceClass(..), Orientation(..))
-
-    resize (Device Phone Portrait) (OffCanvasLayout LastTwo Element.none Element.none Element.none)
-    --> OffCanvasLayout SecondOne Element.none Element.none Element.none
-
--}
-resize : Device -> OffCanvasLayout msg -> OffCanvasLayout msg
-resize device layout =
-    case ( device.class, device.orientation ) of
-        ( Phone, Portrait ) ->
-            layout
-
-        _ ->
-            layout
-
-
-view : OffCanvasLayout msg -> Element msg
-view a =
-    Element.none
+        ThirdOne ->
+            Element.row []
+                [ col3
+                ]
 
 
 
 -- INTERNAL
 
 
-updateVisible : Focus -> Visible -> Visible
-updateVisible focus visible =
+resize : Device -> OffCanvasLayout msg -> OffCanvasLayout msg
+resize device layout =
+    case ( device.class, device.orientation ) of
+        ( Phone, Portrait ) ->
+            { layout | visible = zoomOne layout.focus }
+
+        ( Phone, Landscape ) ->
+            { layout | visible = zoomTwo layout.focus layout.visible }
+
+        ( Tablet, Portrait ) ->
+            { layout | visible = zoomTwo layout.focus layout.visible }
+
+        _ ->
+            { layout | visible = AllThree }
+
+
+zoomOne : Focus -> Visible
+zoomOne focus =
     case focus of
         First ->
-            case visible of
-                LastTwo ->
-                    FirstTwo
-
-                SecondOne ->
-                    FirstOne
-
-                ThirdOne ->
-                    FirstOne
-
-                _ ->
-                    visible
+            FirstOne
 
         Second ->
-            case visible of
-                FirstOne ->
-                    SecondOne
-
-                ThirdOne ->
-                    SecondOne
-
-                _ ->
-                    visible
+            SecondOne
 
         Third ->
-            case visible of
-                FirstTwo ->
-                    LastTwo
+            ThirdOne
 
-                SecondOne ->
-                    ThirdOne
 
-                FirstOne ->
-                    ThirdOne
+zoomTwo : Focus -> Visible -> Visible
+zoomTwo focus visible =
+    case ( focus, visible ) of
+        ( First, _ ) ->
+            FirstTwo
 
-                _ ->
-                    visible
+        ( Second, FirstTwo ) ->
+            FirstTwo
+
+        ( Second, LastTwo ) ->
+            LastTwo
+
+        ( Second, _ ) ->
+            FirstTwo
+
+        ( Third, _ ) ->
+            LastTwo
