@@ -1,19 +1,42 @@
-module Home exposing (Model, Msg(..), init, update, view)
+module Home exposing (Column(..), Model, Msg, init, select, update, view)
 
 import BlockList
 import Calendar
 import Date exposing (Date)
-import Element exposing (Element, el, row, text)
+import Element exposing (Device, DeviceClass(..), Element, Orientation(..), el, text)
+import OffCanvasLayout exposing (Focus(..))
+import Task
 
 
 type Model
     = Loading
-    | Loaded Date
+    | LoadedColumn Column
+    | Loaded Column Date
     | Problem String
 
 
+type Column
+    = Calendar
+    | BlockList
+
+
 type Msg
-    = ReceiveDate Date
+    = Select Column (Maybe Date)
+
+
+select : Column -> Maybe Date -> Msg
+select column date =
+    Select column date
+
+
+focus : Column -> Focus
+focus column =
+    case column of
+        Calendar ->
+            First
+
+        BlockList ->
+            Second
 
 
 init : Model
@@ -24,10 +47,18 @@ init =
 view : Model -> Element Msg
 view model =
     case model of
-        Loaded date ->
-            row [] [ Calendar.view date, BlockList.view date ]
+        Loaded column date ->
+            OffCanvasLayout.view
+                (Device Phone Portrait)
+                (focus column)
+                (Calendar.view date)
+                (BlockList.view date)
+                Element.none
 
         Loading ->
+            el [] (text "Loading")
+
+        LoadedColumn col ->
             el [] (text "Loading")
 
         Problem message ->
@@ -37,5 +68,14 @@ view model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReceiveDate date ->
-            ( Loaded date, Cmd.none )
+        Select column maybeDate ->
+            case maybeDate of
+                Nothing ->
+                    ( LoadedColumn column
+                    , Date.today
+                        |> Task.perform
+                            (\date -> select column (Just date))
+                    )
+
+                Just date ->
+                    ( Loaded column date, Cmd.none )

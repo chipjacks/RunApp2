@@ -19,6 +19,12 @@ yarn serve
 yarn test
 ```
 
+Or, have them run automatically using [fswatch](https://github.com/emcrisostomo/fswatch):
+
+```
+fswatch src/* tests/* | while read line; do elm-test; done;
+```
+
 ##### Integration tests
 
 Start the dev server and then open cypress:

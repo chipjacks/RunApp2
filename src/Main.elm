@@ -1,9 +1,9 @@
-module Main exposing (Msg(..), parseUrl)
+module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
 import Date exposing (Date)
-import Home
+import Home exposing (Column(..))
 import Html
 import Skeleton
 import Task
@@ -56,8 +56,6 @@ init _ url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | HomeMsg Home.Msg
-    | SelectDate Date
-    | LoadDate
     | NoOp
 
 
@@ -69,15 +67,6 @@ update message model =
                 |> Tuple.mapBoth
                     (\cmodel -> { model | page = Home cmodel })
                     (\cmsg -> Cmd.map HomeMsg cmsg)
-
-        ( SelectDate date, Home subModel ) ->
-            Home.update (Home.ReceiveDate date) subModel
-                |> Tuple.mapBoth
-                    (\cmodel -> { model | page = Home cmodel })
-                    (\cmsg -> Cmd.map HomeMsg cmsg)
-
-        ( LoadDate, _ ) ->
-            ( model, Date.today |> Task.perform SelectDate )
 
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
@@ -136,22 +125,21 @@ update message model =
 parseUrl : Url.Url -> Msg
 parseUrl url =
     Parser.oneOf
-        [ Parser.map selectDate (Parser.s "calendar" <?> Query.int "date")
-        , Parser.map selectDate (Parser.s "blocks" <?> Query.int "date")
-        , Parser.map LoadDate Parser.top
+        [ Parser.map (select Calendar) (Parser.s "calendar" <?> Query.int "date")
+        , Parser.map (select BlockList) (Parser.s "blocks" <?> Query.int "date")
+        , Parser.map (select Calendar Nothing) Parser.top
         ]
         |> (\parser -> Parser.parse parser url)
         |> Maybe.withDefault NoOp
 
 
-selectDate : Maybe Int -> Msg
-selectDate rataDie =
-    case rataDie of
-        Just int ->
-            SelectDate (Date.fromRataDie int)
-
-        Nothing ->
-            LoadDate
+select : Home.Column -> Maybe Int -> Msg
+select column rataDie =
+    let
+        date =
+            Maybe.map Date.fromRataDie rataDie
+    in
+    HomeMsg (Home.select column date)
 
 
 
