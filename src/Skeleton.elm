@@ -1,6 +1,7 @@
 module Skeleton exposing (layout)
 
-import Element exposing (Element, centerX, fill, height, px, row, width)
+import Config exposing (config)
+import Element exposing (Element, centerX, column, el, fill, height, maximum, minimum, px, row, text, width)
 import Html exposing (Html)
 
 
@@ -13,5 +14,10 @@ import Html exposing (Html)
 
 layout : Element msg -> Html msg
 layout body =
-    Element.layout [ width fill, Element.explain Debug.todo ]
-        (row [ centerX, width (px 320), height (px 568) ] [ body ])
+    Element.layout [ width fill, centerX ]
+        (column [ centerX, width (fill |> maximum config.maxWindowWidth |> minimum config.minColumnWidth) ]
+            [ el [ centerX ] (text "HEADER")
+            , body
+            , el [ centerX ] (text "FOOTER")
+            ]
+        )

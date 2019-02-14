@@ -1,6 +1,8 @@
 module OffCanvasLayout exposing (Focus(..), view)
 
-import Element exposing (Device, DeviceClass(..), Element, Orientation(..), el)
+import Config exposing (config)
+import Element exposing (Element, el, fill, width)
+import Window exposing (Window)
 
 
 
@@ -35,44 +37,44 @@ type Focus
     | Third
 
 
-view : Device -> Focus -> Element msg -> Element msg -> Element msg -> Element msg
-view device focus col1 col2 col3 =
+view : Window -> Focus -> Element msg -> Element msg -> Element msg -> Element msg
+view window focus col1 col2 col3 =
     let
         layout =
-            resize device (OffCanvasLayout AllThree focus col1 col2 col3)
+            resize window (OffCanvasLayout AllThree focus col1 col2 col3)
     in
     case layout.visible of
         AllThree ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col1
                 , col2
                 , col3
                 ]
 
         FirstTwo ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col1
                 , col2
                 ]
 
         LastTwo ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col2
                 , col3
                 ]
 
         FirstOne ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col1
                 ]
 
         SecondOne ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col2
                 ]
 
         ThirdOne ->
-            Element.row []
+            Element.row [ width fill ]
                 [ col3
                 ]
 
@@ -81,20 +83,16 @@ view device focus col1 col2 col3 =
 -- INTERNAL
 
 
-resize : Device -> OffCanvasLayout msg -> OffCanvasLayout msg
-resize device layout =
-    case ( device.class, device.orientation ) of
-        ( Phone, Portrait ) ->
-            { layout | visible = zoomOne layout.focus }
+resize : Window -> OffCanvasLayout msg -> OffCanvasLayout msg
+resize window layout =
+    if window.width < (config.minColumnWidth * 2) then
+        { layout | visible = zoomOne layout.focus }
 
-        ( Phone, Landscape ) ->
-            { layout | visible = zoomTwo layout.focus layout.visible }
+    else if window.width < (config.minColumnWidth * 3) then
+        { layout | visible = zoomTwo layout.focus layout.visible }
 
-        ( Tablet, Portrait ) ->
-            { layout | visible = zoomTwo layout.focus layout.visible }
-
-        _ ->
-            { layout | visible = AllThree }
+    else
+        { layout | visible = AllThree }
 
 
 zoomOne : Focus -> Visible

@@ -8,7 +8,7 @@ import Time exposing (Month(..))
 
 view : Date -> Element msg
 view date =
-    column []
+    column [ width fill ]
         (weekList date |> List.map viewWeek)
 
 
