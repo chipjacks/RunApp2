@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "serve": "elm-live src/Main.elm -u",
+    "serve": "elm-live src/Main.elm -u -- --output=elm.js",
     "test": "elm-test && elm-verify-examples"
   },
   "dependencies": {

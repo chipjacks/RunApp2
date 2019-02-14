@@ -3,9 +3,10 @@ module Home exposing (Column(..), Model, Msg, init, select, update, view)
 import BlockList
 import Calendar
 import Date exposing (Date)
-import Element exposing (Device, DeviceClass(..), Element, Orientation(..), el, text)
+import Element exposing (Device, DeviceClass(..), Element, Orientation(..), classifyDevice, el, text)
 import OffCanvasLayout exposing (Focus(..))
 import Task
+import Window exposing (Window)
 
 
 type Model
@@ -44,16 +45,16 @@ init =
     Loading
 
 
-view : Model -> Element Msg
-view model =
+view : Model -> Window -> Element Msg
+view model window =
     case model of
         Loaded column date ->
             OffCanvasLayout.view
-                (Device Phone Portrait)
+                (classifyDevice window)
                 (focus column)
                 (Calendar.view date)
                 (BlockList.view date)
-                Element.none
+                (el [] (text "Library"))
 
         Loading ->
             el [] (text "Loading")

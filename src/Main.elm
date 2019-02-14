@@ -10,6 +10,7 @@ import Task
 import Url
 import Url.Parser as Parser exposing ((<?>))
 import Url.Parser.Query as Query
+import Window exposing (Window)
 
 
 
@@ -19,6 +20,7 @@ import Url.Parser.Query as Query
 type alias Model =
     { key : Nav.Key
     , page : Page
+    , window : Window
     }
 
 
@@ -42,11 +44,16 @@ main =
         }
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
+type alias Flags =
+    { window : Window
+    }
+
+
+init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     update
         (parseUrl url)
-        { key = key, page = Home Home.init }
+        { key = key, page = Home Home.init, window = flags.window }
 
 
 
@@ -156,7 +163,7 @@ view model =
 
         Home subModel ->
             { title = "Home"
-            , body = Home.view subModel |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
+            , body = Home.view subModel model.window |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
             }
 
 
