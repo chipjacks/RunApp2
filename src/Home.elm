@@ -4,6 +4,7 @@ import BlockList
 import Calendar
 import Date exposing (Date)
 import Element exposing (Element, el, fill, text, width)
+import Element.Region exposing (description)
 import OffCanvasLayout exposing (Focus(..))
 import Task
 import Window exposing (Window)
@@ -54,7 +55,7 @@ view model window =
                 (focus column)
                 (Calendar.view date)
                 (BlockList.view date)
-                (el [ width fill ] (text "Library"))
+                (el [ width fill, description "library" ] (text "Library"))
 
         Loading ->
             el [] (text "Loading")

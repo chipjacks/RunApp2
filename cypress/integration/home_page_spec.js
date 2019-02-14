@@ -6,9 +6,9 @@ context('The Home Page', function() {
     })
 
     it('links to the blocklist', function() {
-      cy.contains('div', '1').click()
+      cy.get('[aria-label=calendar]').contains('div', '1').click()
       cy.url().should('match', /\/blocks\?date=737119$/)
-      cy.contains('div', 'Blocks 2019-03-01')
+      cy.get('[aria-label=blocks]').contains('div', 'Blocks 2019-03-01')
     })
   })
 
@@ -20,6 +20,23 @@ context('The Home Page', function() {
     it('links to the calendar', function() {
       cy.contains('div', 'Calendar').click()
       cy.url().should('match', /\/calendar\?date=737118$/)
+    })
+  })
+
+  describe('resizing', function() {
+    it('adds columns as the window grows', function() {
+      cy.viewport(320, 568) // iPhone 5
+      cy.get('[aria-label=calendar]').should('exist')
+      cy.get('[aria-label=blocks]').should('not.exist')
+      cy.get('[aria-label=library]').should('not.exist')
+      cy.viewport(640, 1000)
+      cy.get('[aria-label=calendar]').should('exist')
+      cy.get('[aria-label=blocks]').should('exist')
+      cy.get('[aria-label=library]').should('not.exist')
+      cy.viewport(960, 1000)
+      cy.get('[aria-label=calendar]').should('exist')
+      cy.get('[aria-label=blocks]').should('exist')
+      cy.get('[aria-label=library]').should('exist')
     })
   })
 

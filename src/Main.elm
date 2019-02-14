@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Browser.Navigation as Nav
 import Date exposing (Date)
 import Home exposing (Column(..))
@@ -63,6 +64,7 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | HomeMsg Home.Msg
+    | WindowResize Int Int
     | NoOp
 
 
@@ -86,6 +88,9 @@ update message model =
                     ( model
                     , Nav.load href
                     )
+
+        ( WindowResize width height, _ ) ->
+            ( { model | window = Window width height }, Cmd.none )
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -173,4 +178,4 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Browser.Events.onResize WindowResize
