@@ -1,7 +1,7 @@
 module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
-import Element exposing (Element, above, column, el, fill, link, px, row, spaceEvenly, text, width)
+import Element exposing (Element, above, column, el, fill, height, link, px, row, spaceEvenly, text, width)
 import Element.Region exposing (description)
 import Link
 import Time exposing (Month(..))
@@ -9,7 +9,7 @@ import Time exposing (Month(..))
 
 view : Date -> Element msg
 view date =
-    column [ width fill, description "calendar" ]
+    column [ width fill, height fill, description "calendar" ]
         (weekList date |> List.map viewWeek)
 
 

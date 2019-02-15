@@ -1,7 +1,7 @@
 module OffCanvasLayout exposing (Focus(..), view)
 
 import Config exposing (config)
-import Element exposing (Element, el, fill, width)
+import Element exposing (Element, el, fill, height, spacing, width)
 import Window exposing (Window)
 
 
@@ -45,36 +45,36 @@ view window focus col1 col2 col3 =
     in
     case layout.visible of
         AllThree ->
-            Element.row [ width fill ]
+            fullRow
                 [ col1
                 , col2
                 , col3
                 ]
 
         FirstTwo ->
-            Element.row [ width fill ]
+            fullRow
                 [ col1
                 , col2
                 ]
 
         LastTwo ->
-            Element.row [ width fill ]
+            fullRow
                 [ col2
                 , col3
                 ]
 
         FirstOne ->
-            Element.row [ width fill ]
+            fullRow
                 [ col1
                 ]
 
         SecondOne ->
-            Element.row [ width fill ]
+            fullRow
                 [ col2
                 ]
 
         ThirdOne ->
-            Element.row [ width fill ]
+            fullRow
                 [ col3
                 ]
 
@@ -83,12 +83,17 @@ view window focus col1 col2 col3 =
 -- INTERNAL
 
 
+fullRow : List (Element msg) -> Element msg
+fullRow columns =
+    Element.row [ width fill, height fill, spacing 20 ] columns
+
+
 resize : Window -> OffCanvasLayout msg -> OffCanvasLayout msg
 resize window layout =
-    if window.width < (config.minColumnWidth * 2) then
+    if window.width < (config.window.minWidth * 2 + 20) then
         { layout | visible = zoomOne layout.focus }
 
-    else if window.width < (config.minColumnWidth * 3) then
+    else if window.width < (config.window.minWidth * 3 + 40) then
         { layout | visible = zoomTwo layout.focus layout.visible }
 
     else
