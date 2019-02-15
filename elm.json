@@ -11,8 +11,7 @@
             "elm/html": "1.0.0",
             "elm/time": "1.0.0",
             "elm/url": "1.0.0",
-            "justinmimbs/date": "3.1.2",
-            "mdgriffith/elm-ui": "1.1.0"
+            "justinmimbs/date": "3.1.2"
         },
         "indirect": {
             "elm/json": "1.1.2",

@@ -3,8 +3,8 @@ module Home exposing (Column(..), Model, Msg, init, select, update, view)
 import BlockList
 import Calendar
 import Date exposing (Date)
-import Element exposing (Element, el, fill, text, width)
-import Element.Region exposing (description)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class, id)
 import OffCanvasLayout exposing (Focus(..))
 import Task
 import Window exposing (Window)
@@ -46,7 +46,7 @@ init =
     Loading
 
 
-view : Model -> Window -> Element Msg
+view : Model -> Window -> Html Msg
 view model window =
     case model of
         Loaded column date ->
@@ -55,16 +55,16 @@ view model window =
                 (focus column)
                 (Calendar.view date)
                 (BlockList.view date)
-                (el [ width fill, description "library" ] (text "Library"))
+                (div [ class "column", id "library" ] [ text "Library" ])
 
         Loading ->
-            el [] (text "Loading")
+            div [] [ text "Loading" ]
 
         LoadedColumn col ->
-            el [] (text "Loading")
+            div [] [ text "Loading" ]
 
         Problem message ->
-            el [] (text message)
+            div [] [ text message ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

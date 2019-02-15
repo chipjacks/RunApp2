@@ -1,38 +1,37 @@
 module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
-import Element exposing (Element, above, column, el, fill, height, link, px, row, spaceEvenly, text, width)
-import Element.Region exposing (description)
+import Html exposing (Html, a, div, text)
+import Html.Attributes exposing (id, class, href)
 import Link
 import Time exposing (Month(..))
 
 
-view : Date -> Element msg
+view : Date -> Html msg
 view date =
-    column [ width fill, height fill, description "calendar" ]
+    div [ class "column", id "calendar" ]
         (weekList date |> List.map viewWeek)
 
 
-viewWeek : Date -> Element msg
+viewWeek : Date -> Html msg
 viewWeek start =
     let
         days =
             daysOfWeek start
     in
-    row [ spaceEvenly, width fill ] <|
+    div [ class "row" ] <|
         titleWeek start
             :: List.map viewDay days
 
 
-viewDay : Date -> Element msg
+viewDay : Date -> Html msg
 viewDay date =
-    link []
-        { url = Link.toBlockList date
-        , label = Date.format "d" date |> text
-        }
+    a [ href (Link.toBlockList date) ]
+        [ text (Date.format "d" date)
+        ]
 
 
-titleWeek : Date -> Element msg
+titleWeek : Date -> Html msg
 titleWeek start =
     let
         monthStart =
@@ -49,11 +48,7 @@ titleWeek start =
                 |> Maybe.map (Date.format "yyyy")
                 |> Maybe.withDefault ""
     in
-    el
-        [ width (px 100)
-        , above (text yearStart)
-        ]
-        (text monthStart)
+    div [] [ text monthStart ]
 
 
 weekList : Date -> List Date

@@ -1,17 +1,15 @@
 module BlockList exposing (view)
 
 import Date exposing (Date)
-import Element exposing (Element, column, fill, link, text, width)
-import Element.Region exposing (description)
+import Html exposing (Html, a, div, text)
+import Html.Attributes exposing (class, href, id)
 import Link
 
 
-view : Date -> Element msg
+view : Date -> Html msg
 view date =
-    column [ width fill, description "blocks" ]
+    div [ class "column", id "blocks" ]
         [ text ("Blocks " ++ Date.toIsoString date)
-        , link []
-            { url = Link.toCalendar date
-            , label = text "Calendar"
-            }
+        , a [ href (Link.toCalendar date) ]
+            [ text "Calendar" ]
         ]

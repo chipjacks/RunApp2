@@ -1,7 +1,8 @@
 module OffCanvasLayout exposing (Focus(..), view)
 
 import Config exposing (config)
-import Element exposing (Element, el, fill, height, spacing, width)
+import Html exposing (Html, div)
+import Html.Attributes exposing (class)
 import Window exposing (Window)
 
 
@@ -16,9 +17,9 @@ import Window exposing (Window)
 type alias OffCanvasLayout msg =
     { visible : Visible
     , focus : Focus
-    , col1 : Element msg
-    , col2 : Element msg
-    , col3 : Element msg
+    , col1 : Html msg
+    , col2 : Html msg
+    , col3 : Html msg
     }
 
 
@@ -37,7 +38,7 @@ type Focus
     | Third
 
 
-view : Window -> Focus -> Element msg -> Element msg -> Element msg -> Element msg
+view : Window -> Focus -> Html msg -> Html msg -> Html msg -> Html msg
 view window focus col1 col2 col3 =
     let
         layout =
@@ -83,9 +84,9 @@ view window focus col1 col2 col3 =
 -- INTERNAL
 
 
-fullRow : List (Element msg) -> Element msg
+fullRow : List (Html msg) -> Html msg
 fullRow columns =
-    Element.row [ width fill, height fill, spacing 20 ] columns
+    div [ class "ui equal width grid" ] columns
 
 
 resize : Window -> OffCanvasLayout msg -> OffCanvasLayout msg
