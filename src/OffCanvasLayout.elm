@@ -2,7 +2,7 @@ module OffCanvasLayout exposing (Focus(..), view)
 
 import Config exposing (config)
 import Html exposing (Html, div)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 import Window exposing (Window)
 
 
@@ -38,7 +38,7 @@ type Focus
     | Third
 
 
-view : Window -> Focus -> Html msg -> Html msg -> Html msg -> Html msg
+view : Window -> Focus -> Html msg -> Html msg -> Html msg -> List (Html msg)
 view window focus col1 col2 col3 =
     let
         layout =
@@ -46,47 +46,36 @@ view window focus col1 col2 col3 =
     in
     case layout.visible of
         AllThree ->
-            fullRow
-                [ col1
-                , col2
-                , col3
-                ]
+            [ col1
+            , col2
+            , col3
+            ]
 
         FirstTwo ->
-            fullRow
-                [ col1
-                , col2
-                ]
+            [ col1
+            , col2
+            ]
 
         LastTwo ->
-            fullRow
-                [ col2
-                , col3
-                ]
+            [ col2
+            , col3
+            ]
 
         FirstOne ->
-            fullRow
-                [ col1
-                ]
+            [ col1
+            ]
 
         SecondOne ->
-            fullRow
-                [ col2
-                ]
+            [ col2
+            ]
 
         ThirdOne ->
-            fullRow
-                [ col3
-                ]
+            [ col3
+            ]
 
 
 
 -- INTERNAL
-
-
-fullRow : List (Html msg) -> Html msg
-fullRow columns =
-    div [ class "ui equal width grid" ] columns
 
 
 resize : Window -> OffCanvasLayout msg -> OffCanvasLayout msg

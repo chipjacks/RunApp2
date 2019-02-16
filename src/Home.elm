@@ -4,7 +4,7 @@ import BlockList
 import Calendar
 import Date exposing (Date)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, id)
+import Html.Attributes exposing (class, id, style)
 import OffCanvasLayout exposing (Focus(..))
 import Task
 import Window exposing (Window)
@@ -50,12 +50,13 @@ view : Model -> Window -> Html Msg
 view model window =
     case model of
         Loaded column date ->
-            OffCanvasLayout.view
-                window
-                (focus column)
-                (Calendar.view date)
-                (BlockList.view date)
-                (div [ class "column", id "library" ] [ text "Library" ])
+            div [ class "row grow equal-width-children", id "home" ] <|
+                OffCanvasLayout.view
+                    window
+                    (focus column)
+                    (Calendar.view date)
+                    (BlockList.view date)
+                    (div [ class "column", id "library" ] [ text "Library" ])
 
         Loading ->
             div [] [ text "Loading" ]

@@ -2,17 +2,15 @@ module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
-import Html.Attributes exposing (class, href, id)
+import Html.Attributes exposing (class, href, id, style)
 import Link
 import Time exposing (Month(..))
 
 
 view : Date -> Html msg
 view date =
-    div [ class "column" ]
-        [ div [ class "ui grid", id "calendar" ]
-            (weekList date |> List.map viewWeek)
-        ]
+    div [ class "column no-grow", id "calendar" ]
+        (weekList date |> List.map viewWeek)
 
 
 viewWeek : Date -> Html msg
@@ -21,7 +19,7 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "equal width row" ] <|
+    div [ class "row grow", style "min-height" "50px" ] <|
         titleWeek start
             :: List.map viewDay days
 
@@ -29,7 +27,7 @@ viewWeek start =
 viewDay : Date -> Html msg
 viewDay date =
     div [ class "column" ]
-        [ a [ class "ui small circular label", href (Link.toBlockList date) ]
+        [ a [ href (Link.toBlockList date) ]
             [ text (Date.format "d" date)
             ]
         ]

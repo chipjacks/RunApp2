@@ -1,0 +1,23 @@
+/* LAYOUT */
+
+html, body { height: 100%; margin: 0 }
+.container { max-width: 1000px; min-width: 320px; max-height: 1000px; min-height: 568px; }
+.container { height: 100%; margin-left: auto; margin-right: auto; overflow: hidden; }
+
+.row { display: flex; flex-direction: row; }
+.column { display: flex; flex-direction: column; }
+
+.equal-width-children > .column { flex: 1 1 auto; }
+
+.no-grow { flex: 0 0 auto; }
+.grow { flex: 1 1 auto; }
+
+.center-x { justify-content: center; }
+
+/* HOME */
+
+#home { overflow: hidden; }
+
+/* CALENDAR */
+
+#calendar { overflow: scroll; }
