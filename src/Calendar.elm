@@ -7,10 +7,14 @@ import Link
 import Time exposing (Month(..))
 
 
-view : Date -> Html msg
-view date =
-    div [ class "column no-grow", id "calendar" ]
-        (weekList date |> List.map viewWeek)
+view : Date -> Html.Attribute msg -> Html msg
+view date onScroll =
+    div
+        [ class "column no-grow"
+        , id "calendar"
+        , onScroll
+        ]
+        [ div [ class "column grow" ] (weekList date |> List.map viewWeek) ]
 
 
 viewWeek : Date -> Html msg
@@ -62,7 +66,7 @@ weekList date =
             Date.floor Week date
 
         end =
-            Date.add Months 3 start
+            Date.add Months 4 start
     in
     Date.range Week 1 start end
 

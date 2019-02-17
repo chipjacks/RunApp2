@@ -21,3 +21,4 @@ html, body { height: 100%; margin: 0 }
 /* CALENDAR */
 
 #calendar { overflow: scroll; }
+#calendar > .column { margin-bottom: -500px; }
