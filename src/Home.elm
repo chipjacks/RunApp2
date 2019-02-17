@@ -53,7 +53,7 @@ view model window =
             OffCanvasLayout.view
                 window
                 (focus column)
-                (Calendar.view date)
+                (Calendar.view date (\d -> select Calendar (Just d)))
                 (BlockList.view date)
                 (div [ class "column", id "library" ] [ text "Library" ])
 

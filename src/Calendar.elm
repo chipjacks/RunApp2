@@ -2,17 +2,76 @@ module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
-import Html.Attributes exposing (class, href, id)
+import Html.Attributes exposing (class, href, id, style)
+import Html.Events exposing (onClick)
 import Link
 import Time exposing (Month(..))
 
 
-view : Date -> Html msg
-view date =
-    div [ class "column" ]
-        [ div [ class "ui grid", id "calendar" ]
+view : Date -> (Date -> msg) -> Html msg
+view date changeDate =
+    div [ class "column", id "calendar" ]
+        [ dateSelect date changeDate
+        , div [ class "ui grid" ]
             (weekList date |> List.map viewWeek)
         ]
+
+
+
+-- DATE SELECTION
+
+
+dateSelect : Date -> (Date -> msg) -> Html msg
+dateSelect date changeDate =
+    div [ class "ui secondary menu" ]
+        [ div [ class "ui horizontally fitted simple dropdown item", id "month-select" ]
+            [ div [] [ text (Date.format "MMMM" date) ]
+            , Html.i [ class "dropdown icon" ] []
+            , div [ class "menu", style "margin" "0" ]
+                (listMonths date changeDate)
+            ]
+        , div [ class "ui simple dropdown item", id "year-select" ]
+            [ div [] [ text (Date.format "yyyy" date) ]
+            , Html.i [ class "dropdown icon" ] []
+            , div [ class "menu", style "margin" "0" ]
+                (listYears date changeDate)
+            ]
+        ]
+
+
+listMonths : Date -> (Date -> msg) -> List (Html msg)
+listMonths date changeDate =
+    let
+        start =
+            Date.fromCalendarDate (Date.year date) Jan 1
+
+        end =
+            Date.fromCalendarDate (Date.add Years 1 date |> Date.year) Jan 1
+    in
+    Date.range Month 1 start end
+        |> List.map (viewDropdownItem changeDate "MMMM")
+
+
+listYears : Date -> (Date -> msg) -> List (Html msg)
+listYears date changeDate =
+    let
+        start =
+            Date.add Years -3 date
+
+        end =
+            Date.add Years 3 date
+    in
+    Date.range Month 12 start end
+        |> List.map (viewDropdownItem changeDate "yyyy")
+
+
+viewDropdownItem : (Date -> msg) -> String -> Date -> Html msg
+viewDropdownItem changeDate formatDate date =
+    div [ class "item", onClick (changeDate date) ] [ text <| Date.format formatDate date ]
+
+
+
+-- CALENDAR VIEW
 
 
 viewWeek : Date -> Html msg
@@ -43,13 +102,6 @@ titleWeek start =
                 |> List.filter (\d -> Date.day d == 1)
                 |> List.head
                 |> Maybe.map (Date.format "MMMM")
-                |> Maybe.withDefault ""
-
-        yearStart =
-            daysOfWeek start
-                |> List.filter (\d -> Date.ordinalDay d == 1)
-                |> List.head
-                |> Maybe.map (Date.format "yyyy")
                 |> Maybe.withDefault ""
     in
     div [ class "left floated three wide column" ]
