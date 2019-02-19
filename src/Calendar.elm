@@ -62,11 +62,14 @@ listMonths date changeDate =
 listYears : Date -> (Date -> msg) -> List (Html msg)
 listYears date changeDate =
     let
+        middle =
+            Date.fromCalendarDate 2019 Jan 1
+
         start =
-            Date.add Years -3 date
+            Date.add Years -3 middle
 
         end =
-            Date.add Years 3 date
+            Date.add Years 3 middle
     in
     Date.range Month 12 start end
         |> List.map (viewDropdownItem changeDate "yyyy")
