@@ -29,20 +29,20 @@ view changeDate { date } =
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
     div [ class "ui secondary menu" ]
-        [ div [ class "ui horizontally fitted simple dropdown item", id "month-select" ]
+        [ div [ class "ui horizontally fitted simple dropdown item" ]
             [ div [] [ text (Date.format "MMMM" date) ]
             , Html.i [ class "dropdown icon" ] []
             , div [ class "menu", style "margin" "0" ]
                 (listMonths date changeDate)
             ]
-        , div [ class "ui simple dropdown item", id "year-select" ]
+        , div [ class "ui simple dropdown item" ]
             [ div [] [ text (Date.format "yyyy" date) ]
             , Html.i [ class "dropdown icon" ] []
             , div [ class "menu", style "margin" "0" ]
                 (listYears date changeDate)
             ]
-
-        -- TODO: Add button for jumping to todays date
+        , a [ class "item", href (Link.toCalendar Nothing) ]
+            [ text "Today" ]
         ]
 
 
@@ -95,7 +95,7 @@ viewWeek start =
 viewDay : Date -> Html msg
 viewDay date =
     div [ class "column" ]
-        [ a [ class "ui small circular label", href (Link.toBlockList date) ]
+        [ a [ class "ui small circular label", href (Link.toBlockList (Just date)) ]
             [ text (Date.format "d" date)
             ]
         ]

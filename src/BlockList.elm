@@ -15,6 +15,6 @@ view : Model -> Html msg
 view { date } =
     div [ class "column", id "blocks" ]
         [ text ("Blocks " ++ Date.toIsoString date)
-        , a [ href (Link.toCalendar date) ]
+        , a [ href (Link.toCalendar (Just date)) ]
             [ text "Calendar" ]
         ]

@@ -12,9 +12,14 @@ import Url.Builder exposing (absolute, int)
     --> "/calendar?date=123"
 
 -}
-toCalendar : Date -> String
-toCalendar date =
-    absolute [ "calendar" ] [ int "date" (Date.toRataDie date) ]
+toCalendar : Maybe Date -> String
+toCalendar dateM =
+    case dateM of
+        Just date ->
+            absolute [ "calendar" ] [ int "date" (Date.toRataDie date) ]
+
+        Nothing ->
+            absolute [ "calendar" ] []
 
 
 {-| Build a URL for the blocklist page
@@ -25,6 +30,11 @@ toCalendar date =
     --> "/blocks?date=123"
 
 -}
-toBlockList : Date -> String
-toBlockList date =
-    absolute [ "blocks" ] [ int "date" (Date.toRataDie date) ]
+toBlockList : Maybe Date -> String
+toBlockList dateM =
+    case dateM of
+        Just date ->
+            absolute [ "blocks" ] [ int "date" (Date.toRataDie date) ]
+
+        Nothing ->
+            absolute [ "blocks" ] []
