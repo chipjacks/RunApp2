@@ -91,44 +91,6 @@ update message model =
             ( model, Cmd.none )
 
 
-
-{-
-   ## Routing
-
-   /<view>?<opts>
-
-   view - calendar, blocklist
-
-   opts - date, block
-
-   ### Examples
-   # TODO: Instead of documenting behaviour, code it using feature tests
-
-   click calendar
-       -> change url to "/blocks?date=12345"
-       -x trigger messages "SelectView blocks, SelectDate 12345"
-       -> highlight date on calendar, scroll blocklist
-
-   scroll blocklist
-       -> change url to "/blocks?date=12345"
-       -x trigger message "SelectDate 12345"
-       -> highlight date on calendar
-
-   click block on blocklist
-       -> change url to "/blocks?block=67890"
-       -> trigger messages "SelectView blocks, SelectBlock 67890"
-       -> open block view
-
-   load url "/blocks?date=12345&block=67890"
-       -> trigger messages "SelectView, SelectDate, SelectBlock"
-       -> highlight date on calendar, scroll blocklist, open block view
-
-   load url "/"
-       -> TODO: specify this behavior
-
--}
-
-
 parseUrl : Url.Url -> Msg
 parseUrl url =
     Parser.oneOf
