@@ -1,14 +1,19 @@
 context('The Home Page', function() {
+  beforeEach(() => {
+    cy.visit('/')
+  })
 
   describe('calendar', function() {
-    beforeEach(() => {
-      cy.visit('/calendar?date=737118')
-    })
-
     it('links to the blocklist', function() {
+      cy.visit('/calendar?date=737118')
       cy.get('#calendar').contains('a', '1').click()
       cy.url().should('match', /\/blocks\?date=737119$/)
       cy.get('#blocks').contains('div', 'Blocks 2019-03-01')
+    })
+
+    it('loads automatically with blocklist', function() {
+      cy.visit('/blocks?date=737118')
+      cy.get('#calendar').contains('a', '1')
     })
   })
 
@@ -20,6 +25,11 @@ context('The Home Page', function() {
     it('links to the calendar', function() {
       cy.contains('a', 'Calendar').click()
       cy.url().should('match', /\/calendar\?date=737118$/)
+    })
+
+    it('loads automatically with calendar', function() {
+      cy.visit('/blocks?date=737118')
+      cy.get('#blocks').contains('div', 'Blocks 2019-02-28')
     })
   })
 

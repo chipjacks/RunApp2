@@ -36,6 +36,7 @@ init window =
 type Msg
     = ChangeFocus Focus (Maybe Column)
     | LoadCalendar Date
+    | LoadBlockList Date
     | ResizeWindow Int Int
 
 
@@ -58,7 +59,6 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ChangeFocus focus columnM ->
-            -- TODO: initialize calendar and blocklist together
             case columnM of
                 Just column ->
                     updateColumn column { model | focus = focus }
@@ -67,7 +67,10 @@ update msg model =
                     initColumn { model | focus = focus }
 
         LoadCalendar date ->
-            ( { model | col1 = Just (Calendar.Model date) }, Cmd.none )
+            updateColumn (Calendar (Calendar.Model date)) model
+
+        LoadBlockList date ->
+            updateColumn (BlockList (BlockList.Model date)) model
 
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
@@ -87,7 +90,7 @@ view model =
             Array.fromList
                 [ viewColM (Calendar.view LoadCalendar) model.col1
                 , viewColM BlockList.view model.col2
-                , div [ class "column", id "library" ] []
+                , div [ class "column", id "library" ] [ text "Library" ]
                 ]
     in
     case visible model.window model.focus of
@@ -123,10 +126,18 @@ updateColumn : Column -> Model -> ( Model, Cmd msg )
 updateColumn column model =
     case column of
         Calendar calendar ->
-            ( { model | col1 = Just calendar }, Cmd.none )
+            let
+                blockListM =
+                    Maybe.withDefault (BlockList.Model calendar.date) model.col2
+            in
+            ( { model | col1 = Just calendar, col2 = Just blockListM }, Cmd.none )
 
-        BlockList blocklist ->
-            ( { model | col2 = Just blocklist }, Cmd.none )
+        BlockList blockList ->
+            let
+                calendarM =
+                    Maybe.withDefault (Calendar.Model blockList.date) model.col1
+            in
+            ( { model | col2 = Just blockList, col1 = Just calendarM }, Cmd.none )
 
 
 initColumn : Model -> ( Model, Cmd Msg )
@@ -134,6 +145,9 @@ initColumn model =
     case model.focus of
         First ->
             ( model, Task.perform LoadCalendar Date.today )
+
+        Second ->
+            ( model, Task.perform LoadBlockList Date.today )
 
         _ ->
             ( model, Cmd.none )
