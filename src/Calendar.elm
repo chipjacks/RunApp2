@@ -1,4 +1,4 @@
-module Calendar exposing (view)
+module Calendar exposing (Model, view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
@@ -8,8 +8,13 @@ import Link
 import Time exposing (Month(..))
 
 
-view : Date -> (Date -> msg) -> Html msg
-view date changeDate =
+type alias Model =
+    { date : Date
+    }
+
+
+view : (Date -> msg) -> Model -> Html msg
+view changeDate { date } =
     div [ class "column", id "calendar" ]
         [ dateSelect date changeDate
         , div [ class "ui grid" ]
@@ -36,6 +41,8 @@ dateSelect date changeDate =
             , div [ class "menu", style "margin" "0" ]
                 (listYears date changeDate)
             ]
+
+        -- TODO: Add button for jumping to todays date
         ]
 
 

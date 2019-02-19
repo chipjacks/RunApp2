@@ -1,83 +1,220 @@
-module Home exposing (Column(..), Model, Msg, init, select, update, view)
+module Home exposing (Model, Msg, init, openBlockList, openCalendar, resizeWindow, update, view)
 
+import Array exposing (Array)
 import BlockList
 import Calendar
+import Config exposing (config)
 import Date exposing (Date)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id)
-import OffCanvasLayout exposing (Focus(..))
 import Task
 import Window exposing (Window)
 
 
-type Model
-    = Loading
-    | LoadedColumn Column
-    | Loaded Column Date
-    | Problem String
+
+-- INITIALIZING MODEL
 
 
-type Column
-    = Calendar
-    | BlockList
+type alias Model =
+    { window : Window
+    , focus : Focus
+    , col1 : Maybe Calendar.Model
+    , col2 : Maybe BlockList.Model
+    , col3 : Maybe String
+    }
+
+
+init : Window -> Model
+init window =
+    Model window First Nothing Nothing Nothing
+
+
+
+-- UPDATING MODEL
 
 
 type Msg
-    = Select Column (Maybe Date)
+    = ChangeFocus Focus (Maybe Column)
+    | LoadCalendar Date
+    | ResizeWindow Int Int
 
 
-select : Column -> Maybe Date -> Msg
-select column date =
-    Select column date
+openCalendar : Maybe Date -> Msg
+openCalendar dateM =
+    ChangeFocus First (Maybe.map (\date -> Calendar (Calendar.Model date)) dateM)
 
 
-focus : Column -> Focus
-focus column =
-    case column of
-        Calendar ->
-            First
-
-        BlockList ->
-            Second
+openBlockList : Maybe Date -> Msg
+openBlockList dateM =
+    ChangeFocus Second (Maybe.map (\date -> BlockList (BlockList.Model date)) dateM)
 
 
-init : Model
-init =
-    Loading
-
-
-view : Model -> Window -> Html Msg
-view model window =
-    case model of
-        Loaded column date ->
-            OffCanvasLayout.view
-                window
-                (focus column)
-                (Calendar.view date (\d -> select Calendar (Just d)))
-                (BlockList.view date)
-                (div [ class "column", id "library" ] [ text "Library" ])
-
-        Loading ->
-            div [] [ text "Loading" ]
-
-        LoadedColumn col ->
-            div [] [ text "Loading" ]
-
-        Problem message ->
-            div [] [ text message ]
+resizeWindow : Int -> Int -> Msg
+resizeWindow width height =
+    ResizeWindow width height
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Select column maybeDate ->
-            case maybeDate of
-                Nothing ->
-                    ( LoadedColumn column
-                    , Date.today
-                        |> Task.perform
-                            (\date -> select column (Just date))
-                    )
+        ChangeFocus focus columnM ->
+            -- TODO: initialize calendar and blocklist together
+            case columnM of
+                Just column ->
+                    updateColumn column { model | focus = focus }
 
-                Just date ->
-                    ( Loaded column date, Cmd.none )
+                Nothing ->
+                    initColumn { model | focus = focus }
+
+        LoadCalendar date ->
+            ( { model | col1 = Just (Calendar.Model date) }, Cmd.none )
+
+        ResizeWindow width height ->
+            ( { model | window = Window width height }, Cmd.none )
+
+
+
+{- VIEWING MODEL
+   Uses the off-canvas pattern for responsiveness.
+   https://developers.google.com/web/fundamentals/design-and-ux/responsive/patterns#off_canvas
+-}
+
+
+view : Model -> Html Msg
+view model =
+    let
+        columns =
+            Array.fromList
+                [ viewColM (Calendar.view LoadCalendar) model.col1
+                , viewColM BlockList.view model.col2
+                , div [ class "column", id "library" ] []
+                ]
+    in
+    case visible model.window model.focus of
+        AllThree ->
+            fullRow (Array.slice 0 3 columns)
+
+        FirstTwo ->
+            fullRow (Array.slice 0 2 columns)
+
+        LastTwo ->
+            fullRow (Array.slice 1 3 columns)
+
+        FirstOne ->
+            fullRow (Array.slice 0 1 columns)
+
+        SecondOne ->
+            fullRow (Array.slice 1 2 columns)
+
+        ThirdOne ->
+            fullRow (Array.slice 2 3 columns)
+
+
+
+-- UPDATING COLUMNS
+
+
+type Column
+    = Calendar Calendar.Model
+    | BlockList BlockList.Model
+
+
+updateColumn : Column -> Model -> ( Model, Cmd msg )
+updateColumn column model =
+    case column of
+        Calendar calendar ->
+            ( { model | col1 = Just calendar }, Cmd.none )
+
+        BlockList blocklist ->
+            ( { model | col2 = Just blocklist }, Cmd.none )
+
+
+initColumn : Model -> ( Model, Cmd Msg )
+initColumn model =
+    case model.focus of
+        First ->
+            ( model, Task.perform LoadCalendar Date.today )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+
+-- VIEWING COLUMNS
+
+
+viewColM : (subModel -> Html msg) -> Maybe subModel -> Html msg
+viewColM viewFunc subModelM =
+    case subModelM of
+        Just subModel ->
+            viewFunc subModel
+
+        Nothing ->
+            viewEmptyColumn
+
+
+viewEmptyColumn : Html msg
+viewEmptyColumn =
+    div [ class "column" ] [ text "Nothing" ]
+
+
+fullRow : Array (Html msg) -> Html msg
+fullRow columns =
+    div [ class "ui equal width grid" ] (columns |> Array.toList)
+
+
+
+-- FOCUSING AND HIDING COLUMNS
+
+
+type Visible
+    = AllThree
+    | FirstTwo
+    | LastTwo
+    | FirstOne
+    | SecondOne
+    | ThirdOne
+
+
+type Focus
+    = First
+    | Second
+    | Third
+
+
+visible : Window -> Focus -> Visible
+visible window focus =
+    if window.width < (config.window.minWidth * 2 + 20) then
+        zoomOne focus
+
+    else if window.width < (config.window.minWidth * 3 + 40) then
+        zoomTwo focus
+
+    else
+        AllThree
+
+
+zoomOne : Focus -> Visible
+zoomOne focus =
+    case focus of
+        First ->
+            FirstOne
+
+        Second ->
+            SecondOne
+
+        Third ->
+            ThirdOne
+
+
+zoomTwo : Focus -> Visible
+zoomTwo focus =
+    case focus of
+        First ->
+            FirstTwo
+
+        Second ->
+            FirstTwo
+
+        Third ->
+            LastTwo

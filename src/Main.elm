@@ -4,7 +4,7 @@ import Browser
 import Browser.Events
 import Browser.Navigation as Nav
 import Date exposing (Date)
-import Home exposing (Column(..))
+import Home
 import Html
 import Skeleton
 import Task
@@ -21,7 +21,6 @@ import Window exposing (Window)
 type alias Model =
     { key : Nav.Key
     , page : Page
-    , window : Window
     }
 
 
@@ -54,7 +53,7 @@ init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     update
         (parseUrl url)
-        { key = key, page = Home Home.init, window = flags.window }
+        { key = key, page = Home (Home.init flags.window) }
 
 
 
@@ -64,7 +63,6 @@ init flags url key =
 type Msg
     = LinkClicked Browser.UrlRequest
     | HomeMsg Home.Msg
-    | WindowResize Int Int
     | NoOp
 
 
@@ -88,9 +86,6 @@ update message model =
                     ( model
                     , Nav.load href
                     )
-
-        ( WindowResize width height, _ ) ->
-            ( { model | window = Window width height }, Cmd.none )
 
         ( _, _ ) ->
             ( model, Cmd.none )
@@ -137,21 +132,16 @@ update message model =
 parseUrl : Url.Url -> Msg
 parseUrl url =
     Parser.oneOf
-        [ Parser.map (select Calendar) (Parser.s "calendar" <?> Query.int "date")
-        , Parser.map (select BlockList) (Parser.s "blocks" <?> Query.int "date")
-        , Parser.map (select Calendar Nothing) Parser.top
+        [ Parser.map
+            (\rataDieM -> HomeMsg <| Home.openCalendar (Maybe.map Date.fromRataDie rataDieM))
+            (Parser.s "calendar" <?> Query.int "date")
+        , Parser.map
+            (\rataDieM -> HomeMsg <| Home.openBlockList (Maybe.map Date.fromRataDie rataDieM))
+            (Parser.s "blocks" <?> Query.int "date")
+        , Parser.map (HomeMsg <| Home.openCalendar Nothing) Parser.top
         ]
         |> (\parser -> Parser.parse parser url)
         |> Maybe.withDefault NoOp
-
-
-select : Home.Column -> Maybe Int -> Msg
-select column rataDie =
-    let
-        date =
-            Maybe.map Date.fromRataDie rataDie
-    in
-    HomeMsg (Home.select column date)
 
 
 
@@ -168,7 +158,7 @@ view model =
 
         Home subModel ->
             { title = "Home"
-            , body = Home.view subModel model.window |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
+            , body = Home.view subModel |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
             }
 
 
@@ -178,4 +168,4 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Browser.Events.onResize WindowResize
+    Browser.Events.onResize (\w h -> HomeMsg (Home.resizeWindow w h))
