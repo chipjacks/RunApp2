@@ -1,6 +1,6 @@
 module Home exposing (Model, Msg, init, openBlockList, openCalendar, resizeWindow, update, view)
 
-import Activity exposing (Activity)
+import Activities
 import Array exposing (Array)
 import BlockList
 import Calendar
@@ -21,8 +21,7 @@ import Window exposing (Window)
 type alias Model =
     { window : Window
     , focus : Focus
-    , activities : Kinto.Pager Activity
-    , editing : Maybe Activity
+    , activities : Activities.Model
     , col1 : Maybe Calendar.Model
     , col2 : Maybe BlockList.Model
     , col3 : Maybe String
@@ -31,39 +30,7 @@ type alias Model =
 
 init : Window -> Model
 init window =
-    Model window First (Kinto.emptyPager client Activity.resource) Nothing Nothing Nothing Nothing
-
-
-
--- FETCHING/UPDATING ACTIVITIES
-
-
-client : Kinto.Client
-client =
-    Kinto.client
-        "https://kinto.dev.mozaws.net/v1/"
-        (Kinto.Basic "chip" "password")
-
-
-fetchActivities : Kinto.Pager a -> Date -> Cmd Msg
-fetchActivities pager date =
-    pager.client
-        |> Kinto.getList Activity.resource
-        |> Kinto.send FetchedActivities
-
-
-editActivity : Activity -> Cmd Msg
-editActivity activity =
-    case activity.id of
-        Nothing ->
-            client
-                |> Kinto.create Activity.resource (Activity.encode activity)
-                |> Kinto.send ActivityUpdated
-
-        Just id ->
-            client
-                |> Kinto.update Activity.resource id (Activity.encode activity)
-                |> Kinto.send ActivityUpdated
+    Model window First Activities.init Nothing Nothing Nothing
 
 
 
@@ -75,10 +42,7 @@ type Msg
     | LoadCalendar Date
     | LoadBlockList Date
     | ResizeWindow Int Int
-    | FetchedActivities (Result Kinto.Error (Kinto.Pager Activity))
-    | EditActivity Activity
-    | SubmitActivity
-    | ActivityUpdated (Result Kinto.Error Activity)
+    | ActivitiesMsg Activities.Msg
 
 
 openCalendar : Maybe Date -> Msg
@@ -116,27 +80,12 @@ update msg model =
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
 
-        FetchedActivities activitiesR ->
-            case activitiesR of
-                Ok activitiesPager ->
-                    ( { model | activities = activitiesPager }, Cmd.none )
-
-                Err error ->
-                    Debug.todo "Deal with error"
-
-        EditActivity activity ->
-            ( { model | editing = Just activity }, Cmd.none )
-
-        SubmitActivity ->
-            case model.editing of
-                Just activity ->
-                    ( model, editActivity activity )
-
-                Nothing ->
-                    ( model, Cmd.none )
-
-        ActivityUpdated result ->
-            ( { model | editing = Nothing }, fetchActivities model.activities (Date.fromCalendarDate 2019 Jan 1) )
+        ActivitiesMsg subMsg ->
+            let
+                ( subModel, subCmd ) =
+                    Activities.update subMsg model.activities
+            in
+            ( { model | activities = subModel }, Cmd.map ActivitiesMsg subCmd )
 
 
 
@@ -152,7 +101,9 @@ view model =
         columns =
             Array.fromList
                 [ viewColM (Calendar.view LoadCalendar) model.col1
-                , viewColM (BlockList.view (\date -> model.activities.objects) EditActivity SubmitActivity) model.col2
+                , viewColM
+                    (BlockList.view model.activities ActivitiesMsg)
+                    model.col2
                 , div [ class "column", id "library" ] [ text "Library" ]
                 ]
     in
@@ -193,14 +144,18 @@ updateColumn column model =
                 blockListM =
                     Maybe.withDefault (BlockList.Model calendar.date) model.col2
             in
-            ( { model | col1 = Just calendar, col2 = Just blockListM }, fetchActivities model.activities calendar.date )
+            ( { model | col1 = Just calendar, col2 = Just blockListM }
+            , Activities.fetch model.activities calendar.date |> Cmd.map ActivitiesMsg
+            )
 
         BlockList blockList ->
             let
                 calendarM =
                     Maybe.withDefault (Calendar.Model blockList.date) model.col1
             in
-            ( { model | col2 = Just blockList, col1 = Just calendarM }, fetchActivities model.activities blockList.date )
+            ( { model | col2 = Just blockList, col1 = Just calendarM }
+            , Activities.fetch model.activities blockList.date |> Cmd.map ActivitiesMsg
+            )
 
 
 initColumn : Model -> ( Model, Cmd Msg )
