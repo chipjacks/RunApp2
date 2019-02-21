@@ -15,9 +15,9 @@ type alias Model =
 
 view : (Date -> msg) -> Model -> Html msg
 view changeDate { date } =
-    div [ class "column", id "calendar" ]
+    div [ class "column", id "calendar", style "padding-top" "0", style "padding-bottom" "0" ]
         [ dateSelect date changeDate
-        , div [ class "ui grid" ]
+        , div [ class "ui padded grid" ]
             (weekList date |> List.map viewWeek)
         ]
 
@@ -28,8 +28,8 @@ view changeDate { date } =
 
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
-    div [ class "ui secondary menu" ]
-        [ div [ class "ui horizontally fitted simple dropdown item" ]
+    div [ class "ui secondary menu", style "margin-bottom" "0" ]
+        [ div [ class "ui simple dropdown item" ]
             [ div [] [ text (Date.format "MMMM" date) ]
             , Html.i [ class "dropdown icon" ] []
             , div [ class "menu", style "margin" "0" ]
@@ -90,7 +90,7 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "equal width row" ] <|
+    div [ class "equal width row", style "padding" "5" ] <|
         titleWeek start
             :: List.map viewDay days
 
