@@ -1,8 +1,7 @@
 module Skeleton exposing (layout)
 
-import Config exposing (config)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, style)
 
 
 
@@ -13,11 +12,9 @@ import Html.Attributes exposing (class)
 
 
 layout : Html msg -> Html msg
-layout body =
-    div [ class "ui container" ]
-        [ div [ class "ui menu" ]
-            [ div [ class "header item" ]
-                [ text "HEADER" ]
-            ]
-        , body
+layout page =
+    div [ class "container column" ]
+        [ div [ class "row", style "justify-content" "center" ] [ text "HEADER" ]
+        , page
+        , div [ class "row", style "justify-content" "center" ] [ text "FOOTER" ]
         ]

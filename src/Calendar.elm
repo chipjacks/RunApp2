@@ -1,7 +1,7 @@
 module Calendar exposing (Model, view)
 
 import Date exposing (Date, Interval(..), Unit(..))
-import Html exposing (Html, a, div, text)
+import Html exposing (Html, a, button, div, text)
 import Html.Attributes exposing (class, href, id, style)
 import Html.Events exposing (onClick)
 import Link
@@ -15,11 +15,14 @@ type alias Model =
 
 view : (Date -> msg) -> Model -> Html msg
 view changeDate { date } =
-    div [ class "column", id "calendar", style "padding-top" "0", style "padding-bottom" "0" ]
-        [ dateSelect date changeDate
-        , div [ class "ui padded grid" ]
-            (weekList date |> List.map viewWeek)
+    div
+        [ class "column grow"
+        , id "calendar"
+        , style "overflow" "scroll"
         ]
+        (dateSelect date changeDate
+            :: (weekList date |> List.map viewWeek)
+        )
 
 
 
@@ -28,20 +31,35 @@ view changeDate { date } =
 
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
-    div [ class "ui secondary menu", style "margin-bottom" "0" ]
-        [ div [ class "ui simple dropdown item" ]
-            [ div [] [ text (Date.format "MMMM" date) ]
-            , Html.i [ class "dropdown icon" ] []
-            , div [ class "menu", style "margin" "0" ]
+    div
+        [ class "row"
+        , style "position" "sticky"
+        , style "top" "0"
+        , style "background-color" "white"
+        ]
+        [ div [ class "dropdown" ]
+            [ button [ class "menu-button" ]
+                [ text (Date.format "MMMM" date)
+                , text " ▿"
+                ]
+            , div [ class "dropdown-content" ]
                 (listMonths date changeDate)
             ]
-        , div [ class "ui simple dropdown item" ]
-            [ div [] [ text (Date.format "yyyy" date) ]
-            , Html.i [ class "dropdown icon" ] []
-            , div [ class "menu", style "margin" "0" ]
+        , div [ class "dropdown", style "margin-left" "0.5em" ]
+            [ button [ class "menu-button" ]
+                [ text (Date.format "yyyy" date)
+                , text " ▿"
+                ]
+            , div [ class "dropdown-content" ]
                 (listYears date changeDate)
             ]
-        , a [ class "item", href (Link.toCalendar Nothing) ]
+        , a
+            [ class "menu-button"
+            , style "margin-left" "1em"
+            , style "text-decoration" "none"
+            , style "color" "black"
+            , href (Link.toCalendar Nothing)
+            ]
             [ text "Today" ]
         ]
 
@@ -77,7 +95,7 @@ listYears date changeDate =
 
 viewDropdownItem : (Date -> msg) -> String -> Date -> Html msg
 viewDropdownItem changeDate formatDate date =
-    div [ class "item", onClick (changeDate date) ] [ text <| Date.format formatDate date ]
+    div [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
 
 
 
@@ -90,15 +108,15 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "equal width row", style "padding" "5" ] <|
+    div [ class "row", style "min-height" "3em" ] <|
         titleWeek start
             :: List.map viewDay days
 
 
 viewDay : Date -> Html msg
 viewDay date =
-    div [ class "column" ]
-        [ a [ class "ui small circular label", href (Link.toBlockList (Just date)) ]
+    div [ style "flex-basis" "12%" ]
+        [ a [ href (Link.toBlockList (Just date)) ]
             [ text (Date.format "d" date)
             ]
         ]
@@ -111,10 +129,10 @@ titleWeek start =
             daysOfWeek start
                 |> List.filter (\d -> Date.day d == 1)
                 |> List.head
-                |> Maybe.map (Date.format "MMMM")
+                |> Maybe.map (Date.format "MMM")
                 |> Maybe.withDefault ""
     in
-    div [ class "left floated three wide column" ]
+    div [ style "flex-basis" "16%" ]
         [ text monthStart
         ]
 

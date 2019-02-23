@@ -1,0 +1,60 @@
+/*
+ * LAYOUT
+*/
+
+/* CONTAINERS */
+html, body { height: 100%; margin: 0 }
+.container { max-width: 1000px; min-width: 320px; max-height: 1000px; min-height: 568px; }
+.container { height: 100%; margin-left: auto; margin-right: auto; overflow: hidden; }
+
+/* FLEXBOX PARENTS */
+.row { display: flex; flex-direction: row; }
+.column { display: flex; flex-direction: column; }
+
+/* FLEXBOX CHILDREN */
+.no-grow { flex: 0 0 auto; }
+.grow { flex: 1 1 auto; }
+
+
+/*
+ * STYLING
+*/
+body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
+a { text-decoration: none; }
+
+
+/*
+ * DROPDOWN
+*/
+
+.dropdown { position: relative; display: inline-block; }
+
+.menu-button {
+  background-color: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  padding: 0.5em;
+  font-size: 1em;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content div {
+  padding: 0.5em;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-content div:hover {background-color: #f1f1f1}
+
+.dropdown:hover .dropdown-content { display: block; }
+
+.menu-button:hover { background-color: #f1f1f1; }

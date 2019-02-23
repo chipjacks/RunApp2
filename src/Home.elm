@@ -7,7 +7,7 @@ import Calendar
 import Config exposing (config)
 import Date exposing (Date)
 import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, id)
+import Html.Attributes exposing (class, id, style)
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
@@ -97,33 +97,41 @@ update msg model =
 view : Model -> Html Msg
 view model =
     let
+        containerDiv children =
+            div
+                [ class "row grow"
+                , id "home"
+                , style "overflow" "hidden"
+                ]
+                (children |> Array.toList)
+
         columns =
             Array.fromList
                 [ viewColM (Calendar.view LoadCalendar) model.col1
                 , viewColM
                     (BlockList.view model.activities ActivitiesMsg)
                     model.col2
-                , div [ class "column", id "library" ] [ text "Library" ]
+                , div [ class "column grow", id "library" ] [ text "Library" ]
                 ]
     in
     case visible model.window model.focus of
         AllThree ->
-            fullRow (Array.slice 0 3 columns)
+            containerDiv (Array.slice 0 3 columns)
 
         FirstTwo ->
-            fullRow (Array.slice 0 2 columns)
+            containerDiv (Array.slice 0 2 columns)
 
         LastTwo ->
-            fullRow (Array.slice 1 3 columns)
+            containerDiv (Array.slice 1 3 columns)
 
         FirstOne ->
-            fullRow (Array.slice 0 1 columns)
+            containerDiv (Array.slice 0 1 columns)
 
         SecondOne ->
-            fullRow (Array.slice 1 2 columns)
+            containerDiv (Array.slice 1 2 columns)
 
         ThirdOne ->
-            fullRow (Array.slice 2 3 columns)
+            containerDiv (Array.slice 2 3 columns)
 
 
 
@@ -186,12 +194,7 @@ viewColM viewFunc subModelM =
 
 viewEmptyColumn : Html msg
 viewEmptyColumn =
-    div [ class "column" ] [ text "Nothing" ]
-
-
-fullRow : Array (Html msg) -> Html msg
-fullRow columns =
-    div [ class "ui equal width grid" ] (columns |> Array.toList)
+    div [ class "column grow" ] [ text "Nothing" ]
 
 
 

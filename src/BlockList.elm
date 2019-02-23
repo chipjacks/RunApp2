@@ -15,13 +15,13 @@ type alias Model =
 
 view : Activities.Model -> (Activities.Msg -> msg) -> Model -> Html msg
 view activities parentMsg { date } =
-    div [ class "column", id "blocks" ]
+    div [ class "column grow", id "blocks" ]
         [ text ("Blocks " ++ Date.toIsoString date)
         , a [ href (Link.toCalendar (Just date)) ]
             [ text "Calendar" ]
-        , div [ class "ui padded grid" ]
+        , div []
             (List.map viewBlock (Activities.list activities))
-        , div [ class "ui action input" ]
+        , div []
             [ input
                 [ type_ "text"
                 , placeholder "Description"
@@ -34,8 +34,7 @@ view activities parentMsg { date } =
                 ]
                 []
             , button
-                [ class "ui button"
-                , onClick (parentMsg Activities.submit)
+                [ onClick (parentMsg Activities.submit)
                 ]
                 [ text "Add" ]
             ]
