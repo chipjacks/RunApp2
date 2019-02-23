@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'sinatra/json'
 
 get '/activities.json' do
   headers 'Access-Control-Allow-Origin' => 'http://localhost:8000'
@@ -8,5 +7,6 @@ get '/activities.json' do
       {id: "123", description: "Workout Wednesday"},
       {id: "123", description: "Fartlek Friday"},
     ]
-  json activities
+  content_type :json
+  activities.to_json
 end
