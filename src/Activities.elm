@@ -1,9 +1,9 @@
 module Activities exposing (Activity, Model, Msg, edit, fetch, init, list, submit, update)
 
 import Date exposing (Date)
+import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Kinto
 import Time exposing (Month(..))
 
 
@@ -14,81 +14,78 @@ type alias Activity =
 
 
 type alias Model =
-    { activities : Kinto.Pager Activity
+    { activities : Maybe (List Activity)
     , editing : Maybe Activity
     }
 
 
 init : Model
 init =
-    Model (Kinto.emptyPager client resource) Nothing
+    Model Nothing Nothing
 
 
 type Msg
-    = Fetched (Result Kinto.Error (Kinto.Pager Activity))
-    | Edit Activity
-    | Submit
-    | Updated (Result Kinto.Error Activity)
-
-
-client : Kinto.Client
-client =
-    Kinto.client
-        "https://kinto.dev.mozaws.net/v1/"
-        (Kinto.Basic "chip" "password")
+    = FetchedStore (Result Http.Error (List Activity))
+    | EditedForm Activity
+    | SubmittedForm
+    | UpdatedStore (Result Http.Error Activity)
 
 
 fetch : Model -> Date -> Cmd Msg
 fetch model date =
-    model.activities.client
-        |> Kinto.getList resource
-        |> Kinto.send Fetched
+    Http.get
+        { url = "http://localhost:4567/activities.json"
+        , expect =
+            Http.expectJson
+                FetchedStore
+                (Decode.list decoder)
+        }
 
 
 edit : Activity -> Msg
 edit activity =
-    Edit activity
+    EditedForm activity
 
 
 list : Model -> List Activity
 list model =
-    model.activities.objects
+    Maybe.withDefault [] model.activities
 
 
 submit : Msg
 submit =
-    Submit
+    SubmittedForm
 
 
 sendEdit : Activity -> Cmd Msg
 sendEdit activity =
     case activity.id of
         Nothing ->
-            client
-                |> Kinto.create resource (encode activity)
-                |> Kinto.send Updated
+            Debug.todo "send edits"
 
         Just id ->
-            client
-                |> Kinto.update resource id (encode activity)
-                |> Kinto.send Updated
+            Debug.todo "send edits"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Fetched activitiesR ->
+        FetchedStore activitiesR ->
             case activitiesR of
-                Ok activitiesPager ->
-                    ( { model | activities = activitiesPager }, Cmd.none )
+                Ok activities ->
+                    ( { model | activities = Just activities }, Cmd.none )
 
                 Err error ->
+                    let
+                        log =
+                            Debug.log "error" error
+                    in
                     Debug.todo "Deal with error"
 
-        Edit activity ->
+        EditedForm activity ->
             ( { model | editing = Just activity }, Cmd.none )
 
-        Submit ->
+        SubmittedForm ->
             case model.editing of
                 Just activity ->
                     ( model, sendEdit activity )
@@ -96,13 +93,8 @@ update msg model =
                 Nothing ->
                     ( model, Cmd.none )
 
-        Updated result ->
+        UpdatedStore result ->
             ( { model | editing = Nothing }, fetch model (Date.fromCalendarDate 2019 Jan 1) )
-
-
-resource : Kinto.Resource Activity
-resource =
-    Kinto.recordResource "default" "activities" decoder
 
 
 decoder : Decode.Decoder Activity

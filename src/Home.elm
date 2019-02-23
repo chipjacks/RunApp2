@@ -8,7 +8,6 @@ import Config exposing (config)
 import Date exposing (Date)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id)
-import Kinto
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
