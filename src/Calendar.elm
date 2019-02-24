@@ -13,16 +13,18 @@ type alias Model =
     }
 
 
-view : (Date -> msg) -> Model -> Html msg
-view changeDate { date } =
+view : (Date -> msg) -> (Model -> Html.Attribute msg) -> Model -> Html msg
+view changeDate onScroll model =
     div
         [ class "column grow"
         , id "calendar"
         , style "overflow" "scroll"
+        , onScroll model
         ]
-        (dateSelect date changeDate
-            :: (weekList date |> List.map viewWeek)
-        )
+        [ dateSelect model.date changeDate
+        , div [ class "column grow", style "margin-bottom" "-500px" ]
+            (weekList model.date |> List.map viewWeek)
+        ]
 
 
 
@@ -108,7 +110,7 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "row", style "min-height" "3em" ] <|
+    div [ class "row grow", style "min-height" "3em" ] <|
         titleWeek start
             :: List.map viewDay days
 
@@ -144,7 +146,7 @@ weekList date =
             Date.floor Week date
 
         end =
-            Date.add Months 3 start
+            Date.add Months 4 start
     in
     Date.range Week 1 start end
 

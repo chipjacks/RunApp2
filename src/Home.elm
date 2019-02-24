@@ -3,11 +3,14 @@ module Home exposing (Model, Msg, init, openBlockList, openCalendar, resizeWindo
 import Activities
 import Array exposing (Array)
 import BlockList
+import Browser.Dom as Dom
 import Calendar
 import Config exposing (config)
-import Date exposing (Date)
+import Date exposing (Date, Unit(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id, style)
+import Html.Events exposing (on)
+import Json.Decode as Decode
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
@@ -41,6 +44,7 @@ type Msg
     | LoadCalendar Date
     | LoadBlockList Date
     | ResizeWindow Int Int
+    | ScrolledColumn Column Int
     | ActivitiesMsg Activities.Msg
 
 
@@ -79,6 +83,9 @@ update msg model =
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
 
+        ScrolledColumn column scrollTop ->
+            ( model, changeDate column scrollTop )
+
         ActivitiesMsg subMsg ->
             let
                 ( subModel, subCmd ) =
@@ -107,7 +114,12 @@ view model =
 
         columns =
             Array.fromList
-                [ viewColM (Calendar.view LoadCalendar) model.col1
+                [ viewColM
+                    (Calendar.view
+                        LoadCalendar
+                        (onScroll Calendar)
+                    )
+                    model.col1
                 , viewColM
                     (BlockList.view model.activities ActivitiesMsg)
                     model.col2
@@ -252,3 +264,41 @@ zoomTwo focus =
 
         Third ->
             LastTwo
+
+
+
+-- SCROLLING COLUMNS
+
+
+changeDate : Column -> Int -> Cmd Msg
+changeDate column scrollTop =
+    let
+        scrollTask msg id date =
+            if scrollTop < 10 then
+                Task.attempt
+                    (\_ -> msg (Date.add Months -1 date))
+                    (Dom.setViewportOf id 0 250)
+
+            else if scrollTop > 490 then
+                Task.attempt
+                    (\_ -> msg (Date.add Months 1 date))
+                    (Dom.setViewportOf id 0 250)
+
+            else
+                Cmd.none
+    in
+    case column of
+        Calendar calendar ->
+            scrollTask LoadCalendar "calendar" calendar.date
+
+        BlockList blocklist ->
+            scrollTask LoadBlockList "blocks" blocklist.date
+
+
+onScroll : (a -> Column) -> (a -> Html.Attribute Msg)
+onScroll toColumn =
+    \subModel ->
+        on "scroll"
+            (Decode.at [ "target", "scrollTop" ] Decode.int
+                |> Decode.map (ScrolledColumn (toColumn subModel))
+            )
