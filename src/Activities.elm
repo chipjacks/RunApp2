@@ -1,4 +1,4 @@
-module Activities exposing (Activity, Model, Msg, edit, fetch, init, list, submit, update)
+module Activities exposing (Activity, Model, Msg, WebData(..), edit, fetch, init, submit, update)
 
 import Date exposing (Date)
 import Http
@@ -13,15 +13,21 @@ type alias Activity =
     }
 
 
+type WebData a
+    = Loading
+    | Failure Http.Error
+    | Success a
+
+
 type alias Model =
-    { activities : Maybe (List Activity)
+    { fetching : WebData (List Activity)
     , editing : Maybe Activity
     }
 
 
 init : Model
 init =
-    Model Nothing Nothing
+    Model Loading Nothing
 
 
 type Msg
@@ -47,11 +53,6 @@ edit activity =
     EditedForm activity
 
 
-list : Model -> List Activity
-list model =
-    Maybe.withDefault [] model.activities
-
-
 submit : Msg
 submit =
     SubmittedForm
@@ -73,14 +74,10 @@ update msg model =
         FetchedStore activitiesR ->
             case activitiesR of
                 Ok activities ->
-                    ( { model | activities = Just activities }, Cmd.none )
+                    ( { model | fetching = Success activities }, Cmd.none )
 
                 Err error ->
-                    let
-                        log =
-                            Debug.log "error" error
-                    in
-                    Debug.todo "Deal with error"
+                    ( { model | fetching = Failure error }, Cmd.none )
 
         EditedForm activity ->
             ( { model | editing = Just activity }, Cmd.none )

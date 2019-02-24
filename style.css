@@ -4,7 +4,7 @@
 
 /* CONTAINERS */
 html, body { height: 100%; margin: 0 }
-.container { max-width: 1000px; min-width: 320px; max-height: 1000px; min-height: 568px; }
+.container { max-width: 1000px; min-width: 320px; max-height: 1000px; min-height: 450px; }
 .container { height: 100%; margin-left: auto; margin-right: auto; overflow: hidden; }
 
 /* FLEXBOX PARENTS */

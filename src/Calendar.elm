@@ -15,15 +15,17 @@ type alias Model =
 
 view : (Date -> msg) -> (Model -> Html.Attribute msg) -> Model -> Html msg
 view changeDate onScroll model =
-    div
-        [ class "column grow"
-        , id "calendar"
-        , style "overflow" "scroll"
-        , onScroll model
-        ]
+    div [ class "column grow" ]
         [ dateSelect model.date changeDate
-        , div [ class "column grow", style "margin-bottom" "-500px" ]
-            (weekList model.date |> List.map viewWeek)
+        , div
+            [ class "column grow"
+            , id "calendar"
+            , style "overflow" "scroll"
+            , onScroll model
+            ]
+            [ div [ class "column grow", style "margin-bottom" "-500px" ]
+                (weekList model.date |> List.map viewWeek)
+            ]
         ]
 
 
@@ -34,11 +36,7 @@ view changeDate onScroll model =
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
     div
-        [ class "row"
-        , style "position" "sticky"
-        , style "top" "0"
-        , style "background-color" "white"
-        ]
+        [ class "row" ]
         [ div [ class "dropdown" ]
             [ button [ class "menu-button" ]
                 [ text (Date.format "MMMM" date)
@@ -143,10 +141,10 @@ weekList : Date -> List Date
 weekList date =
     let
         start =
-            Date.floor Week date
+            Date.add Months -1 (Date.floor Week date)
 
         end =
-            Date.add Months 4 start
+            Date.add Months 3 start
     in
     Date.range Week 1 start end
 
