@@ -1,14 +1,15 @@
-module Activities exposing (Activity, Model, Msg, WebData(..), edit, fetch, init, submit, update)
+module Activities exposing (Activity, Model, Msg, WebData(..), fetchedStore, getActivities, init, saveActivity, update)
 
 import Date exposing (Date)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Task exposing (Task)
 import Time exposing (Month(..))
 
 
 type alias Activity =
-    { id : Maybe String
+    { id : String
     , description : String
     }
 
@@ -21,7 +22,7 @@ type WebData a
 
 type alias Model =
     { fetching : WebData (List Activity)
-    , editing : Maybe Activity
+    , sending : Maybe Activity
     }
 
 
@@ -32,40 +33,51 @@ init =
 
 type Msg
     = FetchedStore (Result Http.Error (List Activity))
-    | EditedForm Activity
-    | SubmittedForm
-    | UpdatedStore (Result Http.Error Activity)
+    | SaveActivity Activity
+    | UpdatedStore (Result Http.Error (List Activity))
 
 
-fetch : Model -> Date -> Cmd Msg
-fetch model date =
-    Http.get
-        { url = "http://localhost:4567/activities.json"
-        , expect =
-            Http.expectJson
-                FetchedStore
-                (Decode.list decoder)
+storeUrl =
+    "https://api.jsonbin.io/b/5c745db056292a73eb718d29"
+
+
+fetchedStore =
+    FetchedStore
+
+
+getActivities : Task Http.Error (List Activity)
+getActivities =
+    Http.task
+        { method = "GET"
+        , headers = [ Http.header "Content-Type" "application/json" ]
+        , url = storeUrl ++ "/latest"
+        , body = Http.emptyBody
+        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.list activityDecoder
+        , timeout = Nothing
         }
 
 
-edit : Activity -> Msg
-edit activity =
-    EditedForm activity
+postActivities : List Activity -> Task Http.Error (List Activity)
+postActivities activities =
+    Http.task
+        { method = "PUT"
+        , headers = []
+        , url = storeUrl
+        , body = Http.jsonBody (Encode.list encode activities)
+        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.list activityDecoder
+        , timeout = Nothing
+        }
 
 
-submit : Msg
-submit =
-    SubmittedForm
-
-
-sendEdit : Activity -> Cmd Msg
-sendEdit activity =
-    case activity.id of
-        Nothing ->
-            Debug.todo "send edits"
-
-        Just id ->
-            Debug.todo "send edits"
+saveActivity : Activity -> Task Http.Error (List Activity)
+saveActivity activity =
+    getActivities
+        |> Task.map
+            (\activities ->
+                List.partition (\a -> a.id == activity.id) activities
+                    |> (\( oldActivity, others ) -> activity :: others)
+            )
+        |> Task.andThen postActivities
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,35 +86,80 @@ update msg model =
         FetchedStore activitiesR ->
             case activitiesR of
                 Ok activities ->
-                    ( { model | fetching = Success activities }, Cmd.none )
+                    case model.sending of
+                        Just activity ->
+                            updateStore activity model
+
+                        Nothing ->
+                            ( { model | fetching = Success activities }, Cmd.none )
 
                 Err error ->
                     ( { model | fetching = Failure error }, Cmd.none )
 
-        EditedForm activity ->
-            ( { model | editing = Just activity }, Cmd.none )
-
-        SubmittedForm ->
-            case model.editing of
-                Just activity ->
-                    ( model, sendEdit activity )
-
-                Nothing ->
-                    ( model, Cmd.none )
+        SaveActivity activity ->
+            ( { model | sending = Just activity }, Task.attempt FetchedStore getActivities )
 
         UpdatedStore result ->
-            ( { model | editing = Nothing }, fetch model (Date.fromCalendarDate 2019 Jan 1) )
+            case result of
+                Ok activities ->
+                    ( { model | sending = Nothing }, Cmd.none )
+
+                Err error ->
+                    let
+                        log =
+                            Debug.log "Error updating store" error
+                    in
+                    ( model, Cmd.none )
 
 
-decoder : Decode.Decoder Activity
-decoder =
+updateStore : Activity -> Model -> ( Model, Cmd Msg )
+updateStore activity model =
+    case model.fetching of
+        Success activities ->
+            ( model
+            , List.partition (\a -> a.id == activity.id) activities
+                |> (\( oldActivity, others ) -> activity :: others)
+                |> (\updatedActivities -> Task.attempt UpdatedStore (postActivities updatedActivities))
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+activityDecoder : Decode.Decoder Activity
+activityDecoder =
     Decode.map2 Activity
-        (Decode.field "id" Decode.string |> Decode.map Just)
+        (Decode.field "id" Decode.string)
         (Decode.field "description" Decode.string)
 
 
 encode : Activity -> Encode.Value
 encode activity =
     Encode.object
-        [ ( "description", Encode.string activity.description )
+        [ ( "id", Encode.string activity.id )
+        , ( "description", Encode.string activity.description )
         ]
+
+
+handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result Http.Error a
+handleJsonResponse decoder response =
+    case response of
+        Http.BadUrl_ url ->
+            Err (Http.BadUrl url)
+
+        Http.Timeout_ ->
+            Err Http.Timeout
+
+        Http.BadStatus_ { statusCode } _ ->
+            Err (Http.BadStatus statusCode)
+
+        Http.NetworkError_ ->
+            Err Http.NetworkError
+
+        Http.GoodStatus_ _ body ->
+            case Decode.decodeString decoder body of
+                Err _ ->
+                    Err (Http.BadBody body)
+
+                Ok result ->
+                    Ok result

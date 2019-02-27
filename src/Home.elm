@@ -1,6 +1,7 @@
 module Home exposing (Model, Msg, init, openBlockList, openCalendar, resizeWindow, update, view)
 
 import Activities
+import ActivityForm
 import Array exposing (Array)
 import BlockList
 import Browser.Dom as Dom
@@ -26,13 +27,13 @@ type alias Model =
     , activities : Activities.Model
     , col1 : Maybe Calendar.Model
     , col2 : Maybe BlockList.Model
-    , col3 : Maybe String
+    , col3 : Maybe ActivityForm.Model
     }
 
 
 init : Window -> Model
 init window =
-    Model window First Activities.init Nothing Nothing Nothing
+    Model window First Activities.init Nothing Nothing (Just (ActivityForm.init Nothing))
 
 
 
@@ -46,6 +47,7 @@ type Msg
     | ResizeWindow Int Int
     | ScrolledColumn Column Int
     | ActivitiesMsg Activities.Msg
+    | ActivityFormMsg ActivityForm.Msg
 
 
 openCalendar : Maybe Date -> Msg
@@ -93,6 +95,18 @@ update msg model =
             in
             ( { model | activities = subModel }, Cmd.map ActivitiesMsg subCmd )
 
+        ActivityFormMsg subMsg ->
+            case model.col3 of
+                Just form ->
+                    let
+                        ( subModel, subCmd ) =
+                            ActivityForm.update subMsg form
+                    in
+                    ( { model | col3 = Just subModel }, Cmd.map ActivityFormMsg subCmd )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
 
 
 {- VIEWING MODEL
@@ -123,7 +137,7 @@ view model =
                 , viewColM
                     (BlockList.view model.activities ActivitiesMsg)
                     model.col2
-                , div [ class "column grow", id "library" ] [ text "Library" ]
+                , viewColM (\m -> ActivityForm.view m |> Html.map ActivityFormMsg) model.col3
                 ]
     in
     case visible model.window model.focus of
@@ -164,7 +178,7 @@ updateColumn column model =
                     Maybe.withDefault (BlockList.Model calendar.date) model.col2
             in
             ( { model | col1 = Just calendar, col2 = Just blockListM }
-            , Activities.fetch model.activities calendar.date |> Cmd.map ActivitiesMsg
+            , Cmd.none
             )
 
         BlockList blockList ->
@@ -173,7 +187,7 @@ updateColumn column model =
                     Maybe.withDefault (Calendar.Model blockList.date) model.col1
             in
             ( { model | col2 = Just blockList, col1 = Just calendarM }
-            , Activities.fetch model.activities blockList.date |> Cmd.map ActivitiesMsg
+            , Task.attempt Activities.fetchedStore Activities.getActivities |> Cmd.map ActivitiesMsg
             )
 
 

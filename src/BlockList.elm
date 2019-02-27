@@ -20,23 +20,6 @@ view activities parentMsg { date } =
         , a [ href (Link.toCalendar (Just date)) ]
             [ text "Calendar" ]
         , viewActivities activities.fetching
-        , div []
-            [ input
-                [ type_ "text"
-                , placeholder "Description"
-                , onInput
-                    (\description ->
-                        Activity Nothing description
-                            |> Activities.edit
-                            |> parentMsg
-                    )
-                ]
-                []
-            , button
-                [ onClick (parentMsg Activities.submit)
-                ]
-                [ text "Add" ]
-            ]
         ]
 
 
