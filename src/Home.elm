@@ -1,9 +1,9 @@
-module Home exposing (Model, Msg, init, openBlockList, openCalendar, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
 
 import Activities
 import ActivityForm
+import ActivityList
 import Array exposing (Array)
-import BlockList
 import Browser.Dom as Dom
 import Calendar
 import Config exposing (config)
@@ -24,16 +24,15 @@ import Window exposing (Window)
 type alias Model =
     { window : Window
     , focus : Focus
-    , activities : Activities.Model
     , col1 : Maybe Calendar.Model
-    , col2 : Maybe BlockList.Model
+    , col2 : Maybe ActivityList.Model
     , col3 : Maybe ActivityForm.Model
     }
 
 
 init : Window -> Model
 init window =
-    Model window First Activities.init Nothing Nothing (Just (ActivityForm.init Nothing))
+    Model window First Nothing Nothing (Just (ActivityForm.init Nothing))
 
 
 
@@ -43,7 +42,7 @@ init window =
 type Msg
     = ChangeFocus Focus (Maybe Column)
     | LoadCalendar Date
-    | LoadBlockList Date
+    | LoadActivityList Date
     | ResizeWindow Int Int
     | ScrolledColumn Column Int
     | ActivitiesMsg Activities.Msg
@@ -55,9 +54,9 @@ openCalendar dateM =
     ChangeFocus First (Maybe.map (\date -> Calendar (Calendar.Model date)) dateM)
 
 
-openBlockList : Maybe Date -> Msg
-openBlockList dateM =
-    ChangeFocus Second (Maybe.map (\date -> BlockList (BlockList.Model date)) dateM)
+openActivityList : Maybe Date -> Msg
+openActivityList dateM =
+    ChangeFocus Second (Maybe.map (\date -> ActivityList (ActivityList.Model date)) dateM)
 
 
 resizeWindow : Int -> Int -> Msg
@@ -79,8 +78,8 @@ update msg model =
         LoadCalendar date ->
             updateColumn (Calendar (Calendar.Model date)) model
 
-        LoadBlockList date ->
-            updateColumn (BlockList (BlockList.Model date)) model
+        LoadActivityList date ->
+            updateColumn (ActivityList (ActivityList.Model date)) model
 
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
@@ -135,7 +134,7 @@ view model =
                     )
                     model.col1
                 , viewColM
-                    (BlockList.view model.activities ActivitiesMsg)
+                    (ActivityList.view model.activities ActivitiesMsg)
                     model.col2
                 , viewColM (\m -> ActivityForm.view m |> Html.map ActivityFormMsg) model.col3
                 ]
@@ -166,7 +165,7 @@ view model =
 
 type Column
     = Calendar Calendar.Model
-    | BlockList BlockList.Model
+    | ActivityList ActivityList.Model
 
 
 updateColumn : Column -> Model -> ( Model, Cmd Msg )
@@ -174,19 +173,19 @@ updateColumn column model =
     case column of
         Calendar calendar ->
             let
-                blockListM =
-                    Maybe.withDefault (BlockList.Model calendar.date) model.col2
+                activitylistM =
+                    Maybe.withDefault (ActivityList.Model calendar.date) model.col2
             in
-            ( { model | col1 = Just calendar, col2 = Just blockListM }
+            ( { model | col1 = Just calendar, col2 = Just activitylistM }
             , Cmd.none
             )
 
-        BlockList blockList ->
+        ActivityList activitylist ->
             let
                 calendarM =
-                    Maybe.withDefault (Calendar.Model blockList.date) model.col1
+                    Maybe.withDefault (Calendar.Model activitylist.date) model.col1
             in
-            ( { model | col2 = Just blockList, col1 = Just calendarM }
+            ( { model | col2 = Just activitylist, col1 = Just calendarM }
             , Task.attempt Activities.fetchedStore Activities.getActivities |> Cmd.map ActivitiesMsg
             )
 
@@ -198,7 +197,7 @@ initColumn model =
             ( model, Task.perform LoadCalendar Date.today )
 
         Second ->
-            ( model, Task.perform LoadBlockList Date.today )
+            ( model, Task.perform LoadActivityList Date.today )
 
         _ ->
             ( model, Cmd.none )
@@ -305,8 +304,8 @@ changeDate column scrollTop =
         Calendar calendar ->
             scrollTask LoadCalendar "calendar" calendar.date
 
-        BlockList blocklist ->
-            scrollTask LoadBlockList "blocks" blocklist.date
+        ActivityList activitylist ->
+            scrollTask LoadActivityList "activities" activitylist.date
 
 
 onScroll : (a -> Column) -> (a -> Html.Attribute Msg)

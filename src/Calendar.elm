@@ -116,7 +116,7 @@ viewWeek start =
 viewDay : Date -> Html msg
 viewDay date =
     div [ style "flex-basis" "12%" ]
-        [ a [ href (Link.toBlockList (Just date)) ]
+        [ a [ href (Link.toActivityList (Just date)) ]
             [ text (Date.format "d" date)
             ]
         ]

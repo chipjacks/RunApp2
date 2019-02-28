@@ -1,4 +1,4 @@
-module BlockList exposing (Model, view)
+module ActivityList exposing (Model, view)
 
 import Activities exposing (Activity, WebData(..))
 import Date exposing (Date)
@@ -15,8 +15,8 @@ type alias Model =
 
 view : Activities.Model -> (Activities.Msg -> msg) -> Model -> Html msg
 view activities parentMsg { date } =
-    div [ class "column grow", id "blocks" ]
-        [ text ("Blocks " ++ Date.toIsoString date)
+    div [ class "column grow", id "activities" ]
+        [ text ("Activities " ++ Date.toIsoString date)
         , a [ href (Link.toCalendar (Just date)) ]
             [ text "Calendar" ]
         , viewActivities activities.fetching

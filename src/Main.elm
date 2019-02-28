@@ -98,8 +98,8 @@ parseUrl url =
             (\rataDieM -> HomeMsg <| Home.openCalendar (Maybe.map Date.fromRataDie rataDieM))
             (Parser.s "calendar" <?> Query.int "date")
         , Parser.map
-            (\rataDieM -> HomeMsg <| Home.openBlockList (Maybe.map Date.fromRataDie rataDieM))
-            (Parser.s "blocks" <?> Query.int "date")
+            (\rataDieM -> HomeMsg <| Home.openActivityList (Maybe.map Date.fromRataDie rataDieM))
+            (Parser.s "activities" <?> Query.int "date")
         , Parser.map (HomeMsg <| Home.openCalendar Nothing) Parser.top
         ]
         |> (\parser -> Parser.parse parser url)
