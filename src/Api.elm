@@ -1,11 +1,13 @@
 module Api exposing (getActivities, saveActivity)
 
-import Activity exposing (Activity)
+import Activity exposing (Activity, NewActivity)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Random
 import Task exposing (Task)
-import Time exposing (Month(..))
+import Time exposing (Month(..), utc)
+import Uuid.Barebones exposing (uuidStringGenerator)
 
 
 getActivities : Task Http.Error (List Activity)
@@ -20,13 +22,18 @@ getActivities =
         }
 
 
-saveActivity : Activity -> Task Http.Error (List Activity)
-saveActivity activity =
-    getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == activity.id) activities
-                    |> (\( _, others ) -> activity :: others)
+saveActivity : NewActivity -> Task Http.Error (List Activity)
+saveActivity newActivity =
+    addId newActivity
+        |> Task.mapError (\_ -> Http.Timeout)
+        |> Task.andThen
+            (\activity ->
+                getActivities
+                    |> Task.map
+                        (\activities ->
+                            List.partition (\a -> a.id == activity.id) activities
+                                |> (\( _, others ) -> activity :: others)
+                        )
             )
         |> Task.andThen postActivities
 
@@ -39,6 +46,22 @@ storeUrl =
     "https://api.jsonbin.io/b/5c745db056292a73eb718d29"
 
 
+addId : NewActivity -> Task Never Activity
+addId activity =
+    case activity.id of
+        Just id ->
+            Task.succeed (Activity id activity.description)
+
+        Nothing ->
+            Time.now
+                |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
+                |> Task.map (Random.step uuidStringGenerator)
+                |> Task.map
+                    (\( uuid, _ ) ->
+                        Activity uuid activity.description
+                    )
+
+
 postActivities : List Activity -> Task Http.Error (List Activity)
 postActivities activities =
     Http.task
@@ -46,7 +69,7 @@ postActivities activities =
         , headers = []
         , url = storeUrl
         , body = Http.jsonBody (Encode.list activityEncoder activities)
-        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.list activityDecoder
+        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.field "data" (Decode.list activityDecoder)
         , timeout = Nothing
         }
 

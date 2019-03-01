@@ -1,10 +1,10 @@
 module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
 
-import Activity exposing (Activity)
+import Activity exposing (Activity, NewActivity)
 import ActivityForm
 import ActivityList
 import Api
-import Array exposing (Array)
+import Array
 import Browser.Dom as Dom
 import Calendar
 import Config exposing (config)
@@ -27,13 +27,13 @@ type alias Model =
     , calendarDate : Maybe Date
     , activitiesDate : Maybe Date
     , activities : Maybe (List Activity)
-    , activityForm : ActivityForm.Model
+    , editedActivity : NewActivity
     }
 
 
 init : Window -> Model
 init window =
-    Model window First Nothing Nothing Nothing (ActivityForm.init Nothing)
+    Model window First Nothing Nothing Nothing (NewActivity Nothing "")
 
 
 
@@ -46,7 +46,9 @@ type Msg
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
     | ScrolledCalendar Date Int
-    | ActivityFormMsg ActivityForm.Msg
+    | EditDescription String
+    | SubmitActivity
+    | SubmitResult (Result Http.Error (List Activity))
 
 
 openCalendar : Maybe Date -> Msg
@@ -122,12 +124,23 @@ update msg model =
         ScrolledCalendar date scrollTop ->
             ( model, changeCalendarDate date scrollTop )
 
-        ActivityFormMsg subMsg ->
+        EditDescription desc ->
             let
-                ( subModel, subCmd ) =
-                    ActivityForm.update subMsg model.activityForm
+                updatedActivity =
+                    NewActivity model.editedActivity.id desc
             in
-            ( { model | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
+            ( { model | editedActivity = updatedActivity }, Cmd.none )
+
+        SubmitActivity ->
+            let
+                newActivity =
+                    NewActivity Nothing ""
+            in
+            ( { model | editedActivity = newActivity }, Task.attempt GotActivities (Api.saveActivity model.editedActivity) )
+
+        SubmitResult result ->
+            -- TODO: handle errors on activity submit
+            ( model, Cmd.none )
 
 
 
@@ -156,7 +169,7 @@ view model =
                 , viewColM
                     (ActivityList.view model.activities)
                     model.activitiesDate
-                , ActivityForm.view model.activityForm |> Html.map ActivityFormMsg
+                , ActivityForm.view model.editedActivity EditDescription SubmitActivity
                 ]
     in
     case visible model.window model.focus of
