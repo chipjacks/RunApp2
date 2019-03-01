@@ -1,32 +1,36 @@
-module Calendar exposing (Model, view)
+module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
 import Html.Attributes exposing (class, href, id, style)
-import Html.Events exposing (onClick)
+import Html.Events exposing (on, onClick)
+import Json.Decode as Decode
 import Link
 import Time exposing (Month(..))
 
 
-type alias Model =
-    { date : Date
-    }
-
-
-view : (Date -> msg) -> (Model -> Html.Attribute msg) -> Model -> Html msg
-view changeDate onScroll model =
+view : (Date -> msg) -> (Date -> Int -> msg) -> Date -> Html msg
+view changeDate scroll date =
     div [ class "column grow" ]
-        [ dateSelect model.date changeDate
+        [ dateSelect date changeDate
         , div
             [ class "column grow"
             , id "calendar"
             , style "overflow" "scroll"
-            , onScroll model
+            , onScroll (scroll date)
             ]
             [ div [ class "column grow", style "margin-bottom" "-500px" ]
-                (weekList model.date |> List.map viewWeek)
+                (weekList date |> List.map viewWeek)
             ]
         ]
+
+
+onScroll : (Int -> msg) -> Html.Attribute msg
+onScroll msg =
+    on "scroll"
+        (Decode.at [ "target", "scrollTop" ] Decode.int
+            |> Decode.map msg
+        )
 
 
 

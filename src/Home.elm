@@ -1,8 +1,9 @@
 module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
 
-import Activities
+import Activity exposing (Activity)
 import ActivityForm
 import ActivityList
+import Api
 import Array exposing (Array)
 import Browser.Dom as Dom
 import Calendar
@@ -10,8 +11,7 @@ import Config exposing (config)
 import Date exposing (Date, Unit(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id, style)
-import Html.Events exposing (on)
-import Json.Decode as Decode
+import Http
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
@@ -24,15 +24,16 @@ import Window exposing (Window)
 type alias Model =
     { window : Window
     , focus : Focus
-    , col1 : Maybe Calendar.Model
-    , col2 : Maybe ActivityList.Model
-    , col3 : Maybe ActivityForm.Model
+    , calendarDate : Maybe Date
+    , activitiesDate : Maybe Date
+    , activities : Maybe (List Activity)
+    , activityForm : ActivityForm.Model
     }
 
 
 init : Window -> Model
 init window =
-    Model window First Nothing Nothing (Just (ActivityForm.init Nothing))
+    Model window First Nothing Nothing Nothing (ActivityForm.init Nothing)
 
 
 
@@ -40,23 +41,22 @@ init window =
 
 
 type Msg
-    = ChangeFocus Focus (Maybe Column)
+    = ChangeFocus Focus (Maybe Date)
     | LoadCalendar Date
-    | LoadActivityList Date
+    | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
-    | ScrolledColumn Column Int
-    | ActivitiesMsg Activities.Msg
+    | ScrolledCalendar Date Int
     | ActivityFormMsg ActivityForm.Msg
 
 
 openCalendar : Maybe Date -> Msg
 openCalendar dateM =
-    ChangeFocus First (Maybe.map (\date -> Calendar (Calendar.Model date)) dateM)
+    ChangeFocus First dateM
 
 
 openActivityList : Maybe Date -> Msg
 openActivityList dateM =
-    ChangeFocus Second (Maybe.map (\date -> ActivityList (ActivityList.Model date)) dateM)
+    ChangeFocus Second dateM
 
 
 resizeWindow : Int -> Int -> Msg
@@ -67,44 +67,67 @@ resizeWindow width height =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeFocus focus columnM ->
-            case columnM of
-                Just column ->
-                    updateColumn column { model | focus = focus }
+        ChangeFocus focus dateM ->
+            case dateM of
+                Just date ->
+                    let
+                        calendarDate =
+                            if focus == First then
+                                Just date
+
+                            else if model.calendarDate == Nothing then
+                                Just date
+
+                            else
+                                model.calendarDate
+
+                        activitiesDate =
+                            if focus == Second then
+                                Just date
+
+                            else if model.activitiesDate == Nothing then
+                                Just date
+
+                            else
+                                model.activitiesDate
+
+                        cmd =
+                            if activitiesDate /= model.activitiesDate then
+                                Task.attempt GotActivities Api.getActivities
+
+                            else
+                                Cmd.none
+                    in
+                    ( { model | focus = focus, calendarDate = calendarDate, activitiesDate = activitiesDate }
+                    , cmd
+                    )
 
                 Nothing ->
-                    initColumn { model | focus = focus }
+                    ( model, Task.perform (\d -> ChangeFocus focus (Just d)) Date.today )
 
         LoadCalendar date ->
-            updateColumn (Calendar (Calendar.Model date)) model
+            ( { model | calendarDate = Just date }, Cmd.none )
 
-        LoadActivityList date ->
-            updateColumn (ActivityList (ActivityList.Model date)) model
+        GotActivities result ->
+            case result of
+                Ok activities ->
+                    ( { model | activities = Just activities }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
 
-        ScrolledColumn column scrollTop ->
-            ( model, changeDate column scrollTop )
-
-        ActivitiesMsg subMsg ->
-            let
-                ( subModel, subCmd ) =
-                    Activities.update subMsg model.activities
-            in
-            ( { model | activities = subModel }, Cmd.map ActivitiesMsg subCmd )
+        ScrolledCalendar date scrollTop ->
+            ( model, changeCalendarDate date scrollTop )
 
         ActivityFormMsg subMsg ->
-            case model.col3 of
-                Just form ->
-                    let
-                        ( subModel, subCmd ) =
-                            ActivityForm.update subMsg form
-                    in
-                    ( { model | col3 = Just subModel }, Cmd.map ActivityFormMsg subCmd )
-
-                Nothing ->
-                    ( model, Cmd.none )
+            let
+                ( subModel, subCmd ) =
+                    ActivityForm.update subMsg model.activityForm
+            in
+            ( { model | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
 
 
@@ -128,15 +151,12 @@ view model =
         columns =
             Array.fromList
                 [ viewColM
-                    (Calendar.view
-                        LoadCalendar
-                        (onScroll Calendar)
-                    )
-                    model.col1
+                    (Calendar.view LoadCalendar ScrolledCalendar)
+                    model.calendarDate
                 , viewColM
-                    (ActivityList.view model.activities ActivitiesMsg)
-                    model.col2
-                , viewColM (\m -> ActivityForm.view m |> Html.map ActivityFormMsg) model.col3
+                    (ActivityList.view model.activities)
+                    model.activitiesDate
+                , ActivityForm.view model.activityForm |> Html.map ActivityFormMsg
                 ]
     in
     case visible model.window model.focus of
@@ -157,50 +177,6 @@ view model =
 
         ThirdOne ->
             containerDiv (Array.slice 2 3 columns)
-
-
-
--- UPDATING COLUMNS
-
-
-type Column
-    = Calendar Calendar.Model
-    | ActivityList ActivityList.Model
-
-
-updateColumn : Column -> Model -> ( Model, Cmd Msg )
-updateColumn column model =
-    case column of
-        Calendar calendar ->
-            let
-                activitylistM =
-                    Maybe.withDefault (ActivityList.Model calendar.date) model.col2
-            in
-            ( { model | col1 = Just calendar, col2 = Just activitylistM }
-            , Cmd.none
-            )
-
-        ActivityList activitylist ->
-            let
-                calendarM =
-                    Maybe.withDefault (Calendar.Model activitylist.date) model.col1
-            in
-            ( { model | col2 = Just activitylist, col1 = Just calendarM }
-            , Task.attempt Activities.fetchedStore Activities.getActivities |> Cmd.map ActivitiesMsg
-            )
-
-
-initColumn : Model -> ( Model, Cmd Msg )
-initColumn model =
-    case model.focus of
-        First ->
-            ( model, Task.perform LoadCalendar Date.today )
-
-        Second ->
-            ( model, Task.perform LoadActivityList Date.today )
-
-        _ ->
-            ( model, Cmd.none )
 
 
 
@@ -283,35 +259,17 @@ zoomTwo focus =
 -- SCROLLING COLUMNS
 
 
-changeDate : Column -> Int -> Cmd Msg
-changeDate column scrollTop =
-    let
-        scrollTask msg id date =
-            if scrollTop < 10 then
-                Task.attempt
-                    (\_ -> msg (Date.add Months -1 date))
-                    (Dom.setViewportOf id 0 250)
+changeCalendarDate : Date -> Int -> Cmd Msg
+changeCalendarDate date scrollTop =
+    if scrollTop < 10 then
+        Task.attempt
+            (\_ -> LoadCalendar (Date.add Months -1 date))
+            (Dom.setViewportOf "calendar" 0 250)
 
-            else if scrollTop > 490 then
-                Task.attempt
-                    (\_ -> msg (Date.add Months 1 date))
-                    (Dom.setViewportOf id 0 250)
+    else if scrollTop > 490 then
+        Task.attempt
+            (\_ -> LoadCalendar (Date.add Months 1 date))
+            (Dom.setViewportOf "calendar" 0 250)
 
-            else
-                Cmd.none
-    in
-    case column of
-        Calendar calendar ->
-            scrollTask LoadCalendar "calendar" calendar.date
-
-        ActivityList activitylist ->
-            scrollTask LoadActivityList "activities" activitylist.date
-
-
-onScroll : (a -> Column) -> (a -> Html.Attribute Msg)
-onScroll toColumn =
-    \subModel ->
-        on "scroll"
-            (Decode.at [ "target", "scrollTop" ] Decode.int
-                |> Decode.map (ScrolledColumn (toColumn subModel))
-            )
+    else
+        Cmd.none

@@ -1,6 +1,6 @@
-module ActivityList exposing (Model, view)
+module ActivityList exposing (view)
 
-import Activities exposing (Activity, WebData(..))
+import Activity exposing (Activity)
 import Date exposing (Date)
 import Html exposing (Html, a, button, div, input, text)
 import Html.Attributes exposing (class, href, id, placeholder, type_)
@@ -8,25 +8,20 @@ import Html.Events exposing (onClick, onInput)
 import Link
 
 
-type alias Model =
-    { date : Date
-    }
-
-
-view : Activities.Model -> (Activities.Msg -> msg) -> Model -> Html msg
-view activities parentMsg { date } =
+view : Maybe (List Activity) -> Date -> Html msg
+view activitiesM date =
     div [ class "column grow", id "activities" ]
         [ text ("Activities " ++ Date.toIsoString date)
         , a [ href (Link.toCalendar (Just date)) ]
             [ text "Calendar" ]
-        , viewActivities activities.fetching
+        , viewActivities activitiesM
         ]
 
 
-viewActivities : WebData (List Activity) -> Html msg
-viewActivities activitiesWD =
-    case activitiesWD of
-        Success activities ->
+viewActivities : Maybe (List Activity) -> Html msg
+viewActivities activitiesM =
+    case activitiesM of
+        Just activities ->
             div [ class "column" ]
                 (List.map
                     (\a ->
@@ -35,8 +30,5 @@ viewActivities activitiesWD =
                     activities
                 )
 
-        Loading ->
+        Nothing ->
             div [] [ text "Loading activities" ]
-
-        Failure e ->
-            div [] [ text "Activities failed to load" ]

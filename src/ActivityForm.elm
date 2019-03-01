@@ -1,8 +1,9 @@
 module ActivityForm exposing (Model, Msg, init, update, view)
 
-import Activities exposing (Activity, saveActivity)
+import Activity exposing (Activity)
+import Api exposing (saveActivity)
 import Html exposing (Html, button, div, input, text)
-import Html.Attributes exposing (class, placeholder, type_)
+import Html.Attributes exposing (class, id, placeholder, type_)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Random
@@ -108,7 +109,7 @@ generateId =
 
 view : Model -> Html Msg
 view model =
-    div [ class "column grow" ]
+    div [ class "column grow", id "activity" ]
         [ input
             [ type_ "text"
             , placeholder "Description"
