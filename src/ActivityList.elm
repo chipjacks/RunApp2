@@ -2,9 +2,8 @@ module ActivityList exposing (view)
 
 import Activity exposing (Activity)
 import Date exposing (Date)
-import Html exposing (Html, a, button, div, input, text)
-import Html.Attributes exposing (class, href, id, placeholder, type_)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, a, div, text)
+import Html.Attributes exposing (class, href, id)
 import Link
 
 

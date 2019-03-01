@@ -3,11 +3,10 @@ module Main exposing (main)
 import Browser
 import Browser.Events
 import Browser.Navigation as Nav
-import Date exposing (Date)
+import Date
 import Home
 import Html
 import Skeleton
-import Task
 import Url
 import Url.Parser as Parser exposing ((<?>))
 import Url.Parser.Query as Query

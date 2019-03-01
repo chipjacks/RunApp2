@@ -1,7 +1,6 @@
 module Api exposing (getActivities, saveActivity)
 
 import Activity exposing (Activity)
-import Date exposing (Date)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -27,7 +26,7 @@ saveActivity activity =
         |> Task.map
             (\activities ->
                 List.partition (\a -> a.id == activity.id) activities
-                    |> (\( oldActivity, others ) -> activity :: others)
+                    |> (\( _, others ) -> activity :: others)
             )
         |> Task.andThen postActivities
 
