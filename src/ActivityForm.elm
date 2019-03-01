@@ -25,5 +25,5 @@ view activity onDescription onSubmit =
         , button
             [ onClick onSubmit
             ]
-            [ text "Add" ]
+            [ text "Save" ]
         ]

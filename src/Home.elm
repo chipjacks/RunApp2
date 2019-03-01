@@ -46,6 +46,7 @@ type Msg
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
     | ScrolledCalendar Date Int
+    | EditActivity Activity
     | EditDescription String
     | SubmitActivity
     | SubmitResult (Result Http.Error (List Activity))
@@ -124,6 +125,13 @@ update msg model =
         ScrolledCalendar date scrollTop ->
             ( model, changeCalendarDate date scrollTop )
 
+        EditActivity activity ->
+            let
+                editActivity =
+                    NewActivity (Just activity.id) activity.description
+            in
+            ( { model | editedActivity = editActivity }, Cmd.none )
+
         EditDescription desc ->
             let
                 updatedActivity =
@@ -167,7 +175,7 @@ view model =
                     (Calendar.view LoadCalendar ScrolledCalendar)
                     model.calendarDate
                 , viewColM
-                    (ActivityList.view model.activities)
+                    (ActivityList.view model.activities EditActivity)
                     model.activitiesDate
                 , ActivityForm.view model.editedActivity EditDescription SubmitActivity
                 ]
