@@ -1,7 +1,8 @@
 {
   "scripts": {
     "serve": "elm-live src/Main.elm -u -- --output=elm.js",
-    "test": "elm-test && elm-verify-examples"
+    "test": "elm-test && elm-verify-examples",
+    "seed": "curl --header 'Content-Type: application/json' --request PUT --data @cypress/fixtures/activities.json https://api.jsonbin.io/b/5c745db056292a73eb718d29/"
   },
   "dependencies": {
     "elm": "^0.19.0-bugfix6"
