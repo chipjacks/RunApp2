@@ -94,7 +94,7 @@ update msg model =
                             else
                                 model.activitiesDate
 
-                        cmd =
+                        loadActivities =
                             if activitiesDate /= model.activitiesDate then
                                 Task.attempt GotActivities Api.getActivities
 
@@ -102,7 +102,10 @@ update msg model =
                                 Cmd.none
                     in
                     ( { model | focus = focus, calendarDate = calendarDate, activitiesDate = activitiesDate }
-                    , cmd
+                    , Cmd.batch
+                        [ loadCalendarDate date
+                        , loadActivities
+                        ]
                     )
 
                 Nothing ->
@@ -123,7 +126,7 @@ update msg model =
             ( { model | window = Window width height }, Cmd.none )
 
         ScrolledCalendar date scrollTop ->
-            ( model, changeCalendarDate date scrollTop )
+            ( model, onCalendarScroll date scrollTop )
 
         EditActivity activity ->
             let
@@ -277,20 +280,23 @@ zoomTwo focus =
 
 
 
--- SCROLLING COLUMNS
+-- SCROLLING CALENDAR
 
 
-changeCalendarDate : Date -> Int -> Cmd Msg
-changeCalendarDate date scrollTop =
+onCalendarScroll : Date -> Int -> Cmd Msg
+onCalendarScroll date scrollTop =
     if scrollTop < 10 then
-        Task.attempt
-            (\_ -> LoadCalendar (Date.add Months -1 date))
-            (Dom.setViewportOf "calendar" 0 250)
+        loadCalendarDate (Date.add Months -1 date)
 
     else if scrollTop > 490 then
-        Task.attempt
-            (\_ -> LoadCalendar (Date.add Months 1 date))
-            (Dom.setViewportOf "calendar" 0 250)
+        loadCalendarDate (Date.add Months 1 date)
 
     else
         Cmd.none
+
+
+loadCalendarDate : Date -> Cmd Msg
+loadCalendarDate date =
+    Task.attempt
+        (\_ -> LoadCalendar date)
+        (Dom.setViewportOf "calendar" 0 250)
