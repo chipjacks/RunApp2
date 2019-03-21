@@ -9,7 +9,7 @@ import Link
 import Time exposing (Month(..))
 
 
-view : (Date -> msg) -> (Date -> Int -> msg) -> Date -> Html msg
+view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 view changeDate scroll date =
     div [ class "column grow" ]
         [ dateSelect date changeDate
@@ -17,14 +17,14 @@ view changeDate scroll date =
         ]
 
 
-dateGrid : (Date -> msg) -> (Date -> Int -> msg) -> Date -> Html msg
+dateGrid : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 dateGrid changeDate scroll date =
     div
         [ class "column grow"
         , id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (String.fromInt <| Date.toRataDie date)
-        , onScroll (scroll date)
+        , onScroll scroll
         ]
         [ div [ class "column grow", style "margin-bottom" "-500px" ]
             (weekList date |> List.map viewWeek)

@@ -41,11 +41,11 @@ init window =
 
 
 type Msg
-    = ChangeFocus Focus (Maybe Date)
-    | LoadCalendar Date
+    = LoadCalendar (Maybe Date)
+    | LoadActivities (Maybe Date)
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
-    | ScrolledCalendar Date Int
+    | ScrolledCalendar Int
     | EditActivity Activity
     | EditDescription String
     | SubmitActivity
@@ -54,12 +54,12 @@ type Msg
 
 openCalendar : Maybe Date -> Msg
 openCalendar dateM =
-    ChangeFocus First dateM
+    LoadCalendar dateM
 
 
 openActivityList : Maybe Date -> Msg
 openActivityList dateM =
-    ChangeFocus Second dateM
+    LoadActivities dateM
 
 
 resizeWindow : Int -> Int -> Msg
@@ -70,49 +70,25 @@ resizeWindow width height =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeFocus focus dateM ->
+        LoadCalendar dateM ->
             case dateM of
                 Just date ->
-                    let
-                        calendarDate =
-                            if focus == First then
-                                Just date
-
-                            else if model.calendarDate == Nothing then
-                                Just date
-
-                            else
-                                model.calendarDate
-
-                        activitiesDate =
-                            if focus == Second then
-                                Just date
-
-                            else if model.activitiesDate == Nothing then
-                                Just date
-
-                            else
-                                model.activitiesDate
-
-                        loadActivities =
-                            if activitiesDate /= model.activitiesDate then
-                                Task.attempt GotActivities Api.getActivities
-
-                            else
-                                Cmd.none
-                    in
-                    ( { model | focus = focus, calendarDate = calendarDate, activitiesDate = activitiesDate }
-                    , Cmd.batch
-                        [ loadCalendarDate date
-                        , loadActivities
-                        ]
-                    )
+                    ( { model | focus = First, calendarDate = Just date }, resetCalendarScroll )
+                        |> updateDate date
 
                 Nothing ->
-                    ( model, Task.perform (\d -> ChangeFocus focus (Just d)) Date.today )
+                    ( model, Task.perform (\d -> LoadCalendar (Just d)) Date.today )
 
-        LoadCalendar date ->
-            ( { model | calendarDate = Just date }, Cmd.none )
+        LoadActivities dateM ->
+            case dateM of
+                Just date ->
+                    ( { model | focus = Second, activitiesDate = Just date }
+                    , Task.attempt GotActivities Api.getActivities
+                    )
+                        |> updateDate date
+
+                Nothing ->
+                    ( model, Task.perform (\d -> LoadActivities (Just d)) Date.today )
 
         GotActivities result ->
             case result of
@@ -125,8 +101,19 @@ update msg model =
         ResizeWindow width height ->
             ( { model | window = Window width height }, Cmd.none )
 
-        ScrolledCalendar date scrollTop ->
-            ( model, onCalendarScroll date scrollTop )
+        ScrolledCalendar scrollTop ->
+            let
+                ( dateF, cmd ) =
+                    if scrollTop < 10 then
+                        ( Date.add Weeks -4, resetCalendarScroll )
+
+                    else if scrollTop > 490 then
+                        ( Date.add Weeks 4, resetCalendarScroll )
+
+                    else
+                        ( identity, Cmd.none )
+            in
+            ( { model | calendarDate = model.calendarDate |> Maybe.map dateF }, cmd )
 
         EditActivity activity ->
             let
@@ -154,6 +141,28 @@ update msg model =
             ( model, Cmd.none )
 
 
+updateDate : Date -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+updateDate date ( model, cmd ) =
+    let
+        ( calendarDate, calendarCmd ) =
+            if model.calendarDate == Nothing then
+                ( Just date, resetCalendarScroll )
+
+            else
+                ( model.calendarDate, Cmd.none )
+
+        ( activitiesDate, activitiesCmd ) =
+            if model.activitiesDate == Nothing then
+                ( Just date, Task.attempt GotActivities Api.getActivities )
+
+            else
+                ( model.activitiesDate, Cmd.none )
+    in
+    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate }
+    , Cmd.batch [ cmd, calendarCmd, activitiesCmd ]
+    )
+
+
 
 {- VIEWING MODEL
    Uses the off-canvas pattern for responsiveness.
@@ -175,7 +184,7 @@ view model =
         columns =
             Array.fromList
                 [ viewColM
-                    (Calendar.view LoadCalendar ScrolledCalendar)
+                    (Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar)
                     model.calendarDate
                 , viewColM
                     (ActivityList.view model.activities EditActivity)
@@ -283,20 +292,8 @@ zoomTwo focus =
 -- SCROLLING CALENDAR
 
 
-onCalendarScroll : Date -> Int -> Cmd Msg
-onCalendarScroll date scrollTop =
-    if scrollTop < 10 then
-        loadCalendarDate (Date.add Weeks -4 date)
-
-    else if scrollTop > 490 then
-        loadCalendarDate (Date.add Weeks 4 date)
-
-    else
-        Cmd.none
-
-
-loadCalendarDate : Date -> Cmd Msg
-loadCalendarDate date =
+resetCalendarScroll : Cmd Msg
+resetCalendarScroll =
     Task.attempt
-        (\_ -> LoadCalendar date)
+        (\_ -> ScrolledCalendar 250)
         (Dom.setViewportOf "calendar" 0 250)
