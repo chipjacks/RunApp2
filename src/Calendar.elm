@@ -1,4 +1,4 @@
-module Calendar exposing (view)
+module Calendar exposing (scrollConfig, view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
@@ -7,6 +7,14 @@ import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
 import Time exposing (Month(..))
+
+
+scrollConfig =
+    { marginBottom = "-500px"
+    , center = 250
+    , loadPrevious = 10
+    , loadNext = 490
+    }
 
 
 view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
@@ -26,7 +34,7 @@ dateGrid changeDate scroll date =
         , attribute "data-date" (String.fromInt <| Date.toRataDie date)
         , onScroll scroll
         ]
-        [ div [ class "column grow", style "margin-bottom" "-500px" ]
+        [ div [ class "column grow", style "margin-bottom" scrollConfig.marginBottom ]
             (weekList date |> List.map viewWeek)
         ]
 

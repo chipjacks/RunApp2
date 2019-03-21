@@ -104,10 +104,10 @@ update msg model =
         ScrolledCalendar scrollTop ->
             let
                 ( dateF, cmd ) =
-                    if scrollTop < 10 then
+                    if scrollTop < Calendar.scrollConfig.loadPrevious then
                         ( Date.add Weeks -4, resetCalendarScroll )
 
-                    else if scrollTop > 490 then
+                    else if scrollTop > Calendar.scrollConfig.loadNext then
                         ( Date.add Weeks 4, resetCalendarScroll )
 
                     else
@@ -295,5 +295,5 @@ zoomTwo focus =
 resetCalendarScroll : Cmd Msg
 resetCalendarScroll =
     Task.attempt
-        (\_ -> ScrolledCalendar 250)
-        (Dom.setViewportOf "calendar" 0 250)
+        (\_ -> ScrolledCalendar Calendar.scrollConfig.center)
+        (Dom.setViewportOf "calendar" 0 Calendar.scrollConfig.center)
