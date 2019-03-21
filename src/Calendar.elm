@@ -2,7 +2,7 @@ module Calendar exposing (view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
-import Html.Attributes exposing (class, href, id, style)
+import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
@@ -23,6 +23,7 @@ dateGrid changeDate scroll date =
         [ class "column grow"
         , id "calendar"
         , style "overflow" "scroll"
+        , attribute "data-date" (String.fromInt <| Date.toRataDie date)
         , onScroll (scroll date)
         ]
         [ div [ class "column grow", style "margin-bottom" "-500px" ]

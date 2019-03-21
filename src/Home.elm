@@ -286,10 +286,10 @@ zoomTwo focus =
 onCalendarScroll : Date -> Int -> Cmd Msg
 onCalendarScroll date scrollTop =
     if scrollTop < 10 then
-        loadCalendarDate (Date.add Months -1 date)
+        loadCalendarDate (Date.add Weeks -4 date)
 
     else if scrollTop > 490 then
-        loadCalendarDate (Date.add Months 1 date)
+        loadCalendarDate (Date.add Weeks 4 date)
 
     else
         Cmd.none
