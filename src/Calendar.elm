@@ -13,15 +13,20 @@ view : (Date -> msg) -> (Date -> Int -> msg) -> Date -> Html msg
 view changeDate scroll date =
     div [ class "column grow" ]
         [ dateSelect date changeDate
-        , div
-            [ class "column grow"
-            , id "calendar"
-            , style "overflow" "scroll"
-            , onScroll (scroll date)
-            ]
-            [ div [ class "column grow", style "margin-bottom" "-500px" ]
-                (weekList date |> List.map viewWeek)
-            ]
+        , dateGrid changeDate scroll date
+        ]
+
+
+dateGrid : (Date -> msg) -> (Date -> Int -> msg) -> Date -> Html msg
+dateGrid changeDate scroll date =
+    div
+        [ class "column grow"
+        , id "calendar"
+        , style "overflow" "scroll"
+        , onScroll (scroll date)
+        ]
+        [ div [ class "column grow", style "margin-bottom" "-500px" ]
+            (weekList date |> List.map viewWeek)
         ]
 
 
@@ -145,10 +150,10 @@ weekList : Date -> List Date
 weekList date =
     let
         start =
-            Date.add Months -1 (Date.floor Week date)
+            Date.add Weeks -4 (Date.floor Week date)
 
         end =
-            Date.add Months 3 start
+            Date.add Weeks 12 start
     in
     Date.range Week 1 start end
 

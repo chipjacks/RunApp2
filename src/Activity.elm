@@ -1,6 +1,8 @@
-module Activity exposing (Activity, NewActivity, Order, orderFromString, orderToString)
+module Activity exposing (Activity, NewActivity, Order, decoder, encoder, orderFromString, orderToString)
 
 import Date exposing (Date)
+import Json.Decode as Decode
+import Json.Encode as Encode
 
 
 type alias NewActivity =
@@ -84,3 +86,22 @@ orderToString order =
             String.fromInt order.interval
     in
     String.concat [ date, "+", session, interval ]
+
+
+
+-- SERIALIZATION
+
+
+decoder : Decode.Decoder Activity
+decoder =
+    Decode.map2 Activity
+        (Decode.field "id" Decode.string)
+        (Decode.field "description" Decode.string)
+
+
+encoder : Activity -> Encode.Value
+encoder activity =
+    Encode.object
+        [ ( "id", Encode.string activity.id )
+        , ( "description", Encode.string activity.description )
+        ]

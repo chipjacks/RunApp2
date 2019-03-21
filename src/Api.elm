@@ -17,7 +17,10 @@ getActivities =
         , headers = [ Http.header "Content-Type" "application/json" ]
         , url = storeUrl ++ "/latest"
         , body = Http.emptyBody
-        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.list activityDecoder
+        , resolver =
+            Http.stringResolver <|
+                handleJsonResponse <|
+                    Decode.list Activity.decoder
         , timeout = Nothing
         }
 
@@ -68,25 +71,13 @@ postActivities activities =
         { method = "PUT"
         , headers = []
         , url = storeUrl
-        , body = Http.jsonBody (Encode.list activityEncoder activities)
-        , resolver = Http.stringResolver <| handleJsonResponse <| Decode.field "data" (Decode.list activityDecoder)
+        , body = Http.jsonBody (Encode.list Activity.encoder activities)
+        , resolver =
+            Http.stringResolver <|
+                handleJsonResponse <|
+                    Decode.field "data" (Decode.list Activity.decoder)
         , timeout = Nothing
         }
-
-
-activityDecoder : Decode.Decoder Activity
-activityDecoder =
-    Decode.map2 Activity
-        (Decode.field "id" Decode.string)
-        (Decode.field "description" Decode.string)
-
-
-activityEncoder : Activity -> Encode.Value
-activityEncoder activity =
-    Encode.object
-        [ ( "id", Encode.string activity.id )
-        , ( "description", Encode.string activity.description )
-        ]
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result Http.Error a
