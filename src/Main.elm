@@ -19,7 +19,6 @@ import Window exposing (Window)
 type alias Model =
     { key : Nav.Key
     , page : Page
-    , window : Window
     }
 
 
@@ -44,16 +43,11 @@ main =
         }
 
 
-type alias Flags =
-    { window : Window
-    }
-
-
-init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init _ url key =
     update
         (ChangedUrl url)
-        { key = key, page = Welcome, window = flags.window }
+        { key = key, page = Welcome }
 
 
 
@@ -114,16 +108,19 @@ changeRouteTo model routeM =
 
 updateHome : Model -> Home.Msg -> ( Home.Model, Cmd Home.Msg )
 updateHome model msg =
-    let
-        subModel =
-            case model.page of
-                Home home ->
-                    home
+    case model.page of
+        Home home ->
+            Home.update msg home
 
-                _ ->
-                    Home.init model.window
-    in
-    Home.update msg subModel
+        _ ->
+            let
+                ( subModel, subCmd ) =
+                    Home.init
+            in
+            Home.update msg subModel
+                |> (\( subModel2, subCmd2 ) ->
+                        ( subModel2, Cmd.batch [ subCmd, subCmd2 ] )
+                   )
 
 
 updateWith : (subModel -> Page) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )

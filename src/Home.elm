@@ -31,9 +31,11 @@ type alias Model =
     }
 
 
-init : Window -> Model
-init window =
-    Model window First Nothing Nothing Nothing (NewActivity Nothing "")
+init : ( Model, Cmd Msg )
+init =
+    ( Model (Window 0 0) First Nothing Nothing Nothing (NewActivity Nothing "")
+    , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
+    )
 
 
 
