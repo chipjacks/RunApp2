@@ -133,7 +133,7 @@ viewWeek start =
 
 viewDay : Date -> Html msg
 viewDay date =
-    div [ style "flex-basis" "12%" ]
+    div [ class "grow" ]
         [ a [ href (Link.toActivityList (Just date)) ]
             [ text (Date.format "d" date)
             ]
@@ -150,7 +150,7 @@ titleWeek start =
                 |> Maybe.map (Date.format "MMM")
                 |> Maybe.withDefault ""
     in
-    div [ style "flex-basis" "16%" ]
+    div [ style "min-width" "3em" ]
         [ text monthStart
         ]
 

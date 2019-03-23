@@ -6,10 +6,9 @@ import Browser.Navigation as Nav
 import Date
 import Home
 import Html
+import Route exposing (Route)
 import Skeleton
-import Url
-import Url.Parser as Parser exposing ((<?>))
-import Url.Parser.Query as Query
+import Url exposing (Url)
 import Window exposing (Window)
 
 
@@ -20,11 +19,13 @@ import Window exposing (Window)
 type alias Model =
     { key : Nav.Key
     , page : Page
+    , window : Window
     }
 
 
 type Page
     = Home Home.Model
+    | Welcome
     | NotFound
 
 
@@ -39,7 +40,7 @@ main =
         , update = update
         , subscriptions = subscriptions
         , onUrlRequest = LinkClicked
-        , onUrlChange = parseUrl
+        , onUrlChange = ChangedUrl
         }
 
 
@@ -51,8 +52,8 @@ type alias Flags =
 init : Flags -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     update
-        (parseUrl url)
-        { key = key, page = Home (Home.init flags.window) }
+        (ChangedUrl url)
+        { key = key, page = Welcome, window = flags.window }
 
 
 
@@ -61,6 +62,7 @@ init flags url key =
 
 type Msg
     = LinkClicked Browser.UrlRequest
+    | ChangedUrl Url
     | HomeMsg Home.Msg
     | NoOp
 
@@ -70,9 +72,7 @@ update message model =
     case ( message, model.page ) of
         ( HomeMsg subMsg, Home subModel ) ->
             Home.update subMsg subModel
-                |> Tuple.mapBoth
-                    (\cmodel -> { model | page = Home cmodel })
-                    (\cmsg -> Cmd.map HomeMsg cmsg)
+                |> updateWith Home HomeMsg model
 
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
@@ -86,23 +86,51 @@ update message model =
                     , Nav.load href
                     )
 
+        ( ChangedUrl url, _ ) ->
+            changeRouteTo model (Route.fromUrl url)
+
         ( _, _ ) ->
             ( model, Cmd.none )
 
 
-parseUrl : Url.Url -> Msg
-parseUrl url =
-    Parser.oneOf
-        [ Parser.map
-            (\rataDieM -> HomeMsg <| Home.openCalendar (Maybe.map Date.fromRataDie rataDieM))
-            (Parser.s "calendar" <?> Query.int "date")
-        , Parser.map
-            (\rataDieM -> HomeMsg <| Home.openActivityList (Maybe.map Date.fromRataDie rataDieM))
-            (Parser.s "activities" <?> Query.int "date")
-        , Parser.map (HomeMsg <| Home.openCalendar Nothing) Parser.top
-        ]
-        |> (\parser -> Parser.parse parser url)
-        |> Maybe.withDefault NoOp
+changeRouteTo : Model -> Maybe Route -> ( Model, Cmd Msg )
+changeRouteTo model routeM =
+    case routeM of
+        Nothing ->
+            ( { model | page = NotFound }, Cmd.none )
+
+        Just (Route.Calendar dateM) ->
+            updateHome model (Home.openCalendar dateM)
+                |> updateWith Home HomeMsg model
+
+        Just (Route.Activities dateM) ->
+            updateHome model (Home.openActivityList dateM)
+                |> updateWith Home HomeMsg model
+
+        Just Route.Home ->
+            updateHome model (Home.openCalendar Nothing)
+                |> updateWith Home HomeMsg model
+
+
+updateHome : Model -> Home.Msg -> ( Home.Model, Cmd Home.Msg )
+updateHome model msg =
+    let
+        subModel =
+            case model.page of
+                Home home ->
+                    home
+
+                _ ->
+                    Home.init model.window
+    in
+    Home.update msg subModel
+
+
+updateWith : (subModel -> Page) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toPage toMsg model ( subModel, subCmd ) =
+    ( { model | page = toPage subModel }
+    , Cmd.map toMsg subCmd
+    )
 
 
 
@@ -112,14 +140,19 @@ parseUrl url =
 view : Model -> Browser.Document Msg
 view model =
     case model.page of
-        NotFound ->
-            { title = "Not Found"
-            , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
+        Welcome ->
+            { title = "Welcome"
+            , body = [ Html.div [] [ Html.text "Welcome to RunApp2" ] ]
             }
 
         Home subModel ->
             { title = "Home"
             , body = Home.view subModel |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
+            }
+
+        NotFound ->
+            { title = "Not Found"
+            , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
             }
 
 
