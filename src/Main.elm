@@ -87,6 +87,13 @@ update message model =
             ( model, Cmd.none )
 
 
+updateWith : (subModel -> Page) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
+updateWith toPage toMsg model ( subModel, subCmd ) =
+    ( { model | page = toPage subModel }
+    , Cmd.map toMsg subCmd
+    )
+
+
 changeRouteTo : Model -> Maybe Route -> ( Model, Cmd Msg )
 changeRouteTo model routeM =
     case routeM of
@@ -121,13 +128,6 @@ updateHome model msg =
                 |> (\( subModel2, subCmd2 ) ->
                         ( subModel2, Cmd.batch [ subCmd, subCmd2 ] )
                    )
-
-
-updateWith : (subModel -> Page) -> (subMsg -> Msg) -> Model -> ( subModel, Cmd subMsg ) -> ( Model, Cmd Msg )
-updateWith toPage toMsg model ( subModel, subCmd ) =
-    ( { model | page = toPage subModel }
-    , Cmd.map toMsg subCmd
-    )
 
 
 
