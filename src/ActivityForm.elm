@@ -52,7 +52,7 @@ toActivity activityForm dateM =
                     Task.fail MissingDateError
     in
     Task.map2
-        (\id date -> Activity id (Date.toIsoString date) activityForm.description)
+        (\id date -> Activity id date activityForm.description)
         idT
         dateT
 
