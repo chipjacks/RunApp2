@@ -27,7 +27,8 @@ context('The Home Page', function() {
     })
 
     it('links to the calendar', function() {
-      cy.contains('a', 'Calendar').click()
+      cy.wait(500)
+      cy.get('#activities').contains('a', 'Calendar').click()
       cy.url().should('match', /\/calendar\?date=737118$/)
     })
 
@@ -36,7 +37,7 @@ context('The Home Page', function() {
     })
 
     it('lists activities', function() {
-      cy.get('#activities').contains('Tempo Tuesday')
+      cy.get('#activities').should('contain', 'Tempo Tuesday')
     })
   })
 
