@@ -7,6 +7,7 @@ import Json.Encode as Encode
 
 type alias Activity =
     { id : String
+    , date : String
     , description : String
     }
 
@@ -17,8 +18,9 @@ type alias Activity =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map2 Activity
+    Decode.map3 Activity
         (Decode.field "id" Decode.string)
+        (Decode.field "date" Decode.string)
         (Decode.field "description" Decode.string)
 
 
@@ -26,5 +28,6 @@ encoder : Activity -> Encode.Value
 encoder activity =
     Encode.object
         [ ( "id", Encode.string activity.id )
+        , ( "date", Encode.string activity.date )
         , ( "description", Encode.string activity.description )
         ]

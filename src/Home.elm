@@ -26,6 +26,7 @@ type alias Model =
     , focus : Focus
     , calendarDate : Maybe Date
     , activitiesDate : Maybe Date
+    , activityDate : Maybe Date
     , activities : Maybe (List Activity)
     , editedActivity : ActivityForm
     }
@@ -33,7 +34,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Window 0 0) First Nothing Nothing Nothing (ActivityForm Nothing "")
+    ( Model (Window 0 0) First Nothing Nothing Nothing Nothing (ActivityForm Nothing "")
     , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
     )
 
@@ -51,7 +52,7 @@ type Msg
     | EditActivity Activity
     | EditDescription String
     | SubmitActivity
-    | SubmitResult (Result Http.Error (List Activity))
+    | SubmitResult (Result ActivityForm.SubmitError (List Activity))
 
 
 openCalendar : Maybe Date -> Msg
@@ -134,18 +135,22 @@ update msg model =
         SubmitActivity ->
             let
                 saveActivityT =
-                    ActivityForm.toActivity model.editedActivity
-                        |> Task.mapError (\_ -> Http.Timeout)
-                        |> Task.andThen Api.saveActivity
+                    ActivityForm.toActivity model.editedActivity model.activityDate
+                        |> Task.andThen (\a -> Api.saveActivity a |> Task.mapError (\_ -> ActivityForm.ApiError))
 
                 newActivity =
                     ActivityForm Nothing ""
             in
-            ( { model | editedActivity = newActivity }, Task.attempt GotActivities saveActivityT )
+            ( { model | editedActivity = newActivity }, Task.attempt SubmitResult saveActivityT )
 
         SubmitResult result ->
-            -- TODO: handle errors on activity submit
-            ( model, Cmd.none )
+            case result of
+                Ok activities ->
+                    ( { model | activities = Just activities }, Cmd.none )
+
+                _ ->
+                    -- TODO: handle errors on activity submit
+                    ( model, Cmd.none )
 
 
 updateDate : Date -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -164,9 +169,16 @@ updateDate date ( model, cmd ) =
 
             else
                 ( model.activitiesDate, Cmd.none )
+
+        ( activityDate, activityCmd ) =
+            if model.activityDate == Nothing then
+                ( Just date, Cmd.none )
+
+            else
+                ( model.activityDate, Cmd.none )
     in
-    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate }
-    , Cmd.batch [ cmd, calendarCmd, activitiesCmd ]
+    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate, activityDate = activityDate }
+    , Cmd.batch [ cmd, calendarCmd, activitiesCmd, activityCmd ]
     )
 
 
@@ -196,7 +208,11 @@ view model =
                 , viewColM
                     (ActivityList.view model.activities EditActivity)
                     model.activitiesDate
-                , ActivityForm.view model.editedActivity EditDescription SubmitActivity
+                , ActivityForm.view
+                    model.editedActivity
+                    model.activityDate
+                    EditDescription
+                    SubmitActivity
                 ]
     in
     case visible model.window model.focus of

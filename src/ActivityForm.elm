@@ -1,6 +1,7 @@
-module ActivityForm exposing (ActivityForm, toActivity, view)
+module ActivityForm exposing (ActivityForm, SubmitError(..), toActivity, view)
 
 import Activity exposing (Activity)
+import Date exposing (Date)
 import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, id, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -22,26 +23,45 @@ type alias ActivityForm =
     }
 
 
-toActivity : ActivityForm -> Task Never Activity
-toActivity activityForm =
-    case activityForm.id of
-        Just id ->
-            Task.succeed (Activity id activityForm.description)
-
-        Nothing ->
-            Time.now
-                |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
-                |> Task.map (Random.step uuidStringGenerator)
-                |> Task.map
-                    (\( uuid, _ ) ->
-                        Activity uuid activityForm.description
-                    )
+type SubmitError
+    = ApiError
+    | IdError
+    | MissingDateError
 
 
-view : ActivityForm -> (String -> msg) -> msg -> Html msg
-view activity onDescription onSubmit =
+toActivity : ActivityForm -> Maybe Date -> Task SubmitError Activity
+toActivity activityForm dateM =
+    let
+        idT =
+            case activityForm.id of
+                Just id ->
+                    Task.succeed id
+
+                Nothing ->
+                    Time.now
+                        |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
+                        |> Task.map (Random.step uuidStringGenerator)
+                        |> Task.map (\( uuid, _ ) -> uuid)
+
+        dateT =
+            case dateM of
+                Just date ->
+                    Task.succeed date
+
+                Nothing ->
+                    Task.fail MissingDateError
+    in
+    Task.map2
+        (\id date -> Activity id (Date.toIsoString date) activityForm.description)
+        idT
+        dateT
+
+
+view : ActivityForm -> Maybe Date -> (String -> msg) -> msg -> Html msg
+view activity dateM onDescription onSubmit =
     div [ class "column grow", id "activity" ]
-        [ input
+        [ div [] [ text (Maybe.map Date.toIsoString dateM |> Maybe.withDefault "") ]
+        , input
             [ type_ "text"
             , placeholder "Description"
             , onInput onDescription
