@@ -1,7 +1,7 @@
 module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
 
-import Activity exposing (Activity, NewActivity)
-import ActivityForm
+import Activity exposing (Activity)
+import ActivityForm exposing (ActivityForm)
 import ActivityList
 import Api
 import Array
@@ -27,13 +27,13 @@ type alias Model =
     , calendarDate : Maybe Date
     , activitiesDate : Maybe Date
     , activities : Maybe (List Activity)
-    , editedActivity : NewActivity
+    , editedActivity : ActivityForm
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Window 0 0) First Nothing Nothing Nothing (NewActivity Nothing "")
+    ( Model (Window 0 0) First Nothing Nothing Nothing (ActivityForm Nothing "")
     , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
     )
 
@@ -120,23 +120,28 @@ update msg model =
         EditActivity activity ->
             let
                 editActivity =
-                    NewActivity (Just activity.id) activity.description
+                    ActivityForm (Just activity.id) activity.description
             in
             ( { model | editedActivity = editActivity }, Cmd.none )
 
         EditDescription desc ->
             let
                 updatedActivity =
-                    NewActivity model.editedActivity.id desc
+                    ActivityForm model.editedActivity.id desc
             in
             ( { model | editedActivity = updatedActivity }, Cmd.none )
 
         SubmitActivity ->
             let
+                saveActivityT =
+                    ActivityForm.toActivity model.editedActivity
+                        |> Task.mapError (\_ -> Http.Timeout)
+                        |> Task.andThen Api.saveActivity
+
                 newActivity =
-                    NewActivity Nothing ""
+                    ActivityForm Nothing ""
             in
-            ( { model | editedActivity = newActivity }, Task.attempt GotActivities (Api.saveActivity model.editedActivity) )
+            ( { model | editedActivity = newActivity }, Task.attempt GotActivities saveActivityT )
 
         SubmitResult result ->
             -- TODO: handle errors on activity submit

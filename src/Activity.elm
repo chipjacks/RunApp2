@@ -1,14 +1,8 @@
-module Activity exposing (Activity, NewActivity, decoder, encoder)
+module Activity exposing (Activity, decoder, encoder)
 
 import Date exposing (Date)
 import Json.Decode as Decode
 import Json.Encode as Encode
-
-
-type alias NewActivity =
-    { id : Maybe String
-    , description : String
-    }
 
 
 type alias Activity =
