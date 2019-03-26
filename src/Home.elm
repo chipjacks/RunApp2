@@ -102,7 +102,7 @@ update msg model =
                     ( model, Cmd.none )
 
         ResizeWindow width height ->
-            ( { model | window = Window width height }, Cmd.none )
+            ( { model | window = Window width height }, resetCalendarScroll )
 
         ScrolledCalendar scrollTop ->
             let
