@@ -1,36 +1,71 @@
-module ActivityList exposing (view)
+module ActivityList exposing (handleScroll, view)
 
 import Activity exposing (Activity)
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
-import Html.Attributes exposing (class, href, id)
+import Html.Attributes exposing (class, href, id, style)
 import Html.Events exposing (onClick)
 import Link
+import Scroll
 
 
-view : Maybe (List Activity) -> (Activity -> msg) -> Date -> Html msg
-view activitiesM editActivity date =
-    div [ class "column grow", id "activities" ]
-        [ text ("Activities " ++ Date.toIsoString date)
-        , div [ class "column grow" ]
-            (dayList date
+view : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
+view activitiesM editActivity scrollMsg date =
+    div [ class "column grow" ]
+        [ header date
+        , scrollingBody activitiesM editActivity scrollMsg date
+        ]
+
+
+header : Date -> Html msg
+header date =
+    div [ class "row" ] [ text (Date.toIsoString date) ]
+
+
+scrollingBody : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
+scrollingBody activitiesM editActivity scrollMsg date =
+    div
+        [ class "column grow"
+        , id "activities"
+        , style "overflow" "scroll"
+        , Scroll.on scrollMsg
+        ]
+        [ div [ class "column grow", style "margin-bottom" "-500px" ]
+            (listDays date
                 |> List.map (\d -> ( d, List.filter (\a -> a.date == d) (Maybe.withDefault [] activitiesM) ))
                 |> List.map (viewDay editActivity)
             )
         ]
 
 
+handleScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
+handleScroll scrollTop scrollMsg =
+    if scrollTop < Scroll.config.loadPrevious then
+        ( Date.add Days -3, Scroll.reset scrollMsg "activities" )
+
+    else if scrollTop > Scroll.config.loadNext then
+        ( Date.add Days 3, Scroll.reset scrollMsg "activities" )
+
+    else
+        ( identity, Cmd.none )
+
+
 viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
-    div [ class "row" ]
-        [ a [ href (Link.toCalendar (Just date)) ]
-            [ text (Date.format "E" date) ]
-        , viewActivities activities editActivity
+    div [ class "row grow" ]
+        [ div [ class "column" ]
+            [ div [ class "row" ]
+                [ a [ href (Link.toCalendar (Just date)) ]
+                    [ text (Date.format "E MMM d" date) ]
+                ]
+            , div [ class "row" ]
+                [ viewActivities activities editActivity ]
+            ]
         ]
 
 
-dayList : Date -> List Date
-dayList date =
+listDays : Date -> List Date
+listDays date =
     let
         start =
             Date.add Days -7 date

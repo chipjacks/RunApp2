@@ -12,6 +12,7 @@ import Date exposing (Date, Unit(..))
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id, style)
 import Http
+import Scroll
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
@@ -49,6 +50,7 @@ type Msg
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
     | ScrolledCalendar Int
+    | ScrolledActivities Int
     | EditActivity Activity
     | EditDescription String
     | SubmitActivity
@@ -76,7 +78,7 @@ update msg model =
         LoadCalendar dateM ->
             case dateM of
                 Just date ->
-                    ( { model | focus = First, calendarDate = Just date }, resetCalendarScroll )
+                    ( { model | focus = First, calendarDate = Just date }, Scroll.reset ScrolledCalendar "calendar" )
                         |> updateDate date
 
                 Nothing ->
@@ -102,21 +104,21 @@ update msg model =
                     ( model, Cmd.none )
 
         ResizeWindow width height ->
-            ( { model | window = Window width height }, resetCalendarScroll )
+            ( { model | window = Window width height }, resetScrolls )
 
         ScrolledCalendar scrollTop ->
             let
                 ( dateF, cmd ) =
-                    if scrollTop < Calendar.scrollConfig.loadPrevious then
-                        ( Date.add Weeks -4, resetCalendarScroll )
-
-                    else if scrollTop > Calendar.scrollConfig.loadNext then
-                        ( Date.add Weeks 4, resetCalendarScroll )
-
-                    else
-                        ( identity, Cmd.none )
+                    Calendar.handleScroll scrollTop ScrolledCalendar
             in
             ( { model | calendarDate = model.calendarDate |> Maybe.map dateF }, cmd )
+
+        ScrolledActivities scrollTop ->
+            let
+                ( dateF, cmd ) =
+                    ActivityList.handleScroll scrollTop ScrolledActivities
+            in
+            ( { model | activitiesDate = model.activitiesDate |> Maybe.map dateF }, cmd )
 
         EditActivity activity ->
             let
@@ -158,14 +160,19 @@ updateDate date ( model, cmd ) =
     let
         ( calendarDate, calendarCmd ) =
             if model.calendarDate == Nothing then
-                ( Just date, resetCalendarScroll )
+                ( Just date, Scroll.reset ScrolledCalendar "calendar" )
 
             else
                 ( model.calendarDate, Cmd.none )
 
         ( activitiesDate, activitiesCmd ) =
             if model.activitiesDate == Nothing then
-                ( Just date, Task.attempt GotActivities Api.getActivities )
+                ( Just date
+                , Cmd.batch
+                    [ Task.attempt GotActivities Api.getActivities
+                    , Scroll.reset ScrolledActivities "activities"
+                    ]
+                )
 
             else
                 ( model.activitiesDate, Cmd.none )
@@ -206,7 +213,7 @@ view model =
                     (Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar)
                     model.calendarDate
                 , viewColM
-                    (ActivityList.view model.activities EditActivity)
+                    (ActivityList.view model.activities EditActivity ScrolledActivities)
                     model.activitiesDate
                 , ActivityForm.view
                     model.editedActivity
@@ -311,12 +318,9 @@ zoomTwo focus =
             LastTwo
 
 
-
--- SCROLLING CALENDAR
-
-
-resetCalendarScroll : Cmd Msg
-resetCalendarScroll =
-    Task.attempt
-        (\_ -> ScrolledCalendar Calendar.scrollConfig.center)
-        (Dom.setViewportOf "calendar" 0 Calendar.scrollConfig.center)
+resetScrolls : Cmd Msg
+resetScrolls =
+    Cmd.batch
+        [ Scroll.reset ScrolledCalendar "calendar"
+        , Scroll.reset ScrolledActivities "activities"
+        ]

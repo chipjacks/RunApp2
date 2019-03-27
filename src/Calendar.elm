@@ -1,4 +1,4 @@
-module Calendar exposing (scrollConfig, view)
+module Calendar exposing (handleScroll, view)
 
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
@@ -6,15 +6,8 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
+import Scroll
 import Time exposing (Month(..))
-
-
-scrollConfig =
-    { marginBottom = "-500px"
-    , center = 250
-    , loadPrevious = 10
-    , loadNext = 490
-    }
 
 
 view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
@@ -32,19 +25,23 @@ dateGrid changeDate scroll date =
         , id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (String.fromInt <| Date.toRataDie date)
-        , onScroll scroll
+        , Scroll.on scroll
         ]
-        [ div [ class "column grow", style "margin-bottom" scrollConfig.marginBottom ]
+        [ div [ class "column grow", style "margin-bottom" Scroll.config.marginBottom ]
             (weekList date |> List.map viewWeek)
         ]
 
 
-onScroll : (Int -> msg) -> Html.Attribute msg
-onScroll msg =
-    on "scroll"
-        (Decode.at [ "target", "scrollTop" ] Decode.int
-            |> Decode.map msg
-        )
+handleScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
+handleScroll scrollTop scrollMsg =
+    if scrollTop < Scroll.config.loadPrevious then
+        ( Date.add Weeks -4, Scroll.reset scrollMsg "calendar" )
+
+    else if scrollTop > Scroll.config.loadNext then
+        ( Date.add Weeks 4, Scroll.reset scrollMsg "calendar" )
+
+    else
+        ( identity, Cmd.none )
 
 
 
