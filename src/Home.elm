@@ -201,7 +201,7 @@ view model =
     let
         containerDiv children =
             div
-                [ class "row grow"
+                [ class "row"
                 , id "home"
                 , style "overflow" "hidden"
                 ]
@@ -258,7 +258,7 @@ viewColM viewFunc subModelM =
 
 viewEmptyColumn : Html msg
 viewEmptyColumn =
-    div [ class "column grow" ] [ text "Nothing" ]
+    div [ class "column" ] [ text "Nothing" ]
 
 
 

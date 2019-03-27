@@ -59,7 +59,7 @@ toActivity activityForm dateM =
 
 view : ActivityForm -> Maybe Date -> (String -> msg) -> msg -> Html msg
 view activity dateM onDescription onSubmit =
-    div [ class "column grow", id "activity" ]
+    div [ class "column", id "activity" ]
         [ div [] [ text (Maybe.map Date.toIsoString dateM |> Maybe.withDefault "") ]
         , input
             [ type_ "text"

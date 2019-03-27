@@ -11,7 +11,7 @@ import Scroll
 
 view : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
 view activitiesM editActivity scrollMsg date =
-    div [ class "column grow" ]
+    div [ class "column" ]
         [ header date
         , scrollingBody activitiesM editActivity scrollMsg date
         ]
@@ -19,18 +19,18 @@ view activitiesM editActivity scrollMsg date =
 
 header : Date -> Html msg
 header date =
-    div [ class "row" ] [ text (Date.toIsoString date) ]
+    div [ class "row no-grow" ] [ text (Date.toIsoString date) ]
 
 
 scrollingBody : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
 scrollingBody activitiesM editActivity scrollMsg date =
     div
-        [ class "column grow"
+        [ class "column"
         , id "activities"
         , style "overflow" "scroll"
         , Scroll.on scrollMsg
         ]
-        [ div [ class "column grow", style "margin-bottom" "-500px" ]
+        [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
             (listDays date
                 |> List.map (\d -> ( d, List.filter (\a -> a.date == d) (Maybe.withDefault [] activitiesM) ))
                 |> List.map (viewDay editActivity)
@@ -52,7 +52,7 @@ handleScroll scrollTop scrollMsg =
 
 viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
-    div [ class "row grow" ]
+    div [ class "row" ]
         [ div [ class "column" ]
             [ div [ class "row" ]
                 [ a [ href (Link.toCalendar (Just date)) ]

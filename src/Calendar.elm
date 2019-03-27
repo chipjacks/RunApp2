@@ -12,7 +12,7 @@ import Time exposing (Month(..))
 
 view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 view changeDate scroll date =
-    div [ class "column grow" ]
+    div [ class "column" ]
         [ dateSelect date changeDate
         , dateGrid changeDate scroll date
         ]
@@ -21,13 +21,13 @@ view changeDate scroll date =
 dateGrid : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 dateGrid changeDate scroll date =
     div
-        [ class "column grow"
+        [ class "column"
         , id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (String.fromInt <| Date.toRataDie date)
         , Scroll.on scroll
         ]
-        [ div [ class "column grow", style "margin-bottom" Scroll.config.marginBottom ]
+        [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
             (weekList date |> List.map viewWeek)
         ]
 
@@ -51,7 +51,7 @@ handleScroll scrollTop scrollMsg =
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
     div
-        [ class "row" ]
+        [ class "row no-grow" ]
         [ div [ class "dropdown" ]
             [ button [ class "menu-button" ]
                 [ text (Date.format "MMMM" date)
@@ -123,14 +123,14 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "row grow", style "min-height" "3em" ] <|
+    div [ class "row", style "min-height" "3em" ] <|
         titleWeek start
             :: List.map viewDay days
 
 
 viewDay : Date -> Html msg
 viewDay date =
-    div [ class "grow" ]
+    div [ class "column" ]
         [ a [ href (Link.toActivityList (Just date)) ]
             [ text (Date.format "d" date)
             ]
