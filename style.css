@@ -13,7 +13,7 @@ html, body { height: 100%; margin: 0 }
 
 /* FLEXBOX CHILDREN */
 .no-grow { flex: 0 0 auto; }
-.grow { flex: 1 1 auto; }
+.grow { flex: 1 1 0; }
 
 
 /*
