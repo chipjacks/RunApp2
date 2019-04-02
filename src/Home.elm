@@ -1,7 +1,7 @@
 module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
 
 import Activity exposing (Activity)
-import ActivityForm exposing (ActivityForm)
+import ActivityForm
 import ActivityList
 import Api
 import Array
@@ -27,15 +27,14 @@ type alias Model =
     , focus : Focus
     , calendarDate : Maybe Date
     , activitiesDate : Maybe Date
-    , activityDate : Maybe Date
     , activities : Maybe (List Activity)
-    , editedActivity : ActivityForm
+    , activityForm : ActivityForm.Model
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Window 0 0) First Nothing Nothing Nothing Nothing (ActivityForm Nothing "")
+    ( Model (Window 0 0) First Nothing Nothing Nothing ActivityForm.initNew
     , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
     )
 
@@ -52,9 +51,7 @@ type Msg
     | ScrolledCalendar Int
     | ScrolledActivities Int
     | EditActivity Activity
-    | EditDescription String
-    | SubmitActivity
-    | SubmitResult (Result ActivityForm.SubmitError (List Activity))
+    | ActivityFormMsg ActivityForm.Msg
 
 
 openCalendar : Maybe Date -> Msg
@@ -121,38 +118,22 @@ update msg model =
             ( { model | activitiesDate = model.activitiesDate |> Maybe.map dateF }, cmd )
 
         EditActivity activity ->
+            ( { model | activityForm = ActivityForm.initEdit activity }, Cmd.none )
+
+        ActivityFormMsg subMsg ->
             let
-                editActivity =
-                    ActivityForm (Just activity.id) activity.description
+                newModel =
+                    case subMsg of
+                        ActivityForm.GotSubmitResult (Ok activities) ->
+                            { model | activities = Just activities }
+
+                        _ ->
+                            model
+
+                ( subModel, subCmd ) =
+                    ActivityForm.update subMsg newModel.activityForm
             in
-            ( { model | editedActivity = editActivity }, Cmd.none )
-
-        EditDescription desc ->
-            let
-                updatedActivity =
-                    ActivityForm model.editedActivity.id desc
-            in
-            ( { model | editedActivity = updatedActivity }, Cmd.none )
-
-        SubmitActivity ->
-            let
-                saveActivityT =
-                    ActivityForm.toActivity model.editedActivity model.activityDate
-                        |> Task.andThen (\a -> Api.saveActivity a |> Task.mapError (\_ -> ActivityForm.ApiError))
-
-                newActivity =
-                    ActivityForm Nothing ""
-            in
-            ( { model | editedActivity = newActivity }, Task.attempt SubmitResult saveActivityT )
-
-        SubmitResult result ->
-            case result of
-                Ok activities ->
-                    ( { model | activities = Just activities }, Cmd.none )
-
-                _ ->
-                    -- TODO: handle errors on activity submit
-                    ( model, Cmd.none )
+            ( { newModel | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
 
 updateDate : Date -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -177,15 +158,15 @@ updateDate date ( model, cmd ) =
             else
                 ( model.activitiesDate, Cmd.none )
 
-        ( activityDate, activityCmd ) =
-            if model.activityDate == Nothing then
-                ( Just date, Cmd.none )
+        activityForm =
+            if ActivityForm.dateRequested model.activityForm then
+                ActivityForm.selectDate model.activityForm date
 
             else
-                ( model.activityDate, Cmd.none )
+                model.activityForm
     in
-    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate, activityDate = activityDate }
-    , Cmd.batch [ cmd, calendarCmd, activitiesCmd, activityCmd ]
+    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate, activityForm = activityForm }
+    , Cmd.batch [ cmd, calendarCmd, activitiesCmd ]
     )
 
 
@@ -216,10 +197,8 @@ view model =
                     (ActivityList.view model.activities EditActivity ScrolledActivities)
                     model.activitiesDate
                 , ActivityForm.view
-                    model.editedActivity
-                    model.activityDate
-                    EditDescription
-                    SubmitActivity
+                    model.activityForm
+                    |> Html.map ActivityFormMsg
                 ]
     in
     case visible model.window model.focus of
