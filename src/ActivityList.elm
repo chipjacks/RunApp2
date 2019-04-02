@@ -3,7 +3,7 @@ module ActivityList exposing (handleScroll, view)
 import Activity exposing (Activity)
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
-import Html.Attributes exposing (class, href, id, style)
+import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (onClick)
 import Link
 import Scroll
@@ -28,6 +28,7 @@ scrollingBody activitiesM editActivity scrollMsg date =
         [ class "column"
         , id "activities"
         , style "overflow" "scroll"
+        , attribute "data-date" (String.fromInt <| Date.toRataDie date)
         , Scroll.on scrollMsg
         ]
         [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
