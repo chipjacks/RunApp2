@@ -152,7 +152,7 @@ selectDateButton dateM =
                 Nothing ->
                     "Select Date"
     in
-    button [ onClick RequestDate ] [ text content ]
+    button [ name "date", onClick RequestDate ] [ text content ]
 
 
 viewError : Maybe SubmitError -> Html Msg

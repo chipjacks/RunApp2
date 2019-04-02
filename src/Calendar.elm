@@ -131,7 +131,10 @@ viewWeek start =
 viewDay : Date -> Html msg
 viewDay date =
     div [ class "column" ]
-        [ a [ href (Link.toActivityList (Just date)) ]
+        [ a
+            [ href (Link.toActivityList (Just date))
+            , attribute "data-date" (Date.toIsoString date)
+            ]
             [ text (Date.format "d" date)
             ]
         ]

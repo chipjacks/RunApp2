@@ -59,19 +59,30 @@ context('The Home Page', function() {
   describe('#activity', function() {
     beforeEach(() => {
       cy.visit('/activities?date=' + date)
+      cy.wait('@fetch')
     })
 
     it('creates new activities', function () {
-      cy.get('#activity').get('input').type('Long Run Sunday')
+      cy.get('#activity').get('input[name=description]').type('Long Run Sunday')
+      cy.get('#activity').get('button[name=date]').click()
+      cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').contains('Save').click()
       cy.get('#activities').contains('Long Run Sunday')
     })
 
-    it('edits existing activities', function () {
+    it('edits existing activity descriptions', function () {
       cy.get('#activities').contains('Tempo Tuesday').click({force: true})
-      cy.get('#activity').get('input').should('have.value', 'Tempo Tuesday').type(' - Felt Great!')
+      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo Tuesday').type(' - Felt Great!')
       cy.get('#activity').contains('Save').click()
       cy.get('#activities').contains('Tempo Tuesday - Felt Great!')
+    })
+
+    it('edits existing activity dates', function () {
+      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
+      cy.get('#activity').get('button[name=date]').should('contain', '2019-02-28').click()
+      cy.get('#activity').get('button[name=date]').should('contain', 'Select Date')
+      cy.get('#calendar').get('a[data-date=2019-03-02]').click()
+      cy.get('#activity').get('button[name=date]').should('contain', '2019-03-02')
     })
   })
 
