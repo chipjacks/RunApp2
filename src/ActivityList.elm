@@ -28,7 +28,7 @@ scrollingBody activitiesM editActivity scrollMsg date =
         [ class "column"
         , id "activities"
         , style "overflow" "scroll"
-        , attribute "data-date" (String.fromInt <| Date.toRataDie date)
+        , attribute "data-date" (Date.toIsoString date)
         , Scroll.on scrollMsg
         ]
         [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]

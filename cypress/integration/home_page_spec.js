@@ -1,4 +1,4 @@
-const date = 737118 // 2019-02-28
+const date = '2019-02-28'
 
 context('The Home Page', function() {
   beforeEach(() => {
@@ -13,13 +13,9 @@ context('The Home Page', function() {
     })
 
     it('links to the activities', function() {
-      cy.get('#calendar').contains('a', '10').click()
-      cy.url().should('match', /\/activities\?date=737100$/)
-      cy.get('#activities').should('have.attr', 'data-date', '737100')
-    })
-
-    it('loads automatically with activities', function() {
-      cy.get('#calendar').contains('a', '10')
+      cy.get('#calendar').get('a[data-date=2019-02-10]').click()
+      cy.url().should('match', /\/activities\?date=2019-02-10$/)
+      cy.get('#activities').should('have.attr', 'data-date', '2019-02-10')
     })
 
     it('lists 12 weeks', () => {
@@ -28,12 +24,12 @@ context('The Home Page', function() {
 
     it('scrolls up by 4 weeks', () => {
       cy.get('#calendar').scrollTo('top')
-      cy.get('#calendar').should('have.attr', 'data-date', (date - (4 * 7)).toString())
+      cy.get('#calendar').should('have.attr', 'data-date', '2019-01-31')
     })
 
     it('scrolls down by 4 weeks', () => {
       cy.get('#calendar').scrollTo('bottom')
-      cy.get('#calendar').should('have.attr', 'data-date', (date + (4 * 7)).toString())
+      cy.get('#calendar').should('have.attr', 'data-date', '2019-03-28')
     })
   })
 
@@ -45,10 +41,6 @@ context('The Home Page', function() {
     it('links to the calendar', function() { // FLAKY!
       cy.get('#activities').contains('a', 'Thu Feb 28').click({force: true})
       cy.url().should('contain', '/calendar?date=' + date)
-    })
-
-    it('loads automatically with calendar', function() {
-      cy.get('#activities').should('have.attr', 'data-date', date.toString())
     })
 
     it('lists activities', function() {

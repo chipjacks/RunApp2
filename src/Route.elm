@@ -16,11 +16,11 @@ fromUrl : Url -> Maybe Route
 fromUrl url =
     Parser.oneOf
         [ Parser.map
-            (\rataDieM -> Calendar (Maybe.map Date.fromRataDie rataDieM))
-            (Parser.s "calendar" <?> Query.int "date")
+            (\dateM -> Calendar (Date.fromIsoString (Maybe.withDefault "" dateM) |> Result.toMaybe))
+            (Parser.s "calendar" <?> Query.string "date")
         , Parser.map
-            (\rataDieM -> Activities (Maybe.map Date.fromRataDie rataDieM))
-            (Parser.s "activities" <?> Query.int "date")
+            (\dateM -> Activities (Date.fromIsoString (Maybe.withDefault "" dateM) |> Result.toMaybe))
+            (Parser.s "activities" <?> Query.string "date")
         , Parser.map Home Parser.top
         ]
         |> (\parser -> Parser.parse parser url)

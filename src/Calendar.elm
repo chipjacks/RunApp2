@@ -24,7 +24,7 @@ dateGrid changeDate scroll date =
         [ class "column"
         , id "calendar"
         , style "overflow" "scroll"
-        , attribute "data-date" (String.fromInt <| Date.toRataDie date)
+        , attribute "data-date" (Date.toIsoString date)
         , Scroll.on scroll
         ]
         [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
