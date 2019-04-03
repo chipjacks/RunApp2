@@ -58,6 +58,8 @@ context('The Home Page', function() {
       cy.get('#activity').get('input[name=description]').type('Long Run Sunday')
       cy.get('#activity').get('button[name=date]').click()
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
+      cy.get('#activity').get('input[name=duration]').type('120')
+      cy.get('#activity').get('select[name=pace]').select('easy')
       cy.get('#activity').contains('Save').click()
       cy.get('#activities').contains('Long Run Sunday')
     })

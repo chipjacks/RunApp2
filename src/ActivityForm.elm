@@ -159,15 +159,16 @@ view model =
             , placeholder "Duration"
             , onInput EditedDuration
             , name "duration"
-            , value (model.duration |> Maybe.map String.fromInt |> Maybe.withDefault "60")
+            , value (model.duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
             []
-        , Html.select [ onInput SelectedPace ] <|
-            List.map
-                (\( paceStr, pace ) ->
-                    Html.option [] [ Html.text paceStr ]
-                )
-                Activity.pace.list
+        , Html.select [ onInput SelectedPace, name "pace", value (model.pace |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Pace") ] <|
+            Html.option [] [ Html.text "Pace" ]
+                :: List.map
+                    (\( paceStr, pace ) ->
+                        Html.option [] [ Html.text paceStr ]
+                    )
+                    Activity.pace.list
         , button
             [ onClick ClickedSubmit
             ]

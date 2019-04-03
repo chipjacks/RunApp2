@@ -2,24 +2,32 @@
   "success": true,
   "data": [
     {
-      "description": "Long Run Sunday",
-      "date": "2019-03-02",
-      "id": "23458dd9-37a1-4b5b-89fc-7f6aefe2c4cb"
-    },
-    {
-      "description": "Fartlek Friday",
+      "id": "34098dd9-37a1-4b5b-89fc-7f6aefe2c4cb",
       "date": "2019-02-27",
-      "id": "34098dd9-37a1-4b5b-89fc-7f6aefe2c4cb"
+      "description": "Fartlek Friday",
+      "duration": 55,
+      "pace": "easy"
     },
     {
-      "description": "Tempo Tuesday - Felt Great!",
+      "id": "48cce67d-a40b-4112-be49-a49cb9897201",
       "date": "2019-02-28",
-      "id": "48cce67d-a40b-4112-be49-a49cb9897201"
+      "description": "Tempo Tuesday - Felt Great!",
+      "duration": 60,
+      "pace": "moderate"
     },
     {
-      "description": "Workout Wednesday",
+      "id": "22ad68c5-56a7-424b-8258-9df96ea88581",
       "date": "2019-03-01",
-      "id": "22ad68c5-56a7-424b-8258-9df96ea88581"
+      "description": "Workout Wednesday",
+      "duration": 65,
+      "pace": "hard"
+    },
+    {
+      "id": "23458dd9-37a1-4b5b-89fc-7f6aefe2c4cb",
+      "date": "2019-03-02",
+      "description": "Long Run Sunday",
+      "duration": 120,
+      "pace": "easy"
     }
   ]
 }
