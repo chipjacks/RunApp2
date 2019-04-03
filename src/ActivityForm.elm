@@ -1,11 +1,12 @@
 module ActivityForm exposing (Model, Msg(..), SubmitError(..), dateRequested, initEdit, initNew, selectDate, toActivity, update, view)
 
-import Activity exposing (Activity)
+import Activity exposing (Activity, Minutes)
 import Api
 import Date exposing (Date)
 import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, id, name, placeholder, type_, value)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (on, onClick, onInput)
+import Json.Decode as Decode
 import Random
 import Task exposing (Task)
 import Time exposing (Month(..), utc)
@@ -22,12 +23,16 @@ type alias Model =
     { id : Maybe String
     , date : Maybe Date
     , description : String
+    , duration : Maybe Minutes
+    , pace : Maybe Activity.Pace
     , error : Maybe SubmitError
     }
 
 
 type Msg
     = EditedDescription String
+    | EditedDuration String
+    | SelectedPace String
     | RequestDate
     | GotDate Date
     | ClickedSubmit
@@ -36,17 +41,17 @@ type Msg
 
 type SubmitError
     = ApiError
-    | MissingDateError
+    | EmptyFieldError String
 
 
 initNew : Model
 initNew =
-    Model Nothing Nothing "" Nothing
+    Model Nothing Nothing "" Nothing Nothing Nothing
 
 
 initEdit : Activity -> Model
 initEdit activity =
-    Model (Just activity.id) (Just activity.date) activity.description Nothing
+    Model (Just activity.id) (Just activity.date) activity.description (Just activity.duration) (Just activity.pace) Nothing
 
 
 dateRequested : Model -> Bool
@@ -77,19 +82,24 @@ toActivity activityForm =
                         |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
                         |> Task.map (Random.step uuidStringGenerator)
                         |> Task.map (\( uuid, _ ) -> uuid)
-
-        dateT =
-            case activityForm.date of
-                Just date ->
-                    Task.succeed date
-
-                Nothing ->
-                    Task.fail MissingDateError
     in
-    Task.map2
-        (\id date -> Activity id date activityForm.description)
+    Task.map5
+        Activity
         idT
-        dateT
+        (validateFieldExists activityForm.date "date")
+        (Task.succeed activityForm.description)
+        (validateFieldExists activityForm.duration "duration")
+        (validateFieldExists activityForm.pace "pace")
+
+
+validateFieldExists : Maybe a -> String -> Task SubmitError a
+validateFieldExists fieldM fieldName =
+    case fieldM of
+        Just field ->
+            Task.succeed field
+
+        Nothing ->
+            Task.fail <| EmptyFieldError fieldName
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -97,6 +107,16 @@ update msg model =
     case msg of
         EditedDescription desc ->
             ( { model | description = desc }, Cmd.none )
+
+        EditedDuration str ->
+            let
+                minutes =
+                    String.toInt str
+            in
+            ( { model | duration = minutes }, Cmd.none )
+
+        SelectedPace str ->
+            ( { model | pace = Activity.pace.fromString str }, Cmd.none )
 
         RequestDate ->
             ( { model | date = Nothing }, Cmd.none )
@@ -125,6 +145,7 @@ view : Model -> Html Msg
 view model =
     div [ class "column", id "activity" ]
         [ viewError model.error
+        , selectDateButton model.date
         , input
             [ type_ "text"
             , placeholder "Description"
@@ -133,7 +154,20 @@ view model =
             , value model.description
             ]
             []
-        , selectDateButton model.date
+        , input
+            [ type_ "number"
+            , placeholder "Duration"
+            , onInput EditedDuration
+            , name "duration"
+            , value (model.duration |> Maybe.map String.fromInt |> Maybe.withDefault "60")
+            ]
+            []
+        , Html.select [ onInput SelectedPace ] <|
+            List.map
+                (\( paceStr, pace ) ->
+                    Html.option [] [ Html.text paceStr ]
+                )
+                Activity.pace.list
         , button
             [ onClick ClickedSubmit
             ]
@@ -168,8 +202,8 @@ viewError errorM =
 errorMessage : SubmitError -> String
 errorMessage error =
     case error of
-        MissingDateError ->
-            "missing date"
+        EmptyFieldError field ->
+            "Please fill in " ++ field ++ " field"
 
         _ ->
-            "there has been an error"
+            "There has been an error"
