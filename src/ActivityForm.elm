@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), SubmitError(..), dateRequested, initEdit, initNew, selectDate, toActivity, update, view)
+module ActivityForm exposing (Model, Msg(..), dateRequested, initEdit, initNew, selectDate, update, view)
 
 import Activity exposing (Activity, Minutes)
 import Api
@@ -7,10 +7,7 @@ import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, id, name, placeholder, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
-import Random
 import Task exposing (Task)
-import Time exposing (Month(..), utc)
-import Uuid.Barebones exposing (uuidStringGenerator)
 
 
 
@@ -20,12 +17,29 @@ import Uuid.Barebones exposing (uuidStringGenerator)
 
 
 type alias Model =
-    { id : Maybe String
-    , date : Maybe Date
+    { status : Status
+    , error : Maybe Error
+    }
+
+
+type Status
+    = Creating Form
+    | Editing String Form
+
+
+type alias Form =
+    { date : Maybe Date
     , description : String
     , duration : Maybe Minutes
     , pace : Maybe Activity.Pace
-    , error : Maybe SubmitError
+    }
+
+
+type alias ValidForm =
+    { date : Date
+    , description : String
+    , duration : Minutes
+    , pace : Activity.Pace
     }
 
 
@@ -38,29 +52,46 @@ type Msg
     | ClickedSubmit
     | ClickedReset
     | ClickedDelete
-    | GotSubmitResult (Result SubmitError (List Activity))
-    | GotDeleteResult (Result SubmitError (List Activity))
+    | GotSubmitResult (Result Error (List Activity))
+    | GotDeleteResult (Result Error (List Activity))
 
 
-type SubmitError
+type Error
     = ApiError
     | EmptyFieldError String
-    | MissingIdError
 
 
 initNew : Model
 initNew =
-    Model Nothing Nothing "" Nothing Nothing Nothing
+    Model (Creating (Form Nothing "" Nothing Nothing)) Nothing
 
 
 initEdit : Activity -> Model
 initEdit activity =
-    Model (Just activity.id) (Just activity.date) activity.description (Just activity.duration) (Just activity.pace) Nothing
+    let
+        form =
+            Form
+                (Just activity.date)
+                activity.description
+                (Just activity.duration)
+                (Just activity.pace)
+    in
+    Model (Editing activity.id form) Nothing
+
+
+toForm : Model -> Form
+toForm model =
+    case model.status of
+        Creating form ->
+            form
+
+        Editing _ form ->
+            form
 
 
 dateRequested : Model -> Bool
 dateRequested model =
-    case model.date of
+    case (toForm model).date of
         Just date ->
             False
 
@@ -73,83 +104,78 @@ selectDate model date =
     update (GotDate date) model |> Tuple.first
 
 
-toActivity : Model -> Task SubmitError Activity
-toActivity activityForm =
-    let
-        idT =
-            case activityForm.id of
-                Just id ->
-                    Task.succeed id
-
-                Nothing ->
-                    Time.now
-                        |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
-                        |> Task.map (Random.step uuidStringGenerator)
-                        |> Task.map (\( uuid, _ ) -> uuid)
-    in
-    Task.map5
-        Activity
-        idT
-        (validateFieldExists activityForm.date "date")
-        (Task.succeed activityForm.description)
-        (validateFieldExists activityForm.duration "duration")
-        (validateFieldExists activityForm.pace "pace")
-
-
-validateFieldExists : Maybe a -> String -> Task SubmitError a
+validateFieldExists : Maybe a -> String -> Result Error a
 validateFieldExists fieldM fieldName =
     case fieldM of
         Just field ->
-            Task.succeed field
+            Ok field
 
         Nothing ->
-            Task.fail <| EmptyFieldError fieldName
+            Err <| EmptyFieldError fieldName
+
+
+validate : Form -> Result Error ValidForm
+validate form =
+    Result.map4
+        ValidForm
+        (validateFieldExists form.date "date")
+        (validateFieldExists (Just form.description) "description")
+        (validateFieldExists form.duration "duration")
+        (validateFieldExists form.pace "pace")
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         EditedDescription desc ->
-            ( { model | description = desc }, Cmd.none )
+            updateForm (\form -> { form | description = desc }) model
 
         EditedDuration str ->
             let
                 minutes =
                     String.toInt str
             in
-            ( { model | duration = minutes }, Cmd.none )
+            updateForm (\form -> { form | duration = minutes }) model
 
         SelectedPace str ->
-            ( { model | pace = Activity.pace.fromString str }, Cmd.none )
+            updateForm (\form -> { form | pace = Activity.pace.fromString str }) model
 
         RequestDate ->
-            ( { model | date = Nothing }, Cmd.none )
+            updateForm (\form -> { form | date = Nothing }) model
 
         GotDate date ->
-            ( { model | date = Just date }, Cmd.none )
+            updateForm (\form -> { form | date = Just date }) model
 
         ClickedSubmit ->
-            let
-                saveActivityT =
-                    toActivity model
-                        |> Task.andThen (\a -> Api.saveActivity a |> Task.mapError (\_ -> ApiError))
-            in
-            ( initNew, Task.attempt GotSubmitResult saveActivityT )
+            case validate (toForm model) of
+                Ok { date, description, duration, pace } ->
+                    let
+                        activity id =
+                            Activity id date description duration pace
+
+                        apiTask =
+                            case model.status of
+                                Editing id form ->
+                                    Api.saveActivity (activity id)
+
+                                Creating form ->
+                                    Api.createActivity activity
+                    in
+                    ( initNew, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
+
+                Err error ->
+                    ( { model | error = Just error }, Cmd.none )
 
         ClickedReset ->
             ( initNew, Cmd.none )
 
         ClickedDelete ->
-            let
-                deleteActivityT =
-                    case model.id of
-                        Just id ->
-                            Api.deleteActivity id |> Task.mapError (\_ -> ApiError)
+            case model.status of
+                Editing id _ ->
+                    ( initNew, Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError)) )
 
-                        Nothing ->
-                            Task.fail MissingIdError
-            in
-            ( initNew, Task.attempt GotDeleteResult deleteActivityT )
+                _ ->
+                    ( initNew, Cmd.none )
 
         GotSubmitResult result ->
             case result of
@@ -168,17 +194,31 @@ update msg model =
                     ( { model | error = Just error }, Cmd.none )
 
 
+updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
+updateForm transform model =
+    case model.status of
+        Creating form ->
+            ( { model | status = Creating (transform form) }, Cmd.none )
+
+        Editing id form ->
+            ( { model | status = Editing id (transform form) }, Cmd.none )
+
+
 view : Model -> Html Msg
 view model =
+    let
+        { date, description, duration, pace } =
+            toForm model
+    in
     div [ class "column", id "activity" ]
         [ viewError model.error
-        , selectDateButton model.date
+        , selectDateButton date
         , input
             [ type_ "text"
             , placeholder "Description"
             , onInput EditedDescription
             , name "description"
-            , value model.description
+            , value description
             ]
             []
         , input
@@ -186,31 +226,31 @@ view model =
             , placeholder "Duration"
             , onInput EditedDuration
             , name "duration"
-            , value (model.duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
             []
-        , selectPace model.pace
-        , submitButton model.id
+        , selectPace pace
+        , submitButton model.status
         , button
             [ onClick ClickedReset
             , type_ "reset"
             ]
             [ text "Reset" ]
-        , deleteButton model.id
+        , deleteButton model.status
         ]
 
 
-submitButton : Maybe String -> Html Msg
-submitButton idM =
-    case idM of
-        Just id ->
+submitButton : Status -> Html Msg
+submitButton status =
+    case status of
+        Editing id _ ->
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
                 ]
                 [ text "Save" ]
 
-        Nothing ->
+        Creating _ ->
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
@@ -218,17 +258,17 @@ submitButton idM =
                 [ text "Create" ]
 
 
-deleteButton : Maybe String -> Html Msg
-deleteButton idM =
-    case idM of
-        Just id ->
+deleteButton : Status -> Html Msg
+deleteButton status =
+    case status of
+        Editing id _ ->
             button
                 [ onClick ClickedDelete
                 , name "delete"
                 ]
                 [ text "Delete" ]
 
-        Nothing ->
+        Creating _ ->
             div [] []
 
 
@@ -262,7 +302,7 @@ selectPace paceM =
         )
 
 
-viewError : Maybe SubmitError -> Html Msg
+viewError : Maybe Error -> Html Msg
 viewError errorM =
     case errorM of
         Just error ->
@@ -272,7 +312,7 @@ viewError errorM =
             div [ class "error" ] []
 
 
-errorMessage : SubmitError -> String
+errorMessage : Error -> String
 errorMessage error =
     case error of
         EmptyFieldError field ->

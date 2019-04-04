@@ -1,10 +1,13 @@
-module Api exposing (getActivities, saveActivity, deleteActivity)
+module Api exposing (createActivity, deleteActivity, getActivities, saveActivity)
 
 import Activity exposing (Activity)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Random
 import Task exposing (Task)
+import Time exposing (Month(..), utc)
+import Uuid.Barebones exposing (uuidStringGenerator)
 
 
 getActivities : Task Http.Error (List Activity)
@@ -33,6 +36,25 @@ saveActivity activity =
         |> Task.andThen postActivities
 
 
+createActivity : (String -> Activity) -> Task Http.Error (List Activity)
+createActivity idToActivity =
+    let
+        addIdTask =
+            Time.now
+                |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
+                |> Task.map (Random.step uuidStringGenerator)
+                |> Task.map (\( uuid, _ ) -> idToActivity uuid)
+
+        saveTask activity =
+            getActivities
+                |> Task.map
+                    (\activities -> activity :: activities)
+                |> Task.andThen postActivities
+    in
+    addIdTask
+        |> Task.andThen saveTask
+
+
 deleteActivity : String -> Task Http.Error (List Activity)
 deleteActivity id =
     getActivities
@@ -42,6 +64,7 @@ deleteActivity id =
                     |> (\( _, others ) -> others)
             )
         |> Task.andThen postActivities
+
 
 
 -- INTERNAL
