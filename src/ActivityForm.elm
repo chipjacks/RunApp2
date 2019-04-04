@@ -190,19 +190,46 @@ view model =
             ]
             []
         , selectPace model.pace
-        , button
-            [ onClick ClickedSubmit
-            ]
-            [ text "Save" ]
+        , submitButton model.id
         , button
             [ onClick ClickedReset
+            , type_ "reset"
             ]
             [ text "Reset" ]
-        , button
-            [ onClick ClickedDelete
-            ]
-            [ text "Delete" ]
+        , deleteButton model.id
         ]
+
+
+submitButton : Maybe String -> Html Msg
+submitButton idM =
+    case idM of
+        Just id ->
+            button
+                [ onClick ClickedSubmit
+                , type_ "submit"
+                ]
+                [ text "Save" ]
+
+        Nothing ->
+            button
+                [ onClick ClickedSubmit
+                , type_ "submit"
+                ]
+                [ text "Create" ]
+
+
+deleteButton : Maybe String -> Html Msg
+deleteButton idM =
+    case idM of
+        Just id ->
+            button
+                [ onClick ClickedDelete
+                , name "delete"
+                ]
+                [ text "Delete" ]
+
+        Nothing ->
+            div [] []
 
 
 selectDateButton : Maybe Date -> Html Msg

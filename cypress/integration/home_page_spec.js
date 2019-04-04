@@ -4,7 +4,12 @@ context('The Home Page', function() {
   beforeEach(() => {
     cy.server()
     cy.route('GET', '**/b/**', 'fixture:activities.json').as('fetch')
-    cy.route('PUT', '**/b/**', 'fixture:activities_updated.json')
+    const postResponse = (xhr) => {
+      return {
+        data: { success: true, data: xhr.request.body }
+      }
+    }
+    cy.route( { method: 'PUT' , url: '**/b/**' , onResponse: postResponse })
   })
 
   describe('#calendar', function() {
@@ -60,7 +65,7 @@ context('The Home Page', function() {
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').get('input[name=duration]').type('120')
       cy.get('#activity').get('select[name=pace]').select('easy')
-      cy.get('#activity').contains('Save').click()
+      cy.get('#activity').get('button[type=submit]').click()
       cy.get('#activities').contains('Long Run Sunday')
     })
 
@@ -77,6 +82,19 @@ context('The Home Page', function() {
       cy.get('#activity').get('button[name=date]').should('contain', 'Select Date')
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').get('button[name=date]').should('contain', '2019-03-02')
+    })
+
+    it('deletes existing activities', function () {
+      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
+      cy.get('#activity').get('button[name=delete]').click()
+      cy.get('#activities').should('not.contain', 'Tempo Tuesday')
+    })
+
+    it('resets the form', function () {
+      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
+      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo Tuesday')
+      cy.get('#activity').get('button[type=reset]').click()
+      cy.get('#activity').get('input[name=description]').should('have.value', '')
     })
   })
 
