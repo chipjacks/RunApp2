@@ -36,12 +36,16 @@ type Msg
     | RequestDate
     | GotDate Date
     | ClickedSubmit
+    | ClickedReset
+    | ClickedDelete
     | GotSubmitResult (Result SubmitError (List Activity))
+    | GotDeleteResult (Result SubmitError (List Activity))
 
 
 type SubmitError
     = ApiError
     | EmptyFieldError String
+    | MissingIdError
 
 
 initNew : Model
@@ -132,7 +136,30 @@ update msg model =
             in
             ( initNew, Task.attempt GotSubmitResult saveActivityT )
 
+        ClickedReset ->
+            ( initNew, Cmd.none )
+
+        ClickedDelete ->
+            let
+                deleteActivityT =
+                    case model.id of
+                        Just id ->
+                            Api.deleteActivity id |> Task.mapError (\_ -> ApiError)
+
+                        Nothing ->
+                            Task.fail MissingIdError
+            in
+            ( initNew, Task.attempt GotDeleteResult deleteActivityT )
+
         GotSubmitResult result ->
+            case result of
+                Ok activities ->
+                    ( model, Cmd.none )
+
+                Err error ->
+                    ( { model | error = Just error }, Cmd.none )
+
+        GotDeleteResult result ->
             case result of
                 Ok activities ->
                     ( model, Cmd.none )
@@ -162,17 +189,19 @@ view model =
             , value (model.duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
             ]
             []
-        , Html.select [ onInput SelectedPace, name "pace", value (model.pace |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Pace") ] <|
-            Html.option [] [ Html.text "Pace" ]
-                :: List.map
-                    (\( paceStr, pace ) ->
-                        Html.option [] [ Html.text paceStr ]
-                    )
-                    Activity.pace.list
+        , selectPace model.pace
         , button
             [ onClick ClickedSubmit
             ]
             [ text "Save" ]
+        , button
+            [ onClick ClickedReset
+            ]
+            [ text "Reset" ]
+        , button
+            [ onClick ClickedDelete
+            ]
+            [ text "Delete" ]
         ]
 
 
@@ -188,6 +217,22 @@ selectDateButton dateM =
                     "Select Date"
     in
     button [ name "date", onClick RequestDate ] [ text content ]
+
+
+selectPace : Maybe Activity.Pace -> Html Msg
+selectPace paceM =
+    Html.select
+        [ onInput SelectedPace
+        , name "pace"
+        , value (paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Pace")
+        ]
+        (Html.option [] [ Html.text "Pace" ]
+            :: List.map
+                (\( paceStr, pace ) ->
+                    Html.option [] [ Html.text paceStr ]
+                )
+                Activity.pace.list
+        )
 
 
 viewError : Maybe SubmitError -> Html Msg

@@ -127,6 +127,9 @@ update msg model =
                         ActivityForm.GotSubmitResult (Ok activities) ->
                             { model | activities = Just activities }
 
+                        ActivityForm.GotDeleteResult (Ok activities) ->
+                            { model | activities = Just activities }
+
                         _ ->
                             model
 

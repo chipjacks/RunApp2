@@ -1,4 +1,4 @@
-module Api exposing (getActivities, saveActivity)
+module Api exposing (getActivities, saveActivity, deleteActivity)
 
 import Activity exposing (Activity)
 import Http
@@ -32,6 +32,16 @@ saveActivity activity =
             )
         |> Task.andThen postActivities
 
+
+deleteActivity : String -> Task Http.Error (List Activity)
+deleteActivity id =
+    getActivities
+        |> Task.map
+            (\activities ->
+                List.partition (\a -> a.id == id) activities
+                    |> (\( _, others ) -> others)
+            )
+        |> Task.andThen postActivities
 
 
 -- INTERNAL
