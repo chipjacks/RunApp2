@@ -1,6 +1,6 @@
 module ActivityForm exposing (Model, Msg(..), dateRequested, initEdit, initNew, selectDate, update, view)
 
-import Activity exposing (Activity, Minutes)
+import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
 import Api
 import Date exposing (Date)
@@ -19,7 +19,7 @@ import Task exposing (Task)
 
 type alias Model =
     { status : Status
-    , error : Maybe Error
+    , result : Result Error Activity
     }
 
 
@@ -64,20 +64,24 @@ type Error
 
 initNew : Model
 initNew =
-    Model (Creating (Form Nothing "" Nothing Nothing)) Nothing
+    Model (Creating (Form Nothing "" Nothing Nothing)) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
 initEdit activity =
     let
         form =
-            Form
-                (Just activity.date)
-                activity.description
-                (Just activity.duration)
-                (Just activity.pace)
+            case activity.details of
+                Activity.Run (Activity.Interval minutes pace) ->
+                    Form (Just activity.date) activity.description (Just minutes) (Just pace)
+
+                Activity.Other minutes ->
+                    Form (Just activity.date) activity.description (Just minutes) Nothing
+
+                _ ->
+                    Form (Just activity.date) activity.description Nothing Nothing
     in
-    Model (Editing activity.id form) Nothing
+    Model (Editing activity.id form) (Ok activity)
 
 
 toForm : Model -> Form
@@ -115,10 +119,12 @@ validateFieldExists fieldM fieldName =
             Err <| EmptyFieldError fieldName
 
 
-validate : Form -> Result Error ValidForm
+validate : Form -> Result Error Activity
 validate form =
     Result.map4
-        ValidForm
+        (\date description duration pace ->
+            Activity "" date description <| Run (Interval duration pace)
+        )
         (validateFieldExists form.date "date")
         (validateFieldExists (Just form.description) "description")
         (validateFieldExists form.duration "duration")
@@ -148,24 +154,21 @@ update msg model =
             updateForm (\form -> { form | date = Just date }) model
 
         ClickedSubmit ->
-            case validate (toForm model) of
-                Ok { date, description, duration, pace } ->
+            case model.result of
+                Ok activity ->
                     let
-                        activity id =
-                            Activity id date description duration pace
-
                         apiTask =
                             case model.status of
                                 Editing id form ->
-                                    Api.saveActivity (activity id)
+                                    Api.saveActivity { activity | id = id }
 
                                 Creating form ->
-                                    Api.createActivity activity
+                                    Api.createActivity (\id -> { activity | id = id })
                     in
                     ( initNew, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
                 Err error ->
-                    ( { model | error = Just error }, Cmd.none )
+                    ( { model | result = Err error }, Cmd.none )
 
         ClickedReset ->
             ( initNew, Cmd.none )
@@ -184,7 +187,7 @@ update msg model =
                     ( model, Cmd.none )
 
                 Err error ->
-                    ( { model | error = Just error }, Cmd.none )
+                    ( { model | result = Err error }, Cmd.none )
 
         GotDeleteResult result ->
             case result of
@@ -192,17 +195,17 @@ update msg model =
                     ( model, Cmd.none )
 
                 Err error ->
-                    ( { model | error = Just error }, Cmd.none )
+                    ( { model | result = Err error }, Cmd.none )
 
 
 updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
 updateForm transform model =
     case model.status of
         Creating form ->
-            ( { model | status = Creating (transform form) }, Cmd.none )
+            ( { model | status = Creating (transform form), result = validate form }, Cmd.none )
 
         Editing id form ->
-            ( { model | status = Editing id (transform form) }, Cmd.none )
+            ( { model | status = Editing id (transform form), result = validate form }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -214,13 +217,14 @@ view model =
     div [ id "activity", class "column", style "justify-content" "space-between" ]
         [ div [ class "row no-grow" ]
             [ div [ class "column" ]
-                [ viewError model.error
+                [ viewError model.result
                 , selectDateButton date
                 ]
             ]
         , div [ class "row no-grow" ]
             [ div [ class "column center", style "flex-grow" "1" ]
-                [ viewBlock pace duration ]
+                [ viewActivityShape model.result
+                ]
             , div [ class "column center", style "flex-grow" "3" ]
                 [ input
                     [ type_ "text"
@@ -318,19 +322,24 @@ selectPace paceM =
         )
 
 
-viewError : Maybe Error -> Html Msg
-viewError errorM =
-    case errorM of
-        Just error ->
+viewError : Result Error Activity -> Html Msg
+viewError errorR =
+    case errorR of
+        Err error ->
             div [ class "error" ] [ text <| errorMessage error ]
 
-        Nothing ->
+        _ ->
             div [ class "error" ] []
 
 
-viewBlock : Maybe Activity.Pace -> Maybe Activity.Minutes -> Html msg
-viewBlock paceM durationM =
-    ActivityShape.init paceM durationM |> ActivityShape.view
+viewActivityShape : Result Error Activity -> Html msg
+viewActivityShape activityR =
+    case activityR of
+        Ok activity ->
+            ActivityShape.view activity.details
+
+        _ ->
+            ActivityShape.viewDefault
 
 
 errorMessage : Error -> String

@@ -88,7 +88,7 @@ viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
     div [ class "row", onClick (editActivity activity) ]
         [ div [ class "column center", style "flex-grow" "1" ]
-            [ ActivityShape.init (Just activity.pace) (Just activity.duration) |> ActivityShape.view
+            [ ActivityShape.view activity.details
             ]
         , div [ class "column center", style "flex-grow" "3" ]
             [ text activity.description ]

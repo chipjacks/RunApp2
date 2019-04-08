@@ -1,13 +1,13 @@
-module ActivityShape exposing (Model, init, view)
+module ActivityShape exposing (view, viewDefault)
 
-import Activity exposing (Pace(..))
+import Activity exposing (Details(..), Interval(..), Pace(..))
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 
-type Model
+type Shape
     = Block Color { width : Int, height : Int }
     | Circle Color
 
@@ -16,15 +16,30 @@ type Color
     = Green
 
 
-init : Maybe Activity.Pace -> Maybe Activity.Minutes -> Model
-init paceM durationM =
-    Maybe.map2 (\pace duration -> Block Green { width = toWidth pace, height = toHeight duration }) paceM durationM
-        |> Maybe.withDefault (Circle Green)
+view : Details -> Html msg
+view details =
+    case details of
+        Run (Interval duration pace) ->
+            Block Green { width = toWidth pace, height = toHeight duration }
+                |> viewShape
+
+        Intervals intervals ->
+            Circle Green
+                |> viewShape
+
+        Other duration ->
+            Circle Green
+                |> viewShape
 
 
-view : Model -> Html msg
-view model =
-    case model of
+viewDefault : Html msg
+viewDefault =
+    Circle Green |> viewShape
+
+
+viewShape : Shape -> Html msg
+viewShape shape =
+    case shape of
         Block color { width, height } ->
             div [ class "row no-grow" ]
                 [ div

@@ -1,4 +1,4 @@
-module Activity exposing (Activity, Minutes, Pace(..), decoder, encoder, pace)
+module Activity exposing (Activity, Details(..), Interval(..), Minutes, Pace(..), decoder, encoder, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
@@ -10,9 +10,18 @@ type alias Activity =
     { id : String
     , date : Date
     , description : String
-    , duration : Minutes
-    , pace : Pace
+    , details : Details
     }
+
+
+type Details
+    = Run Interval
+    | Intervals (List Interval)
+    | Other Minutes
+
+
+type Interval
+    = Interval Minutes Pace
 
 
 type alias Minutes =
@@ -81,12 +90,25 @@ pace =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map5 Activity
+    Decode.map4 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
-        (Decode.field "duration" Decode.int)
-        (Decode.field "pace" pace.decoder)
+        detailsDecoder
+
+
+detailsDecoder : Decode.Decoder Details
+detailsDecoder =
+    Decode.oneOf
+        [ Decode.map Run <| Decode.field "run" intervalDecoder
+        , Decode.map Intervals <| Decode.field "intervals" (Decode.list intervalDecoder)
+        , Decode.map Other <| Decode.field "other" (Decode.field "duration" Decode.int)
+        ]
+
+
+intervalDecoder : Decode.Decoder Interval
+intervalDecoder =
+    Decode.map2 Interval (Decode.field "duration" Decode.int) (Decode.field "pace" pace.decoder)
 
 
 encoder : Activity -> Encode.Value
@@ -95,9 +117,31 @@ encoder activity =
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "duration", Encode.int activity.duration )
-        , ( "pace", pace.encode activity.pace )
+        , detailsEncoder activity.details
         ]
+
+
+detailsEncoder : Details -> ( String, Encode.Value )
+detailsEncoder details =
+    case details of
+        Run interval ->
+            ( "run", intervalEncoder interval )
+
+        Intervals intervals ->
+            ( "intervals", Encode.list intervalEncoder intervals )
+
+        Other duration ->
+            ( "other", Encode.object [ ( "duration", Encode.int duration ) ] )
+
+
+intervalEncoder : Interval -> Encode.Value
+intervalEncoder interval =
+    case interval of
+        Interval duration pace_ ->
+            Encode.object
+                [ ( "duration", Encode.int duration )
+                , ( "pace", pace.encode pace_ )
+                ]
 
 
 dateDecoder : Decode.Decoder Date

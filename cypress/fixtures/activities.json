@@ -3,21 +3,43 @@
     "id": "34098dd9-37a1-4b5b-89fc-7f6aefe2c4cb",
     "date": "2019-02-27",
     "description": "Fartlek",
-    "duration": 55,
-    "pace": "Brisk"
+    "intervals":
+      [ { "duration": 3, "pace": "Brisk" }
+      , { "duration": 2, "pace": "Easy" }
+      , { "duration": 3, "pace": "Brisk" }
+      , { "duration": 2, "pace": "Easy" }
+      , { "duration": 3, "pace": "Brisk" }
+      , { "duration": 2, "pace": "Easy" }
+      , { "duration": 3, "pace": "Brisk" }
+      , { "duration": 2, "pace": "Easy" }
+      , { "duration": 3, "pace": "Brisk" }
+      , { "duration": 2, "pace": "Easy" }
+      ]
   },
   {
     "id": "48cce67d-a40b-4112-be49-a49cb9897201",
     "date": "2019-02-28",
     "description": "Recovery",
-    "duration": 60,
-    "pace": "Easy"
+    "run": {
+      "duration": 60,
+      "pace": "Easy"
+    }
   },
   {
     "id": "22ad68c5-56a7-424b-8258-9df96ea88581",
     "date": "2019-03-01",
     "description": "Tempo",
-    "duration": 65,
-    "pace": "Lactate Threshold"
+    "run": {
+      "duration": 65,
+      "pace": "Lactate Threshold"
+    }
+  },
+  {
+    "id": "1234asdf-56a7-424b-8258-9df96ea88581",
+    "date": "2019-03-02",
+    "description": "Swim",
+    "other": {
+      "duration": 30
+    }
   }
 ]
