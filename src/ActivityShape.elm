@@ -57,10 +57,28 @@ toWidth : Activity.Pace -> Int
 toWidth pace =
     case pace of
         Easy ->
-            30
+            10
 
         Moderate ->
+            20
+
+        SteadyState ->
+            30
+
+        Brisk ->
+            40
+
+        AerobicThreshold ->
+            50
+
+        LactateThreshold ->
             60
 
-        Hard ->
+        Groove ->
+            70
+
+        VO2Max ->
+            80
+
+        Fast ->
             90
