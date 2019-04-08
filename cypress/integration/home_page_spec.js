@@ -96,6 +96,11 @@ context('The Home Page', function() {
       cy.get('#activity').get('button[type=reset]').click()
       cy.get('#activity').get('input[name=description]').should('have.value', '')
     })
+
+    it('displays errors', function() {
+      cy.get('#activity').get('button[type=submit]').click()
+      cy.get('#activity').contains('div.error', 'Please fill in duration')
+    })
   })
 
   describe('resizing', function() {

@@ -10,6 +10,7 @@ html, body { height: 100%; margin: 0 }
 /* FLEXBOX PARENTS */
 .row { display: flex; flex-direction: row; flex: 1 1 0; }
 .column { display: flex; flex-direction: column; flex: 1 1 0; }
+.center { justify-content: center; }
 
 /* FLEXBOX CHILDREN */
 .no-grow { flex: 0 0 auto; }
@@ -21,10 +22,7 @@ html, body { height: 100%; margin: 0 }
 body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
 a { text-decoration: none; }
 
-
-/*
- * DROPDOWN
-*/
+/* DROPDOWN */
 
 .dropdown { position: relative; display: inline-block; }
 

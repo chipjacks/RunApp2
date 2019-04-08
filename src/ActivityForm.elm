@@ -1,10 +1,11 @@
 module ActivityForm exposing (Model, Msg(..), dateRequested, initEdit, initNew, selectDate, update, view)
 
 import Activity exposing (Activity, Minutes)
+import ActivityShape
 import Api
 import Date exposing (Date)
 import Html exposing (Html, button, div, input, text)
-import Html.Attributes exposing (class, id, name, placeholder, type_, value)
+import Html.Attributes exposing (class, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
 import Task exposing (Task)
@@ -210,33 +211,48 @@ view model =
         { date, description, duration, pace } =
             toForm model
     in
-    div [ class "column", id "activity" ]
-        [ viewError model.error
-        , selectDateButton date
-        , input
-            [ type_ "text"
-            , placeholder "Description"
-            , onInput EditedDescription
-            , name "description"
-            , value description
+    div [ id "activity", class "column", style "justify-content" "space-between" ]
+        [ div [ class "row no-grow" ]
+            [ div [ class "column" ]
+                [ viewError model.error
+                , selectDateButton date
+                ]
             ]
-            []
-        , input
-            [ type_ "number"
-            , placeholder "Duration"
-            , onInput EditedDuration
-            , name "duration"
-            , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+        , div [ class "row no-grow" ]
+            [ div [ class "column center", style "flex-grow" "1" ]
+                [ viewBlock pace duration ]
+            , div [ class "column center", style "flex-grow" "2" ]
+                [ input
+                    [ type_ "text"
+                    , placeholder "Description"
+                    , onInput EditedDescription
+                    , name "description"
+                    , value description
+                    ]
+                    []
+                ]
             ]
-            []
-        , selectPace pace
-        , submitButton model.status
-        , button
-            [ onClick ClickedReset
-            , type_ "reset"
+        , div [ class "row no-grow" ]
+            [ div [ class "column" ]
+                [ input
+                    [ type_ "number"
+                    , placeholder "Duration"
+                    , onInput EditedDuration
+                    , name "duration"
+                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                    ]
+                    []
+                , selectPace pace
+                , submitButton model.status
+                , button
+                    [ onClick ClickedReset
+                    , type_ "reset"
+                    ]
+                    [ text "Reset" ]
+
+                --TODO: , deleteButton model.status
+                ]
             ]
-            [ text "Reset" ]
-        , deleteButton model.status
         ]
 
 
@@ -310,6 +326,11 @@ viewError errorM =
 
         Nothing ->
             div [ class "error" ] []
+
+
+viewBlock : Maybe Activity.Pace -> Maybe Activity.Minutes -> Html msg
+viewBlock paceM durationM =
+    ActivityShape.init paceM durationM |> ActivityShape.view
 
 
 errorMessage : Error -> String

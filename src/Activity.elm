@@ -1,4 +1,4 @@
-module Activity exposing (Activity, Minutes, Pace, decoder, encoder, pace)
+module Activity exposing (Activity, Minutes, Pace(..), decoder, encoder, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
