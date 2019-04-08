@@ -1,6 +1,7 @@
 module ActivityList exposing (handleScroll, view)
 
 import Activity exposing (Activity)
+import ActivityShape
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, div, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
@@ -55,7 +56,7 @@ viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
     div [ class "row" ]
         [ div [ class "column" ]
-            [ div [ class "row" ]
+            [ div [ class "row", style "margin-top" "2em", style "margin-bottom" "1em" ]
                 [ a [ href (Link.toCalendar (Just date)) ]
                     [ text (Date.format "E MMM d" date) ]
                 ]
@@ -80,9 +81,15 @@ listDays date =
 viewActivities : List Activity -> (Activity -> msg) -> Html msg
 viewActivities activities editActivity =
     div [ class "column" ]
-        (List.map
-            (\a ->
-                div [ class "row", onClick (editActivity a) ] [ text a.description ]
-            )
-            activities
-        )
+        (List.map (viewActivity editActivity) activities)
+
+
+viewActivity : (Activity -> msg) -> Activity -> Html msg
+viewActivity editActivity activity =
+    div [ class "row", onClick (editActivity activity) ]
+        [ div [ class "column center", style "flex-grow" "1" ]
+            [ ActivityShape.init (Just activity.pace) (Just activity.duration) |> ActivityShape.view
+            ]
+        , div [ class "column center", style "flex-grow" "3" ]
+            [ text activity.description ]
+        ]

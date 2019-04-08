@@ -221,7 +221,7 @@ view model =
         , div [ class "row no-grow" ]
             [ div [ class "column center", style "flex-grow" "1" ]
                 [ viewBlock pace duration ]
-            , div [ class "column center", style "flex-grow" "2" ]
+            , div [ class "column center", style "flex-grow" "3" ]
                 [ input
                     [ type_ "text"
                     , placeholder "Description"

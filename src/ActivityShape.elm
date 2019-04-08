@@ -50,7 +50,7 @@ colorString color =
 
 toHeight : Activity.Minutes -> Int
 toHeight duration =
-    duration // 5
+    duration // 10
 
 
 toWidth : Activity.Pace -> Int
