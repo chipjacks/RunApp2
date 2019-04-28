@@ -202,10 +202,10 @@ updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
 updateForm transform model =
     case model.status of
         Creating form ->
-            ( { model | status = Creating (transform form), result = validate form }, Cmd.none )
+            ( { model | status = Creating (transform form), result = validate (transform form) }, Cmd.none )
 
         Editing id form ->
-            ( { model | status = Editing id (transform form), result = validate form }, Cmd.none )
+            ( { model | status = Editing id (transform form), result = validate (transform form) }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -217,8 +217,8 @@ view model =
     div [ id "activity", class "column", style "justify-content" "space-between" ]
         [ div [ class "row no-grow" ]
             [ div [ class "column" ]
-                [ viewError model.result
-                , selectDateButton date
+                [ selectDateButton date
+                , viewError model.result
                 ]
             ]
         , div [ class "row no-grow" ]
@@ -226,28 +226,33 @@ view model =
                 [ viewActivityShape model.result
                 ]
             , div [ class "column center", style "flex-grow" "3" ]
-                [ input
-                    [ type_ "text"
-                    , placeholder "Description"
-                    , onInput EditedDescription
-                    , name "description"
-                    , value description
+                [ div [ class "row no-grow" ]
+                    [ input
+                        [ type_ "text"
+                        , placeholder "Description"
+                        , onInput EditedDescription
+                        , name "description"
+                        , value description
+                        , style "width" "100%"
+                        ]
+                        []
                     ]
-                    []
+                , div [ class "row no-grow" ]
+                    [ input
+                        [ type_ "number"
+                        , placeholder "Duration"
+                        , onInput EditedDuration
+                        , name "duration"
+                        , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                        ]
+                        []
+                    , selectPace pace
+                    ]
                 ]
             ]
         , div [ class "row no-grow" ]
             [ div [ class "column" ]
-                [ input
-                    [ type_ "number"
-                    , placeholder "Duration"
-                    , onInput EditedDuration
-                    , name "duration"
-                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                    ]
-                    []
-                , selectPace pace
-                , submitButton model.status
+                [ submitButton model.status
                 , button
                     [ onClick ClickedReset
                     , type_ "reset"

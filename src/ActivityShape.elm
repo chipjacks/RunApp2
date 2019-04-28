@@ -8,7 +8,7 @@ import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 
 type Shape
-    = Block Color { width : Int, height : Int }
+    = Block Color { width : Int, height : Float }
     | Circle Color
 
 
@@ -44,7 +44,7 @@ viewShape shape =
             div [ class "row no-grow" ]
                 [ div
                     [ style "width" <| String.fromInt width ++ "%"
-                    , style "height" <| String.fromInt height ++ "em"
+                    , style "height" <| String.fromFloat height ++ "em"
                     , style "background-color" (colorString color)
                     ]
                     []
@@ -63,9 +63,9 @@ colorString color =
             "lightgreen"
 
 
-toHeight : Activity.Minutes -> Int
+toHeight : Activity.Minutes -> Float
 toHeight duration =
-    duration // 10
+    toFloat duration / 10
 
 
 toWidth : Activity.Pace -> Int
