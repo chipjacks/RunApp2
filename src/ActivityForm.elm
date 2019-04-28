@@ -25,7 +25,7 @@ type alias Model =
 
 type Status
     = Creating Form
-    | Editing String Form
+    | Editing Activity.Id Form
 
 
 type alias Form =
@@ -33,14 +33,6 @@ type alias Form =
     , description : String
     , duration : Maybe Minutes
     , pace : Maybe Activity.Pace
-    }
-
-
-type alias ValidForm =
-    { date : Date
-    , description : String
-    , duration : Minutes
-    , pace : Activity.Pace
     }
 
 

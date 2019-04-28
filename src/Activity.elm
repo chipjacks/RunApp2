@@ -1,4 +1,4 @@
-module Activity exposing (Activity, Details(..), Interval(..), Minutes, Pace(..), decoder, encoder, pace)
+module Activity exposing (Activity, Details(..), Id, Interval(..), Minutes, Pace(..), decoder, encoder, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
@@ -7,11 +7,15 @@ import Json.Encode as Encode
 
 
 type alias Activity =
-    { id : String
+    { id : Id
     , date : Date
     , description : String
     , details : Details
     }
+
+
+type alias Id =
+    String
 
 
 type Details

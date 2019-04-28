@@ -36,7 +36,7 @@ saveActivity activity =
         |> Task.andThen postActivities
 
 
-createActivity : (String -> Activity) -> Task Http.Error (List Activity)
+createActivity : (Activity.Id -> Activity) -> Task Http.Error (List Activity)
 createActivity idToActivity =
     let
         addIdTask =
@@ -55,7 +55,7 @@ createActivity idToActivity =
         |> Task.andThen saveTask
 
 
-deleteActivity : String -> Task Http.Error (List Activity)
+deleteActivity : Activity.Id -> Task Http.Error (List Activity)
 deleteActivity id =
     getActivities
         |> Task.map
