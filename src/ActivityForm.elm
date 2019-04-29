@@ -19,25 +19,32 @@ import Task exposing (Task)
 
 type alias Model =
     { status : Status
+    , form : Form
     , result : Result Error Activity
     }
 
 
 type Status
-    = Creating Form
-    | Editing Activity.Id Form
+    = Creating
+    | Editing Activity.Id
 
 
 type alias Form =
     { date : Maybe Date
     , description : String
-    , duration : Maybe Minutes
-    , pace : Maybe Activity.Pace
+    , details : DetailsForm
     }
+
+
+type DetailsForm
+    = RunForm { duration : Maybe Minutes, pace : Maybe Activity.Pace }
+    | IntervalsForm (List { duration : Maybe Minutes, pace : Maybe Activity.Pace })
+    | OtherForm { duration : Maybe Minutes }
 
 
 type Msg
     = EditedDescription String
+    | SelectedDetails String
     | EditedDuration String
     | SelectedPace String
     | RequestDate
@@ -56,7 +63,7 @@ type Error
 
 initNew : Model
 initNew =
-    Model (Creating (Form Nothing "" Nothing Nothing)) (Err (EmptyFieldError ""))
+    Model Creating (Form Nothing "" (RunForm { duration = Nothing, pace = Nothing })) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -65,30 +72,27 @@ initEdit activity =
         form =
             case activity.details of
                 Activity.Run (Activity.Interval minutes pace) ->
-                    Form (Just activity.date) activity.description (Just minutes) (Just pace)
+                    Form (Just activity.date) activity.description <|
+                        RunForm { duration = Just minutes, pace = Just pace }
+
+                Activity.Intervals intervals ->
+                    Form (Just activity.date) activity.description <|
+                        IntervalsForm
+                            (List.map
+                                (\(Interval minutes pace) -> { duration = Just minutes, pace = Just pace })
+                                intervals
+                            )
 
                 Activity.Other minutes ->
-                    Form (Just activity.date) activity.description (Just minutes) Nothing
-
-                _ ->
-                    Form (Just activity.date) activity.description Nothing Nothing
+                    Form (Just activity.date) activity.description <|
+                        OtherForm { duration = Just minutes }
     in
-    Model (Editing activity.id form) (Ok activity)
-
-
-toForm : Model -> Form
-toForm model =
-    case model.status of
-        Creating form ->
-            form
-
-        Editing _ form ->
-            form
+    Model (Editing activity.id) form (Ok activity)
 
 
 dateRequested : Model -> Bool
 dateRequested model =
-    case (toForm model).date of
+    case model.form.date of
         Just date ->
             False
 
@@ -113,14 +117,29 @@ validateFieldExists fieldM fieldName =
 
 validate : Form -> Result Error Activity
 validate form =
-    Result.map4
-        (\date description duration pace ->
-            Activity "" date description <| Run (Interval duration pace)
+    Result.map3
+        (\date description details ->
+            Activity "" date description details
         )
         (validateFieldExists form.date "date")
         (validateFieldExists (Just form.description) "description")
-        (validateFieldExists form.duration "duration")
-        (validateFieldExists form.pace "pace")
+        (validateDetails form.details)
+
+
+validateDetails : DetailsForm -> Result Error Activity.Details
+validateDetails detailsForm =
+    case detailsForm of
+        RunForm { duration, pace } ->
+            Result.map2
+                (\duration_ pace_ -> Activity.Run (Activity.Interval duration_ pace_))
+                (validateFieldExists duration "duration")
+                (validateFieldExists pace "pace")
+
+        OtherForm { duration } ->
+            Result.map Activity.Other (validateFieldExists duration "duration")
+
+        IntervalsForm intervals ->
+            Debug.todo "intervals"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -129,15 +148,44 @@ update msg model =
         EditedDescription desc ->
             updateForm (\form -> { form | description = desc }) model
 
+        SelectedDetails str ->
+            let
+                details =
+                    case str of
+                        "Run" ->
+                            RunForm { duration = Nothing, pace = Nothing }
+
+                        "Intervals" ->
+                            IntervalsForm []
+
+                        _ ->
+                            OtherForm { duration = Nothing }
+            in
+            updateForm (\form -> { form | details = details }) model
+
         EditedDuration str ->
             let
-                minutes =
-                    String.toInt str
+                updatedDetails =
+                    case model.form.details of
+                        RunForm runForm ->
+                            RunForm { runForm | duration = String.toInt str }
+
+                        _ ->
+                            model.form.details
             in
-            updateForm (\form -> { form | duration = minutes }) model
+            updateForm (\form -> { form | details = updatedDetails }) model
 
         SelectedPace str ->
-            updateForm (\form -> { form | pace = Activity.pace.fromString str }) model
+            let
+                updatedDetails =
+                    case model.form.details of
+                        RunForm runForm ->
+                            RunForm { runForm | pace = Activity.pace.fromString str }
+
+                        _ ->
+                            model.form.details
+            in
+            updateForm (\form -> { form | details = updatedDetails }) model
 
         RequestDate ->
             updateForm (\form -> { form | date = Nothing }) model
@@ -151,10 +199,10 @@ update msg model =
                     let
                         apiTask =
                             case model.status of
-                                Editing id form ->
+                                Editing id ->
                                     Api.saveActivity { activity | id = id }
 
-                                Creating form ->
+                                Creating ->
                                     Api.createActivity (\id -> { activity | id = id })
                     in
                     ( initNew, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
@@ -167,7 +215,7 @@ update msg model =
 
         ClickedDelete ->
             case model.status of
-                Editing id _ ->
+                Editing id ->
                     ( initNew, Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError)) )
 
                 _ ->
@@ -192,19 +240,29 @@ update msg model =
 
 updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
 updateForm transform model =
-    case model.status of
-        Creating form ->
-            ( { model | status = Creating (transform form), result = validate (transform form) }, Cmd.none )
-
-        Editing id form ->
-            ( { model | status = Editing id (transform form), result = validate (transform form) }, Cmd.none )
+    let
+        updatedForm =
+            transform model.form
+    in
+    ( { model | form = updatedForm, result = validate updatedForm }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
     let
-        { date, description, duration, pace } =
-            toForm model
+        { date, description, details } =
+            model.form
+
+        detailsFormType =
+            case model.form.details of
+                RunForm _ ->
+                    "Run"
+
+                IntervalsForm _ ->
+                    "Intervals"
+
+                OtherForm _ ->
+                    "Other"
     in
     div [ id "activity", class "column", style "justify-content" "space-between" ]
         [ div [ class "row no-grow" ]
@@ -228,18 +286,17 @@ view model =
                         , style "width" "100%"
                         ]
                         []
-                    ]
-                , div [ class "row no-grow" ]
-                    [ input
-                        [ type_ "number"
-                        , placeholder "Duration"
-                        , onInput EditedDuration
-                        , name "duration"
-                        , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                    , Html.select
+                        [ onInput SelectedDetails
+                        , name "details"
+                        , value detailsFormType
                         ]
-                        []
-                    , selectPace pace
+                        [ Html.option [] [ Html.text "Run" ]
+                        , Html.option [] [ Html.text "Intervals" ]
+                        , Html.option [] [ Html.text "Other" ]
+                        ]
                     ]
+                , viewDetailsForm details
                 ]
             ]
         , div [ class "row no-grow" ]
@@ -257,17 +314,49 @@ view model =
         ]
 
 
+viewDetailsForm : DetailsForm -> Html Msg
+viewDetailsForm detailsForm =
+    case detailsForm of
+        RunForm { duration, pace } ->
+            div [ class "row no-grow" ]
+                [ input
+                    [ type_ "number"
+                    , placeholder "Duration"
+                    , onInput EditedDuration
+                    , name "duration"
+                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                    ]
+                    []
+                , selectPace pace
+                ]
+
+        OtherForm { duration } ->
+            div [ class "row no-grow" ]
+                [ input
+                    [ type_ "number"
+                    , placeholder "Duration"
+                    , onInput EditedDuration
+                    , name "duration"
+                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                    ]
+                    []
+                ]
+
+        IntervalsForm intervals ->
+            Debug.todo "intervals"
+
+
 submitButton : Status -> Html Msg
 submitButton status =
     case status of
-        Editing id _ ->
+        Editing id ->
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
                 ]
                 [ text "Save" ]
 
-        Creating _ ->
+        Creating ->
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
@@ -278,14 +367,14 @@ submitButton status =
 deleteButton : Status -> Html Msg
 deleteButton status =
     case status of
-        Editing id _ ->
+        Editing id ->
             button
                 [ onClick ClickedDelete
                 , name "delete"
                 ]
                 [ text "Delete" ]
 
-        Creating _ ->
+        Creating ->
             div [] []
 
 
