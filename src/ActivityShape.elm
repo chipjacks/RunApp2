@@ -56,10 +56,10 @@ viewShape shape =
         Circle color { height } ->
             div [ class "row no-grow" ]
                 [ div
-                    [ style "width" "1em"
+                    [ style "width" "0.5em"
                     , style "height" <| String.fromFloat height ++ "em"
                     , style "background-color" (colorString color)
-                    , style "border-radius" "0.5em"
+                    , style "border-radius" "0.25em"
                     ]
                     []
                 ]

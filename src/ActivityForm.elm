@@ -3,6 +3,7 @@ module ActivityForm exposing (Model, Msg(..), dateRequested, initEdit, initNew, 
 import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
 import Api
+import Array exposing (Array)
 import Date exposing (Date)
 import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, id, name, placeholder, style, type_, value)
@@ -38,7 +39,7 @@ type alias Form =
 
 type DetailsForm
     = RunForm { duration : Maybe Minutes, pace : Maybe Activity.Pace }
-    | IntervalsForm (List { duration : Maybe Minutes, pace : Maybe Activity.Pace })
+    | IntervalsForm (Array { duration : Maybe Minutes, pace : Maybe Activity.Pace })
     | OtherForm { duration : Maybe Minutes }
 
 
@@ -47,6 +48,8 @@ type Msg
     | SelectedDetails String
     | EditedDuration String
     | SelectedPace String
+    | EditedIntervalDuration Int String
+    | SelectedIntervalPace Int String
     | RequestDate
     | GotDate Date
     | ClickedSubmit
@@ -78,9 +81,10 @@ initEdit activity =
                 Activity.Intervals intervals ->
                     Form (Just activity.date) activity.description <|
                         IntervalsForm
-                            (List.map
-                                (\(Interval minutes pace) -> { duration = Just minutes, pace = Just pace })
-                                intervals
+                            (Array.fromList <|
+                                List.map
+                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = Just pace })
+                                    intervals
                             )
 
                 Activity.Other minutes ->
@@ -139,7 +143,19 @@ validateDetails detailsForm =
             Result.map Activity.Other (validateFieldExists duration "duration")
 
         IntervalsForm intervals ->
-            Debug.todo "intervals"
+            Array.foldr
+                (\{ duration, pace } res ->
+                    Result.map3
+                        (\intervals_ duration_ pace_ ->
+                            Activity.Interval duration_ pace_ :: intervals_
+                        )
+                        res
+                        (validateFieldExists duration "duration")
+                        (validateFieldExists pace "pace")
+                )
+                (Ok [])
+                intervals
+                |> Result.map Activity.Intervals
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -156,7 +172,7 @@ update msg model =
                             RunForm { duration = Nothing, pace = Nothing }
 
                         "Intervals" ->
-                            IntervalsForm []
+                            IntervalsForm Array.empty
 
                         _ ->
                             OtherForm { duration = Nothing }
@@ -169,6 +185,41 @@ update msg model =
                     case model.form.details of
                         RunForm runForm ->
                             RunForm { runForm | duration = String.toInt str }
+
+                        OtherForm otherForm ->
+                            OtherForm { otherForm | duration = String.toInt str }
+
+                        _ ->
+                            model.form.details
+            in
+            updateForm (\form -> { form | details = updatedDetails }) model
+
+        EditedIntervalDuration index str ->
+            let
+                updatedDetails =
+                    case model.form.details of
+                        IntervalsForm intervals ->
+                            Array.get index intervals
+                                |> Maybe.map (\interval -> { interval | duration = String.toInt str })
+                                |> Maybe.map (\interval -> Array.set index interval intervals)
+                                |> Maybe.map IntervalsForm
+                                |> Maybe.withDefault model.form.details
+
+                        _ ->
+                            model.form.details
+            in
+            updateForm (\form -> { form | details = updatedDetails }) model
+
+        SelectedIntervalPace index str ->
+            let
+                updatedDetails =
+                    case model.form.details of
+                        IntervalsForm intervals ->
+                            Array.get index intervals
+                                |> Maybe.map (\interval -> { interval | pace = Activity.pace.fromString str })
+                                |> Maybe.map (\interval -> Array.set index interval intervals)
+                                |> Maybe.map IntervalsForm
+                                |> Maybe.withDefault model.form.details
 
                         _ ->
                             model.form.details
@@ -269,14 +320,7 @@ view model =
             [ div [ class "column" ]
                 [ selectDateButton date
                 , viewError model.result
-                ]
-            ]
-        , div [ class "row no-grow" ]
-            [ div [ class "column center", style "flex-grow" "1" ]
-                [ viewActivityShape model.result
-                ]
-            , div [ class "column center", style "flex-grow" "3" ]
-                [ div [ class "row no-grow" ]
+                , div [ class "row no-grow" ]
                     [ input
                         [ type_ "text"
                         , placeholder "Description"
@@ -296,7 +340,14 @@ view model =
                         , Html.option [] [ Html.text "Other" ]
                         ]
                     ]
-                , viewDetailsForm details
+                ]
+            ]
+        , div [ class "row no-grow" ]
+            [ div [ class "column center", style "flex-grow" "1" ]
+                [ viewActivityShape model.result
+                ]
+            , div [ class "column center", style "flex-grow" "3" ]
+                [ viewDetailsForm details
                 ]
             ]
         , div [ class "row no-grow" ]
@@ -327,7 +378,7 @@ viewDetailsForm detailsForm =
                     , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
                     ]
                     []
-                , selectPace pace
+                , selectPace SelectedPace pace
                 ]
 
         OtherForm { duration } ->
@@ -343,7 +394,26 @@ viewDetailsForm detailsForm =
                 ]
 
         IntervalsForm intervals ->
-            Debug.todo "intervals"
+            div [ class "column" ] <|
+                Array.toList <|
+                    Array.indexedMap
+                        (\index { duration, pace } -> viewIntervalForm index duration pace)
+                        intervals
+
+
+viewIntervalForm : Int -> Maybe Minutes -> Maybe Activity.Pace -> Html Msg
+viewIntervalForm index durationM paceM =
+    div [ class "row no-grow" ]
+        [ input
+            [ type_ "number"
+            , placeholder "Duration"
+            , onInput (EditedIntervalDuration index)
+            , name "duration"
+            , value (durationM |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            ]
+            []
+        , selectPace (SelectedIntervalPace index) paceM
+        ]
 
 
 submitButton : Status -> Html Msg
@@ -392,10 +462,10 @@ selectDateButton dateM =
     button [ name "date", onClick RequestDate ] [ text content ]
 
 
-selectPace : Maybe Activity.Pace -> Html Msg
-selectPace paceM =
+selectPace : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
+selectPace msg paceM =
     Html.select
-        [ onInput SelectedPace
+        [ onInput msg
         , name "pace"
         , value (paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Pace")
         ]
