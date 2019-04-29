@@ -9,11 +9,12 @@ import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 type Shape
     = Block Color { width : Int, height : Float }
-    | Circle Color
+    | Circle Color { height : Float }
 
 
 type Color
     = Green
+    | Grey
 
 
 view : Details -> Html msg
@@ -24,17 +25,19 @@ view details =
                 |> viewShape
 
         Intervals intervals ->
-            Circle Green
-                |> viewShape
+            div [ class "column" ] <|
+                List.map
+                    (\(Interval duration pace) -> Block Green { width = toWidth pace, height = toHeight duration } |> viewShape)
+                    intervals
 
         Other duration ->
-            Circle Green
+            Circle Grey { height = toHeight duration }
                 |> viewShape
 
 
 viewDefault : Html msg
 viewDefault =
-    Circle Green |> viewShape
+    Circle Grey { height = 1 } |> viewShape
 
 
 viewShape : Shape -> Html msg
@@ -50,9 +53,15 @@ viewShape shape =
                     []
                 ]
 
-        Circle color ->
+        Circle color { height } ->
             div [ class "row no-grow" ]
-                [ svg [ width "30", height "30" ] [ circle [ cx "15", cy "15", r "10", fill (colorString color) ] [] ]
+                [ div
+                    [ style "width" "1em"
+                    , style "height" <| String.fromFloat height ++ "em"
+                    , style "background-color" (colorString color)
+                    , style "border-radius" "0.5em"
+                    ]
+                    []
                 ]
 
 
@@ -60,7 +69,10 @@ colorString : Color -> String
 colorString color =
     case color of
         Green ->
-            "lightgreen"
+            "limegreen"
+
+        Grey ->
+            "gray"
 
 
 toHeight : Activity.Minutes -> Float
