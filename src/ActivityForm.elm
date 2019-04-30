@@ -38,9 +38,15 @@ type alias Form =
 
 
 type DetailsForm
-    = RunForm { duration : Maybe Minutes, pace : Maybe Activity.Pace }
-    | IntervalsForm (Array { duration : Maybe Minutes, pace : Maybe Activity.Pace })
+    = RunForm IntervalForm
+    | IntervalsForm (Array IntervalForm)
     | OtherForm { duration : Maybe Minutes }
+
+
+type alias IntervalForm =
+    { duration : Maybe Minutes
+    , pace : Maybe Activity.Pace
+    }
 
 
 type Msg
@@ -194,38 +200,6 @@ update msg model =
             in
             updateForm (\form -> { form | details = updatedDetails }) model
 
-        EditedIntervalDuration index str ->
-            let
-                updatedDetails =
-                    case model.form.details of
-                        IntervalsForm intervals ->
-                            Array.get index intervals
-                                |> Maybe.map (\interval -> { interval | duration = String.toInt str })
-                                |> Maybe.map (\interval -> Array.set index interval intervals)
-                                |> Maybe.map IntervalsForm
-                                |> Maybe.withDefault model.form.details
-
-                        _ ->
-                            model.form.details
-            in
-            updateForm (\form -> { form | details = updatedDetails }) model
-
-        SelectedIntervalPace index str ->
-            let
-                updatedDetails =
-                    case model.form.details of
-                        IntervalsForm intervals ->
-                            Array.get index intervals
-                                |> Maybe.map (\interval -> { interval | pace = Activity.pace.fromString str })
-                                |> Maybe.map (\interval -> Array.set index interval intervals)
-                                |> Maybe.map IntervalsForm
-                                |> Maybe.withDefault model.form.details
-
-                        _ ->
-                            model.form.details
-            in
-            updateForm (\form -> { form | details = updatedDetails }) model
-
         SelectedPace str ->
             let
                 updatedDetails =
@@ -237,6 +211,12 @@ update msg model =
                             model.form.details
             in
             updateForm (\form -> { form | details = updatedDetails }) model
+
+        EditedIntervalDuration index str ->
+            updateInterval index (\interval -> { interval | duration = String.toInt str }) model
+
+        SelectedIntervalPace index str ->
+            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str }) model
 
         RequestDate ->
             updateForm (\form -> { form | date = Nothing }) model
@@ -259,7 +239,7 @@ update msg model =
                     ( initNew, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
                 Err error ->
-                    ( { model | result = Err error }, Cmd.none )
+                    ( model, Cmd.none )
 
         ClickedReset ->
             ( initNew, Cmd.none )
@@ -296,6 +276,24 @@ updateForm transform model =
             transform model.form
     in
     ( { model | form = updatedForm, result = validate updatedForm }, Cmd.none )
+
+
+updateInterval : Int -> (IntervalForm -> IntervalForm) -> Model -> ( Model, Cmd Msg )
+updateInterval index transform model =
+    let
+        updatedDetails =
+            case model.form.details of
+                IntervalsForm intervals ->
+                    Array.get index intervals
+                        |> Maybe.map transform
+                        |> Maybe.map (\interval -> Array.set index interval intervals)
+                        |> Maybe.map IntervalsForm
+                        |> Maybe.withDefault model.form.details
+
+                _ ->
+                    model.form.details
+    in
+    updateForm (\form -> { form | details = updatedDetails }) model
 
 
 view : Model -> Html Msg

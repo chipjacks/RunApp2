@@ -56,7 +56,7 @@ viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
     div [ class "row" ]
         [ div [ class "column" ]
-            [ div [ class "row", style "margin-top" "2em", style "margin-bottom" "1em" ]
+            [ div [ class "row", style "margin-top" "1em", style "margin-bottom" "1em" ]
                 [ a [ href (Link.toCalendar (Just date)) ]
                     [ text (Date.format "E MMM d" date) ]
                 ]
@@ -86,7 +86,7 @@ viewActivities activities editActivity =
 
 viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
-    div [ class "row", onClick (editActivity activity) ]
+    div [ class "row", style "margin-bottom" "1em", onClick (editActivity activity) ]
         [ div [ class "column center", style "flex-grow" "1" ]
             [ ActivityShape.view activity.details
             ]
