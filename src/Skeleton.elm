@@ -7,9 +7,9 @@ import Html.Attributes exposing (class, style)
 layout : Html msg -> Html msg
 layout page =
     column [ class "container" ]
-        [ row [ style "justify-content" "center" ] [ text "HEADER" ]
+        [ row [ class "center" ] [ text "HEADER" ]
         , page
-        , row [ style "justify-content" "center" ] [ text "FOOTER" ]
+        , row [ class "center" ] [ text "FOOTER" ]
         ]
 
 

@@ -372,29 +372,16 @@ viewDetailsForm detailsForm =
                 twoColumns
                     [ activityShape ]
                     [ row []
-                        [ input
-                            [ type_ "number"
-                            , placeholder "Duration"
-                            , onInput EditedDuration
-                            , name "duration"
-                            , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                            ]
-                            []
-                        , selectPace SelectedPace pace
+                        [ durationInput EditedDuration duration
+                        , paceSelect SelectedPace pace
                         ]
                     ]
 
         OtherForm { duration } ->
-            row []
-                [ input
-                    [ type_ "number"
-                    , placeholder "Duration"
-                    , onInput EditedDuration
-                    , name "duration"
-                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                    ]
-                    []
-                ]
+            row [] <|
+                twoColumns
+                    [ activityShape ]
+                    [ durationInput EditedDuration duration ]
 
         IntervalsForm intervals ->
             row []
@@ -421,15 +408,8 @@ viewIntervalForm index interval =
         twoColumns
             [ activityShape ]
             [ row []
-                [ input
-                    [ type_ "number"
-                    , placeholder "Duration"
-                    , onInput (EditedIntervalDuration index)
-                    , name "duration"
-                    , value (interval.duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
-                    ]
-                    []
-                , selectPace (SelectedIntervalPace index) interval.pace
+                [ durationInput (EditedIntervalDuration index) interval.duration
+                , paceSelect (SelectedIntervalPace index) interval.pace
                 ]
             ]
 
@@ -480,8 +460,20 @@ selectDateButton dateM =
     button [ name "date", onClick RequestDate ] [ text content ]
 
 
-selectPace : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
-selectPace msg paceM =
+durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg
+durationInput msg duration =
+    input
+        [ type_ "number"
+        , placeholder "Duration"
+        , onInput msg
+        , name "duration"
+        , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+        ]
+        []
+
+
+paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
+paceSelect msg paceM =
     Html.select
         [ onInput msg
         , name "pace"
