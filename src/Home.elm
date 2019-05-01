@@ -13,6 +13,7 @@ import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id, style)
 import Http
 import Scroll
+import Skeleton exposing (column, expandingRow, row)
 import Task
 import Time exposing (Month(..))
 import Window exposing (Window)
@@ -184,9 +185,8 @@ view : Model -> Html Msg
 view model =
     let
         containerDiv children =
-            div
-                [ class "row"
-                , id "home"
+            expandingRow
+                [ id "home"
                 , style "overflow" "hidden"
                 ]
                 (children |> Array.toList)
@@ -240,7 +240,7 @@ viewColM viewFunc subModelM =
 
 viewEmptyColumn : Html msg
 viewEmptyColumn =
-    div [ class "column" ] [ text "Nothing" ]
+    column [] [ text "Nothing" ]
 
 
 

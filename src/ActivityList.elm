@@ -8,11 +8,12 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (onClick)
 import Link
 import Scroll
+import Skeleton exposing (column, expandingRow, row, twoColumns)
 
 
 view : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
 view activitiesM editActivity scrollMsg date =
-    div [ class "column" ]
+    column []
         [ header date
         , scrollingBody activitiesM editActivity scrollMsg date
         ]
@@ -20,19 +21,18 @@ view activitiesM editActivity scrollMsg date =
 
 header : Date -> Html msg
 header date =
-    div [ class "row no-grow" ] [ text (Date.toIsoString date) ]
+    row [] [ text (Date.toIsoString date) ]
 
 
 scrollingBody : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
 scrollingBody activitiesM editActivity scrollMsg date =
-    div
-        [ class "column"
-        , id "activities"
+    column
+        [ id "activities"
         , style "overflow" "scroll"
         , attribute "data-date" (Date.toIsoString date)
         , Scroll.on scrollMsg
         ]
-        [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
+        [ column [ style "margin-bottom" Scroll.config.marginBottom ]
             (listDays date
                 |> List.map (\d -> ( d, List.filter (\a -> a.date == d) (Maybe.withDefault [] activitiesM) ))
                 |> List.map (viewDay editActivity)
@@ -54,13 +54,13 @@ handleScroll scrollTop scrollMsg =
 
 viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
-    div [ class "row" ]
-        [ div [ class "column" ]
-            [ div [ class "row", style "margin-top" "1em", style "margin-bottom" "1em" ]
+    expandingRow []
+        [ column []
+            [ expandingRow [ style "margin-top" "1em", style "margin-bottom" "1em" ]
                 [ a [ href (Link.toCalendar (Just date)) ]
                     [ text (Date.format "E MMM d" date) ]
                 ]
-            , div [ class "row" ]
+            , expandingRow []
                 [ viewActivities activities editActivity ]
             ]
         ]
@@ -80,16 +80,12 @@ listDays date =
 
 viewActivities : List Activity -> (Activity -> msg) -> Html msg
 viewActivities activities editActivity =
-    div [ class "column" ]
-        (List.map (viewActivity editActivity) activities)
+    column [] (List.map (viewActivity editActivity) activities)
 
 
 viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
-    div [ class "row", style "margin-bottom" "1em", onClick (editActivity activity) ]
-        [ div [ class "column center", style "flex-grow" "1" ]
-            [ ActivityShape.view activity.details
-            ]
-        , div [ class "column center", style "flex-grow" "3" ]
+    expandingRow [ style "margin-bottom" "1em", onClick (editActivity activity) ] <|
+        twoColumns
+            [ ActivityShape.view activity.details ]
             [ text activity.description ]
-        ]

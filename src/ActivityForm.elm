@@ -9,6 +9,7 @@ import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
+import Skeleton exposing (column, expandingRow, row, twoColumns)
 import Task exposing (Task)
 
 
@@ -313,12 +314,12 @@ view model =
                 OtherForm _ ->
                     "Other"
     in
-    div [ id "activity", class "column", style "justify-content" "space-between" ]
-        [ div [ class "row no-grow" ]
-            [ div [ class "column" ]
+    column [ id "activity", style "justify-content" "space-between" ]
+        [ row []
+            [ column []
                 [ selectDateButton date
                 , viewError model.result
-                , div [ class "row no-grow" ]
+                , row []
                     [ input
                         [ type_ "text"
                         , placeholder "Description"
@@ -340,16 +341,9 @@ view model =
                     ]
                 ]
             ]
-        , div [ class "row no-grow" ]
-            [ div [ class "column center", style "flex-grow" "1" ]
-                [ viewActivityShape model.result
-                ]
-            , div [ class "column center", style "flex-grow" "3" ]
-                [ viewDetailsForm details
-                ]
-            ]
-        , div [ class "row no-grow" ]
-            [ div [ class "column" ]
+        , viewDetailsForm details
+        , row []
+            [ column []
                 [ submitButton model.status
                 , button
                     [ onClick ClickedReset
@@ -365,22 +359,33 @@ view model =
 
 viewDetailsForm : DetailsForm -> Html Msg
 viewDetailsForm detailsForm =
+    let
+        activityShape =
+            validateDetails detailsForm
+                |> Result.toMaybe
+                |> Maybe.map ActivityShape.view
+                |> Maybe.withDefault ActivityShape.viewDefault
+    in
     case detailsForm of
         RunForm { duration, pace } ->
-            div [ class "row no-grow" ]
-                [ input
-                    [ type_ "number"
-                    , placeholder "Duration"
-                    , onInput EditedDuration
-                    , name "duration"
-                    , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+            row [] <|
+                twoColumns
+                    [ activityShape ]
+                    [ row []
+                        [ input
+                            [ type_ "number"
+                            , placeholder "Duration"
+                            , onInput EditedDuration
+                            , name "duration"
+                            , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                            ]
+                            []
+                        , selectPace SelectedPace pace
+                        ]
                     ]
-                    []
-                , selectPace SelectedPace pace
-                ]
 
         OtherForm { duration } ->
-            div [ class "row no-grow" ]
+            row []
                 [ input
                     [ type_ "number"
                     , placeholder "Duration"
@@ -392,26 +397,41 @@ viewDetailsForm detailsForm =
                 ]
 
         IntervalsForm intervals ->
-            div [ class "column" ] <|
-                Array.toList <|
-                    Array.indexedMap
-                        (\index { duration, pace } -> viewIntervalForm index duration pace)
-                        intervals
+            row []
+                [ column [] <|
+                    Array.toList <|
+                        Array.indexedMap
+                            (\index interval -> viewIntervalForm index interval)
+                            intervals
+                ]
 
 
-viewIntervalForm : Int -> Maybe Minutes -> Maybe Activity.Pace -> Html Msg
-viewIntervalForm index durationM paceM =
-    div [ class "row no-grow" ]
-        [ input
-            [ type_ "number"
-            , placeholder "Duration"
-            , onInput (EditedIntervalDuration index)
-            , name "duration"
-            , value (durationM |> Maybe.map String.fromInt |> Maybe.withDefault "")
+viewIntervalForm : Int -> IntervalForm -> Html Msg
+viewIntervalForm index interval =
+    let
+        activityShape =
+            case validateDetails (RunForm interval) of
+                Ok activityDetails ->
+                    ActivityShape.view activityDetails
+
+                Err _ ->
+                    ActivityShape.viewDefault
+    in
+    row [] <|
+        twoColumns
+            [ activityShape ]
+            [ row []
+                [ input
+                    [ type_ "number"
+                    , placeholder "Duration"
+                    , onInput (EditedIntervalDuration index)
+                    , name "duration"
+                    , value (interval.duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+                    ]
+                    []
+                , selectPace (SelectedIntervalPace index) interval.pace
+                ]
             ]
-            []
-        , selectPace (SelectedIntervalPace index) paceM
-        ]
 
 
 submitButton : Status -> Html Msg
@@ -484,16 +504,6 @@ viewError errorR =
 
         _ ->
             div [ class "error" ] []
-
-
-viewActivityShape : Result Error Activity -> Html msg
-viewActivityShape activityR =
-    case activityR of
-        Ok activity ->
-            ActivityShape.view activity.details
-
-        _ ->
-            ActivityShape.viewDefault
 
 
 errorMessage : Error -> String

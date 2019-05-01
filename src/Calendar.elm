@@ -7,12 +7,13 @@ import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
 import Scroll
+import Skeleton exposing (column, expandingRow, row)
 import Time exposing (Month(..))
 
 
 view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 view changeDate scroll date =
-    div [ class "column" ]
+    column []
         [ dateSelect date changeDate
         , dateGrid changeDate scroll date
         ]
@@ -20,14 +21,13 @@ view changeDate scroll date =
 
 dateGrid : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
 dateGrid changeDate scroll date =
-    div
-        [ class "column"
-        , id "calendar"
+    column
+        [ id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (Date.toIsoString date)
         , Scroll.on scroll
         ]
-        [ div [ class "column", style "margin-bottom" Scroll.config.marginBottom ]
+        [ column [ style "margin-bottom" Scroll.config.marginBottom ]
             (weekList date |> List.map viewWeek)
         ]
 
@@ -50,8 +50,7 @@ handleScroll scrollTop scrollMsg =
 
 dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
-    div
-        [ class "row no-grow" ]
+    row []
         [ div [ class "dropdown" ]
             [ button [ class "menu-button" ]
                 [ text (Date.format "MMMM" date)
@@ -123,14 +122,14 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    div [ class "row", style "min-height" "3em" ] <|
+    expandingRow [ style "min-height" "3em" ] <|
         titleWeek start
             :: List.map viewDay days
 
 
 viewDay : Date -> Html msg
 viewDay date =
-    div [ class "column" ]
+    column []
         [ a
             [ href (Link.toActivityList (Just date))
             , attribute "data-date" (Date.toIsoString date)

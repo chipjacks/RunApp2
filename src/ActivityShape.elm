@@ -3,6 +3,7 @@ module ActivityShape exposing (view, viewDefault)
 import Activity exposing (Details(..), Interval(..), Pace(..))
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
+import Skeleton exposing (column, row)
 import Svg exposing (circle, svg)
 import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
@@ -25,7 +26,7 @@ view details =
                 |> viewShape
 
         Intervals intervals ->
-            div [ class "column" ] <|
+            column [] <|
                 List.map
                     (\(Interval duration pace) -> Block Green { width = toWidth pace, height = toHeight duration } |> viewShape)
                     intervals
@@ -44,7 +45,7 @@ viewShape : Shape -> Html msg
 viewShape shape =
     case shape of
         Block color { width, height } ->
-            div [ class "row no-grow" ]
+            row []
                 [ div
                     [ style "width" <| String.fromInt width ++ "%"
                     , style "height" <| String.fromFloat height ++ "em"
@@ -54,7 +55,7 @@ viewShape shape =
                 ]
 
         Circle color { height } ->
-            div [ class "row no-grow" ]
+            row []
                 [ div
                     [ style "width" "0.5em"
                     , style "height" <| String.fromFloat height ++ "em"
