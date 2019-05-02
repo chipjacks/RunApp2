@@ -304,7 +304,7 @@ view model =
             model.form
 
         detailsFormType =
-            case model.form.details of
+            case details of
                 RunForm _ ->
                     "Run"
 
@@ -474,17 +474,26 @@ durationInput msg duration =
 
 paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
 paceSelect msg paceM =
+    let
+        selected =
+            paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Easy"
+
+        selectedAttr paceStr =
+            if selected == paceStr then
+                [ Html.Attributes.attribute "selected" "" ]
+
+            else
+                []
+    in
     Html.select
         [ onInput msg
         , name "pace"
-        , value (paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Pace")
         ]
-        (Html.option [] [ Html.text "Pace" ]
-            :: List.map
-                (\( paceStr, pace ) ->
-                    Html.option [] [ Html.text paceStr ]
-                )
-                Activity.pace.list
+        (List.map
+            (\( paceStr, pace ) ->
+                Html.option (selectedAttr paceStr) [ Html.text paceStr ]
+            )
+            Activity.pace.list
         )
 
 
