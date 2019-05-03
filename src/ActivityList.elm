@@ -85,7 +85,9 @@ viewActivities activities editActivity =
 
 viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
-    expandingRow [ style "margin-bottom" "1em", onClick (editActivity activity) ] <|
-        twoColumns
-            [ ActivityShape.view activity.details ]
-            [ text activity.description ]
+    a [ href (Link.toActivity <| Just activity.id) ]
+        [ expandingRow [ style "margin-bottom" "1em" ] <|
+            twoColumns
+                [ ActivityShape.view activity.details ]
+                [ text activity.description ]
+        ]

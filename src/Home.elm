@@ -1,4 +1,4 @@
-module Home exposing (Model, Msg, init, openActivityList, openCalendar, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, openActivity, openActivityList, openCalendar, resizeWindow, update, view)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -47,6 +47,7 @@ init =
 type Msg
     = LoadCalendar (Maybe Date)
     | LoadActivities (Maybe Date)
+    | LoadActivity (Maybe Activity.Id)
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
     | ScrolledCalendar Int
@@ -63,6 +64,11 @@ openCalendar dateM =
 openActivityList : Maybe Date -> Msg
 openActivityList dateM =
     LoadActivities dateM
+
+
+openActivity : Maybe Activity.Id -> Msg
+openActivity idM =
+    LoadActivity idM
 
 
 resizeWindow : Int -> Int -> Msg
@@ -92,6 +98,28 @@ update msg model =
 
                 Nothing ->
                     ( model, Task.perform (\d -> LoadActivities (Just d)) Date.today )
+
+        LoadActivity idM ->
+            case ( idM, model.activities ) of
+                ( Just id, Just activities ) ->
+                    let
+                        activityM =
+                            activities |> List.filter (\a -> a.id == id) |> List.head
+                    in
+                    case activityM of
+                        Just activity ->
+                            ( { model | focus = Third, activityForm = ActivityForm.initEdit activity }, Cmd.none )
+
+                        Nothing ->
+                            -- TODO: error handling
+                            ( model, Cmd.none )
+
+                ( Just id, Nothing ) ->
+                    -- TODO: Load activities
+                    ( model, Cmd.none )
+
+                ( Nothing, _ ) ->
+                    ( { model | focus = Third, activityForm = ActivityForm.initNew }, Cmd.none )
 
         GotActivities result ->
             case result of

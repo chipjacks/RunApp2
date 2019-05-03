@@ -1,5 +1,6 @@
-module Link exposing (toActivityList, toCalendar)
+module Link exposing (toActivity, toActivityList, toCalendar)
 
+import Activity
 import Date exposing (Date)
 import Url.Builder exposing (absolute, string)
 
@@ -22,3 +23,13 @@ toActivityList dateM =
 
         Nothing ->
             absolute [ "activities" ] []
+
+
+toActivity : Maybe Activity.Id -> String
+toActivity idM =
+    case idM of
+        Just id ->
+            absolute [ "activity" ] [ string "id" id ]
+
+        Nothing ->
+            absolute [ "activity" ] []
