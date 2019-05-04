@@ -467,6 +467,7 @@ durationInput msg duration =
         , placeholder "Duration"
         , onInput msg
         , name "duration"
+        , style "width" "7em"
         , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
         ]
         []

@@ -52,7 +52,7 @@ dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
     row []
         [ div [ class "dropdown" ]
-            [ button [ class "menu-button" ]
+            [ button []
                 [ text (Date.format "MMMM" date)
                 , text " ▿"
                 ]
@@ -60,7 +60,7 @@ dateSelect date changeDate =
                 (listMonths date changeDate)
             ]
         , div [ class "dropdown", style "margin-left" "0.5em" ]
-            [ button [ class "menu-button" ]
+            [ button []
                 [ text (Date.format "yyyy" date)
                 , text " ▿"
                 ]
@@ -68,7 +68,7 @@ dateSelect date changeDate =
                 (listYears date changeDate)
             ]
         , a
-            [ class "menu-button"
+            [ class "button"
             , style "margin-left" "1em"
             , style "text-decoration" "none"
             , style "color" "black"

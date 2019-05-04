@@ -7,9 +7,11 @@ import Html.Attributes exposing (class, style)
 layout : Html msg -> Html msg
 layout page =
     column [ class "container" ]
-        [ row [ class "center" ] [ text "HEADER" ]
+        [ row [ class "navbar" ]
+            [ column [ style "font-weight" "bold" ] [ text "RunApp2" ]
+            , column [ class "no-grow" ] [ text "Account" ]
+            ]
         , page
-        , row [ class "center" ] [ text "FOOTER" ]
         ]
 
 
