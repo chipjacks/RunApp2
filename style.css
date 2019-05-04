@@ -4,17 +4,18 @@
 
 /* CONTAINERS */
 html, body { height: 100%; margin: 0 }
-.container { max-width: 1000px; min-width: 320px; max-height: 1000px; min-height: 450px; }
-.container { height: 100%; margin-left: auto; margin-right: auto; overflow: hidden; }
-.navbar .column { padding: 1em; }
+.container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto; }
+.container-y {  max-height: 1000px; min-height: 450px; height: 100%; overflow: hidden; }
+.navbar { padding: 0.7em; color: white; background-color: #4183c4; margin-bottom: 0.5em; }
 
 /* FLEXBOX PARENTS */
-.row { display: flex; flex-direction: row; flex: 1 1 0; }
-.column { display: flex; flex-direction: column; flex: 1 1 0; }
+.row { display: flex; flex-direction: row; }
+.column { display: flex; flex-direction: column; }
 .center { justify-content: center; }
 
 /* FLEXBOX CHILDREN */
-.no-grow { flex: 0 0 auto; }
+.compact { flex: 0 0 auto; }
+.expand { flex: 1 1 0; }
 
 
 /*
