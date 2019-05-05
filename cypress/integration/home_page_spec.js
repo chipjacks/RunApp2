@@ -49,7 +49,7 @@ context('The Home Page', function() {
     })
 
     it('lists activities', function() {
-      cy.get('#activities').should('contain', 'Tempo Tuesday')
+      cy.get('#activities').should('contain', 'Tempo')
     })
   })
 
@@ -64,35 +64,35 @@ context('The Home Page', function() {
       cy.get('#activity').get('button[name=date]').click()
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').get('input[name=duration]').type('120')
-      cy.get('#activity').get('select[name=pace]').select('easy')
+      cy.get('#activity').get('select[name=pace]').select('Easy')
       cy.get('#activity').get('button[type=submit]').click()
       cy.get('#activities').contains('Long Run Sunday')
     })
 
     it('edits existing activity descriptions', function () {
-      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
-      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo Tuesday').type(' - Felt Great!')
+      cy.get('#activities').contains('Tempo').click({force: true})
+      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo').type(' - Felt Great!')
       cy.get('#activity').contains('Save').click()
-      cy.get('#activities').contains('Tempo Tuesday - Felt Great!')
+      cy.get('#activities').contains('Tempo - Felt Great!')
     })
 
     it('edits existing activity dates', function () {
-      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
-      cy.get('#activity').get('button[name=date]').should('contain', '2019-02-28').click()
+      cy.get('#activities').contains('Tempo').click({force: true})
+      cy.get('#activity').get('button[name=date]').should('contain', '2019-03-01').click()
       cy.get('#activity').get('button[name=date]').should('contain', 'Select Date')
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').get('button[name=date]').should('contain', '2019-03-02')
     })
 
     it('deletes existing activities', function () {
-      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
+      cy.get('#activities').contains('Tempo').click({force: true})
       cy.get('#activity').get('button[name=delete]').click()
-      cy.get('#activities').should('not.contain', 'Tempo Tuesday')
+      cy.get('#activities').should('not.contain', 'Tempo')
     })
 
     it('resets the form', function () {
-      cy.get('#activities').contains('Tempo Tuesday').click({force: true})
-      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo Tuesday')
+      cy.get('#activities').contains('Tempo').click({force: true})
+      cy.get('#activity').get('input[name=description]').should('have.value', 'Tempo')
       cy.get('#activity').get('button[type=reset]').click()
       cy.get('#activity').get('input[name=description]').should('have.value', '')
     })

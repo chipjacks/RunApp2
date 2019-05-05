@@ -343,16 +343,14 @@ view model =
             ]
         , viewDetailsForm details
         , row []
-            [ column []
-                [ submitButton model.status
-                , button
-                    [ onClick ClickedReset
-                    , type_ "reset"
-                    ]
-                    [ text "Reset" ]
-
-                --TODO: , deleteButton model.status
+            [ submitButton model.status
+            , button
+                [ onClick ClickedReset
+                , type_ "reset"
+                , style "margin-left" "1em"
                 ]
+                [ text "Reset" ]
+            , deleteButton model.status
             ]
         ]
 
@@ -421,6 +419,7 @@ submitButton status =
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
+                , style "width" "10em"
                 ]
                 [ text "Save" ]
 
@@ -428,6 +427,7 @@ submitButton status =
             button
                 [ onClick ClickedSubmit
                 , type_ "submit"
+                , style "width" "10em"
                 ]
                 [ text "Create" ]
 
@@ -439,6 +439,7 @@ deleteButton status =
             button
                 [ onClick ClickedDelete
                 , name "delete"
+                , style "margin-left" "1em"
                 ]
                 [ text "Delete" ]
 
