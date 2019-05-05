@@ -48,7 +48,7 @@ viewShape shape =
             row []
                 [ div
                     [ style "width" <| String.fromInt width ++ "%"
-                    , style "height" <| String.fromFloat height ++ "em"
+                    , style "height" <| String.fromFloat height ++ "rem"
                     , style "background-color" (colorString color)
                     ]
                     []
@@ -57,10 +57,10 @@ viewShape shape =
         Circle color { height } ->
             row []
                 [ div
-                    [ style "width" "0.5em"
-                    , style "height" <| String.fromFloat height ++ "em"
+                    [ style "width" "0.5rem"
+                    , style "height" <| String.fromFloat height ++ "rem"
                     , style "background-color" (colorString color)
-                    , style "border-radius" "0.25em"
+                    , style "border-radius" "0.25rem"
                     ]
                     []
                 ]

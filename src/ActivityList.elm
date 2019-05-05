@@ -56,7 +56,7 @@ viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
 viewDay editActivity ( date, activities ) =
     expandingRow []
         [ column []
-            [ expandingRow [ style "margin-top" "1em", style "margin-bottom" "1em" ]
+            [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
                 [ a [ href (Link.toCalendar (Just date)) ]
                     [ text (Date.format "E MMM d" date) ]
                 ]
@@ -86,7 +86,7 @@ viewActivities activities editActivity =
 viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
     a [ href (Link.toActivity <| Just activity.id) ]
-        [ expandingRow [ style "margin-bottom" "1em" ] <|
+        [ expandingRow [ style "margin-bottom" "1rem" ] <|
             twoColumns
                 [ ActivityShape.view activity.details ]
                 [ text activity.description ]

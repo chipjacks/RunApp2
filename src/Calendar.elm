@@ -52,24 +52,22 @@ dateSelect : Date -> (Date -> msg) -> Html msg
 dateSelect date changeDate =
     row []
         [ div [ class "dropdown" ]
-            [ button []
+            [ button [ style "width" "6rem" ]
                 [ text (Date.format "MMMM" date)
-                , text " ▿"
                 ]
-            , div [ class "dropdown-content" ]
+            , div [ class "dropdown-content", style "width" "6rem" ]
                 (listMonths date changeDate)
             ]
-        , div [ class "dropdown", style "margin-left" "0.5em" ]
-            [ button []
+        , div [ class "dropdown", style "margin-left" "0.5rem" ]
+            [ button [ style "width" "4rem" ]
                 [ text (Date.format "yyyy" date)
-                , text " ▿"
                 ]
-            , div [ class "dropdown-content" ]
+            , div [ class "dropdown-content", style "width" "4rem" ]
                 (listYears date changeDate)
             ]
         , a
             [ class "button"
-            , style "margin-left" "1em"
+            , style "margin-left" "0.5rem"
             , style "text-decoration" "none"
             , style "color" "black"
             , href (Link.toCalendar Nothing)
@@ -122,7 +120,7 @@ viewWeek start =
         days =
             daysOfWeek start
     in
-    expandingRow [ style "min-height" "3em" ] <|
+    expandingRow [ style "min-height" "3rem" ] <|
         titleWeek start
             :: List.map viewDay days
 
@@ -149,7 +147,7 @@ titleWeek start =
                 |> Maybe.map (Date.format "MMM")
                 |> Maybe.withDefault ""
     in
-    div [ style "min-width" "3em" ]
+    div [ style "min-width" "3rem" ]
         [ text monthStart
         ]
 
