@@ -41,11 +41,17 @@ context('The Home Page', function() {
   describe('#activities', function() {
     beforeEach(() => {
       cy.visit('/activities?date=' + date)
+      cy.wait('@fetch')
     })
 
     it('links to the calendar', function() { // FLAKY!
       cy.get('#activities').contains('a', 'Thu Feb 28').click({force: true})
       cy.url().should('contain', '/calendar?date=' + date)
+    })
+
+    it('links to an activity', function() {
+      cy.get('#activities').contains('Tempo').click({force: true})
+      cy.url().should('contain', '/activity?id=')
     })
 
     it('lists activities', function() {
@@ -82,6 +88,11 @@ context('The Home Page', function() {
       cy.get('#activity').get('button[name=date]').should('contain', 'Select Date')
       cy.get('#calendar').get('a[data-date=2019-03-02]').click()
       cy.get('#activity').get('button[name=date]').should('contain', '2019-03-02')
+    })
+
+    it('edits existing activity intervals', function () {
+      cy.get('#activities').contains('Fartlek').click({force: true})
+      cy.get('#activity').get('input[name=duration]').should('have.length', 12)
     })
 
     it('deletes existing activities', function () {
