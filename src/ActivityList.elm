@@ -11,11 +11,11 @@ import Scroll
 import Skeleton exposing (column, expandingRow, row, twoColumns)
 
 
-view : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
-view activitiesM editActivity scrollMsg date =
+view : List Activity -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
+view activities editActivity scrollMsg date =
     column [ style "flex-grow" "1", style "border-right" "1px solid #f1f1f1" ]
         [ header date
-        , scrollingBody activitiesM editActivity scrollMsg date
+        , scrollingBody activities editActivity scrollMsg date
         ]
 
 
@@ -24,8 +24,8 @@ header date =
     row [] [ text (Date.toIsoString date) ]
 
 
-scrollingBody : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
-scrollingBody activitiesM editActivity scrollMsg date =
+scrollingBody : List Activity -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
+scrollingBody activities editActivity scrollMsg date =
     column
         [ id "activities"
         , style "overflow" "scroll"
@@ -34,7 +34,7 @@ scrollingBody activitiesM editActivity scrollMsg date =
         ]
         [ column [ style "margin-bottom" Scroll.config.marginBottom ]
             (listDays date
-                |> List.map (\d -> ( d, List.filter (\a -> a.date == d) (Maybe.withDefault [] activitiesM) ))
+                |> List.map (\d -> ( d, List.filter (\a -> a.date == d) activities ))
                 |> List.map (viewDay editActivity)
             )
         ]

@@ -23,20 +23,29 @@ import Window exposing (Window)
 -- INITIALIZING MODEL
 
 
-type alias Model =
+type Model
+    = Loading (Maybe Window) (Maybe Date) (Maybe (List Activity))
+    | Loaded State
+
+
+type alias State =
     { window : Window
     , focus : Focus
     , calendar : Bool
-    , date : Maybe Date
-    , activities : Maybe (List Activity)
+    , date : Date
+    , activities : List Activity
     , activityForm : ActivityForm.Model
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Window 0 0) DateSelect False Nothing Nothing ActivityForm.initNew
-    , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
+    ( Loading Nothing Nothing Nothing
+    , Cmd.batch
+        [ Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
+        , Task.perform (\date -> LoadActivities <| Just date) Date.today
+        , Task.attempt GotActivities Api.getActivities
+        ]
     )
 
 
@@ -78,109 +87,136 @@ resizeWindow width height =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        LoadCalendar dateM ->
-            case dateM of
-                Just date ->
-                    ( { model | focus = DateSelect, date = Just date, calendar = True }, Scroll.reset ScrolledCalendar "calendar" )
-                        |> updateDate date
+    case model of
+        Loading windowM dateM activitiesM ->
+            case msg of
+                ResizeWindow width height ->
+                    Loading (Just <| Window width height) dateM activitiesM
+                        |> updateLoading
 
-                Nothing ->
-                    ( model, Task.perform (\d -> LoadCalendar (Just d)) Date.today )
+                LoadCalendar (Just date) ->
+                    Loading windowM (Just date) activitiesM
+                        |> updateLoading
 
-        LoadActivities dateM ->
-            case dateM of
-                Just date ->
-                    ( { model | focus = DateSelect, date = Just date, calendar = False }
-                    , Task.attempt GotActivities Api.getActivities
-                    )
-                        |> updateDate date
+                LoadActivities (Just date) ->
+                    Loading windowM (Just date) activitiesM
+                        |> updateLoading
 
-                Nothing ->
-                    ( model, Task.perform (\d -> LoadActivities (Just d)) Date.today )
+                GotActivities activitiesR ->
+                    case activitiesR of
+                        Ok activities ->
+                            Loading windowM dateM (Just activities)
+                                |> updateLoading
 
-        LoadActivity idM ->
-            case ( idM, model.activities ) of
-                ( Just id, Just activities ) ->
-                    let
-                        activityM =
-                            activities |> List.filter (\a -> a.id == id) |> List.head
-                    in
-                    case activityM of
-                        Just activity ->
-                            ( { model | focus = ActivityView, activityForm = ActivityForm.initEdit activity }, Cmd.none )
-
-                        Nothing ->
-                            -- TODO: error handling
+                        _ ->
                             ( model, Cmd.none )
-
-                ( Just id, Nothing ) ->
-                    -- TODO: Load activities
-                    ( model, Cmd.none )
-
-                ( Nothing, _ ) ->
-                    ( { model | focus = ActivityView, activityForm = ActivityForm.initNew }, Cmd.none )
-
-        GotActivities result ->
-            case result of
-                Ok activities ->
-                    ( { model | activities = Just activities }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
 
-        ResizeWindow width height ->
-            ( { model | window = Window width height }, resetScrolls )
+        Loaded state ->
+            case msg of
+                LoadCalendar dateM ->
+                    case dateM of
+                        Just date ->
+                            ( Loaded { state | focus = DateSelect, date = date, calendar = True }
+                            , Scroll.reset ScrolledCalendar "calendar"
+                            )
 
-        ScrolledCalendar scrollTop ->
-            let
-                ( dateF, cmd ) =
-                    Calendar.handleScroll scrollTop ScrolledCalendar
-            in
-            ( { model | date = model.date |> Maybe.map dateF }, cmd )
+                        Nothing ->
+                            ( Loaded { state | focus = DateSelect, calendar = True }
+                            , Scroll.reset ScrolledCalendar "calendar"
+                            )
 
-        ScrolledActivities scrollTop ->
-            let
-                ( dateF, cmd ) =
-                    ActivityList.handleScroll scrollTop ScrolledActivities
-            in
-            ( { model | date = model.date |> Maybe.map dateF }, cmd )
+                LoadActivities dateM ->
+                    case dateM of
+                        Just date ->
+                            ( Loaded { state | focus = ActivityView, date = date, calendar = False }
+                            , Scroll.reset ScrolledActivities "activities"
+                            )
 
-        EditActivity activity ->
-            ( { model | activityForm = ActivityForm.initEdit activity }, Cmd.none )
+                        Nothing ->
+                            ( Loaded { state | focus = DateSelect, calendar = False }
+                            , Scroll.reset ScrolledActivities "activities"
+                            )
 
-        ActivityFormMsg subMsg ->
-            let
-                newModel =
-                    case subMsg of
-                        ActivityForm.GotSubmitResult (Ok activities) ->
-                            { model | activities = Just activities }
+                LoadActivity idM ->
+                    case idM of
+                        Just id ->
+                            let
+                                activityM =
+                                    state.activities |> List.filter (\a -> a.id == id) |> List.head
+                            in
+                            case activityM of
+                                Just activity ->
+                                    ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initEdit activity }
+                                    , Cmd.none
+                                    )
 
-                        ActivityForm.GotDeleteResult (Ok activities) ->
-                            { model | activities = Just activities }
+                                Nothing ->
+                                    -- TODO: error handling
+                                    ( model, Cmd.none )
+
+                        Nothing ->
+                            ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initNew }, Cmd.none )
+
+                GotActivities result ->
+                    case result of
+                        Ok activities ->
+                            ( Loaded { state | activities = activities }, Cmd.none )
 
                         _ ->
-                            model
+                            ( model, Cmd.none )
 
-                ( subModel, subCmd ) =
-                    ActivityForm.update subMsg newModel.activityForm
-            in
-            ( { newModel | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
+                ResizeWindow width height ->
+                    ( Loaded { state | window = Window width height }, resetScrolls )
+
+                ScrolledCalendar scrollTop ->
+                    let
+                        ( dateF, cmd ) =
+                            Calendar.handleScroll scrollTop ScrolledCalendar
+                    in
+                    ( Loaded { state | date = dateF state.date }, cmd )
+
+                ScrolledActivities scrollTop ->
+                    let
+                        ( dateF, cmd ) =
+                            ActivityList.handleScroll scrollTop ScrolledActivities
+                    in
+                    ( Loaded { state | date = dateF state.date }, cmd )
+
+                EditActivity activity ->
+                    ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
+
+                ActivityFormMsg subMsg ->
+                    let
+                        newState =
+                            case subMsg of
+                                ActivityForm.GotSubmitResult (Ok activities) ->
+                                    { state | activities = activities }
+
+                                ActivityForm.GotDeleteResult (Ok activities) ->
+                                    { state | activities = activities }
+
+                                _ ->
+                                    state
+
+                        ( subModel, subCmd ) =
+                            ActivityForm.update subMsg state.activityForm
+                    in
+                    ( Loaded { state | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
 
-updateDate : Date -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-updateDate date ( model, cmd ) =
-    let
-        activityForm =
-            if ActivityForm.dateRequested model.activityForm then
-                ActivityForm.selectDate model.activityForm date
+updateLoading : Model -> ( Model, Cmd Msg )
+updateLoading model =
+    case model of
+        Loading (Just window) (Just date) (Just activities) ->
+            ( Loaded <| State window ActivityView False date activities ActivityForm.initNew
+            , Scroll.reset ScrolledActivities "activities"
+            )
 
-            else
-                model.activityForm
-    in
-    ( { model | activityForm = activityForm }
-    , Cmd.none
-    )
+        _ ->
+            ( model, Cmd.none )
 
 
 
@@ -192,58 +228,40 @@ updateDate date ( model, cmd ) =
 
 view : Model -> Html Msg
 view model =
-    let
-        containerDiv =
-            expandingRow
-                [ id "home"
-                , style "overflow" "hidden"
-                ]
+    case model of
+        Loading _ _ _ ->
+            Html.div [] [ Html.text "Loading" ]
 
-        dateSelect =
-            case model.calendar of
-                True ->
-                    viewColM
-                        (Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar)
-                        model.date
+        Loaded state ->
+            let
+                containerDiv =
+                    expandingRow
+                        [ id "home"
+                        , style "overflow" "hidden"
+                        ]
 
-                False ->
-                    viewColM
-                        (ActivityList.view model.activities EditActivity ScrolledActivities)
-                        model.date
+                dateSelect =
+                    case state.calendar of
+                        True ->
+                            Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar state.date
 
-        activityView =
-            ActivityForm.view
-                model.activityForm
-                |> Html.map ActivityFormMsg
-    in
-    case visible model.window model.focus of
-        One DateSelect ->
-            containerDiv [ dateSelect ]
+                        False ->
+                            ActivityList.view state.activities EditActivity ScrolledActivities state.date
 
-        One ActivityView ->
-            containerDiv [ activityView ]
+                activityView =
+                    ActivityForm.view
+                        state.activityForm
+                        |> Html.map ActivityFormMsg
+            in
+            case visible state.window state.focus of
+                One DateSelect ->
+                    containerDiv [ dateSelect ]
 
-        Both ->
-            containerDiv [ dateSelect, activityView ]
+                One ActivityView ->
+                    containerDiv [ activityView ]
 
-
-
--- VIEWING COLUMNS
-
-
-viewColM : (subModel -> Html msg) -> Maybe subModel -> Html msg
-viewColM viewFunc subModelM =
-    case subModelM of
-        Just subModel ->
-            viewFunc subModel
-
-        Nothing ->
-            viewEmptyColumn
-
-
-viewEmptyColumn : Html msg
-viewEmptyColumn =
-    column [] [ text "Nothing" ]
+                Both ->
+                    containerDiv [ dateSelect, activityView ]
 
 
 
