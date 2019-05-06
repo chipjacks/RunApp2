@@ -115,7 +115,7 @@ viewWeekDay : Date -> Html msg
 viewWeekDay date =
     column []
         [ a
-            [ href (Link.toCalendar (Just date))
+            [ href "#"
             , attribute "data-date" (Date.toIsoString date)
             ]
             [ text (Date.format "d" date)
@@ -164,7 +164,7 @@ viewDay editActivity ( date, activities ) =
     expandingRow []
         [ column []
             [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
-                [ a [ href (Link.toCalendar (Just date)) ]
+                [ a [ href "#" ]
                     [ text (Date.format "E MMM d" date) ]
                 ]
             , expandingRow []
@@ -192,7 +192,7 @@ viewActivities activities editActivity =
 
 viewActivity : (Activity -> msg) -> Activity -> Html msg
 viewActivity editActivity activity =
-    a [ href (Link.toActivity <| Just activity.id) ]
+    a [ href (Link.toActivity activity.id) ]
         [ expandingRow [ style "margin-bottom" "1rem" ] <|
             twoColumns
                 [ ActivityShape.view activity.details ]

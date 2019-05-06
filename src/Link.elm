@@ -5,21 +5,11 @@ import Date exposing (Date)
 import Url.Builder exposing (absolute, string)
 
 
-toCalendar : Maybe Date -> String
-toCalendar dateM =
-    case dateM of
-        Just date ->
-            absolute [ "calendar" ] [ string "date" (Date.toIsoString date) ]
-
-        Nothing ->
-            absolute [ "calendar" ] []
+toCalendar : String
+toCalendar =
+    absolute [ "home" ] []
 
 
-toActivity : Maybe Activity.Id -> String
-toActivity idM =
-    case idM of
-        Just id ->
-            absolute [ "activity" ] [ string "id" id ]
-
-        Nothing ->
-            absolute [ "activity" ] []
+toActivity : Activity.Id -> String
+toActivity id =
+    absolute [ "home" ] [ string "activity" id ]

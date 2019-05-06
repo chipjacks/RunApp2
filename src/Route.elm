@@ -8,20 +8,14 @@ import Url.Parser.Query as Query
 
 
 type Route
-    = Calendar (Maybe Date)
-    | Activity (Maybe Activity.Id)
-    | Home
+    = Home (Maybe Activity.Id)
 
 
 fromUrl : Url -> Maybe Route
 fromUrl url =
     Parser.oneOf
         [ Parser.map
-            (\dateM -> Calendar (Date.fromIsoString (Maybe.withDefault "" dateM) |> Result.toMaybe))
-            (Parser.s "calendar" <?> Query.string "date")
-        , Parser.map
-            Activity
-            (Parser.s "activity" <?> Query.string "id")
-        , Parser.map Home Parser.top
+            Home
+            (Parser.s "home" <?> Query.string "activity")
         ]
         |> (\parser -> Parser.parse parser url)

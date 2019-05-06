@@ -57,8 +57,8 @@ type Msg
     = LoadDate Date
     | LoadToday
     | ToggleCalendar
-    | FocusDateSelect
-    | LoadActivity (Maybe Activity.Id)
+    | FocusCalendar
+    | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
     | EditActivity Activity
@@ -66,19 +66,14 @@ type Msg
     | NoOp
 
 
-openCalendar : Maybe Date -> Msg
-openCalendar dateM =
-    case dateM of
-        Just date ->
-            LoadDate date
-
-        Nothing ->
-            FocusDateSelect
+openCalendar : Msg
+openCalendar =
+    FocusCalendar
 
 
-openActivity : Maybe Activity.Id -> Msg
-openActivity idM =
-    LoadActivity idM
+openActivity : Activity.Id -> Msg
+openActivity id =
+    LoadActivity id
 
 
 resizeWindow : Int -> Int -> Msg
@@ -141,30 +136,25 @@ update msg model =
                     , Calendar.resetScroll NoOp
                     )
 
-                FocusDateSelect ->
+                FocusCalendar ->
                     ( Loaded { state | focus = DateSelect }
                     , Calendar.resetScroll NoOp
                     )
 
-                LoadActivity idM ->
-                    case idM of
-                        Just id ->
-                            let
-                                activityM =
-                                    state.activities |> List.filter (\a -> a.id == id) |> List.head
-                            in
-                            case activityM of
-                                Just activity ->
-                                    ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initEdit activity }
-                                    , Cmd.none
-                                    )
-
-                                Nothing ->
-                                    -- TODO: error handling
-                                    ( model, Cmd.none )
+                LoadActivity id ->
+                    let
+                        activityM =
+                            state.activities |> List.filter (\a -> a.id == id) |> List.head
+                    in
+                    case activityM of
+                        Just activity ->
+                            ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initEdit activity }
+                            , Cmd.none
+                            )
 
                         Nothing ->
-                            ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initNew }, Cmd.none )
+                            -- TODO: error handling
+                            ( model, Cmd.none )
 
                 GotActivities result ->
                     case result of
