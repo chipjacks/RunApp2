@@ -13,7 +13,6 @@ import Html.Attributes exposing (class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
 import Link
-import Scroll
 import Skeleton exposing (column, expandingRow, row)
 import Task
 import Time exposing (Month(..))
@@ -32,7 +31,7 @@ type Model
 type alias State =
     { window : Window
     , focus : Focus
-    , calendar : Bool
+    , calendar : Calendar.Model Msg
     , date : Date
     , activities : List Activity
     , activityForm : ActivityForm.Model
@@ -61,10 +60,9 @@ type Msg
     | LoadActivity (Maybe Activity.Id)
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
-    | ScrolledCalendar Int
-    | ScrolledActivities Int
     | EditActivity Activity
     | ActivityFormMsg ActivityForm.Msg
+    | NoOp
 
 
 openCalendar : Maybe Date -> Msg
@@ -115,18 +113,31 @@ update msg model =
         Loaded state ->
             case msg of
                 LoadDate date ->
-                    ( Loaded { state | focus = DateSelect, date = date }
-                    , Scroll.reset ScrolledCalendar "calendar"
-                    )
+                    if date == state.date then
+                        ( model, Cmd.none )
+
+                    else
+                        ( Loaded { state | focus = DateSelect, date = date }
+                        , Calendar.resetScroll NoOp
+                        )
 
                 ToggleCalendar ->
-                    ( Loaded { state | focus = DateSelect, calendar = not state.calendar }
-                    , Scroll.reset ScrolledCalendar "calendar"
+                    let
+                        toggledCalendar =
+                            case state.calendar of
+                                Calendar.Weekly ->
+                                    Calendar.Daily state.activities EditActivity
+
+                                Calendar.Daily _ _ ->
+                                    Calendar.Weekly
+                    in
+                    ( Loaded { state | focus = DateSelect, calendar = toggledCalendar }
+                    , Calendar.resetScroll NoOp
                     )
 
                 FocusDateSelect ->
                     ( Loaded { state | focus = DateSelect }
-                    , Scroll.reset ScrolledCalendar "calendar"
+                    , Calendar.resetScroll NoOp
                     )
 
                 LoadActivity idM ->
@@ -158,21 +169,7 @@ update msg model =
                             ( model, Cmd.none )
 
                 ResizeWindow width height ->
-                    ( Loaded { state | window = Window width height }, resetScrolls )
-
-                ScrolledCalendar scrollTop ->
-                    let
-                        ( dateF, cmd ) =
-                            Calendar.handleWeekScroll scrollTop ScrolledCalendar
-                    in
-                    ( Loaded { state | date = dateF state.date }, cmd )
-
-                ScrolledActivities scrollTop ->
-                    let
-                        ( dateF, cmd ) =
-                            Calendar.handleDayScroll scrollTop ScrolledActivities
-                    in
-                    ( Loaded { state | date = dateF state.date }, cmd )
+                    ( Loaded { state | window = Window width height }, Calendar.resetScroll NoOp )
 
                 EditActivity activity ->
                     ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
@@ -195,13 +192,16 @@ update msg model =
                     in
                     ( Loaded { state | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
+                NoOp ->
+                    ( model, Cmd.none )
+
 
 updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
         Loading (Just window) (Just date) (Just activities) ->
-            ( Loaded <| State window ActivityView False date activities ActivityForm.initNew
-            , Scroll.reset ScrolledCalendar "calendar"
+            ( Loaded <| State window ActivityView Calendar.Weekly date activities ActivityForm.initNew
+            , Calendar.resetScroll NoOp
             )
 
         _ ->
@@ -244,15 +244,6 @@ view model =
 
 viewDateSelect : State -> Html Msg
 viewDateSelect state =
-    let
-        calendarView =
-            case state.calendar of
-                True ->
-                    Calendar.Weekly
-
-                False ->
-                    Calendar.Daily state.activities EditActivity
-    in
     column []
         [ row []
             [ div [ class "dropdown" ]
@@ -281,7 +272,7 @@ viewDateSelect state =
                 ]
                 [ text "=" ]
             ]
-        , Calendar.view ScrolledCalendar state.date calendarView
+        , Calendar.view LoadDate state.date state.calendar
         ]
 
 
@@ -340,11 +331,3 @@ visible window focus =
 
     else
         Both
-
-
-resetScrolls : Cmd Msg
-resetScrolls =
-    Cmd.batch
-        [ Scroll.reset ScrolledCalendar "calendar"
-        , Scroll.reset ScrolledActivities "activities"
-        ]

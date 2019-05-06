@@ -1,15 +1,16 @@
-module Calendar exposing (Model(..), handleDayScroll, handleWeekScroll, view)
+module Calendar exposing (Model(..), resetScroll, view)
 
 import Activity exposing (Activity)
 import ActivityShape
+import Browser.Dom as Dom
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
-import Scroll
 import Skeleton exposing (column, expandingRow, row, twoColumns)
+import Task
 import Time exposing (Month(..))
 
 
@@ -18,8 +19,8 @@ type Model msg
     | Daily (List Activity) (Activity -> msg)
 
 
-view : (Int -> msg) -> Date -> Model msg -> Html msg
-view scroll date model =
+view : (Date -> msg) -> Date -> Model msg -> Html msg
+view changeDate date model =
     let
         body =
             case model of
@@ -35,35 +36,64 @@ view scroll date model =
         [ id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (Date.toIsoString date)
-        , Scroll.on scroll
+        , onScroll <| scrollHandler date changeDate model
         ]
-        [ column [ style "margin-bottom" Scroll.config.marginBottom ]
+        [ column [ style "margin-bottom" scrollConfig.marginBottom ]
             body
         ]
 
 
-handleWeekScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
-handleWeekScroll scrollTop scrollMsg =
-    if scrollTop < Scroll.config.loadPrevious then
-        ( Date.add Weeks -4, Scroll.reset scrollMsg "calendar" )
 
-    else if scrollTop > Scroll.config.loadNext then
-        ( Date.add Weeks 4, Scroll.reset scrollMsg "calendar" )
-
-    else
-        ( identity, Cmd.none )
+-- SCROLLING
 
 
-handleDayScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
-handleDayScroll scrollTop scrollMsg =
-    if scrollTop < Scroll.config.loadPrevious then
-        ( Date.add Days -3, Scroll.reset scrollMsg "calendar" )
+scrollConfig =
+    { marginBottom = "-500px"
+    , center = 250
+    , loadPrevious = 10
+    , loadNext = 490
+    }
 
-    else if scrollTop > Scroll.config.loadNext then
-        ( Date.add Days 3, Scroll.reset scrollMsg "calendar" )
 
-    else
-        ( identity, Cmd.none )
+onScroll : (Int -> msg) -> Html.Attribute msg
+onScroll msg =
+    Html.Events.on "scroll"
+        (Decode.at [ "target", "scrollTop" ] Decode.int
+            |> Decode.map msg
+        )
+
+
+resetScroll : msg -> Cmd msg
+resetScroll msg =
+    Task.attempt
+        (\_ -> msg)
+        (Dom.setViewportOf "calendar" 0 scrollConfig.center)
+
+
+scrollHandler : Date -> (Date -> msg) -> Model msg -> (Int -> msg)
+scrollHandler date changeDate model =
+    case model of
+        Weekly ->
+            \scrollTop ->
+                if scrollTop < scrollConfig.loadPrevious then
+                    changeDate (Date.add Weeks -4 date)
+
+                else if scrollTop > scrollConfig.loadNext then
+                    changeDate (Date.add Weeks 4 date)
+
+                else
+                    changeDate date
+
+        Daily _ _ ->
+            \scrollTop ->
+                if scrollTop < scrollConfig.loadPrevious then
+                    changeDate (Date.add Days -3 date)
+
+                else if scrollTop > scrollConfig.loadNext then
+                    changeDate (Date.add Days 3 date)
+
+                else
+                    changeDate date
 
 
 
