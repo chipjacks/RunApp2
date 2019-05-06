@@ -1,6 +1,6 @@
 module Skeleton exposing (column, expandingRow, layout, row, twoColumns)
 
-import Html exposing (Html, div, img, text)
+import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
 
 
@@ -9,11 +9,11 @@ layout page =
     column [ class "container-y" ]
         [ row [ class "navbar" ]
             [ column [ class "container-x" ]
-                [ row []
-                    [ compactColumn [ style "font-size" "1.5rem", style "font-style" "italic" ] [ text "RunApp2" ]
+                [ row [ style "font-size" "1.5rem" ]
+                    [ compactColumn [ style "font-style" "italic" ] [ text "RunApp2" ]
                     , column [] []
                     , compactColumn []
-                        [ img [ style "height" "1.8rem", src "assets/account.svg" ] []
+                        [ i [ class "fas fa-user-circle", style "padding-top" "0.2rem" ] []
                         ]
                     ]
                 ]

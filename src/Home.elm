@@ -8,7 +8,7 @@ import Browser.Dom as Dom
 import Calendar
 import Config exposing (config)
 import Date exposing (Date, Interval(..), Unit(..))
-import Html exposing (Html, a, button, div, text)
+import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
@@ -55,6 +55,7 @@ init =
 
 type Msg
     = LoadDate Date
+    | LoadToday
     | ToggleCalendar
     | FocusDateSelect
     | LoadActivity (Maybe Activity.Id)
@@ -120,6 +121,11 @@ update msg model =
                         ( Loaded { state | focus = DateSelect, date = date }
                         , Calendar.resetScroll NoOp
                         )
+
+                LoadToday ->
+                    ( model
+                    , Task.perform LoadDate Date.today
+                    )
 
                 ToggleCalendar ->
                     let
@@ -244,9 +250,19 @@ view model =
 
 viewDateSelect : State -> Html Msg
 viewDateSelect state =
+    let
+        calendarIcon =
+            case state.calendar of
+                Calendar.Weekly ->
+                    [ i [ class "far fa-calendar-minus" ] [] ]
+
+                _ ->
+                    [ i [ class "far fa-calendar-alt" ] [] ]
+    in
     column []
         [ row []
-            [ div [ class "dropdown" ]
+            [ button [ onClick ToggleCalendar ] calendarIcon
+            , div [ class "dropdown", style "margin-left" "0.5rem" ]
                 [ button [ style "width" "6rem" ]
                     [ text (Date.format "MMMM" state.date)
                     ]
@@ -260,17 +276,11 @@ viewDateSelect state =
                 , div [ class "dropdown-content", style "width" "4rem" ]
                     (listYears state.date LoadDate)
                 ]
-            , a
-                [ class "button"
-                , style "margin-left" "0.5rem"
-                , href (Link.toCalendar Nothing)
+            , button
+                [ style "margin-left" "0.5rem"
+                , onClick LoadToday
                 ]
                 [ text "Today" ]
-            , button
-                [ onClick ToggleCalendar
-                , style "margin-left" "0.5em"
-                ]
-                [ text "=" ]
             ]
         , Calendar.view LoadDate state.date state.calendar
         ]
@@ -293,7 +303,7 @@ listYears : Date -> (Date -> msg) -> List (Html msg)
 listYears date changeDate =
     let
         middle =
-            Date.fromCalendarDate 2019 Jan 1
+            Date.fromCalendarDate 2019 (Date.month date) 1
 
         start =
             Date.add Years -3 middle

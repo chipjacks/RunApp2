@@ -5,6 +5,10 @@ import Json.Decode as Decode exposing (Decoder, Value)
 import Json.Encode as Encode
 
 
+
+-- SOURCE: https://discourse.elm-lang.org/t/enum-helper-package/3426
+
+
 type alias Enum a =
     { toString : a -> String
     , fromString : String -> Maybe a
