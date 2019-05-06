@@ -13,7 +13,7 @@ import Skeleton exposing (column, expandingRow, row, twoColumns)
 
 view : Maybe (List Activity) -> (Activity -> msg) -> (Int -> msg) -> Date -> Html msg
 view activitiesM editActivity scrollMsg date =
-    column []
+    column [ style "flex-grow" "1", style "border-right" "1px solid #f1f1f1" ]
         [ header date
         , scrollingBody activitiesM editActivity scrollMsg date
         ]

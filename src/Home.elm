@@ -26,8 +26,8 @@ import Window exposing (Window)
 type alias Model =
     { window : Window
     , focus : Focus
-    , calendarDate : Maybe Date
-    , activitiesDate : Maybe Date
+    , calendar : Bool
+    , date : Maybe Date
     , activities : Maybe (List Activity)
     , activityForm : ActivityForm.Model
     }
@@ -35,7 +35,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model (Window 0 0) First Nothing Nothing Nothing ActivityForm.initNew
+    ( Model (Window 0 0) DateSelect False Nothing Nothing ActivityForm.initNew
     , Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
     )
 
@@ -82,7 +82,7 @@ update msg model =
         LoadCalendar dateM ->
             case dateM of
                 Just date ->
-                    ( { model | focus = First, calendarDate = Just date }, Scroll.reset ScrolledCalendar "calendar" )
+                    ( { model | focus = DateSelect, date = Just date, calendar = True }, Scroll.reset ScrolledCalendar "calendar" )
                         |> updateDate date
 
                 Nothing ->
@@ -91,7 +91,7 @@ update msg model =
         LoadActivities dateM ->
             case dateM of
                 Just date ->
-                    ( { model | focus = Second, activitiesDate = Just date }
+                    ( { model | focus = DateSelect, date = Just date, calendar = False }
                     , Task.attempt GotActivities Api.getActivities
                     )
                         |> updateDate date
@@ -108,7 +108,7 @@ update msg model =
                     in
                     case activityM of
                         Just activity ->
-                            ( { model | focus = Third, activityForm = ActivityForm.initEdit activity }, Cmd.none )
+                            ( { model | focus = ActivityView, activityForm = ActivityForm.initEdit activity }, Cmd.none )
 
                         Nothing ->
                             -- TODO: error handling
@@ -119,7 +119,7 @@ update msg model =
                     ( model, Cmd.none )
 
                 ( Nothing, _ ) ->
-                    ( { model | focus = Third, activityForm = ActivityForm.initNew }, Cmd.none )
+                    ( { model | focus = ActivityView, activityForm = ActivityForm.initNew }, Cmd.none )
 
         GotActivities result ->
             case result of
@@ -137,14 +137,14 @@ update msg model =
                 ( dateF, cmd ) =
                     Calendar.handleScroll scrollTop ScrolledCalendar
             in
-            ( { model | calendarDate = model.calendarDate |> Maybe.map dateF }, cmd )
+            ( { model | date = model.date |> Maybe.map dateF }, cmd )
 
         ScrolledActivities scrollTop ->
             let
                 ( dateF, cmd ) =
                     ActivityList.handleScroll scrollTop ScrolledActivities
             in
-            ( { model | activitiesDate = model.activitiesDate |> Maybe.map dateF }, cmd )
+            ( { model | date = model.date |> Maybe.map dateF }, cmd )
 
         EditActivity activity ->
             ( { model | activityForm = ActivityForm.initEdit activity }, Cmd.none )
@@ -171,25 +171,6 @@ update msg model =
 updateDate : Date -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 updateDate date ( model, cmd ) =
     let
-        ( calendarDate, calendarCmd ) =
-            if model.calendarDate == Nothing then
-                ( Just date, Scroll.reset ScrolledCalendar "calendar" )
-
-            else
-                ( model.calendarDate, Cmd.none )
-
-        ( activitiesDate, activitiesCmd ) =
-            if model.activitiesDate == Nothing then
-                ( Just date
-                , Cmd.batch
-                    [ Task.attempt GotActivities Api.getActivities
-                    , Scroll.reset ScrolledActivities "activities"
-                    ]
-                )
-
-            else
-                ( model.activitiesDate, Cmd.none )
-
         activityForm =
             if ActivityForm.dateRequested model.activityForm then
                 ActivityForm.selectDate model.activityForm date
@@ -197,8 +178,8 @@ updateDate date ( model, cmd ) =
             else
                 model.activityForm
     in
-    ( { model | calendarDate = calendarDate, activitiesDate = activitiesDate, activityForm = activityForm }
-    , Cmd.batch [ cmd, calendarCmd, activitiesCmd ]
+    ( { model | activityForm = activityForm }
+    , Cmd.none
     )
 
 
@@ -212,44 +193,38 @@ updateDate date ( model, cmd ) =
 view : Model -> Html Msg
 view model =
     let
-        containerDiv children =
+        containerDiv =
             expandingRow
                 [ id "home"
                 , style "overflow" "hidden"
                 ]
-                (children |> Array.toList)
 
-        columns =
-            Array.fromList
-                [ viewColM
-                    (Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar)
-                    model.calendarDate
-                , viewColM
-                    (ActivityList.view model.activities EditActivity ScrolledActivities)
-                    model.activitiesDate
-                , ActivityForm.view
-                    model.activityForm
-                    |> Html.map ActivityFormMsg
-                ]
+        dateSelect =
+            case model.calendar of
+                True ->
+                    viewColM
+                        (Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar)
+                        model.date
+
+                False ->
+                    viewColM
+                        (ActivityList.view model.activities EditActivity ScrolledActivities)
+                        model.date
+
+        activityView =
+            ActivityForm.view
+                model.activityForm
+                |> Html.map ActivityFormMsg
     in
     case visible model.window model.focus of
-        AllThree ->
-            containerDiv (Array.slice 0 3 columns)
+        One DateSelect ->
+            containerDiv [ dateSelect ]
 
-        FirstTwo ->
-            containerDiv (Array.slice 0 2 columns)
+        One ActivityView ->
+            containerDiv [ activityView ]
 
-        LastTwo ->
-            containerDiv (Array.slice 1 3 columns)
-
-        FirstOne ->
-            containerDiv (Array.slice 0 1 columns)
-
-        SecondOne ->
-            containerDiv (Array.slice 1 2 columns)
-
-        ThirdOne ->
-            containerDiv (Array.slice 2 3 columns)
+        Both ->
+            containerDiv [ dateSelect, activityView ]
 
 
 
@@ -276,56 +251,22 @@ viewEmptyColumn =
 
 
 type Visible
-    = AllThree
-    | FirstTwo
-    | LastTwo
-    | FirstOne
-    | SecondOne
-    | ThirdOne
+    = One Focus
+    | Both
 
 
 type Focus
-    = First
-    | Second
-    | Third
+    = DateSelect
+    | ActivityView
 
 
 visible : Window -> Focus -> Visible
 visible window focus =
     if window.width < (config.window.minWidth * 2 + 20) then
-        zoomOne focus
-
-    else if window.width < (config.window.minWidth * 3 + 40) then
-        zoomTwo focus
+        One focus
 
     else
-        AllThree
-
-
-zoomOne : Focus -> Visible
-zoomOne focus =
-    case focus of
-        First ->
-            FirstOne
-
-        Second ->
-            SecondOne
-
-        Third ->
-            ThirdOne
-
-
-zoomTwo : Focus -> Visible
-zoomTwo focus =
-    case focus of
-        First ->
-            FirstTwo
-
-        Second ->
-            FirstTwo
-
-        Third ->
-            LastTwo
+        Both
 
 
 resetScrolls : Cmd Msg

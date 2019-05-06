@@ -314,7 +314,7 @@ view model =
                 OtherForm _ ->
                     "Other"
     in
-    column [ id "activity", style "justify-content" "space-between" ]
+    column [ id "activity", style "justify-content" "space-between", style "flex-grow" "2" ]
         [ row []
             [ column []
                 [ selectDateButton date
