@@ -1,4 +1,4 @@
-module Link exposing (toActivity, toActivityList, toCalendar)
+module Link exposing (toActivity, toCalendar)
 
 import Activity
 import Date exposing (Date)
@@ -13,16 +13,6 @@ toCalendar dateM =
 
         Nothing ->
             absolute [ "calendar" ] []
-
-
-toActivityList : Maybe Date -> String
-toActivityList dateM =
-    case dateM of
-        Just date ->
-            absolute [ "activities" ] [ string "date" (Date.toIsoString date) ]
-
-        Nothing ->
-            absolute [ "activities" ] []
 
 
 toActivity : Maybe Activity.Id -> String

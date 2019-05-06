@@ -104,10 +104,6 @@ changeRouteTo model routeM =
             updateHome model (Home.openCalendar dateM)
                 |> updateWith Home HomeMsg model
 
-        Just (Route.Activities dateM) ->
-            updateHome model (Home.openActivityList dateM)
-                |> updateWith Home HomeMsg model
-
         Just (Route.Activity idM) ->
             updateHome model (Home.openActivity idM)
                 |> updateWith Home HomeMsg model

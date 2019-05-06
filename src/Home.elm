@@ -1,17 +1,18 @@
-module Home exposing (Model, Msg, init, openActivity, openActivityList, openCalendar, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, openActivity, openCalendar, resizeWindow, update, view)
 
 import Activity exposing (Activity)
 import ActivityForm
-import ActivityList
 import Api
 import Array
 import Browser.Dom as Dom
 import Calendar
 import Config exposing (config)
-import Date exposing (Date, Unit(..))
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, id, style)
+import Date exposing (Date, Interval(..), Unit(..))
+import Html exposing (Html, a, button, div, text)
+import Html.Attributes exposing (class, href, id, style)
+import Html.Events exposing (on, onClick)
 import Http
+import Link
 import Scroll
 import Skeleton exposing (column, expandingRow, row)
 import Task
@@ -43,7 +44,7 @@ init =
     ( Loading Nothing Nothing Nothing
     , Cmd.batch
         [ Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
-        , Task.perform (\date -> LoadActivities <| Just date) Date.today
+        , Task.perform LoadDate Date.today
         , Task.attempt GotActivities Api.getActivities
         ]
     )
@@ -54,8 +55,9 @@ init =
 
 
 type Msg
-    = LoadCalendar (Maybe Date)
-    | LoadActivities (Maybe Date)
+    = LoadDate Date
+    | ToggleCalendar
+    | FocusDateSelect
     | LoadActivity (Maybe Activity.Id)
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
@@ -67,12 +69,12 @@ type Msg
 
 openCalendar : Maybe Date -> Msg
 openCalendar dateM =
-    LoadCalendar dateM
+    case dateM of
+        Just date ->
+            LoadDate date
 
-
-openActivityList : Maybe Date -> Msg
-openActivityList dateM =
-    LoadActivities dateM
+        Nothing ->
+            FocusDateSelect
 
 
 openActivity : Maybe Activity.Id -> Msg
@@ -94,11 +96,7 @@ update msg model =
                     Loading (Just <| Window width height) dateM activitiesM
                         |> updateLoading
 
-                LoadCalendar (Just date) ->
-                    Loading windowM (Just date) activitiesM
-                        |> updateLoading
-
-                LoadActivities (Just date) ->
+                LoadDate date ->
                     Loading windowM (Just date) activitiesM
                         |> updateLoading
 
@@ -116,29 +114,20 @@ update msg model =
 
         Loaded state ->
             case msg of
-                LoadCalendar dateM ->
-                    case dateM of
-                        Just date ->
-                            ( Loaded { state | focus = DateSelect, date = date, calendar = True }
-                            , Scroll.reset ScrolledCalendar "calendar"
-                            )
+                LoadDate date ->
+                    ( Loaded { state | focus = DateSelect, date = date }
+                    , Scroll.reset ScrolledCalendar "calendar"
+                    )
 
-                        Nothing ->
-                            ( Loaded { state | focus = DateSelect, calendar = True }
-                            , Scroll.reset ScrolledCalendar "calendar"
-                            )
+                ToggleCalendar ->
+                    ( Loaded { state | focus = DateSelect, calendar = not state.calendar }
+                    , Scroll.reset ScrolledCalendar "calendar"
+                    )
 
-                LoadActivities dateM ->
-                    case dateM of
-                        Just date ->
-                            ( Loaded { state | focus = ActivityView, date = date, calendar = False }
-                            , Scroll.reset ScrolledActivities "activities"
-                            )
-
-                        Nothing ->
-                            ( Loaded { state | focus = DateSelect, calendar = False }
-                            , Scroll.reset ScrolledActivities "activities"
-                            )
+                FocusDateSelect ->
+                    ( Loaded { state | focus = DateSelect }
+                    , Scroll.reset ScrolledCalendar "calendar"
+                    )
 
                 LoadActivity idM ->
                     case idM of
@@ -174,14 +163,14 @@ update msg model =
                 ScrolledCalendar scrollTop ->
                     let
                         ( dateF, cmd ) =
-                            Calendar.handleScroll scrollTop ScrolledCalendar
+                            Calendar.handleWeekScroll scrollTop ScrolledCalendar
                     in
                     ( Loaded { state | date = dateF state.date }, cmd )
 
                 ScrolledActivities scrollTop ->
                     let
                         ( dateF, cmd ) =
-                            ActivityList.handleScroll scrollTop ScrolledActivities
+                            Calendar.handleDayScroll scrollTop ScrolledActivities
                     in
                     ( Loaded { state | date = dateF state.date }, cmd )
 
@@ -212,7 +201,7 @@ updateLoading model =
     case model of
         Loading (Just window) (Just date) (Just activities) ->
             ( Loaded <| State window ActivityView False date activities ActivityForm.initNew
-            , Scroll.reset ScrolledActivities "activities"
+            , Scroll.reset ScrolledCalendar "calendar"
             )
 
         _ ->
@@ -220,10 +209,7 @@ updateLoading model =
 
 
 
-{- VIEWING MODEL
-   Uses the off-canvas pattern for responsiveness.
-   https://developers.google.com/web/fundamentals/design-and-ux/responsive/patterns#off_canvas
--}
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -240,14 +226,6 @@ view model =
                         , style "overflow" "hidden"
                         ]
 
-                dateSelect =
-                    case state.calendar of
-                        True ->
-                            Calendar.view (\d -> LoadCalendar (Just d)) ScrolledCalendar state.date
-
-                        False ->
-                            ActivityList.view state.activities EditActivity ScrolledActivities state.date
-
                 activityView =
                     ActivityForm.view
                         state.activityForm
@@ -255,13 +233,90 @@ view model =
             in
             case visible state.window state.focus of
                 One DateSelect ->
-                    containerDiv [ dateSelect ]
+                    containerDiv [ viewDateSelect state ]
 
                 One ActivityView ->
                     containerDiv [ activityView ]
 
                 Both ->
-                    containerDiv [ dateSelect, activityView ]
+                    containerDiv [ viewDateSelect state, activityView ]
+
+
+viewDateSelect : State -> Html Msg
+viewDateSelect state =
+    let
+        calendarView =
+            case state.calendar of
+                True ->
+                    Calendar.Weekly
+
+                False ->
+                    Calendar.Daily state.activities EditActivity
+    in
+    column []
+        [ row []
+            [ div [ class "dropdown" ]
+                [ button [ style "width" "6rem" ]
+                    [ text (Date.format "MMMM" state.date)
+                    ]
+                , div [ class "dropdown-content", style "width" "6rem" ]
+                    (listMonths state.date LoadDate)
+                ]
+            , div [ class "dropdown", style "margin-left" "0.5rem" ]
+                [ button [ style "width" "4rem" ]
+                    [ text (Date.format "yyyy" state.date)
+                    ]
+                , div [ class "dropdown-content", style "width" "4rem" ]
+                    (listYears state.date LoadDate)
+                ]
+            , a
+                [ class "button"
+                , style "margin-left" "0.5rem"
+                , href (Link.toCalendar Nothing)
+                ]
+                [ text "Today" ]
+            , button
+                [ onClick ToggleCalendar
+                , style "margin-left" "0.5em"
+                ]
+                [ text "=" ]
+            ]
+        , Calendar.view ScrolledCalendar state.date calendarView
+        ]
+
+
+listMonths : Date -> (Date -> msg) -> List (Html msg)
+listMonths date changeDate =
+    let
+        start =
+            Date.fromCalendarDate (Date.year date) Jan 1
+
+        end =
+            Date.fromCalendarDate (Date.add Years 1 date |> Date.year) Jan 1
+    in
+    Date.range Month 1 start end
+        |> List.map (viewDropdownItem changeDate "MMMM")
+
+
+listYears : Date -> (Date -> msg) -> List (Html msg)
+listYears date changeDate =
+    let
+        middle =
+            Date.fromCalendarDate 2019 Jan 1
+
+        start =
+            Date.add Years -3 middle
+
+        end =
+            Date.add Years 3 middle
+    in
+    Date.range Month 12 start end
+        |> List.map (viewDropdownItem changeDate "yyyy")
+
+
+viewDropdownItem : (Date -> msg) -> String -> Date -> Html msg
+viewDropdownItem changeDate formatDate date =
+    div [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
 
 
 

@@ -1,5 +1,7 @@
-module Calendar exposing (handleScroll, view)
+module Calendar exposing (Model(..), handleDayScroll, handleWeekScroll, view)
 
+import Activity exposing (Activity)
+import ActivityShape
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
@@ -7,20 +9,28 @@ import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
 import Scroll
-import Skeleton exposing (column, expandingRow, row)
+import Skeleton exposing (column, expandingRow, row, twoColumns)
 import Time exposing (Month(..))
 
 
-view : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
-view changeDate scroll date =
-    column []
-        [ dateSelect date changeDate
-        , dateGrid changeDate scroll date
-        ]
+type Model msg
+    = Weekly
+    | Daily (List Activity) (Activity -> msg)
 
 
-dateGrid : (Date -> msg) -> (Int -> msg) -> Date -> Html msg
-dateGrid changeDate scroll date =
+view : (Int -> msg) -> Date -> Model msg -> Html msg
+view scroll date model =
+    let
+        body =
+            case model of
+                Weekly ->
+                    weekList date |> List.map viewWeek
+
+                Daily activities editActivity ->
+                    listDays date
+                        |> List.map (\d -> ( d, List.filter (\a -> a.date == d) activities ))
+                        |> List.map (viewDay editActivity)
+    in
     column
         [ id "calendar"
         , style "overflow" "scroll"
@@ -28,12 +38,12 @@ dateGrid changeDate scroll date =
         , Scroll.on scroll
         ]
         [ column [ style "margin-bottom" Scroll.config.marginBottom ]
-            (weekList date |> List.map viewWeek)
+            body
         ]
 
 
-handleScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
-handleScroll scrollTop scrollMsg =
+handleWeekScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
+handleWeekScroll scrollTop scrollMsg =
     if scrollTop < Scroll.config.loadPrevious then
         ( Date.add Weeks -4, Scroll.reset scrollMsg "calendar" )
 
@@ -44,74 +54,20 @@ handleScroll scrollTop scrollMsg =
         ( identity, Cmd.none )
 
 
+handleDayScroll : Int -> (Int -> msg) -> ( Date -> Date, Cmd msg )
+handleDayScroll scrollTop scrollMsg =
+    if scrollTop < Scroll.config.loadPrevious then
+        ( Date.add Days -3, Scroll.reset scrollMsg "calendar" )
 
--- DATE SELECTION
+    else if scrollTop > Scroll.config.loadNext then
+        ( Date.add Days 3, Scroll.reset scrollMsg "calendar" )
 
-
-dateSelect : Date -> (Date -> msg) -> Html msg
-dateSelect date changeDate =
-    row []
-        [ div [ class "dropdown" ]
-            [ button [ style "width" "6rem" ]
-                [ text (Date.format "MMMM" date)
-                ]
-            , div [ class "dropdown-content", style "width" "6rem" ]
-                (listMonths date changeDate)
-            ]
-        , div [ class "dropdown", style "margin-left" "0.5rem" ]
-            [ button [ style "width" "4rem" ]
-                [ text (Date.format "yyyy" date)
-                ]
-            , div [ class "dropdown-content", style "width" "4rem" ]
-                (listYears date changeDate)
-            ]
-        , a
-            [ class "button"
-            , style "margin-left" "0.5rem"
-            , style "text-decoration" "none"
-            , style "color" "black"
-            , href (Link.toCalendar Nothing)
-            ]
-            [ text "Today" ]
-        ]
-
-
-listMonths : Date -> (Date -> msg) -> List (Html msg)
-listMonths date changeDate =
-    let
-        start =
-            Date.fromCalendarDate (Date.year date) Jan 1
-
-        end =
-            Date.fromCalendarDate (Date.add Years 1 date |> Date.year) Jan 1
-    in
-    Date.range Month 1 start end
-        |> List.map (viewDropdownItem changeDate "MMMM")
-
-
-listYears : Date -> (Date -> msg) -> List (Html msg)
-listYears date changeDate =
-    let
-        middle =
-            Date.fromCalendarDate 2019 Jan 1
-
-        start =
-            Date.add Years -3 middle
-
-        end =
-            Date.add Years 3 middle
-    in
-    Date.range Month 12 start end
-        |> List.map (viewDropdownItem changeDate "yyyy")
-
-
-viewDropdownItem : (Date -> msg) -> String -> Date -> Html msg
-viewDropdownItem changeDate formatDate date =
-    div [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
+    else
+        ( identity, Cmd.none )
 
 
 
--- CALENDAR VIEW
+-- WEEKLY VIEW
 
 
 viewWeek : Date -> Html msg
@@ -122,14 +78,14 @@ viewWeek start =
     in
     expandingRow [ style "min-height" "3rem" ] <|
         titleWeek start
-            :: List.map viewDay days
+            :: List.map viewWeekDay days
 
 
-viewDay : Date -> Html msg
-viewDay date =
+viewWeekDay : Date -> Html msg
+viewWeekDay date =
     column []
         [ a
-            [ href (Link.toActivityList (Just date))
+            [ href (Link.toCalendar (Just date))
             , attribute "data-date" (Date.toIsoString date)
             ]
             [ text (Date.format "d" date)
@@ -167,3 +123,48 @@ weekList date =
 daysOfWeek : Date -> List Date
 daysOfWeek start =
     Date.range Day 1 start (Date.add Weeks 1 start)
+
+
+
+-- DAILY VIEW
+
+
+viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
+viewDay editActivity ( date, activities ) =
+    expandingRow []
+        [ column []
+            [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
+                [ a [ href (Link.toCalendar (Just date)) ]
+                    [ text (Date.format "E MMM d" date) ]
+                ]
+            , expandingRow []
+                [ viewActivities activities editActivity ]
+            ]
+        ]
+
+
+listDays : Date -> List Date
+listDays date =
+    let
+        start =
+            Date.add Days -7 date
+
+        end =
+            Date.add Days 7 date
+    in
+    Date.range Day 1 start end
+
+
+viewActivities : List Activity -> (Activity -> msg) -> Html msg
+viewActivities activities editActivity =
+    column [] (List.map (viewActivity editActivity) activities)
+
+
+viewActivity : (Activity -> msg) -> Activity -> Html msg
+viewActivity editActivity activity =
+    a [ href (Link.toActivity <| Just activity.id) ]
+        [ expandingRow [ style "margin-bottom" "1rem" ] <|
+            twoColumns
+                [ ActivityShape.view activity.details ]
+                [ text activity.description ]
+        ]
