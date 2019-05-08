@@ -24,7 +24,7 @@ import Window exposing (Window)
 
 
 type Model
-    = Loading (Maybe Window) (Maybe Date) (Maybe (List Activity))
+    = Loading Msg (Maybe Window) (Maybe Date) (Maybe (List Activity))
     | Loaded State
 
 
@@ -38,9 +38,9 @@ type alias State =
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Loading Nothing Nothing Nothing
+init : Msg -> ( Model, Cmd Msg )
+init msg =
+    ( Loading msg Nothing Nothing Nothing
     , Cmd.batch
         [ Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
         , Task.perform LoadDate Date.today
@@ -95,20 +95,20 @@ resizeWindow width height =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        Loading windowM dateM activitiesM ->
+        Loading queuedMsg windowM dateM activitiesM ->
             case msg of
                 ResizeWindow width height ->
-                    Loading (Just <| Window width height) dateM activitiesM
+                    Loading queuedMsg (Just <| Window width height) dateM activitiesM
                         |> updateLoading
 
                 LoadDate date ->
-                    Loading windowM (Just date) activitiesM
+                    Loading queuedMsg windowM (Just date) activitiesM
                         |> updateLoading
 
                 GotActivities activitiesR ->
                     case activitiesR of
                         Ok activities ->
-                            Loading windowM dateM (Just activities)
+                            Loading queuedMsg windowM dateM (Just activities)
                                 |> updateLoading
 
                         _ ->
@@ -215,10 +215,9 @@ update msg model =
 updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
-        Loading (Just window) (Just date) (Just activities) ->
-            ( Loaded <| State window ActivityFormFocus Calendar.Weekly date activities ActivityForm.initNew
-            , Calendar.resetScroll NoOp
-            )
+        Loading queuedMsg (Just window) (Just date) (Just activities) ->
+            (Loaded <| State window ActivityFormFocus Calendar.Weekly date activities ActivityForm.initNew)
+                |> update queuedMsg
 
         _ ->
             ( model, Cmd.none )
@@ -231,7 +230,7 @@ updateLoading model =
 view : Model -> Html Msg
 view model =
     case model of
-        Loading _ _ _ ->
+        Loading _ _ _ _ ->
             Html.div [] [ Html.text "Loading" ]
 
         Loaded state ->

@@ -112,14 +112,7 @@ updateHome model msg =
             Home.update msg home
 
         _ ->
-            let
-                ( subModel, subCmd ) =
-                    Home.init
-            in
-            Home.update msg subModel
-                |> (\( subModel2, subCmd2 ) ->
-                        ( subModel2, Cmd.batch [ subCmd, subCmd2 ] )
-                   )
+            Home.init msg
 
 
 
