@@ -1,4 +1,4 @@
-module Home exposing (Model, Msg, init, openActivity, openCalendar, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, parseQueryParams, resizeWindow, update, view)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -58,6 +58,7 @@ type Msg
     | LoadToday
     | ToggleCalendar
     | FocusCalendar
+    | LoadCalendarDate Date
     | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
@@ -66,14 +67,24 @@ type Msg
     | NoOp
 
 
-openCalendar : Msg
-openCalendar =
-    FocusCalendar
+parseQueryParams : Maybe Activity.Id -> Maybe String -> Msg
+parseQueryParams activityIdM dateStrM =
+    let
+        dateM =
+            Date.fromIsoString (Maybe.withDefault "" dateStrM)
+                |> Result.toMaybe
+    in
+    case activityIdM of
+        Just activityId ->
+            LoadActivity activityId
 
+        Nothing ->
+            case dateM of
+                Just date ->
+                    LoadCalendarDate date
 
-openActivity : Activity.Id -> Msg
-openActivity id =
-    LoadActivity id
+                Nothing ->
+                    FocusCalendar
 
 
 resizeWindow : Int -> Int -> Msg
@@ -113,7 +124,7 @@ update msg model =
                         ( model, Cmd.none )
 
                     else
-                        ( Loaded { state | focus = DateSelect, date = date }
+                        ( Loaded { state | focus = CalendarFocus, date = date }
                         , Calendar.resetScroll NoOp
                         )
 
@@ -132,12 +143,21 @@ update msg model =
                                 Calendar.Daily _ _ ->
                                     Calendar.Weekly
                     in
-                    ( Loaded { state | focus = DateSelect, calendar = toggledCalendar }
+                    ( Loaded { state | focus = CalendarFocus, calendar = toggledCalendar }
                     , Calendar.resetScroll NoOp
                     )
 
                 FocusCalendar ->
-                    ( Loaded { state | focus = DateSelect }
+                    ( Loaded { state | focus = CalendarFocus }
+                    , Calendar.resetScroll NoOp
+                    )
+
+                LoadCalendarDate date ->
+                    let
+                        calendar =
+                            Calendar.Daily state.activities EditActivity
+                    in
+                    ( Loaded { state | focus = CalendarFocus, calendar = calendar, date = date }
                     , Calendar.resetScroll NoOp
                     )
 
@@ -148,7 +168,7 @@ update msg model =
                     in
                     case activityM of
                         Just activity ->
-                            ( Loaded { state | focus = ActivityView, activityForm = ActivityForm.initEdit activity }
+                            ( Loaded { state | focus = ActivityFormFocus, activityForm = ActivityForm.initEdit activity }
                             , Cmd.none
                             )
 
@@ -196,7 +216,7 @@ updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
         Loading (Just window) (Just date) (Just activities) ->
-            ( Loaded <| State window ActivityView Calendar.Weekly date activities ActivityForm.initNew
+            ( Loaded <| State window ActivityFormFocus Calendar.Weekly date activities ActivityForm.initNew
             , Calendar.resetScroll NoOp
             )
 
@@ -222,24 +242,24 @@ view model =
                         , style "overflow" "hidden"
                         ]
 
-                activityView =
+                viewActivityForm =
                     ActivityForm.view
                         state.activityForm
                         |> Html.map ActivityFormMsg
             in
             case visible state.window state.focus of
-                One DateSelect ->
-                    containerDiv [ viewDateSelect state ]
+                One CalendarFocus ->
+                    containerDiv [ viewCalendar state ]
 
-                One ActivityView ->
-                    containerDiv [ activityView ]
+                One ActivityFormFocus ->
+                    containerDiv [ viewActivityForm ]
 
                 Both ->
-                    containerDiv [ viewDateSelect state, activityView ]
+                    containerDiv [ viewCalendar state, viewActivityForm ]
 
 
-viewDateSelect : State -> Html Msg
-viewDateSelect state =
+viewCalendar : State -> Html Msg
+viewCalendar state =
     let
         calendarIcon =
             case state.calendar of
@@ -320,8 +340,8 @@ type Visible
 
 
 type Focus
-    = DateSelect
-    | ActivityView
+    = CalendarFocus
+    | ActivityFormFocus
 
 
 visible : Window -> Focus -> Visible

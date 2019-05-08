@@ -100,15 +100,9 @@ changeRouteTo model routeM =
         Nothing ->
             ( { model | page = NotFound }, Cmd.none )
 
-        Just (Route.Home activityIdM) ->
-            case activityIdM of
-                Just id ->
-                    updateHome model (Home.openActivity id)
-                        |> updateWith Home HomeMsg model
-
-                Nothing ->
-                    updateHome model Home.openCalendar
-                        |> updateWith Home HomeMsg model
+        Just (Route.Home homeMsg) ->
+            updateHome model homeMsg
+                |> updateWith Home HomeMsg model
 
 
 updateHome : Model -> Home.Msg -> ( Home.Model, Cmd Home.Msg )
