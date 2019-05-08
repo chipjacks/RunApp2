@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), dateRequested, initEdit, initNew, selectDate, update, view)
+module ActivityForm exposing (Model, Msg(..), initEdit, initNew, update, view)
 
 import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
@@ -21,6 +21,7 @@ import Task exposing (Task)
 
 type alias Model =
     { status : Status
+    , date : Date
     , form : Form
     , result : Result Error Activity
     }
@@ -32,8 +33,7 @@ type Status
 
 
 type alias Form =
-    { date : Maybe Date
-    , description : String
+    { description : String
     , details : DetailsForm
     }
 
@@ -57,8 +57,6 @@ type Msg
     | SelectedPace String
     | EditedIntervalDuration Int String
     | SelectedIntervalPace Int String
-    | RequestDate
-    | GotDate Date
     | ClickedSubmit
     | ClickedReset
     | ClickedDelete
@@ -71,9 +69,9 @@ type Error
     | EmptyFieldError String
 
 
-initNew : Model
-initNew =
-    Model Creating (Form Nothing "" (RunForm { duration = Nothing, pace = Nothing })) (Err (EmptyFieldError ""))
+initNew : Date -> Model
+initNew date =
+    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Nothing })) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -82,11 +80,11 @@ initEdit activity =
         form =
             case activity.details of
                 Activity.Run (Activity.Interval minutes pace) ->
-                    Form (Just activity.date) activity.description <|
+                    Form activity.description <|
                         RunForm { duration = Just minutes, pace = Just pace }
 
                 Activity.Intervals intervals ->
-                    Form (Just activity.date) activity.description <|
+                    Form activity.description <|
                         IntervalsForm
                             (Array.fromList <|
                                 List.map
@@ -95,25 +93,10 @@ initEdit activity =
                             )
 
                 Activity.Other minutes ->
-                    Form (Just activity.date) activity.description <|
+                    Form activity.description <|
                         OtherForm { duration = Just minutes }
     in
-    Model (Editing activity.id) form (Ok activity)
-
-
-dateRequested : Model -> Bool
-dateRequested model =
-    case model.form.date of
-        Just date ->
-            False
-
-        Nothing ->
-            True
-
-
-selectDate : Model -> Date -> Model
-selectDate model date =
-    update (GotDate date) model |> Tuple.first
+    Model (Editing activity.id) activity.date form (Ok activity)
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -128,11 +111,10 @@ validateFieldExists fieldM fieldName =
 
 validate : Form -> Result Error Activity
 validate form =
-    Result.map3
-        (\date description details ->
-            Activity "" date description details
+    Result.map2
+        (\description details ->
+            Activity "" (Date.fromRataDie 0) description details
         )
-        (validateFieldExists form.date "date")
         (validateFieldExists (Just form.description) "description")
         (validateDetails form.details)
 
@@ -219,12 +201,6 @@ update msg model =
         SelectedIntervalPace index str ->
             updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str }) model
 
-        RequestDate ->
-            updateForm (\form -> { form | date = Nothing }) model
-
-        GotDate date ->
-            updateForm (\form -> { form | date = Just date }) model
-
         ClickedSubmit ->
             case model.result of
                 Ok activity ->
@@ -232,26 +208,26 @@ update msg model =
                         apiTask =
                             case model.status of
                                 Editing id ->
-                                    Api.saveActivity { activity | id = id }
+                                    Api.saveActivity { activity | date = model.date, id = id }
 
                                 Creating ->
-                                    Api.createActivity (\id -> { activity | id = id })
+                                    Api.createActivity (\id -> { activity | date = model.date, id = id })
                     in
-                    ( initNew, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
+                    ( initNew model.date, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
                 Err error ->
                     ( model, Cmd.none )
 
         ClickedReset ->
-            ( initNew, Cmd.none )
+            ( initNew model.date, Cmd.none )
 
         ClickedDelete ->
             case model.status of
                 Editing id ->
-                    ( initNew, Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError)) )
+                    ( initNew model.date, Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError)) )
 
                 _ ->
-                    ( initNew, Cmd.none )
+                    ( initNew model.date, Cmd.none )
 
         GotSubmitResult result ->
             case result of
@@ -300,7 +276,7 @@ updateInterval index transform model =
 view : Model -> Html Msg
 view model =
     let
-        { date, description, details } =
+        { description, details } =
             model.form
 
         detailsFormType =
@@ -317,7 +293,7 @@ view model =
     column [ id "activity", style "justify-content" "space-between", style "flex-grow" "2" ]
         [ row []
             [ column []
-                [ selectDateButton date
+                [ text (Date.toIsoString model.date)
                 , viewError model.result
                 , row []
                     [ input
@@ -445,20 +421,6 @@ deleteButton status =
 
         Creating ->
             div [] []
-
-
-selectDateButton : Maybe Date -> Html Msg
-selectDateButton dateM =
-    let
-        content =
-            case dateM of
-                Just date ->
-                    Date.toIsoString date
-
-                Nothing ->
-                    "Select Date"
-    in
-    button [ name "date", onClick RequestDate ] [ text content ]
 
 
 durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg

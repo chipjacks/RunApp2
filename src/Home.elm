@@ -216,7 +216,7 @@ updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
         Loading queuedMsg (Just window) (Just date) (Just activities) ->
-            (Loaded <| State window ActivityFormFocus Calendar.Weekly date activities ActivityForm.initNew)
+            (Loaded <| State window ActivityFormFocus Calendar.Weekly date activities (ActivityForm.initNew date))
                 |> update queuedMsg
 
         _ ->
