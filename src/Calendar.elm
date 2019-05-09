@@ -115,7 +115,7 @@ viewWeekDay : Date -> Html msg
 viewWeekDay date =
     column []
         [ a
-            [ href (Link.toCalendar (Just date))
+            [ href (Link.toCalendarDate date)
             , attribute "data-date" (Date.toIsoString date)
             ]
             [ text (Date.format "d" date)
@@ -164,7 +164,9 @@ viewDay editActivity ( date, activities ) =
     expandingRow []
         [ column []
             [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
-                [ text (Date.format "E MMM d" date) ]
+                [ text (Date.format "E MMM d" date)
+                , a [ href (Link.toNewActivity date) ] [ text "+" ]
+                ]
             , expandingRow []
                 [ viewActivities activities editActivity ]
             ]

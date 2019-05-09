@@ -1,4 +1,4 @@
-module Home exposing (Model, Msg, init, parseQueryParams, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, parseUrl, resizeWindow, update, view)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -16,6 +16,9 @@ import Link
 import Skeleton exposing (column, expandingRow, row)
 import Task
 import Time exposing (Month(..))
+import Url exposing (Url)
+import Url.Parser as Parser exposing ((</>), (<?>))
+import Url.Parser.Query as Query
 import Window exposing (Window)
 
 
@@ -62,29 +65,38 @@ type Msg
     | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
+    | NewActivity (Maybe Date)
     | EditActivity Activity
     | ActivityFormMsg ActivityForm.Msg
     | NoOp
 
 
-parseQueryParams : Maybe Activity.Id -> Maybe String -> Msg
-parseQueryParams activityIdM dateStrM =
+parseUrl : Parser.Parser (Msg -> b) b
+parseUrl =
     let
-        dateM =
-            Date.fromIsoString (Maybe.withDefault "" dateStrM)
-                |> Result.toMaybe
-    in
-    case activityIdM of
-        Just activityId ->
-            LoadActivity activityId
-
-        Nothing ->
-            case dateM of
+        calendar dateStrM =
+            case parseDate dateStrM of
                 Just date ->
                     LoadCalendarDate date
 
                 Nothing ->
                     FocusCalendar
+
+        newActivity dateStrM =
+            NewActivity (parseDate dateStrM)
+
+        existingActivity id =
+            LoadActivity id
+
+        parseDate dateStrM =
+            Date.fromIsoString (Maybe.withDefault "" dateStrM)
+                |> Result.toMaybe
+    in
+    Parser.oneOf
+        [ Parser.map calendar (Parser.s "calendar" <?> Query.string "date")
+        , Parser.map newActivity (Parser.s "activity" </> Parser.s "new" <?> Query.string "date")
+        , Parser.map existingActivity (Parser.s "activity" </> Parser.string)
+        ]
 
 
 resizeWindow : Int -> Int -> Msg
@@ -189,6 +201,11 @@ update msg model =
 
                 EditActivity activity ->
                     ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
+
+                NewActivity dateM ->
+                    ( Loaded { state | activityForm = ActivityForm.initNew (dateM |> Maybe.withDefault state.date) }
+                    , Cmd.none
+                    )
 
                 ActivityFormMsg subMsg ->
                     let

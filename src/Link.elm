@@ -1,20 +1,25 @@
-module Link exposing (toActivity, toCalendar)
+module Link exposing (toActivity, toCalendar, toNewActivity, toCalendarDate)
 
 import Activity
 import Date exposing (Date)
 import Url.Builder exposing (absolute, string)
 
 
-toCalendar : Maybe Date -> String
-toCalendar dateM =
-    case dateM of
-        Just date ->
-            absolute [ "home" ] [ string "date" (Date.toIsoString date) ]
+toCalendar : String
+toCalendar =
+    absolute [ "calendar" ] []
 
-        Nothing ->
-            absolute [ "home" ] []
+
+toCalendarDate : Date -> String
+toCalendarDate date =
+    absolute [ "calendar" ] [ string "date" (Date.toIsoString date) ]
 
 
 toActivity : Activity.Id -> String
 toActivity id =
-    absolute [ "home" ] [ string "activity" id ]
+    absolute [ "activity", id ] [ ]
+
+
+toNewActivity : Date -> String
+toNewActivity date =
+    absolute [ "activity", "new" ] [ string "date" (Date.toIsoString date) ]

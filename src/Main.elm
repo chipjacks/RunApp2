@@ -123,17 +123,17 @@ view : Model -> Browser.Document Msg
 view model =
     case model.page of
         Welcome ->
-            { title = "Welcome"
+            { title = "RunApp2"
             , body = [ Html.div [] [ Html.text "Welcome to RunApp2" ] ]
             }
 
         Home subModel ->
-            { title = "Home"
+            { title = "Home | RunApp2"
             , body = Home.view subModel |> Skeleton.layout |> Html.map HomeMsg |> List.singleton
             }
 
         NotFound ->
-            { title = "Not Found"
+            { title = "Not Found | RunApp2"
             , body = [ Html.div [] [ Html.text "Page Not Found" ] ]
             }
 

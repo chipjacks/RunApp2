@@ -13,7 +13,6 @@ type Route
 fromUrl : Url -> Maybe Route
 fromUrl url =
     Parser.oneOf
-        [ Parser.map Home
-            (Parser.s "home" <?> Query.map2 Home.parseQueryParams (Query.string "activity") (Query.string "date"))
+        [ Parser.map Home Home.parseUrl
         ]
         |> (\parser -> Parser.parse parser url)
