@@ -5,7 +5,7 @@ import ActivityShape
 import Api
 import Array exposing (Array)
 import Date exposing (Date)
-import Html exposing (Html, button, div, input, text)
+import Html exposing (Html, button, div, i, input, text)
 import Html.Attributes exposing (class, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
@@ -278,23 +278,18 @@ view model =
     let
         { description, details } =
             model.form
-
-        detailsFormType =
-            case details of
-                RunForm _ ->
-                    "Run"
-
-                IntervalsForm _ ->
-                    "Intervals"
-
-                OtherForm _ ->
-                    "Other"
     in
-    column [ id "activity", style "justify-content" "space-between", style "flex-grow" "2" ]
+    column
+        [ id "activity"
+        , style "justify-content" "space-between"
+        , style "flex-grow" "2"
+        ]
         [ row []
             [ column []
-                [ text (Date.toIsoString model.date)
-                , viewError model.result
+                [ row [ style "justify-content" "space-between" ]
+                    [ detailsSelect details
+                    , text (Date.toIsoString model.date)
+                    ]
                 , row []
                     [ input
                         [ type_ "text"
@@ -305,16 +300,8 @@ view model =
                         , style "width" "100%"
                         ]
                         []
-                    , Html.select
-                        [ onInput SelectedDetails
-                        , name "details"
-                        , value detailsFormType
-                        ]
-                        [ Html.option [] [ Html.text "Run" ]
-                        , Html.option [] [ Html.text "Intervals" ]
-                        , Html.option [] [ Html.text "Other" ]
-                        ]
                     ]
+                , viewError model.result
                 ]
             ]
         , viewDetailsForm details
@@ -328,6 +315,36 @@ view model =
                 [ text "Reset" ]
             , deleteButton model.status
             ]
+        ]
+
+
+detailsSelect : DetailsForm -> Html Msg
+detailsSelect details =
+    let
+        detailsFormType =
+            case details of
+                RunForm _ ->
+                    "Run"
+
+                IntervalsForm _ ->
+                    "Intervals"
+
+                OtherForm _ ->
+                    "Other"
+
+        radioButton typeStr iconStr =
+            button
+                [ Html.Attributes.classList [ ( "selected", detailsFormType == typeStr ) ]
+                , onClick <| SelectedDetails typeStr
+                ]
+                [ i [ class <| "fas fa-" ++ iconStr, style "padding-right" "0.5rem" ] []
+                , text typeStr
+                ]
+    in
+    div [ class "radio-buttons" ]
+        [ radioButton "Run" "square"
+        , radioButton "Intervals" "align-left"
+        , radioButton "Other" "circle"
         ]
 
 

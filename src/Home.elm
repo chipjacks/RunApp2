@@ -13,7 +13,7 @@ import Html.Attributes exposing (class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
 import Link
-import Skeleton exposing (column, expandingRow, row)
+import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task
 import Time exposing (Month(..))
 import Url exposing (Url)
@@ -271,7 +271,11 @@ view model =
                     containerDiv [ viewActivityForm ]
 
                 Both ->
-                    containerDiv [ viewCalendar state, viewActivityForm ]
+                    containerDiv
+                        [ viewCalendar state
+                        , compactColumn [ style "width" "15px" ] []
+                        , viewActivityForm
+                        ]
 
 
 viewCalendar : State -> Html Msg
@@ -285,7 +289,7 @@ viewCalendar state =
                 _ ->
                     [ i [ class "far fa-calendar-alt" ] [] ]
     in
-    column []
+    column [ style "border-right" "1px solid #f1f1f1" ]
         [ row []
             [ button [ onClick ToggleCalendar ] calendarIcon
             , div [ class "dropdown", style "margin-left" "0.5rem" ]

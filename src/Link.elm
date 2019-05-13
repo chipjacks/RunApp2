@@ -1,4 +1,4 @@
-module Link exposing (toActivity, toCalendar, toNewActivity, toCalendarDate)
+module Link exposing (toActivity, toCalendar, toCalendarDate, toNewActivity)
 
 import Activity
 import Date exposing (Date)
@@ -17,7 +17,7 @@ toCalendarDate date =
 
 toActivity : Activity.Id -> String
 toActivity id =
-    absolute [ "activity", id ] [ ]
+    absolute [ "activity", id ] []
 
 
 toNewActivity : Date -> String

@@ -1,4 +1,4 @@
-module Skeleton exposing (column, expandingRow, layout, row, twoColumns)
+module Skeleton exposing (column, compactColumn, expandingRow, layout, row, twoColumns)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
