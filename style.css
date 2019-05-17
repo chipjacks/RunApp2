@@ -1,4 +1,13 @@
 /*
+ * COLORS
+*/
+:root {
+  --accent-blue: #4183c4;
+  --interact-grey: #f9f9f9;
+  --highlight-grey: #f1f1f1;
+}
+
+/*
  * LAYOUT
 */
 
@@ -6,7 +15,7 @@
 html, body { height: 100%; margin: 0 }
 .container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto; }
 .container-y {  max-height: 1000px; min-height: 450px; height: 100%; overflow: hidden; }
-.navbar { padding: 0.7rem; color: white; background-color: #4183c4; margin-bottom: 0.5rem; }
+.navbar { padding: 0.7rem; color: white; background-color: var(--accent-blue); margin-bottom: 0.5rem; }
 
 /* FLEXBOX PARENTS */
 .row { display: flex; flex-direction: row; }
@@ -22,13 +31,13 @@ html, body { height: 100%; margin: 0 }
  * STYLING
 */
 body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
-a { text-decoration: none; color: #4183c4; }
-input { border: 1px solid #f1f1f1; border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
-input:focus { border-color: #4183c4; }
-select { border: 1px solid #f1f1f1; border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
-select:focus { border-color: #4183c4; }
+a { text-decoration: none; color: var(--accent-blue); }
+input { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
+input:focus { border-color: var(--accent-blue); }
+select { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
+select:focus { border-color: var(--accent-blue); }
 button, .button {
-  background-color: #f9f9f9;
+  background-color: var(--interact-grey);
   padding: 0.5rem;
   border-radius: 0.25rem;
   border: none;
@@ -37,12 +46,12 @@ button, .button {
   text-decoration: none;
   color: black;
 }
-button:hover, .button:hover { background-color: #f1f1f1; }
+button:hover, .button:hover { background-color: var(--highlight-grey); }
 
 .radio-buttons > button { border-radius: 0; }
 .radio-buttons > button:first-child { border-radius: 0.25rem 0 0 0.25rem }
 .radio-buttons > button:last-child { border-radius: 0 0.25rem 0.25rem 0 }
-.radio-buttons > button.selected { background-color: #f1f1f1; }
+.radio-buttons > button.selected { background-color: var(--highlight-grey); }
 
 
 /* DROPDOWN */
@@ -52,7 +61,7 @@ button:hover, .button:hover { background-color: #f1f1f1; }
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f9f9f9;
+  background-color: var(--interact-grey);
   z-index: 1;
   border-radius: 0.25rem;
 }
@@ -66,6 +75,6 @@ button:hover, .button:hover { background-color: #f1f1f1; }
   text-align: center;
 }
 
-.dropdown-content div:hover { background-color: #f1f1f1 }
+.dropdown-content div:hover { background-color: var(--highlight-grey) }
 
 .dropdown:hover .dropdown-content { display: block; }
