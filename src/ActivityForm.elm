@@ -213,7 +213,7 @@ update msg model =
                                 Creating ->
                                     Api.createActivity (\id -> { activity | date = model.date, id = id })
                     in
-                    ( initNew model.date, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
+                    ( model, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
                 Err error ->
                     ( model, Cmd.none )

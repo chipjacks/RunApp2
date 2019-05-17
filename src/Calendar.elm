@@ -14,23 +14,23 @@ import Task
 import Time exposing (Month(..))
 
 
-type Model msg
+type Model
     = Weekly
-    | Daily (List Activity) (Activity -> msg)
+    | Daily
 
 
-view : (Date -> msg) -> Date -> Model msg -> Html msg
-view changeDate date model =
+view : (Date -> msg) -> (Date -> List Activity) -> Date -> Model -> Html msg
+view changeDate accessActivities date model =
     let
         body =
             case model of
                 Weekly ->
                     weekList date |> List.map viewWeek
 
-                Daily activities editActivity ->
+                Daily ->
                     listDays date
-                        |> List.map (\d -> ( d, List.filter (\a -> a.date == d) activities ))
-                        |> List.map (viewDay editActivity)
+                        |> List.map (\d -> ( d, accessActivities d ))
+                        |> List.map viewDay
     in
     column
         [ id "calendar"
@@ -70,7 +70,7 @@ resetScroll msg =
         (Dom.setViewportOf "calendar" 0 scrollConfig.center)
 
 
-scrollHandler : Date -> (Date -> msg) -> Model msg -> (Int -> msg)
+scrollHandler : Date -> (Date -> msg) -> Model -> (Int -> msg)
 scrollHandler date changeDate model =
     case model of
         Weekly ->
@@ -84,7 +84,7 @@ scrollHandler date changeDate model =
                 else
                     changeDate date
 
-        Daily _ _ ->
+        Daily ->
             \scrollTop ->
                 if scrollTop < scrollConfig.loadPrevious then
                     changeDate (Date.add Days -3 date)
@@ -159,8 +159,8 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : (Activity -> msg) -> ( Date, List Activity ) -> Html msg
-viewDay editActivity ( date, activities ) =
+viewDay : ( Date, List Activity ) -> Html msg
+viewDay ( date, activities ) =
     expandingRow []
         [ column []
             [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
@@ -168,7 +168,7 @@ viewDay editActivity ( date, activities ) =
                 , a [ href (Link.toNewActivity date) ] [ text "+" ]
                 ]
             , expandingRow []
-                [ viewActivities activities editActivity ]
+                [ viewActivities activities ]
             ]
         ]
 
@@ -185,13 +185,13 @@ listDays date =
     Date.range Day 1 start end
 
 
-viewActivities : List Activity -> (Activity -> msg) -> Html msg
-viewActivities activities editActivity =
-    column [] (List.map (viewActivity editActivity) activities)
+viewActivities : List Activity -> Html msg
+viewActivities activities =
+    column [] (List.map viewActivity activities)
 
 
-viewActivity : (Activity -> msg) -> Activity -> Html msg
-viewActivity editActivity activity =
+viewActivity : Activity -> Html msg
+viewActivity activity =
     a [ href (Link.toActivity activity.id) ]
         [ expandingRow [ style "margin-bottom" "1rem" ] <|
             twoColumns

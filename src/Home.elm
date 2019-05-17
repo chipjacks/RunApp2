@@ -34,7 +34,7 @@ type Model
 type alias State =
     { window : Window
     , focus : Focus
-    , calendar : Calendar.Model Msg
+    , calendar : Calendar.Model
     , date : Date
     , activities : List Activity
     , activityForm : ActivityForm.Model
@@ -150,9 +150,9 @@ update msg model =
                         toggledCalendar =
                             case state.calendar of
                                 Calendar.Weekly ->
-                                    Calendar.Daily state.activities EditActivity
+                                    Calendar.Daily
 
-                                Calendar.Daily _ _ ->
+                                Calendar.Daily ->
                                     Calendar.Weekly
                     in
                     ( Loaded { state | focus = CalendarFocus, calendar = toggledCalendar }
@@ -167,7 +167,7 @@ update msg model =
                 LoadCalendarDate date ->
                     let
                         calendar =
-                            Calendar.Daily state.activities EditActivity
+                            Calendar.Daily
                     in
                     ( Loaded { state | focus = CalendarFocus, calendar = calendar, date = date }
                     , Calendar.resetScroll NoOp
@@ -223,7 +223,7 @@ update msg model =
                         ( subModel, subCmd ) =
                             ActivityForm.update subMsg state.activityForm
                     in
-                    ( Loaded { state | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
+                    ( Loaded { newState | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
                 NoOp ->
                     ( model, Cmd.none )
@@ -233,7 +233,15 @@ updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
         Loading queuedMsg (Just window) (Just date) (Just activities) ->
-            (Loaded <| State window ActivityFormFocus Calendar.Weekly date activities (ActivityForm.initNew date))
+            (Loaded <|
+                State
+                    window
+                    ActivityFormFocus
+                    Calendar.Daily
+                    date
+                    activities
+                    (ActivityForm.initNew date)
+            )
                 |> update queuedMsg
 
         _ ->
@@ -288,6 +296,10 @@ viewCalendar state =
 
                 _ ->
                     [ i [ class "far fa-calendar-alt" ] [] ]
+
+        accessActivities =
+            \date ->
+                List.filter (\a -> a.date == date) state.activities
     in
     column [ style "border-right" "1px solid #f1f1f1" ]
         [ row []
@@ -312,7 +324,7 @@ viewCalendar state =
                 ]
                 [ text "Today" ]
             ]
-        , Calendar.view LoadDate state.date state.calendar
+        , Calendar.view LoadDate accessActivities state.date state.calendar
         ]
 
 
