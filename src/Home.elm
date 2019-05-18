@@ -203,7 +203,7 @@ update msg model =
                     ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
 
                 NewActivity dateM ->
-                    ( Loaded { state | activityForm = ActivityForm.initNew (dateM |> Maybe.withDefault state.date) }
+                    ( Loaded { state | focus = ActivityFormFocus, activityForm = ActivityForm.initNew (dateM |> Maybe.withDefault state.date) }
                     , Cmd.none
                     )
 
