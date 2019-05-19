@@ -167,7 +167,11 @@ update msg model =
                     ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
 
                 NewActivity dateM ->
-                    ( Loaded { state | focus = ActivityFormFocus, activityForm = ActivityForm.initNew (dateM |> Maybe.withDefault state.date) }
+                    let
+                        date =
+                            dateM |> Maybe.withDefault state.date
+                    in
+                    ( Loaded { state | focus = ActivityFormFocus, date = date, activityForm = ActivityForm.initNew date }
                     , Cmd.none
                     )
 
