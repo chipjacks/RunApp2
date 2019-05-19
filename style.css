@@ -66,15 +66,16 @@ button:hover, .button:hover { background-color: var(--highlight-grey); }
   border-radius: 0.25rem;
 }
 
-.dropdown-content div {
+.dropdown-content a {
   padding: 0.5rem;
   text-decoration: none;
   display: block;
   cursor: pointer;
   border-radius: 0.25rem;
   text-align: center;
+  color: black;
 }
 
-.dropdown-content div:hover { background-color: var(--highlight-grey) }
+.dropdown-content a:hover { background-color: var(--highlight-grey) }
 
 .dropdown:hover .dropdown-content { display: block; }

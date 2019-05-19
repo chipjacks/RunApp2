@@ -46,7 +46,7 @@ init msg =
     ( Loading msg Nothing Nothing Nothing
     , Cmd.batch
         [ Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
-        , Task.perform LoadDate Date.today
+        , Task.perform (\d -> LoadCalendar Calendar.Daily (Just d)) Date.today
         , Task.attempt GotActivities Api.getActivities
         ]
     )
@@ -57,11 +57,8 @@ init msg =
 
 
 type Msg
-    = LoadDate Date
+    = LoadCalendar Calendar.Model (Maybe Date)
     | LoadToday
-    | ToggleCalendar
-    | FocusCalendar
-    | LoadCalendarDate Date
     | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
     | ResizeWindow Int Int
@@ -74,13 +71,11 @@ type Msg
 parseUrl : Parser.Parser (Msg -> b) b
 parseUrl =
     let
-        calendar dateStrM =
-            case parseDate dateStrM of
-                Just date ->
-                    LoadCalendarDate date
+        weeklyCalendar dateStrM =
+            LoadCalendar Calendar.Weekly (parseDate dateStrM)
 
-                Nothing ->
-                    FocusCalendar
+        dailyCalendar dateStrM =
+            LoadCalendar Calendar.Daily (parseDate dateStrM)
 
         newActivity dateStrM =
             NewActivity (parseDate dateStrM)
@@ -93,7 +88,8 @@ parseUrl =
                 |> Result.toMaybe
     in
     Parser.oneOf
-        [ Parser.map calendar (Parser.s "calendar" <?> Query.string "date")
+        [ Parser.map weeklyCalendar (Parser.s "calendar" </> Parser.s "weekly" <?> Query.string "date")
+        , Parser.map dailyCalendar (Parser.s "calendar" </> Parser.s "daily" <?> Query.string "date")
         , Parser.map newActivity (Parser.s "activity" </> Parser.s "new" <?> Query.string "date")
         , Parser.map existingActivity (Parser.s "activity" </> Parser.string)
         ]
@@ -113,8 +109,8 @@ update msg model =
                     Loading queuedMsg (Just <| Window width height) dateM activitiesM
                         |> updateLoading
 
-                LoadDate date ->
-                    Loading queuedMsg windowM (Just date) activitiesM
+                LoadCalendar calendar date ->
+                    Loading queuedMsg windowM date activitiesM
                         |> updateLoading
 
                 GotActivities activitiesR ->
@@ -131,46 +127,14 @@ update msg model =
 
         Loaded state ->
             case msg of
-                LoadDate date ->
-                    if date == state.date then
-                        ( model, Cmd.none )
-
-                    else
-                        ( Loaded { state | focus = CalendarFocus, date = date }
-                        , Calendar.resetScroll NoOp
-                        )
+                LoadCalendar calendar dateM ->
+                    ( Loaded { state | focus = CalendarFocus, calendar = calendar, date = dateM |> Maybe.withDefault state.date }
+                    , Calendar.resetScroll NoOp
+                    )
 
                 LoadToday ->
                     ( model
-                    , Task.perform LoadDate Date.today
-                    )
-
-                ToggleCalendar ->
-                    let
-                        toggledCalendar =
-                            case state.calendar of
-                                Calendar.Weekly ->
-                                    Calendar.Daily
-
-                                Calendar.Daily ->
-                                    Calendar.Weekly
-                    in
-                    ( Loaded { state | focus = CalendarFocus, calendar = toggledCalendar }
-                    , Calendar.resetScroll NoOp
-                    )
-
-                FocusCalendar ->
-                    ( Loaded { state | focus = CalendarFocus }
-                    , Calendar.resetScroll NoOp
-                    )
-
-                LoadCalendarDate date ->
-                    let
-                        calendar =
-                            Calendar.Daily
-                    in
-                    ( Loaded { state | focus = CalendarFocus, calendar = calendar, date = date }
-                    , Calendar.resetScroll NoOp
+                    , Task.perform (\d -> LoadCalendar state.calendar (Just d)) Date.today
                     )
 
                 LoadActivity id ->
@@ -297,26 +261,38 @@ viewCalendar state =
                 _ ->
                     [ i [ class "far fa-calendar-alt" ] [] ]
 
+        ( loadDate, toggleCalendar ) =
+            case state.calendar of
+                Calendar.Weekly ->
+                    ( Link.toWeeklyCalendar
+                    , Link.toDailyCalendar state.date
+                    )
+
+                Calendar.Daily ->
+                    ( Link.toDailyCalendar
+                    , Link.toWeeklyCalendar state.date
+                    )
+
         accessActivities =
             \date ->
                 List.filter (\a -> a.date == date) state.activities
     in
     column [ style "border-right" "1px solid #f1f1f1" ]
         [ row []
-            [ button [ onClick ToggleCalendar ] calendarIcon
+            [ a [ class "button", href toggleCalendar ] calendarIcon
             , div [ class "dropdown", style "margin-left" "0.5rem" ]
                 [ button [ style "width" "6rem" ]
                     [ text (Date.format "MMMM" state.date)
                     ]
                 , div [ class "dropdown-content", style "width" "6rem" ]
-                    (listMonths state.date LoadDate)
+                    (listMonths state.date loadDate)
                 ]
             , div [ class "dropdown", style "margin-left" "0.5rem" ]
                 [ button [ style "width" "4rem" ]
                     [ text (Date.format "yyyy" state.date)
                     ]
                 , div [ class "dropdown-content", style "width" "4rem" ]
-                    (listYears state.date LoadDate)
+                    (listYears state.date loadDate)
                 ]
             , button
                 [ style "margin-left" "0.5rem"
@@ -324,11 +300,11 @@ viewCalendar state =
                 ]
                 [ text "Today" ]
             ]
-        , Calendar.view LoadDate accessActivities state.date state.calendar
+        , Calendar.view (\d -> LoadCalendar state.calendar (Just d)) accessActivities state.date state.calendar
         ]
 
 
-listMonths : Date -> (Date -> msg) -> List (Html msg)
+listMonths : Date -> (Date -> String) -> List (Html msg)
 listMonths date changeDate =
     let
         start =
@@ -341,7 +317,7 @@ listMonths date changeDate =
         |> List.map (viewDropdownItem changeDate "MMMM")
 
 
-listYears : Date -> (Date -> msg) -> List (Html msg)
+listYears : Date -> (Date -> String) -> List (Html msg)
 listYears date changeDate =
     let
         middle =
@@ -357,9 +333,9 @@ listYears date changeDate =
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
-viewDropdownItem : (Date -> msg) -> String -> Date -> Html msg
+viewDropdownItem : (Date -> String) -> String -> Date -> Html msg
 viewDropdownItem changeDate formatDate date =
-    div [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
+    a [ href (changeDate date) ] [ text <| Date.format formatDate date ]
 
 
 

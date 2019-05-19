@@ -1,18 +1,18 @@
-module Link exposing (toActivity, toCalendar, toCalendarDate, toNewActivity)
+module Link exposing (toActivity, toDailyCalendar, toNewActivity, toWeeklyCalendar)
 
 import Activity
 import Date exposing (Date)
 import Url.Builder exposing (absolute, string)
 
 
-toCalendar : String
-toCalendar =
-    absolute [ "calendar" ] []
+toWeeklyCalendar : Date -> String
+toWeeklyCalendar date =
+    absolute [ "calendar", "weekly" ] [ string "date" (Date.toIsoString date) ]
 
 
-toCalendarDate : Date -> String
-toCalendarDate date =
-    absolute [ "calendar" ] [ string "date" (Date.toIsoString date) ]
+toDailyCalendar : Date -> String
+toDailyCalendar date =
+    absolute [ "calendar", "daily" ] [ string "date" (Date.toIsoString date) ]
 
 
 toActivity : Activity.Id -> String

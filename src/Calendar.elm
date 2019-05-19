@@ -55,11 +55,21 @@ scrollConfig =
     }
 
 
-onScroll : (Int -> msg) -> Html.Attribute msg
-onScroll msg =
+onScroll : ( msg, msg ) -> Html.Attribute msg
+onScroll ( loadPrevious, loadNext ) =
     Html.Events.on "scroll"
         (Decode.at [ "target", "scrollTop" ] Decode.int
-            |> Decode.map msg
+            |> Decode.andThen
+                (\scrollTop ->
+                    if scrollTop < scrollConfig.loadPrevious then
+                        Decode.succeed loadPrevious
+
+                    else if scrollTop > scrollConfig.loadNext then
+                        Decode.succeed loadNext
+
+                    else
+                        Decode.fail ""
+                )
         )
 
 
@@ -70,30 +80,16 @@ resetScroll msg =
         (Dom.setViewportOf "calendar" 0 scrollConfig.center)
 
 
-scrollHandler : Date -> (Date -> msg) -> Model -> (Int -> msg)
+scrollHandler : Date -> (Date -> msg) -> Model -> ( msg, msg )
 scrollHandler date changeDate model =
-    case model of
+    (case model of
         Weekly ->
-            \scrollTop ->
-                if scrollTop < scrollConfig.loadPrevious then
-                    changeDate (Date.add Weeks -4 date)
-
-                else if scrollTop > scrollConfig.loadNext then
-                    changeDate (Date.add Weeks 4 date)
-
-                else
-                    changeDate date
+            ( Date.add Weeks -4 date, Date.add Weeks 4 date )
 
         Daily ->
-            \scrollTop ->
-                if scrollTop < scrollConfig.loadPrevious then
-                    changeDate (Date.add Days -3 date)
-
-                else if scrollTop > scrollConfig.loadNext then
-                    changeDate (Date.add Days 3 date)
-
-                else
-                    changeDate date
+            ( Date.add Days -3 date, Date.add Days 3 date )
+    )
+        |> Tuple.mapBoth changeDate changeDate
 
 
 
@@ -115,7 +111,7 @@ viewWeekDay : Date -> Html msg
 viewWeekDay date =
     column []
         [ a
-            [ href (Link.toCalendarDate date)
+            [ href (Link.toDailyCalendar date)
             , attribute "data-date" (Date.toIsoString date)
             ]
             [ text (Date.format "d" date)
