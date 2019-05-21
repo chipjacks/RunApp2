@@ -71,7 +71,7 @@ deleteActivity id =
 
 
 storeUrl =
-    "https://api.jsonbin.io/b/5c745db056292a73eb718d29"
+    "https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c"
 
 
 postActivities : List Activity -> Task Http.Error (List Activity)
