@@ -15,4 +15,16 @@ fromUrl url =
     Parser.oneOf
         [ Parser.map Home Home.parseUrl
         ]
-        |> (\parser -> Parser.parse parser url)
+        |> (\parser -> Parser.parse parser (urlFragmentToPath url))
+
+
+urlFragmentToPath : Url -> Url
+urlFragmentToPath url =
+    let
+        path =
+            url.fragment |> Maybe.withDefault "" |> String.split "?" |> List.head |> Maybe.withDefault ""
+
+        query =
+            url.fragment |> Maybe.withDefault "" |> String.split "?" |> List.tail |> Maybe.withDefault [] |> List.head
+    in
+    { url | path = path, query = query, fragment = Nothing }
