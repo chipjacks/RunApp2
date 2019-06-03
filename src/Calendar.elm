@@ -9,7 +9,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Link
-import Skeleton exposing (column, expandingRow, row, twoColumns)
+import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task
 import Time exposing (Month(..))
 
@@ -32,7 +32,7 @@ view changeDate accessActivities date model =
                         |> List.map (\d -> ( d, accessActivities d ))
                         |> List.map viewDay
     in
-    column
+    expandingRow
         [ id "calendar"
         , style "overflow" "scroll"
         , attribute "data-date" (Date.toIsoString date)
@@ -157,13 +157,13 @@ daysOfWeek start =
 
 viewDay : ( Date, List Activity ) -> Html msg
 viewDay ( date, activities ) =
-    expandingRow []
+    row []
         [ column []
-            [ expandingRow [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
+            [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
                 [ text (Date.format "E MMM d" date)
                 , a [ href (Link.toNewActivity date) ] [ text "+" ]
                 ]
-            , expandingRow []
+            , row []
                 [ viewActivities activities ]
             ]
         ]
@@ -188,9 +188,8 @@ viewActivities activities =
 
 viewActivity : Activity -> Html msg
 viewActivity activity =
-    a [ href (Link.toActivity activity.id) ]
-        [ expandingRow [ style "margin-bottom" "1rem" ] <|
-            twoColumns
-                [ ActivityShape.view activity.details ]
-                [ text activity.description ]
+    row [ style "margin-bottom" "1rem" ]
+        [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
+        , column [ style "justify-content" "center" ]
+            [ a [ href (Link.toActivity activity.id) ] [ text activity.description ] ]
         ]

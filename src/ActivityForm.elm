@@ -5,11 +5,12 @@ import ActivityShape
 import Api
 import Array exposing (Array)
 import Date exposing (Date)
-import Html exposing (Html, button, div, i, input, text)
-import Html.Attributes exposing (class, id, name, placeholder, style, type_, value)
+import Html exposing (Html, a, button, div, i, input, text)
+import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
-import Skeleton exposing (column, expandingRow, row, twoColumns)
+import Link
+import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task exposing (Task)
 
 
@@ -286,10 +287,10 @@ view model =
         ]
         [ row []
             [ column []
-                [ row [ style "justify-content" "space-between" ]
-                    [ detailsSelect details
-                    , text (Date.toIsoString model.date)
+                [ row []
+                    [ a [ href (Link.toDailyCalendar model.date) ] [ text (Date.format "EEEE, MMM d" model.date) ]
                     ]
+                , row [] [ detailsSelect details ]
                 , row []
                     [ input
                         [ type_ "text"
@@ -304,7 +305,9 @@ view model =
                 , viewError model.result
                 ]
             ]
-        , viewDetailsForm details
+        , expandingRow [ style "overflow" "scroll" ]
+            [ column [ style "justify-content" "center" ] [ viewDetailsForm details ]
+            ]
         , row []
             [ submitButton model.status
             , button
@@ -359,20 +362,21 @@ viewDetailsForm detailsForm =
     in
     case detailsForm of
         RunForm { duration, pace } ->
-            row [] <|
-                twoColumns
-                    [ activityShape ]
+            row []
+                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+                , column []
                     [ row []
                         [ durationInput EditedDuration duration
                         , paceSelect SelectedPace pace
                         ]
                     ]
+                ]
 
         OtherForm { duration } ->
-            row [] <|
-                twoColumns
-                    [ activityShape ]
-                    [ durationInput EditedDuration duration ]
+            row []
+                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+                , column [] [ durationInput EditedDuration duration ]
+                ]
 
         IntervalsForm intervals ->
             row []
@@ -395,14 +399,15 @@ viewIntervalForm index interval =
                 Err _ ->
                     ActivityShape.viewDefault
     in
-    row [] <|
-        twoColumns
-            [ activityShape ]
+    row []
+        [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+        , column []
             [ row []
                 [ durationInput (EditedIntervalDuration index) interval.duration
                 , paceSelect (SelectedIntervalPace index) interval.pace
                 ]
             ]
+        ]
 
 
 submitButton : Status -> Html Msg
@@ -444,10 +449,10 @@ durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg
 durationInput msg duration =
     input
         [ type_ "number"
-        , placeholder "Duration"
+        , placeholder "Mins"
         , onInput msg
         , name "duration"
-        , style "width" "7rem"
+        , style "width" "3rem"
         , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
         ]
         []

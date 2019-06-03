@@ -23,8 +23,8 @@ html, body { height: 100%; margin: 0; }
 .center { justify-content: center; }
 
 /* FLEXBOX CHILDREN */
-.compact { flex: 0 0 auto; }
-.expand { flex: 1 1 0; }
+.compact { flex-grow: 0; flex-shrink: 0; flex-basis: auto; }
+.expand { flex-grow: 1; flex-shrink: 1; }
 
 
 /*
@@ -32,9 +32,9 @@ html, body { height: 100%; margin: 0; }
 */
 body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
 a { text-decoration: none; color: var(--accent-blue); }
-input { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
+input { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
 input:focus { border-color: var(--accent-blue); }
-select { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 0.8rem; }
+select { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
 select:focus { border-color: var(--accent-blue); }
 button, .button {
   background-color: var(--interact-grey);
