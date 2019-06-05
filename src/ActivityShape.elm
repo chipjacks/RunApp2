@@ -9,13 +9,13 @@ import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 
 type Shape
-    = Block Color { width : Int, height : Float }
+    = Block Color { width : Float, height : Float }
     | Circle Color { height : Float }
 
 
 type Color
     = Green
-    | Grey
+    | Gray
 
 
 view : Details -> Html msg
@@ -32,38 +32,34 @@ view details =
                     intervals
 
         Other duration ->
-            Circle Grey { height = toHeight duration }
+            Circle Gray { height = toHeight duration }
                 |> viewShape
 
 
 viewDefault : Html msg
 viewDefault =
-    Circle Grey { height = 1 } |> viewShape
+    Circle Gray { height = 1 } |> viewShape
 
 
 viewShape : Shape -> Html msg
 viewShape shape =
     case shape of
         Block color { width, height } ->
-            row []
-                [ div
-                    [ style "width" <| String.fromInt width ++ "%"
-                    , style "height" <| String.fromFloat height ++ "rem"
-                    , style "background-color" (colorString color)
-                    ]
-                    []
+            div
+                [ style "width" <| String.fromFloat (width * 0.5) ++ "rem"
+                , style "height" <| String.fromFloat height ++ "rem"
+                , style "background-color" (colorString color)
                 ]
+                []
 
         Circle color { height } ->
-            row []
-                [ div
-                    [ style "width" "0.5rem"
-                    , style "height" <| String.fromFloat height ++ "rem"
-                    , style "background-color" (colorString color)
-                    , style "border-radius" "0.25rem"
-                    ]
-                    []
+            div
+                [ style "width" "0.5rem"
+                , style "height" <| String.fromFloat height ++ "rem"
+                , style "background-color" (colorString color)
+                , style "border-radius" "0.25rem"
                 ]
+                []
 
 
 colorString : Color -> String
@@ -72,7 +68,7 @@ colorString color =
         Green ->
             "limegreen"
 
-        Grey ->
+        Gray ->
             "gray"
 
 
@@ -81,32 +77,32 @@ toHeight duration =
     toFloat duration / 10
 
 
-toWidth : Activity.Pace -> Int
+toWidth : Activity.Pace -> Float
 toWidth pace =
     case pace of
         Easy ->
-            10
+            1
 
         Moderate ->
-            20
+            2
 
         SteadyState ->
-            30
+            3
 
         Brisk ->
-            40
+            4
 
         AerobicThreshold ->
-            50
+            5
 
         LactateThreshold ->
-            60
+            6
 
         Groove ->
-            70
+            7
 
         VO2Max ->
-            80
+            8
 
         Fast ->
-            90
+            9

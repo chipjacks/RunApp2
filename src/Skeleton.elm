@@ -1,4 +1,4 @@
-module Skeleton exposing (column, compactColumn, expandingRow, layout, row, twoColumns)
+module Skeleton exposing (column, compactColumn, expandingRow, layout, row)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -51,10 +51,3 @@ compactColumn attributes children =
     div
         (class "column compact" :: attributes)
         children
-
-
-twoColumns : List (Html msg) -> List (Html msg) -> List (Html msg)
-twoColumns left right =
-    [ column [ class "center", style "flex-grow" "1" ] <| left
-    , column [ class "center", style "flex-grow" "3" ] <| right
-    ]
