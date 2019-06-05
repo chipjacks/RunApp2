@@ -38,7 +38,7 @@ view changeDate accessActivities date model =
         , attribute "data-date" (Date.toIsoString date)
         , onScroll <| scrollHandler date changeDate model
         ]
-        [ column [ style "margin-bottom" scrollConfig.marginBottom ]
+        [ column [ style "margin-bottom" scrollConfig.marginBottom, style "justify-content" "space-between" ]
             body
         ]
 
