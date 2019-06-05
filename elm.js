@@ -10532,10 +10532,10 @@ var author$project$ActivityForm$durationInput = F2(
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$type_('number'),
-					elm$html$Html$Attributes$placeholder('Duration'),
+					elm$html$Html$Attributes$placeholder('Mins'),
 					elm$html$Html$Events$onInput(msg),
 					elm$html$Html$Attributes$name('duration'),
-					A2(elm$html$Html$Attributes$style, 'width', '7rem'),
+					A2(elm$html$Html$Attributes$style, 'width', '3rem'),
 					elm$html$Html$Attributes$value(
 					A2(
 						elm$core$Maybe$withDefault,
@@ -10604,31 +10604,31 @@ var author$project$ActivityShape$Circle = F2(
 	function (a, b) {
 		return {$: 1, a: a, b: b};
 	});
+var author$project$ActivityShape$Gray = 1;
 var author$project$ActivityShape$Green = 0;
-var author$project$ActivityShape$Grey = 1;
 var author$project$ActivityShape$toHeight = function (duration) {
 	return duration / 10;
 };
 var author$project$ActivityShape$toWidth = function (pace) {
 	switch (pace) {
 		case 0:
-			return 10;
+			return 1;
 		case 1:
-			return 20;
+			return 2;
 		case 2:
-			return 30;
+			return 3;
 		case 3:
-			return 40;
+			return 4;
 		case 4:
-			return 50;
+			return 5;
 		case 5:
-			return 60;
+			return 6;
 		case 6:
-			return 70;
+			return 7;
 		case 7:
-			return 80;
+			return 8;
 		default:
-			return 90;
+			return 9;
 	}
 };
 var author$project$ActivityShape$colorString = function (color) {
@@ -10638,16 +10638,6 @@ var author$project$ActivityShape$colorString = function (color) {
 		return 'gray';
 	}
 };
-var author$project$Skeleton$row = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('row compact'),
-				attributes),
-			children);
-	});
 var elm$core$String$fromFloat = _String_fromNumber;
 var author$project$ActivityShape$viewShape = function (shape) {
 	if (!shape.$) {
@@ -10655,54 +10645,42 @@ var author$project$ActivityShape$viewShape = function (shape) {
 		var width = shape.b.al;
 		var height = shape.b.H;
 		return A2(
-			author$project$Skeleton$row,
-			_List_Nil,
+			elm$html$Html$div,
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$Attributes$style,
-							'width',
-							elm$core$String$fromInt(width) + '%'),
-							A2(
-							elm$html$Html$Attributes$style,
-							'height',
-							elm$core$String$fromFloat(height) + 'rem'),
-							A2(
-							elm$html$Html$Attributes$style,
-							'background-color',
-							author$project$ActivityShape$colorString(color))
-						]),
-					_List_Nil)
-				]));
+					elm$html$Html$Attributes$style,
+					'width',
+					elm$core$String$fromFloat(width * 0.5) + 'rem'),
+					A2(
+					elm$html$Html$Attributes$style,
+					'height',
+					elm$core$String$fromFloat(height) + 'rem'),
+					A2(
+					elm$html$Html$Attributes$style,
+					'background-color',
+					author$project$ActivityShape$colorString(color))
+				]),
+			_List_Nil);
 	} else {
 		var color = shape.a;
 		var height = shape.b.H;
 		return A2(
-			author$project$Skeleton$row,
-			_List_Nil,
+			elm$html$Html$div,
 			_List_fromArray(
 				[
+					A2(elm$html$Html$Attributes$style, 'width', '0.5rem'),
 					A2(
-					elm$html$Html$div,
-					_List_fromArray(
-						[
-							A2(elm$html$Html$Attributes$style, 'width', '0.5rem'),
-							A2(
-							elm$html$Html$Attributes$style,
-							'height',
-							elm$core$String$fromFloat(height) + 'rem'),
-							A2(
-							elm$html$Html$Attributes$style,
-							'background-color',
-							author$project$ActivityShape$colorString(color)),
-							A2(elm$html$Html$Attributes$style, 'border-radius', '0.25rem')
-						]),
-					_List_Nil)
-				]));
+					elm$html$Html$Attributes$style,
+					'height',
+					elm$core$String$fromFloat(height) + 'rem'),
+					A2(
+					elm$html$Html$Attributes$style,
+					'background-color',
+					author$project$ActivityShape$colorString(color)),
+					A2(elm$html$Html$Attributes$style, 'border-radius', '0.25rem')
+				]),
+			_List_Nil);
 	}
 };
 var author$project$Skeleton$column = F2(
@@ -10765,27 +10743,25 @@ var author$project$ActivityShape$viewDefault = author$project$ActivityShape$view
 		author$project$ActivityShape$Circle,
 		1,
 		{H: 1}));
-var author$project$Skeleton$twoColumns = F2(
-	function (left, right) {
-		return _List_fromArray(
-			[
-				A2(
-				author$project$Skeleton$column,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('center'),
-						A2(elm$html$Html$Attributes$style, 'flex-grow', '1')
-					]),
-				left),
-				A2(
-				author$project$Skeleton$column,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$class('center'),
-						A2(elm$html$Html$Attributes$style, 'flex-grow', '3')
-					]),
-				right)
-			]);
+var author$project$Skeleton$compactColumn = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('column compact'),
+				attributes),
+			children);
+	});
+var author$project$Skeleton$row = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('row compact'),
+				attributes),
+			children);
 	});
 var author$project$ActivityForm$viewIntervalForm = F2(
 	function (index, interval) {
@@ -10802,27 +10778,37 @@ var author$project$ActivityForm$viewIntervalForm = F2(
 		return A2(
 			author$project$Skeleton$row,
 			_List_Nil,
-			A2(
-				author$project$Skeleton$twoColumns,
-				_List_fromArray(
-					[activityShape]),
-				_List_fromArray(
-					[
-						A2(
-						author$project$Skeleton$row,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								author$project$ActivityForm$durationInput,
-								author$project$ActivityForm$EditedIntervalDuration(index),
-								interval.i),
-								A2(
-								author$project$ActivityForm$paceSelect,
-								author$project$ActivityForm$SelectedIntervalPace(index),
-								interval.n)
-							]))
-					])));
+			_List_fromArray(
+				[
+					A2(
+					author$project$Skeleton$compactColumn,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'flex-basis', '5rem')
+						]),
+					_List_fromArray(
+						[activityShape])),
+					A2(
+					author$project$Skeleton$column,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2(
+							author$project$Skeleton$row,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									author$project$ActivityForm$durationInput,
+									author$project$ActivityForm$EditedIntervalDuration(index),
+									interval.i),
+									A2(
+									author$project$ActivityForm$paceSelect,
+									author$project$ActivityForm$SelectedIntervalPace(index),
+									interval.n)
+								]))
+						]))
+				]));
 	});
 var elm$core$Elm$JsArray$foldl = _JsArray_foldl;
 var elm$core$Elm$JsArray$indexedMap = _JsArray_indexedMap;
@@ -10878,34 +10864,54 @@ var author$project$ActivityForm$viewDetailsForm = function (detailsForm) {
 			return A2(
 				author$project$Skeleton$row,
 				_List_Nil,
-				A2(
-					author$project$Skeleton$twoColumns,
-					_List_fromArray(
-						[activityShape]),
-					_List_fromArray(
-						[
-							A2(
-							author$project$Skeleton$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(author$project$ActivityForm$durationInput, author$project$ActivityForm$EditedDuration, duration),
-									A2(author$project$ActivityForm$paceSelect, author$project$ActivityForm$SelectedPace, pace)
-								]))
-						])));
+				_List_fromArray(
+					[
+						A2(
+						author$project$Skeleton$compactColumn,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'flex-basis', '5rem')
+							]),
+						_List_fromArray(
+							[activityShape])),
+						A2(
+						author$project$Skeleton$column,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(author$project$ActivityForm$durationInput, author$project$ActivityForm$EditedDuration, duration),
+										A2(author$project$ActivityForm$paceSelect, author$project$ActivityForm$SelectedPace, pace)
+									]))
+							]))
+					]));
 		case 2:
 			var duration = detailsForm.a.i;
 			return A2(
 				author$project$Skeleton$row,
 				_List_Nil,
-				A2(
-					author$project$Skeleton$twoColumns,
-					_List_fromArray(
-						[activityShape]),
-					_List_fromArray(
-						[
-							A2(author$project$ActivityForm$durationInput, author$project$ActivityForm$EditedDuration, duration)
-						])));
+				_List_fromArray(
+					[
+						A2(
+						author$project$Skeleton$compactColumn,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'flex-basis', '5rem')
+							]),
+						_List_fromArray(
+							[activityShape])),
+						A2(
+						author$project$Skeleton$column,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(author$project$ActivityForm$durationInput, author$project$ActivityForm$EditedDuration, duration)
+							]))
+					]));
 		default:
 			var intervals = detailsForm.a;
 			return A2(
@@ -10959,6 +10965,75 @@ var author$project$ActivityForm$viewError = function (errorR) {
 			_List_Nil);
 	}
 };
+var elm$core$String$append = _String_append;
+var author$project$Link$toFragment = function (absUrl) {
+	return A2(
+		elm$core$String$append,
+		'#',
+		A2(elm$core$String$dropLeft, 1, absUrl));
+};
+var elm$url$Url$Builder$toQueryPair = function (_n0) {
+	var key = _n0.a;
+	var value = _n0.b;
+	return key + ('=' + value);
+};
+var elm$url$Url$Builder$toQuery = function (parameters) {
+	if (!parameters.b) {
+		return '';
+	} else {
+		return '?' + A2(
+			elm$core$String$join,
+			'&',
+			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
+	}
+};
+var elm$url$Url$Builder$absolute = F2(
+	function (pathSegments, parameters) {
+		return '/' + (A2(elm$core$String$join, '/', pathSegments) + elm$url$Url$Builder$toQuery(parameters));
+	});
+var elm$url$Url$percentEncode = _Url_percentEncode;
+var elm$url$Url$Builder$QueryParameter = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var elm$url$Url$Builder$string = F2(
+	function (key, value) {
+		return A2(
+			elm$url$Url$Builder$QueryParameter,
+			elm$url$Url$percentEncode(key),
+			elm$url$Url$percentEncode(value));
+	});
+var author$project$Link$toDailyCalendar = function (date) {
+	return author$project$Link$toFragment(
+		A2(
+			elm$url$Url$Builder$absolute,
+			_List_fromArray(
+				['calendar', 'daily']),
+			_List_fromArray(
+				[
+					A2(
+					elm$url$Url$Builder$string,
+					'date',
+					justinmimbs$date$Date$toIsoString(date))
+				])));
+};
+var author$project$Skeleton$expandingRow = F2(
+	function (attributes, children) {
+		return A2(
+			elm$html$Html$div,
+			A2(
+				elm$core$List$cons,
+				elm$html$Html$Attributes$class('row expand'),
+				attributes),
+			children);
+	});
+var elm$html$Html$a = _VirtualDom_node('a');
+var elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var author$project$ActivityForm$view = function (model) {
 	var _n0 = model.m;
@@ -10986,15 +11061,28 @@ var author$project$ActivityForm$view = function (model) {
 							[
 								A2(
 								author$project$Skeleton$row,
+								_List_Nil,
 								_List_fromArray(
 									[
-										A2(elm$html$Html$Attributes$style, 'justify-content', 'space-between')
-									]),
+										A2(
+										elm$html$Html$a,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$href(
+												author$project$Link$toDailyCalendar(model.at))
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text(
+												A2(justinmimbs$date$Date$format, 'EEEE, MMM d', model.at))
+											]))
+									])),
+								A2(
+								author$project$Skeleton$row,
+								_List_Nil,
 								_List_fromArray(
 									[
-										author$project$ActivityForm$detailsSelect(details),
-										elm$html$Html$text(
-										justinmimbs$date$Date$toIsoString(model.at))
+										author$project$ActivityForm$detailsSelect(details)
 									])),
 								A2(
 								author$project$Skeleton$row,
@@ -11017,7 +11105,25 @@ var author$project$ActivityForm$view = function (model) {
 								author$project$ActivityForm$viewError(model.K)
 							]))
 					])),
-				author$project$ActivityForm$viewDetailsForm(details),
+				A2(
+				author$project$Skeleton$expandingRow,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'overflow', 'scroll')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						author$project$Skeleton$column,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'justify-content', 'center')
+							]),
+						_List_fromArray(
+							[
+								author$project$ActivityForm$viewDetailsForm(details)
+							]))
+					])),
 				A2(
 				author$project$Skeleton$row,
 				_List_Nil,
@@ -11252,32 +11358,6 @@ var author$project$Calendar$scrollHandler = F3(
 				}
 			}());
 	});
-var elm$core$String$append = _String_append;
-var author$project$Link$toFragment = function (absUrl) {
-	return A2(
-		elm$core$String$append,
-		'#',
-		A2(elm$core$String$dropLeft, 1, absUrl));
-};
-var elm$url$Url$Builder$toQueryPair = function (_n0) {
-	var key = _n0.a;
-	var value = _n0.b;
-	return key + ('=' + value);
-};
-var elm$url$Url$Builder$toQuery = function (parameters) {
-	if (!parameters.b) {
-		return '';
-	} else {
-		return '?' + A2(
-			elm$core$String$join,
-			'&',
-			A2(elm$core$List$map, elm$url$Url$Builder$toQueryPair, parameters));
-	}
-};
-var elm$url$Url$Builder$absolute = F2(
-	function (pathSegments, parameters) {
-		return '/' + (A2(elm$core$String$join, '/', pathSegments) + elm$url$Url$Builder$toQuery(parameters));
-	});
 var author$project$Link$toActivity = function (id) {
 	return author$project$Link$toFragment(
 		A2(
@@ -11286,49 +11366,45 @@ var author$project$Link$toActivity = function (id) {
 				['activity', id]),
 			_List_Nil));
 };
-var author$project$Skeleton$expandingRow = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('row expand'),
-				attributes),
-			children);
-	});
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
 var author$project$Calendar$viewActivity = function (activity) {
 	return A2(
-		elm$html$Html$a,
+		author$project$Skeleton$row,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$href(
-				author$project$Link$toActivity(activity.aG))
+				A2(elm$html$Html$Attributes$style, 'margin-bottom', '1rem')
 			]),
 		_List_fromArray(
 			[
 				A2(
-				author$project$Skeleton$expandingRow,
+				author$project$Skeleton$compactColumn,
 				_List_fromArray(
 					[
-						A2(elm$html$Html$Attributes$style, 'margin-bottom', '1rem')
+						A2(elm$html$Html$Attributes$style, 'flex-basis', '5rem')
 					]),
+				_List_fromArray(
+					[
+						author$project$ActivityShape$view(activity.aw)
+					])),
 				A2(
-					author$project$Skeleton$twoColumns,
-					_List_fromArray(
-						[
-							author$project$ActivityShape$view(activity.aw)
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(activity.av)
-						])))
+				author$project$Skeleton$column,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'justify-content', 'center')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$a,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$href(
+								author$project$Link$toActivity(activity.aG))
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text(activity.av)
+							]))
+					]))
 			]));
 };
 var author$project$Calendar$viewActivities = function (activities) {
@@ -11337,18 +11413,6 @@ var author$project$Calendar$viewActivities = function (activities) {
 		_List_Nil,
 		A2(elm$core$List$map, author$project$Calendar$viewActivity, activities));
 };
-var elm$url$Url$percentEncode = _Url_percentEncode;
-var elm$url$Url$Builder$QueryParameter = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
-	});
-var elm$url$Url$Builder$string = F2(
-	function (key, value) {
-		return A2(
-			elm$url$Url$Builder$QueryParameter,
-			elm$url$Url$percentEncode(key),
-			elm$url$Url$percentEncode(value));
-	});
 var author$project$Link$toNewActivity = function (date) {
 	return author$project$Link$toFragment(
 		A2(
@@ -11367,7 +11431,7 @@ var author$project$Calendar$viewDay = function (_n0) {
 	var date = _n0.a;
 	var activities = _n0.b;
 	return A2(
-		author$project$Skeleton$expandingRow,
+		author$project$Skeleton$row,
 		_List_Nil,
 		_List_fromArray(
 			[
@@ -11377,7 +11441,7 @@ var author$project$Calendar$viewDay = function (_n0) {
 				_List_fromArray(
 					[
 						A2(
-						author$project$Skeleton$expandingRow,
+						author$project$Skeleton$row,
 						_List_fromArray(
 							[
 								A2(elm$html$Html$Attributes$style, 'margin-top', '1rem'),
@@ -11400,7 +11464,7 @@ var author$project$Calendar$viewDay = function (_n0) {
 									]))
 							])),
 						A2(
-						author$project$Skeleton$expandingRow,
+						author$project$Skeleton$row,
 						_List_Nil,
 						_List_fromArray(
 							[
@@ -11441,20 +11505,6 @@ var author$project$Calendar$titleWeek = function (start) {
 			[
 				elm$html$Html$text(monthStart)
 			]));
-};
-var author$project$Link$toDailyCalendar = function (date) {
-	return author$project$Link$toFragment(
-		A2(
-			elm$url$Url$Builder$absolute,
-			_List_fromArray(
-				['calendar', 'daily']),
-			_List_fromArray(
-				[
-					A2(
-					elm$url$Url$Builder$string,
-					'date',
-					justinmimbs$date$Date$toIsoString(date))
-				])));
 };
 var author$project$Calendar$viewWeekDay = function (date) {
 	return A2(
@@ -11526,7 +11576,7 @@ var author$project$Calendar$view = F4(
 			}
 		}();
 		return A2(
-			author$project$Skeleton$column,
+			author$project$Skeleton$expandingRow,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$id('calendar'),
@@ -11544,7 +11594,8 @@ var author$project$Calendar$view = F4(
 					author$project$Skeleton$column,
 					_List_fromArray(
 						[
-							A2(elm$html$Html$Attributes$style, 'margin-bottom', author$project$Calendar$scrollConfig.aM)
+							A2(elm$html$Html$Attributes$style, 'margin-bottom', author$project$Calendar$scrollConfig.aM),
+							A2(elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 						]),
 					body)
 				]));
@@ -11775,16 +11826,6 @@ var author$project$Home$One = function (a) {
 var author$project$Home$visible = F2(
 	function (window, focus) {
 		return (_Utils_cmp(window.al, (author$project$Config$config.bO.bv * 2) + 20) < 0) ? author$project$Home$One(focus) : author$project$Home$Both;
-	});
-var author$project$Skeleton$compactColumn = F2(
-	function (attributes, children) {
-		return A2(
-			elm$html$Html$div,
-			A2(
-				elm$core$List$cons,
-				elm$html$Html$Attributes$class('column compact'),
-				attributes),
-			children);
 	});
 var elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var elm$html$Html$map = elm$virtual_dom$VirtualDom$map;
