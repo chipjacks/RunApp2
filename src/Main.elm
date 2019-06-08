@@ -144,4 +144,4 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Browser.Events.onResize (\w h -> HomeMsg (Home.resizeWindow w h))
+    Sub.none

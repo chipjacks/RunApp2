@@ -1,4 +1,4 @@
-module Home exposing (Model, Msg, init, parseUrl, resizeWindow, update, view)
+module Home exposing (Model, Msg, init, parseUrl, update, view)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -27,14 +27,12 @@ import Window exposing (Window)
 
 
 type Model
-    = Loading Msg (Maybe Window) (Maybe Date) (Maybe (List Activity))
+    = Loading Msg (Maybe Date) (Maybe (List Activity))
     | Loaded State
 
 
 type alias State =
-    { window : Window
-    , focus : Focus
-    , calendar : Calendar.Model
+    { calendar : Calendar.Model
     , date : Date
     , activities : List Activity
     , activityForm : ActivityForm.Model
@@ -43,10 +41,9 @@ type alias State =
 
 init : Msg -> ( Model, Cmd Msg )
 init msg =
-    ( Loading msg Nothing Nothing Nothing
+    ( Loading msg Nothing Nothing
     , Cmd.batch
-        [ Task.perform (\v -> ResizeWindow (round v.scene.width) (round v.scene.height)) Dom.getViewport
-        , Task.perform (\d -> LoadCalendar Calendar.Daily (Just d)) Date.today
+        [ Task.perform (\d -> LoadCalendar Calendar.Daily (Just d)) Date.today
         , Task.attempt GotActivities Api.getActivities
         ]
     )
@@ -61,7 +58,6 @@ type Msg
     | LoadToday
     | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
-    | ResizeWindow Int Int
     | NewActivity (Maybe Date)
     | EditActivity Activity
     | ActivityFormMsg ActivityForm.Msg
@@ -95,28 +91,19 @@ parseUrl =
         ]
 
 
-resizeWindow : Int -> Int -> Msg
-resizeWindow width height =
-    ResizeWindow width height
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
-        Loading queuedMsg windowM dateM activitiesM ->
+        Loading queuedMsg dateM activitiesM ->
             case msg of
-                ResizeWindow width height ->
-                    Loading queuedMsg (Just <| Window width height) dateM activitiesM
-                        |> updateLoading
-
                 LoadCalendar calendar date ->
-                    Loading queuedMsg windowM date activitiesM
+                    Loading queuedMsg date activitiesM
                         |> updateLoading
 
                 GotActivities activitiesR ->
                     case activitiesR of
                         Ok activities ->
-                            Loading queuedMsg windowM dateM (Just activities)
+                            Loading queuedMsg dateM (Just activities)
                                 |> updateLoading
 
                         _ ->
@@ -128,7 +115,7 @@ update msg model =
         Loaded state ->
             case msg of
                 LoadCalendar calendar dateM ->
-                    ( Loaded { state | focus = CalendarFocus, calendar = calendar, date = dateM |> Maybe.withDefault state.date }
+                    ( Loaded { state | calendar = calendar, date = dateM |> Maybe.withDefault state.date }
                     , Calendar.resetScroll NoOp
                     )
 
@@ -144,7 +131,7 @@ update msg model =
                     in
                     case activityM of
                         Just activity ->
-                            ( Loaded { state | focus = ActivityFormFocus, activityForm = ActivityForm.initEdit activity }
+                            ( Loaded { state | activityForm = ActivityForm.initEdit activity }
                             , Cmd.none
                             )
 
@@ -160,9 +147,6 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
-                ResizeWindow width height ->
-                    ( Loaded { state | window = Window width height }, Calendar.resetScroll NoOp )
-
                 EditActivity activity ->
                     ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
 
@@ -171,7 +155,7 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | focus = ActivityFormFocus, date = date, activityForm = ActivityForm.initNew date }
+                    ( Loaded { state | date = date, activityForm = ActivityForm.initNew date }
                     , Cmd.none
                     )
 
@@ -200,11 +184,9 @@ update msg model =
 updateLoading : Model -> ( Model, Cmd Msg )
 updateLoading model =
     case model of
-        Loading queuedMsg (Just window) (Just date) (Just activities) ->
+        Loading queuedMsg (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    window
-                    ActivityFormFocus
                     Calendar.Daily
                     date
                     activities
@@ -222,36 +204,17 @@ updateLoading model =
 
 view : Model -> Html Msg
 view model =
-    case model of
-        Loading _ _ _ _ ->
-            Html.div [] [ Html.text "Loading" ]
+    expandingRow
+        [ id "home"
+        , style "overflow" "hidden"
+        ]
+    <|
+        case model of
+            Loading _ _ _ ->
+                [ text "Loading" ]
 
-        Loaded state ->
-            let
-                containerDiv =
-                    expandingRow
-                        [ id "home"
-                        , style "overflow" "hidden"
-                        ]
-
-                viewActivityForm =
-                    ActivityForm.view
-                        state.activityForm
-                        |> Html.map ActivityFormMsg
-            in
-            case visible state.window state.focus of
-                One CalendarFocus ->
-                    containerDiv [ viewCalendar state ]
-
-                One ActivityFormFocus ->
-                    containerDiv [ viewActivityForm ]
-
-                Both ->
-                    containerDiv
-                        [ viewCalendar state
-                        , compactColumn [ style "width" "15px" ] []
-                        , viewActivityForm
-                        ]
+            Loaded state ->
+                [ viewCalendar state ]
 
 
 viewCalendar : State -> Html Msg
@@ -340,26 +303,3 @@ listYears date changeDate =
 viewDropdownItem : (Date -> String) -> String -> Date -> Html msg
 viewDropdownItem changeDate formatDate date =
     a [ href (changeDate date) ] [ text <| Date.format formatDate date ]
-
-
-
--- FOCUSING AND HIDING COLUMNS
-
-
-type Visible
-    = One Focus
-    | Both
-
-
-type Focus
-    = CalendarFocus
-    | ActivityFormFocus
-
-
-visible : Window -> Focus -> Visible
-visible window focus =
-    if window.width < (config.window.minWidth * 2 + 20) then
-        One focus
-
-    else
-        Both
