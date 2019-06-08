@@ -47,7 +47,7 @@ type DetailsForm
 
 type alias IntervalForm =
     { duration : Maybe Minutes
-    , pace : Maybe Activity.Pace
+    , pace : Activity.Pace
     }
 
 
@@ -72,7 +72,7 @@ type Error
 
 initNew : Date -> Model
 initNew date =
-    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Nothing })) (Err (EmptyFieldError ""))
+    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Activity.Easy })) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -82,14 +82,14 @@ initEdit activity =
             case activity.details of
                 Activity.Run (Activity.Interval minutes pace) ->
                     Form activity.description <|
-                        RunForm { duration = Just minutes, pace = Just pace }
+                        RunForm { duration = Just minutes, pace = pace }
 
                 Activity.Intervals intervals ->
                     Form activity.description <|
                         IntervalsForm
                             (Array.fromList <|
                                 List.map
-                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = Just pace })
+                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = pace })
                                     intervals
                             )
 
@@ -124,10 +124,9 @@ validateDetails : DetailsForm -> Result Error Activity.Details
 validateDetails detailsForm =
     case detailsForm of
         RunForm { duration, pace } ->
-            Result.map2
-                (\duration_ pace_ -> Activity.Run (Activity.Interval duration_ pace_))
+            Result.map
+                (\duration_ -> Activity.Run (Activity.Interval duration_ pace))
                 (validateFieldExists duration "duration")
-                (validateFieldExists pace "pace")
 
         OtherForm { duration } ->
             Result.map Activity.Other (validateFieldExists duration "duration")
@@ -135,13 +134,12 @@ validateDetails detailsForm =
         IntervalsForm intervals ->
             Array.foldr
                 (\{ duration, pace } res ->
-                    Result.map3
-                        (\intervals_ duration_ pace_ ->
-                            Activity.Interval duration_ pace_ :: intervals_
+                    Result.map2
+                        (\intervals_ duration_ ->
+                            Activity.Interval duration_ pace :: intervals_
                         )
                         res
                         (validateFieldExists duration "duration")
-                        (validateFieldExists pace "pace")
                 )
                 (Ok [])
                 intervals
@@ -159,7 +157,7 @@ update msg model =
                 details =
                     case str of
                         "Run" ->
-                            RunForm { duration = Nothing, pace = Nothing }
+                            RunForm { duration = Nothing, pace = Activity.Easy }
 
                         "Intervals" ->
                             IntervalsForm Array.empty
@@ -189,7 +187,7 @@ update msg model =
                 updatedDetails =
                     case model.form.details of
                         RunForm runForm ->
-                            RunForm { runForm | pace = Activity.pace.fromString str }
+                            RunForm { runForm | pace = Activity.pace.fromString str |> Maybe.withDefault runForm.pace }
 
                         _ ->
                             model.form.details
@@ -200,7 +198,7 @@ update msg model =
             updateInterval index (\interval -> { interval | duration = String.toInt str }) model
 
         SelectedIntervalPace index str ->
-            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str }) model
+            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str |> Maybe.withDefault interval.pace }) model
 
         ClickedSubmit ->
             case model.result of
@@ -458,11 +456,11 @@ durationInput msg duration =
         []
 
 
-paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
-paceSelect msg paceM =
+paceSelect : (String -> Msg) -> Activity.Pace -> Html Msg
+paceSelect msg pace =
     let
         selected =
-            paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Easy"
+            Activity.pace.toString pace
 
         selectedAttr paceStr =
             if selected == paceStr then
@@ -476,7 +474,7 @@ paceSelect msg paceM =
         , name "pace"
         ]
         (List.map
-            (\( paceStr, pace ) ->
+            (\( paceStr, _ ) ->
                 Html.option (selectedAttr paceStr) [ Html.text paceStr ]
             )
             Activity.pace.list
