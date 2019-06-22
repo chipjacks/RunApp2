@@ -231,13 +231,13 @@ viewCalendar state =
         ( loadDate, toggleCalendar ) =
             case state.calendar of
                 Calendar.Weekly ->
-                    ( Link.toWeeklyCalendar
-                    , Link.toDailyCalendar state.date
+                    ( Calendar.link Calendar.Weekly
+                    , Calendar.link Calendar.Daily state.date
                     )
 
                 Calendar.Daily ->
-                    ( Link.toDailyCalendar
-                    , Link.toWeeklyCalendar state.date
+                    ( Calendar.link Calendar.Daily
+                    , Calendar.link Calendar.Weekly state.date
                     )
 
         accessActivities =

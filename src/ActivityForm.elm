@@ -4,6 +4,7 @@ import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
 import Api
 import Array exposing (Array)
+import Calendar
 import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, input, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
@@ -286,7 +287,7 @@ view model =
         [ row []
             [ column []
                 [ row []
-                    [ a [ href (Link.toDailyCalendar model.date) ] [ text (Date.format "EEEE, MMM d" model.date) ]
+                    [ a [ href (Calendar.link Calendar.Daily model.date) ] [ text (Date.format "EEEE, MMM d" model.date) ]
                     ]
                 , row [] [ detailsSelect details ]
                 , row []

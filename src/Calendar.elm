@@ -1,4 +1,4 @@
-module Calendar exposing (Model(..), resetScroll, view)
+module Calendar exposing (Model(..), link, resetScroll, view)
 
 import Activity exposing (Activity)
 import ActivityShape
@@ -12,11 +12,26 @@ import Link
 import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task
 import Time exposing (Month(..))
+import Url.Builder
 
 
 type Model
     = Weekly
     | Daily
+
+
+link : Model -> Date -> String
+link model date =
+    let
+        path =
+            case model of
+                Weekly ->
+                    "weekly"
+
+                Daily ->
+                    "daily"
+    in
+    Url.Builder.absolute [ "calendar", path ] [ Url.Builder.string "date" (Date.toIsoString date) ]
 
 
 view : (Date -> msg) -> (Date -> List Activity) -> Date -> Model -> Html msg
@@ -111,7 +126,7 @@ viewWeekDay : Date -> Html msg
 viewWeekDay date =
     column []
         [ a
-            [ href (Link.toDailyCalendar date)
+            [ href (link Daily date)
             , attribute "data-date" (Date.toIsoString date)
             ]
             [ text (Date.format "d" date)
@@ -188,8 +203,10 @@ viewActivities activities =
 
 viewActivity : Activity -> Html msg
 viewActivity activity =
-    row [ style "margin-bottom" "1rem" ]
-        [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
-        , column [ style "justify-content" "center" ]
-            [ a [ href (Link.toActivity activity.id) ] [ text activity.description ] ]
+    a [ href (Link.toActivity activity.id) ]
+        [ row [ style "margin-bottom" "1rem" ]
+            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
+            , column [ style "justify-content" "center" ]
+                [ text activity.description ]
+            ]
         ]
