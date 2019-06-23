@@ -4,13 +4,11 @@ import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
 import Api
 import Array exposing (Array)
-import Calendar
 import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, input, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
-import Link
 import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task exposing (Task)
 
@@ -286,10 +284,7 @@ view model =
         ]
         [ row []
             [ column []
-                [ row []
-                    [ a [ href (Calendar.link Calendar.Daily model.date) ] [ text (Date.format "EEEE, MMM d" model.date) ]
-                    ]
-                , row [] [ detailsSelect details ]
+                [ row [] [ detailsSelect details ]
                 , row []
                     [ input
                         [ type_ "text"
