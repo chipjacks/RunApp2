@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), initEdit, initNew, update, view)
+module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isEditing, update, view)
 
 import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
@@ -97,6 +97,16 @@ initEdit activity =
                         OtherForm { duration = Just minutes }
     in
     Model (Editing activity.id) activity.date form (Ok activity)
+
+
+isEditing : Activity -> Model -> Bool
+isEditing activity model =
+    case model.status of
+        Editing id ->
+            activity.id == id
+
+        _ ->
+            False
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -276,41 +286,40 @@ view model =
     let
         { description, details } =
             model.form
+
+        activityShape =
+            validateDetails details
+                |> Result.toMaybe
+                |> Maybe.map ActivityShape.view
+                |> Maybe.withDefault ActivityShape.viewDefault
     in
-    column
-        [ id "activity"
-        , style "justify-content" "space-between"
-        , style "flex-grow" "2"
-        ]
-        [ row []
-            [ column []
-                [ row [] [ detailsSelect details ]
-                , row []
-                    [ input
-                        [ type_ "text"
-                        , placeholder "Description"
-                        , onInput EditedDescription
-                        , name "description"
-                        , value description
-                        , style "width" "100%"
-                        ]
-                        []
+    row [ id "activity" ]
+        [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+        , column [ style "justify-content" "space-between" ]
+            [ row [] [ detailsSelect details ]
+            , row []
+                [ input
+                    [ type_ "text"
+                    , placeholder "Description"
+                    , onInput EditedDescription
+                    , name "description"
+                    , value description
+                    , style "width" "100%"
                     ]
-                , viewError model.result
+                    []
                 ]
-            ]
-        , expandingRow [ style "overflow" "scroll" ]
-            [ column [ style "justify-content" "center" ] [ viewDetailsForm details ]
-            ]
-        , row []
-            [ submitButton model.status
-            , button
-                [ onClick ClickedReset
-                , type_ "reset"
-                , style "margin-left" "1em"
+            , viewDetailsForm details
+            , viewError model.result
+            , row []
+                [ submitButton model.status
+                , button
+                    [ onClick ClickedReset
+                    , type_ "reset"
+                    , style "margin-left" "1em"
+                    ]
+                    [ text "Reset" ]
+                , deleteButton model.status
                 ]
-                [ text "Reset" ]
-            , deleteButton model.status
             ]
         ]
 
@@ -347,30 +356,16 @@ detailsSelect details =
 
 viewDetailsForm : DetailsForm -> Html Msg
 viewDetailsForm detailsForm =
-    let
-        activityShape =
-            validateDetails detailsForm
-                |> Result.toMaybe
-                |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault ActivityShape.viewDefault
-    in
     case detailsForm of
         RunForm { duration, pace } ->
             row []
-                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-                , column []
-                    [ row []
-                        [ durationInput EditedDuration duration
-                        , paceSelect SelectedPace pace
-                        ]
-                    ]
+                [ durationInput EditedDuration duration
+                , paceSelect SelectedPace pace
                 ]
 
         OtherForm { duration } ->
             row []
-                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-                , column [] [ durationInput EditedDuration duration ]
-                ]
+                [ durationInput EditedDuration duration ]
 
         IntervalsForm intervals ->
             row []

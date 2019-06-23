@@ -30,7 +30,7 @@ import Window exposing (Window)
 main =
     Browser.document
         { init = init
-        , view = \m -> { title = "Home | RunApp2", body = view m |> Skeleton.layout |> List.singleton }
+        , view = \model -> { title = "Home | RunApp2", body = view model |> Skeleton.layout |> List.singleton }
         , update = update
         , subscriptions = subscriptions
         }
@@ -199,7 +199,7 @@ view model =
             Loaded state ->
                 [ column [ style "border-right" "1px solid #f1f1f1" ]
                     [ viewMenu state.calendar state.date
-                    , viewCalendar state.calendar state.date state.activities
+                    , viewCalendar state
                     ]
                 ]
 
@@ -298,8 +298,8 @@ type CalendarView
     | Daily
 
 
-viewCalendar : CalendarView -> Date -> List Activity -> Html Msg
-viewCalendar calendar date activities =
+viewCalendar : State -> Html Msg
+viewCalendar { calendar, date, activities, activityForm } =
     let
         accessActivities =
             \date_ ->
@@ -313,7 +313,7 @@ viewCalendar calendar date activities =
                 Daily ->
                     listDays date
                         |> List.map (\d -> ( d, accessActivities d ))
-                        |> List.map viewDay
+                        |> List.map (viewDay activityForm)
     in
     expandingRow
         [ id "calendar"
@@ -438,8 +438,8 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : ( Date, List Activity ) -> Html Msg
-viewDay ( date, activities ) =
+viewDay : ActivityForm.Model -> ( Date, List Activity ) -> Html Msg
+viewDay activityForm ( date, activities ) =
     row []
         [ column []
             [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
@@ -447,7 +447,7 @@ viewDay ( date, activities ) =
                 , a [ onClick (NewActivity (Just date)) ] [ text "+" ]
                 ]
             , row []
-                [ viewActivities activities ]
+                [ column [] (List.map (viewActivity activityForm) activities) ]
             ]
         ]
 
@@ -464,20 +464,19 @@ listDays date =
     Date.range Day 1 start end
 
 
-viewActivities : List Activity -> Html Msg
-viewActivities activities =
-    column [] (List.map viewActivity activities)
+viewActivity : ActivityForm.Model -> Activity -> Html Msg
+viewActivity activityForm activity =
+    if ActivityForm.isEditing activity activityForm then
+        ActivityForm.view activityForm |> Html.map ActivityFormMsg
 
-
-viewActivity : Activity -> Html Msg
-viewActivity activity =
-    a [ onClick (EditActivity activity) ]
-        [ row [ style "margin-bottom" "1rem" ]
-            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
-            , column [ style "justify-content" "center" ]
-                [ text activity.description ]
+    else
+        a [ onClick (EditActivity activity) ]
+            [ row [ style "margin-bottom" "1rem" ]
+                [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
+                , column [ style "justify-content" "center" ]
+                    [ text activity.description ]
+                ]
             ]
-        ]
 
 
 
