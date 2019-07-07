@@ -10,7 +10,7 @@ import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 type Shape
     = Block Color { width : Float, height : Float }
-    | Circle Color { height : Float }
+    | Circle Color
 
 
 type Color
@@ -32,13 +32,13 @@ view details =
                     intervals
 
         Other duration ->
-            Circle Gray { height = toHeight duration }
+            Circle Gray
                 |> viewShape
 
 
 viewDefault : Html msg
 viewDefault =
-    Circle Gray { height = 1 } |> viewShape
+    Circle Gray |> viewShape
 
 
 viewShape : Shape -> Html msg
@@ -52,12 +52,12 @@ viewShape shape =
                 ]
                 []
 
-        Circle color { height } ->
+        Circle color ->
             div
-                [ style "width" "0.5rem"
-                , style "height" <| String.fromFloat height ++ "rem"
+                [ style "width" "1rem"
+                , style "height" "1rem"
                 , style "background-color" (colorString color)
-                , style "border-radius" "0.25rem"
+                , style "border-radius" "0.5rem"
                 ]
                 []
 
