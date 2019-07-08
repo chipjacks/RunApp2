@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isEditing, update, view)
+module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, update, view)
 
 import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
@@ -107,6 +107,11 @@ isEditing activity model =
 
         _ ->
             False
+
+
+isCreating : Date -> Model -> Bool
+isCreating date model =
+    model.status == Creating && model.date == date
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -295,7 +300,7 @@ view model =
     in
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-        , column [ style "justify-content" "space-between" ]
+        , column []
             [ row [] [ detailsSelect details ]
             , row []
                 [ input

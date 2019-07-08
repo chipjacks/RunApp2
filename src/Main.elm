@@ -45,7 +45,7 @@ type alias State =
     { calendar : CalendarView
     , date : Date
     , activities : List Activity
-    , activityForm : ActivityForm.Model
+    , activityForm : Maybe ActivityForm.Model
     }
 
 
@@ -66,7 +66,6 @@ init _ =
 type Msg
     = LoadCalendar CalendarView Date
     | LoadToday
-    | LoadActivity Activity.Id
     | GotActivities (Result Http.Error (List Activity))
     | NewActivity (Maybe Date)
     | EditActivity Activity
@@ -107,21 +106,6 @@ update msg model =
                     , Task.perform (LoadCalendar state.calendar) Date.today
                     )
 
-                LoadActivity id ->
-                    let
-                        activityM =
-                            state.activities |> List.filter (\a -> a.id == id) |> List.head
-                    in
-                    case activityM of
-                        Just activity ->
-                            ( Loaded { state | activityForm = ActivityForm.initEdit activity }
-                            , Cmd.none
-                            )
-
-                        Nothing ->
-                            -- TODO: error handling
-                            ( model, Cmd.none )
-
                 GotActivities result ->
                     case result of
                         Ok activities ->
@@ -131,14 +115,14 @@ update msg model =
                             ( model, Cmd.none )
 
                 EditActivity activity ->
-                    ( Loaded { state | activityForm = ActivityForm.initEdit activity }, Cmd.none )
+                    ( Loaded { state | activityForm = Just <| ActivityForm.initEdit activity }, Cmd.none )
 
                 NewActivity dateM ->
                     let
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | date = date, activityForm = ActivityForm.initNew date }
+                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew date }
                     , Cmd.none
                     )
 
@@ -156,7 +140,12 @@ update msg model =
                                     state
 
                         ( subModel, subCmd ) =
-                            ActivityForm.update subMsg state.activityForm
+                            case state.activityForm of
+                                Nothing ->
+                                    ( Nothing, Cmd.none )
+
+                                Just activityForm ->
+                                    ActivityForm.update subMsg activityForm |> Tuple.mapFirst Just
                     in
                     ( Loaded { newState | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
@@ -173,7 +162,7 @@ updateLoading model =
                     Daily
                     date
                     activities
-                    (ActivityForm.initNew date)
+                    Nothing
             )
                 |> update NoOp
 
@@ -197,7 +186,7 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                [ column [ style "border-right" "1px solid #f1f1f1" ]
+                [ column []
                     [ viewMenu state.calendar state.date
                     , viewCalendar state
                     ]
@@ -438,8 +427,21 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : ActivityForm.Model -> ( Date, List Activity ) -> Html Msg
-viewDay activityForm ( date, activities ) =
+viewDay : Maybe ActivityForm.Model -> ( Date, List Activity ) -> Html Msg
+viewDay activityFormM ( date, activities ) =
+    let
+        activityFormView =
+            case activityFormM of
+                Just af ->
+                    if ActivityForm.isCreating date af then
+                        ActivityForm.view af |> Html.map ActivityFormMsg
+
+                    else
+                        Html.text ""
+
+                Nothing ->
+                    Html.text ""
+    in
     row []
         [ column []
             [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
@@ -447,7 +449,8 @@ viewDay activityForm ( date, activities ) =
                 , a [ onClick (NewActivity (Just date)) ] [ text "+" ]
                 ]
             , row []
-                [ column [] (List.map (viewActivity activityForm) activities) ]
+                [ column [] (List.map (viewActivity activityFormM) activities) ]
+            , activityFormView
             ]
         ]
 
@@ -464,19 +467,28 @@ listDays date =
     Date.range Day 1 start end
 
 
-viewActivity : ActivityForm.Model -> Activity -> Html Msg
-viewActivity activityForm activity =
-    if ActivityForm.isEditing activity activityForm then
-        ActivityForm.view activityForm |> Html.map ActivityFormMsg
-
-    else
-        a [ onClick (EditActivity activity) ]
-            [ row [ style "margin-bottom" "1rem" ]
-                [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
-                , column [ style "justify-content" "center" ]
-                    [ text activity.description ]
+viewActivity : Maybe ActivityForm.Model -> Activity -> Html Msg
+viewActivity activityFormM activity =
+    let
+        activityView =
+            a [ onClick (EditActivity activity) ]
+                [ row [ style "margin-bottom" "1rem" ]
+                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.details ]
+                    , column [ style "justify-content" "center" ]
+                        [ text activity.description ]
+                    ]
                 ]
-            ]
+    in
+    case activityFormM of
+        Just af ->
+            if ActivityForm.isEditing activity af then
+                ActivityForm.view af |> Html.map ActivityFormMsg
+
+            else
+                activityView
+
+        Nothing ->
+            activityView
 
 
 
