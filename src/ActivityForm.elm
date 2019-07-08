@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), initEdit, initNew, update, view)
+module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, update, view)
 
 import Activity exposing (Activity, Details(..), Interval(..), Minutes)
 import ActivityShape
@@ -9,7 +9,6 @@ import Html exposing (Html, a, button, div, i, input, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
-import Link
 import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task exposing (Task)
 
@@ -47,7 +46,7 @@ type DetailsForm
 
 type alias IntervalForm =
     { duration : Maybe Minutes
-    , pace : Maybe Activity.Pace
+    , pace : Activity.Pace
     }
 
 
@@ -72,7 +71,7 @@ type Error
 
 initNew : Date -> Model
 initNew date =
-    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Nothing })) (Err (EmptyFieldError ""))
+    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Activity.Easy })) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -82,14 +81,14 @@ initEdit activity =
             case activity.details of
                 Activity.Run (Activity.Interval minutes pace) ->
                     Form activity.description <|
-                        RunForm { duration = Just minutes, pace = Just pace }
+                        RunForm { duration = Just minutes, pace = pace }
 
                 Activity.Intervals intervals ->
                     Form activity.description <|
                         IntervalsForm
                             (Array.fromList <|
                                 List.map
-                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = Just pace })
+                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = pace })
                                     intervals
                             )
 
@@ -98,6 +97,21 @@ initEdit activity =
                         OtherForm { duration = Just minutes }
     in
     Model (Editing activity.id) activity.date form (Ok activity)
+
+
+isEditing : Activity -> Model -> Bool
+isEditing activity model =
+    case model.status of
+        Editing id ->
+            activity.id == id
+
+        _ ->
+            False
+
+
+isCreating : Date -> Model -> Bool
+isCreating date model =
+    model.status == Creating && model.date == date
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -124,10 +138,9 @@ validateDetails : DetailsForm -> Result Error Activity.Details
 validateDetails detailsForm =
     case detailsForm of
         RunForm { duration, pace } ->
-            Result.map2
-                (\duration_ pace_ -> Activity.Run (Activity.Interval duration_ pace_))
+            Result.map
+                (\duration_ -> Activity.Run (Activity.Interval duration_ pace))
                 (validateFieldExists duration "duration")
-                (validateFieldExists pace "pace")
 
         OtherForm { duration } ->
             Result.map Activity.Other (validateFieldExists duration "duration")
@@ -135,13 +148,12 @@ validateDetails detailsForm =
         IntervalsForm intervals ->
             Array.foldr
                 (\{ duration, pace } res ->
-                    Result.map3
-                        (\intervals_ duration_ pace_ ->
-                            Activity.Interval duration_ pace_ :: intervals_
+                    Result.map2
+                        (\intervals_ duration_ ->
+                            Activity.Interval duration_ pace :: intervals_
                         )
                         res
                         (validateFieldExists duration "duration")
-                        (validateFieldExists pace "pace")
                 )
                 (Ok [])
                 intervals
@@ -159,7 +171,7 @@ update msg model =
                 details =
                     case str of
                         "Run" ->
-                            RunForm { duration = Nothing, pace = Nothing }
+                            RunForm { duration = Nothing, pace = Activity.Easy }
 
                         "Intervals" ->
                             IntervalsForm Array.empty
@@ -189,7 +201,7 @@ update msg model =
                 updatedDetails =
                     case model.form.details of
                         RunForm runForm ->
-                            RunForm { runForm | pace = Activity.pace.fromString str }
+                            RunForm { runForm | pace = Activity.pace.fromString str |> Maybe.withDefault runForm.pace }
 
                         _ ->
                             model.form.details
@@ -200,7 +212,7 @@ update msg model =
             updateInterval index (\interval -> { interval | duration = String.toInt str }) model
 
         SelectedIntervalPace index str ->
-            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str }) model
+            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str |> Maybe.withDefault interval.pace }) model
 
         ClickedSubmit ->
             case model.result of
@@ -279,44 +291,40 @@ view model =
     let
         { description, details } =
             model.form
+
+        activityShape =
+            validateDetails details
+                |> Result.toMaybe
+                |> Maybe.map ActivityShape.view
+                |> Maybe.withDefault ActivityShape.viewDefault
     in
-    column
-        [ id "activity"
-        , style "justify-content" "space-between"
-        , style "flex-grow" "2"
-        ]
-        [ row []
-            [ column []
-                [ row []
-                    [ a [ href (Link.toDailyCalendar model.date) ] [ text (Date.format "EEEE, MMM d" model.date) ]
+    row [ id "activity" ]
+        [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+        , column []
+            [ row [] [ detailsSelect details ]
+            , row []
+                [ input
+                    [ type_ "text"
+                    , placeholder "Description"
+                    , onInput EditedDescription
+                    , name "description"
+                    , value description
+                    , style "width" "100%"
                     ]
-                , row [] [ detailsSelect details ]
-                , row []
-                    [ input
-                        [ type_ "text"
-                        , placeholder "Description"
-                        , onInput EditedDescription
-                        , name "description"
-                        , value description
-                        , style "width" "100%"
-                        ]
-                        []
+                    []
+                ]
+            , viewDetailsForm details
+            , viewError model.result
+            , row []
+                [ submitButton model.status
+                , button
+                    [ onClick ClickedReset
+                    , type_ "reset"
+                    , style "margin-left" "1em"
                     ]
-                , viewError model.result
+                    [ text "Reset" ]
+                , deleteButton model.status
                 ]
-            ]
-        , expandingRow [ style "overflow" "scroll" ]
-            [ column [ style "justify-content" "center" ] [ viewDetailsForm details ]
-            ]
-        , row []
-            [ submitButton model.status
-            , button
-                [ onClick ClickedReset
-                , type_ "reset"
-                , style "margin-left" "1em"
-                ]
-                [ text "Reset" ]
-            , deleteButton model.status
             ]
         ]
 
@@ -353,30 +361,16 @@ detailsSelect details =
 
 viewDetailsForm : DetailsForm -> Html Msg
 viewDetailsForm detailsForm =
-    let
-        activityShape =
-            validateDetails detailsForm
-                |> Result.toMaybe
-                |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault ActivityShape.viewDefault
-    in
     case detailsForm of
         RunForm { duration, pace } ->
             row []
-                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-                , column []
-                    [ row []
-                        [ durationInput EditedDuration duration
-                        , paceSelect SelectedPace pace
-                        ]
-                    ]
+                [ durationInput EditedDuration duration
+                , paceSelect SelectedPace pace
                 ]
 
         OtherForm { duration } ->
             row []
-                [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-                , column [] [ durationInput EditedDuration duration ]
-                ]
+                [ durationInput EditedDuration duration ]
 
         IntervalsForm intervals ->
             row []
@@ -458,11 +452,11 @@ durationInput msg duration =
         []
 
 
-paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
-paceSelect msg paceM =
+paceSelect : (String -> Msg) -> Activity.Pace -> Html Msg
+paceSelect msg pace =
     let
         selected =
-            paceM |> Maybe.map Activity.pace.toString |> Maybe.withDefault "Easy"
+            Activity.pace.toString pace
 
         selectedAttr paceStr =
             if selected == paceStr then
@@ -476,7 +470,7 @@ paceSelect msg paceM =
         , name "pace"
         ]
         (List.map
-            (\( paceStr, pace ) ->
+            (\( paceStr, _ ) ->
                 Html.option (selectedAttr paceStr) [ Html.text paceStr ]
             )
             Activity.pace.list
