@@ -1,6 +1,6 @@
 module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, update, view)
 
-import Activity exposing (Activity, Details(..), Interval(..), Minutes)
+import Activity exposing (Activity, Details(..), Minutes)
 import ActivityShape
 import Api
 import Array exposing (Array)
@@ -34,29 +34,22 @@ type Status
 
 type alias Form =
     { description : String
+    , completed : Bool
     , details : DetailsForm
     }
 
 
 type DetailsForm
-    = RunForm IntervalForm
-    | IntervalsForm (Array IntervalForm)
+    = RunForm { duration : Maybe Minutes, pace : Activity.Pace }
     | OtherForm { duration : Maybe Minutes }
-
-
-type alias IntervalForm =
-    { duration : Maybe Minutes
-    , pace : Activity.Pace
-    }
 
 
 type Msg
     = EditedDescription String
+    | CheckedCompleted Bool
     | SelectedDetails String
     | EditedDuration String
     | SelectedPace String
-    | EditedIntervalDuration Int String
-    | SelectedIntervalPace Int String
     | ClickedSubmit
     | ClickedReset
     | ClickedDelete
@@ -71,7 +64,7 @@ type Error
 
 initNew : Date -> Model
 initNew date =
-    Model Creating date (Form "" (RunForm { duration = Nothing, pace = Activity.Easy })) (Err (EmptyFieldError ""))
+    Model Creating date (Form "" True (RunForm { duration = Nothing, pace = Activity.Easy })) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -79,21 +72,12 @@ initEdit activity =
     let
         form =
             case activity.details of
-                Activity.Run (Activity.Interval minutes pace) ->
-                    Form activity.description <|
+                Activity.Run minutes pace ->
+                    Form activity.description activity.completed <|
                         RunForm { duration = Just minutes, pace = pace }
 
-                Activity.Intervals intervals ->
-                    Form activity.description <|
-                        IntervalsForm
-                            (Array.fromList <|
-                                List.map
-                                    (\(Interval minutes pace) -> { duration = Just minutes, pace = pace })
-                                    intervals
-                            )
-
                 Activity.Other minutes ->
-                    Form activity.description <|
+                    Form activity.description activity.completed <|
                         OtherForm { duration = Just minutes }
     in
     Model (Editing activity.id) activity.date form (Ok activity)
@@ -128,7 +112,7 @@ validate : Form -> Result Error Activity
 validate form =
     Result.map2
         (\description details ->
-            Activity "" (Date.fromRataDie 0) description details
+            Activity "" (Date.fromRataDie 0) description form.completed details
         )
         (validateFieldExists (Just form.description) "description")
         (validateDetails form.details)
@@ -139,25 +123,11 @@ validateDetails detailsForm =
     case detailsForm of
         RunForm { duration, pace } ->
             Result.map
-                (\duration_ -> Activity.Run (Activity.Interval duration_ pace))
+                (\duration_ -> Activity.Run duration_ pace)
                 (validateFieldExists duration "duration")
 
         OtherForm { duration } ->
             Result.map Activity.Other (validateFieldExists duration "duration")
-
-        IntervalsForm intervals ->
-            Array.foldr
-                (\{ duration, pace } res ->
-                    Result.map2
-                        (\intervals_ duration_ ->
-                            Activity.Interval duration_ pace :: intervals_
-                        )
-                        res
-                        (validateFieldExists duration "duration")
-                )
-                (Ok [])
-                intervals
-                |> Result.map Activity.Intervals
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -166,15 +136,15 @@ update msg model =
         EditedDescription desc ->
             updateForm (\form -> { form | description = desc }) model
 
+        CheckedCompleted bool ->
+            updateForm (\form -> { form | completed = bool }) model
+
         SelectedDetails str ->
             let
                 details =
                     case str of
                         "Run" ->
                             RunForm { duration = Nothing, pace = Activity.Easy }
-
-                        "Intervals" ->
-                            IntervalsForm Array.empty
 
                         _ ->
                             OtherForm { duration = Nothing }
@@ -190,9 +160,6 @@ update msg model =
 
                         OtherForm otherForm ->
                             OtherForm { otherForm | duration = String.toInt str }
-
-                        _ ->
-                            model.form.details
             in
             updateForm (\form -> { form | details = updatedDetails }) model
 
@@ -207,12 +174,6 @@ update msg model =
                             model.form.details
             in
             updateForm (\form -> { form | details = updatedDetails }) model
-
-        EditedIntervalDuration index str ->
-            updateInterval index (\interval -> { interval | duration = String.toInt str }) model
-
-        SelectedIntervalPace index str ->
-            updateInterval index (\interval -> { interval | pace = Activity.pace.fromString str |> Maybe.withDefault interval.pace }) model
 
         ClickedSubmit ->
             case model.result of
@@ -268,40 +229,25 @@ updateForm transform model =
     ( { model | form = updatedForm, result = validate updatedForm }, Cmd.none )
 
 
-updateInterval : Int -> (IntervalForm -> IntervalForm) -> Model -> ( Model, Cmd Msg )
-updateInterval index transform model =
-    let
-        updatedDetails =
-            case model.form.details of
-                IntervalsForm intervals ->
-                    Array.get index intervals
-                        |> Maybe.map transform
-                        |> Maybe.map (\interval -> Array.set index interval intervals)
-                        |> Maybe.map IntervalsForm
-                        |> Maybe.withDefault model.form.details
-
-                _ ->
-                    model.form.details
-    in
-    updateForm (\form -> { form | details = updatedDetails }) model
-
-
 view : Model -> Html Msg
 view model =
     let
-        { description, details } =
+        { description, completed, details } =
             model.form
 
         activityShape =
             validateDetails details
                 |> Result.toMaybe
-                |> Maybe.map ActivityShape.view
+                |> Maybe.map (ActivityShape.view completed)
                 |> Maybe.withDefault ActivityShape.viewDefault
     in
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
         , column []
-            [ row [] [ detailsSelect details ]
+            [ row []
+                [ detailsSelect details
+                , completedCheckbox completed
+                ]
             , row []
                 [ input
                     [ type_ "text"
@@ -329,6 +275,19 @@ view model =
         ]
 
 
+completedCheckbox : Bool -> Html Msg
+completedCheckbox completed =
+    div []
+        [ input
+            [ type_ "checkbox"
+            , Html.Attributes.checked completed
+            , Html.Events.onCheck CheckedCompleted
+            ]
+            []
+        , Html.label [] [ text "Completed" ]
+        ]
+
+
 detailsSelect : DetailsForm -> Html Msg
 detailsSelect details =
     let
@@ -336,9 +295,6 @@ detailsSelect details =
             case details of
                 RunForm _ ->
                     "Run"
-
-                IntervalsForm _ ->
-                    "Intervals"
 
                 OtherForm _ ->
                     "Other"
@@ -354,7 +310,6 @@ detailsSelect details =
     in
     div [ class "radio-buttons" ]
         [ radioButton "Run" "square"
-        , radioButton "Intervals" "align-left"
         , radioButton "Other" "circle"
         ]
 
@@ -371,37 +326,6 @@ viewDetailsForm detailsForm =
         OtherForm { duration } ->
             row []
                 [ durationInput EditedDuration duration ]
-
-        IntervalsForm intervals ->
-            row []
-                [ column [] <|
-                    Array.toList <|
-                        Array.indexedMap
-                            (\index interval -> viewIntervalForm index interval)
-                            intervals
-                ]
-
-
-viewIntervalForm : Int -> IntervalForm -> Html Msg
-viewIntervalForm index interval =
-    let
-        activityShape =
-            case validateDetails (RunForm interval) of
-                Ok activityDetails ->
-                    ActivityShape.view activityDetails
-
-                Err _ ->
-                    ActivityShape.viewDefault
-    in
-    row []
-        [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
-        , column []
-            [ row []
-                [ durationInput (EditedIntervalDuration index) interval.duration
-                , paceSelect (SelectedIntervalPace index) interval.pace
-                ]
-            ]
-        ]
 
 
 submitButton : Status -> Html Msg

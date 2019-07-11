@@ -1,16 +1,14 @@
 module ActivityShape exposing (view, viewDefault)
 
-import Activity exposing (Details(..), Interval(..), Pace(..))
+import Activity exposing (Details(..), Pace(..))
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Skeleton exposing (column, row)
-import Svg exposing (circle, svg)
-import Svg.Attributes exposing (cx, cy, fill, height, r, width)
 
 
 type Shape
-    = Block Color { width : Float, height : Float }
-    | Circle Color
+    = Block Color Bool { width : Float, height : Float }
+    | Circle Color Bool
 
 
 type Color
@@ -18,46 +16,50 @@ type Color
     | Gray
 
 
-view : Details -> Html msg
-view details =
+view : Bool -> Details -> Html msg
+view completed details =
     case details of
-        Run (Interval duration pace) ->
-            Block Green { width = toWidth pace, height = toHeight duration }
+        Run duration pace ->
+            Block Green completed { width = toWidth pace, height = toHeight duration }
                 |> viewShape
 
-        Intervals intervals ->
-            column [] <|
-                List.map
-                    (\(Interval duration pace) -> Block Green { width = toWidth pace, height = toHeight duration } |> viewShape)
-                    intervals
-
         Other duration ->
-            Circle Gray
+            Circle Gray completed
                 |> viewShape
 
 
 viewDefault : Html msg
 viewDefault =
-    Circle Gray |> viewShape
+    Circle Gray False |> viewShape
 
 
 viewShape : Shape -> Html msg
 viewShape shape =
     case shape of
-        Block color { width, height } ->
+        Block color completed { width, height } ->
             div
                 [ style "width" <| String.fromFloat (width * 0.5) ++ "rem"
                 , style "height" <| String.fromFloat height ++ "rem"
-                , style "background-color" (colorString color)
+                , style "border" ("2px solid " ++ colorString color)
+                , if completed then
+                    style "background-color" (colorString color)
+
+                  else
+                    style "background-color" "white"
                 ]
                 []
 
-        Circle color ->
+        Circle color completed ->
             div
                 [ style "width" "1rem"
                 , style "height" "1rem"
-                , style "background-color" (colorString color)
-                , style "border-radius" "0.5rem"
+                , style "border-radius" "0.6rem"
+                , style "border" ("2px solid " ++ colorString color)
+                , if completed then
+                    style "background-color" (colorString color)
+
+                  else
+                    style "background-color" "white"
                 ]
                 []
 
