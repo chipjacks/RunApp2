@@ -1,47 +1,547 @@
 [
   {
-    "id": "34098dd9-37a1-4b5b-89fc-7f6aefe2c4cb",
-    "date": "2019-02-27",
-    "description": "Fartlek",
-    "intervals":
-      [ { "duration": 15, "pace": "Easy" }
-      , { "duration": 3, "pace": "Brisk" }
-      , { "duration": 2, "pace": "Easy" }
-      , { "duration": 3, "pace": "Brisk" }
-      , { "duration": 2, "pace": "Easy" }
-      , { "duration": 3, "pace": "Brisk" }
-      , { "duration": 2, "pace": "Easy" }
-      , { "duration": 3, "pace": "Brisk" }
-      , { "duration": 2, "pace": "Easy" }
-      , { "duration": 3, "pace": "Brisk" }
-      , { "duration": 2, "pace": "Easy" }
-      , { "duration": 15, "pace": "Easy" }
-      ]
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-07-10",
+    "completed": true,
+    "id": "bd12b0f4-0b49-4ed0-9b3b-f03cc410fe97"
   },
   {
-    "id": "48cce67d-a40b-4112-be49-a49cb9897201",
-    "date": "2019-02-28",
-    "description": "Recovery",
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-07-10",
+    "completed": true,
+    "id": "4e5254a7-0af4-454b-8447-7e2e65c21a28"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Core",
+    "date": "2019-07-10",
+    "completed": true,
+    "id": "1a2ae894-f235-4dfc-be85-83684bf73a67"
+  },
+  {
     "run": {
-      "duration": 60,
-      "pace": "Easy"
-    }
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Crista hill loop",
+    "date": "2019-07-09",
+    "completed": true,
+    "id": "ced15151-a441-44c4-8a19-45fac9a56060"
   },
   {
-    "id": "22ad68c5-56a7-424b-8258-9df96ea88581",
-    "date": "2019-03-01",
-    "description": "Tempo",
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-07-08",
+    "completed": true,
+    "id": "020ddf27-0cd2-4d30-b747-67722ba7310b"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-07-08",
+    "completed": true,
+    "id": "4433e308-e1bc-4cbf-9ef4-82e91ced2f12"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Push ups, pull ups",
+    "date": "2019-07-08",
+    "completed": true,
+    "id": "22aa375a-26a7-498f-868b-5d95ba49ebb4"
+  },
+  {
     "run": {
-      "duration": 65,
-      "pace": "Lactate Threshold"
-    }
+      "pace": "Easy",
+      "duration": 15
+    },
+    "description": "Pickup car",
+    "date": "2019-07-07",
+    "completed": true,
+    "id": "5fc8520f-9cf8-4648-bd84-3a7e821809c3"
   },
   {
-    "id": "1234asdf-56a7-424b-8258-9df96ea88581",
-    "date": "2019-03-02",
-    "description": "Swim",
+    "run": {
+      "pace": "Easy",
+      "duration": 45
+    },
+    "description": "Whatcom Falls with Juan, Nathan, and Tabor",
+    "date": "2019-07-07",
+    "completed": true,
+    "id": "a08809c0-1db3-4d35-8369-fb6bafff0aaf"
+  },
+  {
+    "other": {
+      "duration": 360
+    },
+    "description": "Mt Rainier hike (6 miles)",
+    "date": "2019-07-05",
+    "completed": true,
+    "id": "d9dc21b1-9614-4834-8428-80dee788f5b0"
+  },
+  {
+    "other": {
+      "duration": 300
+    },
+    "description": "Mt Rainier hike (5 miles)",
+    "date": "2019-07-04",
+    "completed": true,
+    "id": "43215349-f8fc-4e0a-a126-9bd5d3e0eb2e"
+  },
+  {
     "other": {
       "duration": 30
-    }
+    },
+    "description": "Core",
+    "date": "2019-07-07",
+    "completed": true,
+    "id": "ae02f202-f52e-4fe4-9a25-9ccc8f4cfd2b"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Crista hill loop",
+    "date": "2019-07-03",
+    "completed": true,
+    "id": "6416eb7a-0d8f-46e1-922b-3d71bd4b2681"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 60
+    },
+    "description": "Easy run",
+    "date": "2019-07-02",
+    "completed": true,
+    "id": "8817fb6b-33d5-43a9-9a68-e1383fd0d6ab"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Swim",
+    "date": "2019-07-01",
+    "completed": true,
+    "id": "835c198b-233b-4287-a103-7400cb113520"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "GSF workout",
+    "date": "2019-07-06",
+    "completed": true,
+    "id": "0efca105-2067-4938-aa0d-90eb5688c768"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Weights",
+    "date": "2019-06-26",
+    "completed": true,
+    "id": "8d01b93a-72a6-4c6e-b463-4c27137075e8"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Crista Hill Loop",
+    "date": "2019-06-28",
+    "completed": true,
+    "id": "458435b8-41e3-4558-b2f7-2c90f98bed41"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Hike up to Silver Lake (12 miles)",
+    "date": "2019-06-29",
+    "completed": true,
+    "id": "da3dcb49-7021-4289-8950-fea0108eb2be"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "GSF workout",
+    "date": "2019-06-30",
+    "completed": true,
+    "id": "3859970a-4279-4bd3-bd86-d23c6f1c0913"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Push ups, pull ups, core",
+    "date": "2019-06-25",
+    "completed": true,
+    "id": "a6a5a3ef-709c-4670-b42e-e30e89a63b7e"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Crista hill loop",
+    "date": "2019-06-24",
+    "completed": true,
+    "id": "1ba45a58-9ed1-4353-8c54-2f516044e135"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "GSF Workout",
+    "date": "2019-06-22",
+    "completed": true,
+    "id": "36c8fa60-ed4f-4b61-b297-9532426d6c98"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-21",
+    "completed": true,
+    "id": "7e7565d4-bda7-494a-b7fd-6e088d0d7a06"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-21",
+    "completed": true,
+    "id": "73e44352-76a3-4440-b76b-ee98c8ff071c"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Bike commute",
+    "date": "2019-06-20",
+    "completed": true,
+    "id": "6a0d80e1-8c59-49fd-a977-be09a882bb21"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Bike commute",
+    "date": "2019-06-20",
+    "completed": true,
+    "id": "54fd6e75-c770-444e-97cb-458035f6b3f3"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Bike commute",
+    "date": "2019-06-20",
+    "completed": true,
+    "id": "f055af76-f2e6-497c-8918-62ac9ce89183"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "GSF workout",
+    "date": "2019-06-16",
+    "completed": true,
+    "id": "ddaf2fb9-c570-487a-81f8-fd54c6589f80"
+  },
+  {
+    "other": {
+      "duration": 70
+    },
+    "description": "Bike ride",
+    "date": "2019-06-15",
+    "completed": true,
+    "id": "013a0d50-f778-429c-bd01-6b18169a2b74"
+  },
+  {
+    "other": {
+      "duration": 70
+    },
+    "description": "Bike ride",
+    "date": "2019-06-15",
+    "completed": true,
+    "id": "6d582f9d-882c-496a-92da-7cc4400fc0e2"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Pull ups, push ups, core",
+    "date": "2019-06-14",
+    "completed": true,
+    "id": "31862ce5-01c6-4492-9513-aaf5f6575452"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Bike commute",
+    "date": "2019-06-13",
+    "completed": true,
+    "id": "364b64c9-0b23-4d71-acc2-191fa204489a"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "Bike commute",
+    "date": "2019-06-13",
+    "completed": true,
+    "id": "ce16b19e-2036-4ab7-a71c-8c489e743cba"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Pull ups, push ups, core",
+    "date": "2019-06-12",
+    "completed": true,
+    "id": "c3ce6985-74ab-4e16-85c8-032aa5499739"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-12",
+    "completed": true,
+    "id": "1b9eeb3a-7d71-4b38-8a62-459922d17c36"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-12",
+    "completed": true,
+    "id": "a4413d03-00cf-4660-aab4-96448a92ff87"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-11",
+    "completed": true,
+    "id": "02873b1c-46c2-41f2-b482-3f0bf54dd470"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-11",
+    "completed": true,
+    "id": "ab95feec-b094-4744-80a4-75647f40fcb8"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Pull-ups, push-ups, core",
+    "date": "2019-06-10",
+    "completed": true,
+    "id": "70d7f62d-b104-4f23-a187-36725582aceb"
+  },
+  {
+    "other": {
+      "duration": 150
+    },
+    "description": "Bike ride",
+    "date": "2019-06-09",
+    "completed": true,
+    "id": "ae02f202-f52e-4fe4-9a25-9ccc8f4cfd2b"
+  },
+  {
+    "other": {
+      "duration": 70
+    },
+    "description": "GSF workout",
+    "date": "2019-06-08",
+    "completed": true,
+    "id": "3b2a3c51-b7d6-448a-a908-1eeccc53888f"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-07",
+    "completed": true,
+    "id": "25642d50-e7e8-46f6-8ad7-d3dcd655d7be"
+  },
+  {
+    "other": {
+      "duration": 20
+    },
+    "description": "Bike commute",
+    "date": "2019-06-07",
+    "completed": true,
+    "id": "b4aaf67d-1db6-497c-b5bf-9454554c295b"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Crista hill loop",
+    "date": "2019-06-06",
+    "completed": true,
+    "id": "9b421e67-4395-467b-858b-4022034906c3"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "P-ups, core, squats",
+    "date": "2019-06-04",
+    "completed": true,
+    "id": "ea0163cc-eb57-41aa-ae85-43865be14a2b"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 70
+    },
+    "description": "Easy run with Quimby and friends",
+    "date": "2019-06-02",
+    "completed": true,
+    "id": "f3b2c5a9-ab58-4d5b-a242-a2ed497c7290"
+  },
+  {
+    "other": {
+      "duration": 70
+    },
+    "description": "GSF workout",
+    "date": "2019-06-01",
+    "completed": true,
+    "id": "e827edf4-4319-4d9a-ae1e-a9905126a02b"
+  },
+  {
+    "other": {
+      "duration": 90
+    },
+    "description": "Bike",
+    "date": "2019-05-28",
+    "completed": true,
+    "id": "d49be180-5b9a-4fd7-91cf-00bea2abc41e"
+  },
+  {
+    "other": {
+      "duration": 90
+    },
+    "description": "Bike ride",
+    "date": "2019-05-27",
+    "completed": true,
+    "id": "e9dce1b5-e006-42bf-9ec5-39910c7ead4b"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Strength training",
+    "date": "2019-05-27",
+    "completed": true,
+    "id": "9d86e007-7114-4383-9b43-7b4492f9c3f1"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 45
+    },
+    "description": "Easy run",
+    "date": "2019-05-26",
+    "completed": true,
+    "id": "3611b2b7-a24f-4017-8c9c-7a66f60fd294"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Easy run",
+    "date": "2019-05-24",
+    "completed": true,
+    "id": "1d0aec15-63f2-491c-87df-e9f7a848b49e"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Strength training",
+    "date": "2019-05-22",
+    "completed": true,
+    "id": "2b0a935a-b653-4444-9729-6f63fb4149e9"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Easy run - stamina 1",
+    "date": "2019-05-19",
+    "completed": true,
+    "id": "20e8bf54-aaff-4bab-96f8-6c7100b2b1b8"
+  },
+  {
+    "other": {
+      "duration": 30
+    },
+    "description": "Strength training - strength 1",
+    "date": "2019-05-20",
+    "completed": true,
+    "id": "a5b4766b-5ada-4bf6-b48f-e9efe40e856d"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 30
+    },
+    "description": "Easy run - stamina 1",
+    "date": "2019-05-18",
+    "completed": true,
+    "id": "d17d56be-78aa-400d-896c-89d0a437c2f4"
+  },
+  {
+    "other": {
+      "duration": 60
+    },
+    "description": "GSF Workout - strength 3",
+    "date": "2019-05-19",
+    "completed": true,
+    "id": "bb79c3f2-3235-4de2-93d9-60ce47ef7bb8"
+  },
+  {
+    "run": {
+      "pace": "Easy",
+      "duration": 60
+    },
+    "description": "Recovery",
+    "date": "2019-02-28",
+    "completed": true,
+    "id": "48cce67d-a40b-4112-be49-a49cb9897201"
   }
 ]
