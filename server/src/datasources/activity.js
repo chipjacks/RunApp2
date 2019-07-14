@@ -1,16 +1,21 @@
 const { RESTDataSource } = require('apollo-datasource-rest');
+const { ApolloError } = require('apollo-server');
 
 class ActivityAPI extends RESTDataSource {
   constructor() {
     super();
-    this.baseURL = 'https://api.jsonbin.io/b/5c745db056292a73eb718d29/latest';
+    this.baseURL = 'https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c/';
   }
 
-  async activities() {
-    const response = await this.get('');
+  async getActivities() {
+    const response = await this.get('latest');
     return Array.isArray(response)
       ? response.map(activity => this.activityReducer(activity))
       : [];
+  }
+
+  async putActivities(activities) {
+    return this.put('', activities);
   }
 
   activityReducer(activity) {
@@ -19,8 +24,8 @@ class ActivityAPI extends RESTDataSource {
       completed: activity.completed,
       date: activity.date,
       description: activity.description,
-      duration: activity.run ? activity.run.duration : activity.other.duration,
-      pace: activity.run ? activity.run.pace : null
+      duration: activity.duration,
+      pace: activity.pace
      }
   }
 }
