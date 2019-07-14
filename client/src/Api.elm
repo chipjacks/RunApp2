@@ -27,13 +27,8 @@ getActivities =
 
 saveActivity : Activity -> Task Http.Error (List Activity)
 saveActivity activity =
-    getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == activity.id) activities
-                    |> (\( _, others ) -> activity :: others)
-            )
-        |> Task.andThen postActivities
+    deleteActivity activity.id
+    |> Task.andThen (\r -> createActivity (\id -> activity))
 
 
 createActivity : (Activity.Id -> Activity) -> Task Http.Error (List Activity)
@@ -46,10 +41,24 @@ createActivity idToActivity =
                 |> Task.map (\( uuid, _ ) -> idToActivity uuid)
 
         saveTask activity =
-            getActivities
-                |> Task.map
-                    (\activities -> activity :: activities)
-                |> Task.andThen postActivities
+            Http.task
+                { method = "POST"
+                , headers = [ Http.header "Content-Type" "application/json" ]
+                , url = storeUrl
+                , body = Http.stringBody "" <| List.foldr (++) ""
+                    [ "{\"query\": \""
+                    , "mutation CreateActivity($activity: ActivityInput!) {  createActivity(activity: $activity"
+                    , ") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
+                    , "\", \"variables\": {\"activity\": "
+                    , Encode.encode 0 (Activity.encoder activity)
+                    , "} }"
+                    ]
+                , resolver =
+                    Http.stringResolver <|
+                        handleJsonResponse <|
+                            ( Decode.at [ "data", "createActivity", "activities" ] (Decode.list Activity.decoder))
+                , timeout = Nothing
+                }
     in
     addIdTask
         |> Task.andThen saveTask
@@ -57,13 +66,23 @@ createActivity idToActivity =
 
 deleteActivity : Activity.Id -> Task Http.Error (List Activity)
 deleteActivity id =
-    getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == id) activities
-                    |> (\( _, others ) -> others)
-            )
-        |> Task.andThen postActivities
+    Http.task
+        { method = "POST"
+        , headers = [ Http.header "Content-Type" "application/json" ]
+        , url = storeUrl
+        , body = Http.stringBody "" <| List.foldr (++) ""
+            [ "{\"query\": \""
+            , "mutation {  deleteActivity(activityId: \\\""
+            , id
+            , "\\\") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
+            , "\"}"
+            ]
+        , resolver =
+            Http.stringResolver <|
+                handleJsonResponse <|
+                    ( Decode.at [ "data", "deleteActivity", "activities" ] (Decode.list Activity.decoder))
+        , timeout = Nothing
+        }
 
 
 

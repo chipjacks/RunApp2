@@ -100,10 +100,6 @@ decoder =
         (Decode.field "pace" (Decode.nullable pace.decoder))
 
 
-runDecoder : Decode.Decoder Details
-runDecoder =
-    Decode.map2 Run (Decode.field "duration" Decode.int) (Decode.field "pace" pace.decoder)
-
 
 encoder : Activity -> Encode.Value
 encoder activity =
