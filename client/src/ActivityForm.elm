@@ -35,19 +35,14 @@ type Status
 type alias Form =
     { description : String
     , completed : Bool
-    , details : DetailsForm
+    , duration : Maybe Minutes
+    , pace : Maybe Activity.Pace
     }
-
-
-type DetailsForm
-    = RunForm { duration : Maybe Minutes, pace : Activity.Pace }
-    | OtherForm { duration : Maybe Minutes }
 
 
 type Msg
     = EditedDescription String
     | CheckedCompleted Bool
-    | SelectedDetails String
     | EditedDuration String
     | SelectedPace String
     | ClickedSubmit
@@ -64,21 +59,14 @@ type Error
 
 initNew : Date -> Model
 initNew date =
-    Model Creating date (Form "" True (RunForm { duration = Nothing, pace = Activity.Easy })) (Err (EmptyFieldError ""))
+    Model Creating date (Form "" True Nothing Nothing) (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
 initEdit activity =
     let
         form =
-            case activity.details of
-                Activity.Run minutes pace ->
-                    Form activity.description activity.completed <|
-                        RunForm { duration = Just minutes, pace = pace }
-
-                Activity.Other minutes ->
-                    Form activity.description activity.completed <|
-                        OtherForm { duration = Just minutes }
+            Form activity.description activity.completed (Just activity.duration) activity.pace
     in
     Model (Editing activity.id) activity.date form (Ok activity)
 
@@ -111,23 +99,11 @@ validateFieldExists fieldM fieldName =
 validate : Form -> Result Error Activity
 validate form =
     Result.map2
-        (\description details ->
-            Activity "" (Date.fromRataDie 0) description form.completed details
+        (\description duration ->
+            Activity "" (Date.fromRataDie 0) description form.completed duration form.pace
         )
         (validateFieldExists (Just form.description) "description")
-        (validateDetails form.details)
-
-
-validateDetails : DetailsForm -> Result Error Activity.Details
-validateDetails detailsForm =
-    case detailsForm of
-        RunForm { duration, pace } ->
-            Result.map
-                (\duration_ -> Activity.Run duration_ pace)
-                (validateFieldExists duration "duration")
-
-        OtherForm { duration } ->
-            Result.map Activity.Other (validateFieldExists duration "duration")
+        (validateFieldExists form.duration "duration")
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -139,41 +115,11 @@ update msg model =
         CheckedCompleted bool ->
             updateForm (\form -> { form | completed = bool }) model
 
-        SelectedDetails str ->
-            let
-                details =
-                    case str of
-                        "Run" ->
-                            RunForm { duration = Nothing, pace = Activity.Easy }
-
-                        _ ->
-                            OtherForm { duration = Nothing }
-            in
-            updateForm (\form -> { form | details = details }) model
-
         EditedDuration str ->
-            let
-                updatedDetails =
-                    case model.form.details of
-                        RunForm runForm ->
-                            RunForm { runForm | duration = String.toInt str }
-
-                        OtherForm otherForm ->
-                            OtherForm { otherForm | duration = String.toInt str }
-            in
-            updateForm (\form -> { form | details = updatedDetails }) model
+            updateForm (\form -> { form | duration = String.toInt str }) model
 
         SelectedPace str ->
-            let
-                updatedDetails =
-                    case model.form.details of
-                        RunForm runForm ->
-                            RunForm { runForm | pace = Activity.pace.fromString str |> Maybe.withDefault runForm.pace }
-
-                        _ ->
-                            model.form.details
-            in
-            updateForm (\form -> { form | details = updatedDetails }) model
+            updateForm (\form -> { form | pace = Activity.pace.fromString str }) model
 
         ClickedSubmit ->
             case model.result of
@@ -232,23 +178,19 @@ updateForm transform model =
 view : Model -> Html Msg
 view model =
     let
-        { description, completed, details } =
+        { description, completed, duration, pace } =
             model.form
 
         activityShape =
-            validateDetails details
+            validate model.form
                 |> Result.toMaybe
-                |> Maybe.map (ActivityShape.view completed)
+                |> Maybe.map ActivityShape.view
                 |> Maybe.withDefault ActivityShape.viewDefault
     in
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
         , column []
             [ row []
-                [ detailsSelect details
-                , completedCheckbox completed
-                ]
-            , row []
                 [ input
                     [ type_ "text"
                     , placeholder "Description"
@@ -259,8 +201,11 @@ view model =
                     ]
                     []
                 ]
-            , viewDetailsForm details
-            , viewError model.result
+            , row []
+                [ durationInput EditedDuration duration
+                , paceSelect SelectedPace pace
+                , completedCheckbox completed
+                ]
             , row []
                 [ submitButton model.status
                 , button
@@ -286,46 +231,6 @@ completedCheckbox completed =
             []
         , Html.label [] [ text "Completed" ]
         ]
-
-
-detailsSelect : DetailsForm -> Html Msg
-detailsSelect details =
-    let
-        detailsFormType =
-            case details of
-                RunForm _ ->
-                    "Run"
-
-                OtherForm _ ->
-                    "Other"
-
-        radioButton typeStr iconStr =
-            button
-                [ Html.Attributes.classList [ ( "selected", detailsFormType == typeStr ) ]
-                , onClick <| SelectedDetails typeStr
-                ]
-                [ i [ class <| "fas fa-" ++ iconStr, style "padding-right" "0.5rem" ] []
-                , text typeStr
-                ]
-    in
-    div [ class "radio-buttons" ]
-        [ radioButton "Run" "square"
-        , radioButton "Other" "circle"
-        ]
-
-
-viewDetailsForm : DetailsForm -> Html Msg
-viewDetailsForm detailsForm =
-    case detailsForm of
-        RunForm { duration, pace } ->
-            row []
-                [ durationInput EditedDuration duration
-                , paceSelect SelectedPace pace
-                ]
-
-        OtherForm { duration } ->
-            row []
-                [ durationInput EditedDuration duration ]
 
 
 submitButton : Status -> Html Msg
@@ -376,11 +281,16 @@ durationInput msg duration =
         []
 
 
-paceSelect : (String -> Msg) -> Activity.Pace -> Html Msg
-paceSelect msg pace =
+paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
+paceSelect msg paceM =
     let
         selected =
-            Activity.pace.toString pace
+            case paceM of
+                Just pace ->
+                    Activity.pace.toString pace
+
+                Nothing ->
+                    ""
 
         selectedAttr paceStr =
             if selected == paceStr then
@@ -397,7 +307,7 @@ paceSelect msg pace =
             (\( paceStr, _ ) ->
                 Html.option (selectedAttr paceStr) [ Html.text paceStr ]
             )
-            Activity.pace.list
+            (( "", Activity.Easy ) :: Activity.pace.list)
         )
 
 

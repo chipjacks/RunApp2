@@ -473,7 +473,7 @@ viewActivity activityFormM activity =
         activityView =
             a [ onClick (EditActivity activity) ]
                 [ row [ style "margin-bottom" "1rem" ]
-                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity.completed activity.details ]
+                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
                     , column [ style "justify-content" "center" ]
                         [ text activity.description ]
                     ]

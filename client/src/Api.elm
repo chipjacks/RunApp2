@@ -13,14 +13,14 @@ import Uuid.Barebones exposing (uuidStringGenerator)
 getActivities : Task Http.Error (List Activity)
 getActivities =
     Http.task
-        { method = "GET"
+        { method = "POST"
         , headers = [ Http.header "Content-Type" "application/json" ]
-        , url = storeUrl ++ "/latest"
-        , body = Http.emptyBody
+        , url = storeUrl
+        , body = Http.stringBody "" """{"operationName":null,"variables":{},"query":"{ activities { id completed date description duration pace }}"}"""
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.list Activity.decoder
+                    (Decode.field "data" <| Decode.field "activities" <| Decode.list Activity.decoder)
         , timeout = Nothing
         }
 
@@ -71,7 +71,7 @@ deleteActivity id =
 
 
 storeUrl =
-    "https://api.jsonbin.io/b/5c745db056292a73eb718d29"
+    "http://localhost:4000"
 
 
 postActivities : List Activity -> Task Http.Error (List Activity)

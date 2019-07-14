@@ -3,7 +3,7 @@ const { RESTDataSource } = require('apollo-datasource-rest');
 class ActivityAPI extends RESTDataSource {
   constructor() {
     super();
-    this.baseURL = 'https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c/latest';
+    this.baseURL = 'https://api.jsonbin.io/b/5c745db056292a73eb718d29/latest';
   }
 
   async activities() {

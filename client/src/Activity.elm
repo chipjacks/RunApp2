@@ -11,7 +11,8 @@ type alias Activity =
     , date : Date
     , description : String
     , completed : Bool
-    , details : Details
+    , duration : Minutes
+    , pace : Maybe Pace
     }
 
 
@@ -90,20 +91,13 @@ pace =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map5 Activity
+    Decode.map6 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
         (Decode.field "completed" Decode.bool)
-        detailsDecoder
-
-
-detailsDecoder : Decode.Decoder Details
-detailsDecoder =
-    Decode.oneOf
-        [ Decode.field "run" runDecoder
-        , Decode.map Other <| Decode.field "other" (Decode.field "duration" Decode.int)
-        ]
+        (Decode.field "duration" Decode.int)
+        (Decode.field "pace" (Decode.nullable pace.decoder))
 
 
 runDecoder : Decode.Decoder Details
@@ -113,28 +107,23 @@ runDecoder =
 
 encoder : Activity -> Encode.Value
 encoder activity =
+    let
+        paceEncoder =
+            case activity.pace of
+                Just pace_ ->
+                    pace.encode pace_
+
+                Nothing ->
+                    Encode.null
+    in
     Encode.object
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
         , ( "completed", Encode.bool activity.completed )
-        , detailsEncoder activity.details
+        , ( "duration", Encode.int activity.duration )
+        , ( "pace", paceEncoder )
         ]
-
-
-detailsEncoder : Details -> ( String, Encode.Value )
-detailsEncoder details =
-    case details of
-        Run minutes pace_ ->
-            ( "run"
-            , Encode.object
-                [ ( "duration", Encode.int minutes )
-                , ( "pace", pace.encode pace_ )
-                ]
-            )
-
-        Other duration ->
-            ( "other", Encode.object [ ( "duration", Encode.int duration ) ] )
 
 
 dateDecoder : Decode.Decoder Date
