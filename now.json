@@ -1,5 +1,12 @@
 {
   "version": 2,
-  "builds": [{ "src": "server/src/index.js", "use": "@now/node-server" }],
-  "routes": [{ "src": "/.*", "dest": "server/src/index.js" }]
+  "builds": [
+    { "src": "server/src/index.js", "use": "@now/node-server" },
+    { "src": "client/package.json", "use": "@now/static-build", "config": { "distDir": "public" } },
+    { "src": "client/public/*", "use": "@now/static" }
+  ],
+  "routes": [
+    { "src": "/api", "dest": "server/src/index.js" },
+    { "src": "/(.*)", "dest": "client/public/$1" }
+  ]
 }

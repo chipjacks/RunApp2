@@ -28,7 +28,7 @@ getActivities =
 saveActivity : Activity -> Task Http.Error (List Activity)
 saveActivity activity =
     deleteActivity activity.id
-    |> Task.andThen (\r -> createActivity (\id -> activity))
+        |> Task.andThen (\r -> createActivity (\id -> activity))
 
 
 createActivity : (Activity.Id -> Activity) -> Task Http.Error (List Activity)
@@ -45,18 +45,21 @@ createActivity idToActivity =
                 { method = "POST"
                 , headers = [ Http.header "Content-Type" "application/json" ]
                 , url = storeUrl
-                , body = Http.stringBody "" <| List.foldr (++) ""
-                    [ "{\"query\": \""
-                    , "mutation CreateActivity($activity: ActivityInput!) {  createActivity(activity: $activity"
-                    , ") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
-                    , "\", \"variables\": {\"activity\": "
-                    , Encode.encode 0 (Activity.encoder activity)
-                    , "} }"
-                    ]
+                , body =
+                    Http.stringBody "" <|
+                        List.foldr (++)
+                            ""
+                            [ "{\"query\": \""
+                            , "mutation CreateActivity($activity: ActivityInput!) {  createActivity(activity: $activity"
+                            , ") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
+                            , "\", \"variables\": {\"activity\": "
+                            , Encode.encode 0 (Activity.encoder activity)
+                            , "} }"
+                            ]
                 , resolver =
                     Http.stringResolver <|
                         handleJsonResponse <|
-                            ( Decode.at [ "data", "createActivity", "activities" ] (Decode.list Activity.decoder))
+                            Decode.at [ "data", "createActivity", "activities" ] (Decode.list Activity.decoder)
                 , timeout = Nothing
                 }
     in
@@ -70,17 +73,20 @@ deleteActivity id =
         { method = "POST"
         , headers = [ Http.header "Content-Type" "application/json" ]
         , url = storeUrl
-        , body = Http.stringBody "" <| List.foldr (++) ""
-            [ "{\"query\": \""
-            , "mutation {  deleteActivity(activityId: \\\""
-            , id
-            , "\\\") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
-            , "\"}"
-            ]
+        , body =
+            Http.stringBody "" <|
+                List.foldr (++)
+                    ""
+                    [ "{\"query\": \""
+                    , "mutation {  deleteActivity(activityId: \\\""
+                    , id
+                    , "\\\") {    success    message    activities {      id      completed      date      description      duration      pace    }  }}"
+                    , "\"}"
+                    ]
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    ( Decode.at [ "data", "deleteActivity", "activities" ] (Decode.list Activity.decoder))
+                    Decode.at [ "data", "deleteActivity", "activities" ] (Decode.list Activity.decoder)
         , timeout = Nothing
         }
 
@@ -90,7 +96,7 @@ deleteActivity id =
 
 
 storeUrl =
-    "http://localhost:4000"
+    "/api"
 
 
 postActivities : List Activity -> Task Http.Error (List Activity)
