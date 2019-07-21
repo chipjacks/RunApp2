@@ -397,16 +397,25 @@ viewWeek accessActivities start =
             daysOfWeek start
                 |> List.map (\d -> ( d, accessActivities d ))
                 |> List.map viewWeekDay
+
+        ( runDuration, otherDuration ) =
+            daysOfWeek start
+                |> List.map (\d -> accessActivities d)
+                |> List.concat
+                |> List.filter (\a -> a.completed)
+                |> List.partition (\a -> a.pace /= Nothing)
+                |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
+                |> Tuple.mapBoth List.sum List.sum
     in
     expandingRow [ style "min-height" "3rem" ] <|
-        titleWeek start
+        titleWeek start ( runDuration, otherDuration )
             :: dayViews
 
 
 viewWeekDay : ( Date, List Activity ) -> Html Msg
 viewWeekDay ( date, activities ) =
     column [ style "overflow" "hidden" ] <|
-        row []
+        row [ style "justify-content" "center" ]
             [ a
                 [ onClick (LoadCalendar Daily date)
                 , attribute "data-date" (Date.toIsoString date)
@@ -414,11 +423,11 @@ viewWeekDay ( date, activities ) =
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [] [ ActivityShape.viewCompact a ]) activities
+            :: List.map (\a -> row [ style "justify-content" "center" ] [ ActivityShape.viewCompact a ]) activities
 
 
-titleWeek : Date -> Html msg
-titleWeek start =
+titleWeek : Date -> ( Int, Int ) -> Html msg
+titleWeek start ( runDuration, otherDuration ) =
     let
         monthStart =
             daysOfWeek start
@@ -426,9 +435,32 @@ titleWeek start =
                 |> List.head
                 |> Maybe.map (Date.format "MMM")
                 |> Maybe.withDefault ""
+
+        hours duration =
+            (toFloat duration / 60)
+                |> round
+
+        minutes duration =
+            remainderBy 60 duration
     in
-    div [ style "min-width" "3rem" ]
-        [ text monthStart
+    column [ style "min-width" "3rem" ]
+        [ row [] [ text monthStart ]
+        , row [ style "color" "limegreen" ]
+            [ text <|
+                if runDuration /= 0 then
+                    List.foldr (++) "" [ String.fromInt (hours runDuration), "h ", String.fromInt (minutes runDuration), "m" ]
+
+                else
+                    ""
+            ]
+        , row [ style "color" "grey" ]
+            [ text <|
+                if otherDuration /= 0 then
+                    List.foldr (++) "" [ String.fromInt (hours otherDuration), "h ", String.fromInt (minutes otherDuration), "m" ]
+
+                else
+                    ""
+            ]
         ]
 
 
