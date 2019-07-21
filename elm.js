@@ -9975,7 +9975,7 @@ var author$project$Main$titleWeek = F2(
 			author$project$Skeleton$column,
 			_List_fromArray(
 				[
-					A2(elm$html$Html$Attributes$style, 'min-width', '3rem')
+					A2(elm$html$Html$Attributes$style, 'min-width', '4rem')
 				]),
 			_List_fromArray(
 				[
@@ -10091,7 +10091,8 @@ var author$project$Main$viewWeekDay = function (_n0) {
 						author$project$Skeleton$row,
 						_List_fromArray(
 							[
-								A2(elm$html$Html$Attributes$style, 'justify-content', 'center')
+								A2(elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2(elm$html$Html$Attributes$style, 'margin-bottom', '0.1rem')
 							]),
 						_List_fromArray(
 							[
@@ -10507,21 +10508,6 @@ var author$project$Skeleton$layout = function (page) {
 										_List_fromArray(
 											[
 												elm$html$Html$text('RunApp2')
-											])),
-										A2(author$project$Skeleton$column, _List_Nil, _List_Nil),
-										A2(
-										author$project$Skeleton$compactColumn,
-										_List_Nil,
-										_List_fromArray(
-											[
-												A2(
-												elm$html$Html$i,
-												_List_fromArray(
-													[
-														elm$html$Html$Attributes$class('fas fa-user-circle'),
-														A2(elm$html$Html$Attributes$style, 'padding-top', '0.2rem')
-													]),
-												_List_Nil)
 											]))
 									]))
 							]))
