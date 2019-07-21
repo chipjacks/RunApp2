@@ -1,6 +1,6 @@
 module ActivityShape exposing (view, viewDefault)
 
-import Activity exposing (Details(..), Pace(..))
+import Activity exposing (Activity, Pace(..))
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Skeleton exposing (column, row)
@@ -16,15 +16,15 @@ type Color
     | Gray
 
 
-view : Bool -> Details -> Html msg
-view completed details =
-    case details of
-        Run duration pace ->
-            Block Green completed { width = toWidth pace, height = toHeight duration }
+view : Activity -> Html msg
+view activity =
+    case activity.pace of
+        Just pace ->
+            Block Green activity.completed { width = toWidth pace, height = toHeight activity.duration }
                 |> viewShape
 
-        Other duration ->
-            Circle Gray completed
+        Nothing ->
+            Circle Gray activity.completed
                 |> viewShape
 
 

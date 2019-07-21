@@ -1,4 +1,4 @@
-module Activity exposing (Activity, Details(..), Id, Minutes, Pace(..), decoder, encoder, pace)
+module Activity exposing (Activity, Id, Minutes, Pace(..), decoder, encoder, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
@@ -11,17 +11,13 @@ type alias Activity =
     , date : Date
     , description : String
     , completed : Bool
-    , details : Details
+    , duration : Minutes
+    , pace : Maybe Pace
     }
 
 
 type alias Id =
     String
-
-
-type Details
-    = Run Minutes Pace
-    | Other Minutes
 
 
 type alias Minutes =
@@ -90,51 +86,34 @@ pace =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map5 Activity
+    Decode.map6 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
         (Decode.field "completed" Decode.bool)
-        detailsDecoder
-
-
-detailsDecoder : Decode.Decoder Details
-detailsDecoder =
-    Decode.oneOf
-        [ Decode.field "run" runDecoder
-        , Decode.map Other <| Decode.field "other" (Decode.field "duration" Decode.int)
-        ]
-
-
-runDecoder : Decode.Decoder Details
-runDecoder =
-    Decode.map2 Run (Decode.field "duration" Decode.int) (Decode.field "pace" pace.decoder)
+        (Decode.field "duration" Decode.int)
+        (Decode.field "pace" (Decode.nullable pace.decoder))
 
 
 encoder : Activity -> Encode.Value
 encoder activity =
+    let
+        paceEncoder =
+            case activity.pace of
+                Just pace_ ->
+                    pace.encode pace_
+
+                Nothing ->
+                    Encode.null
+    in
     Encode.object
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
         , ( "completed", Encode.bool activity.completed )
-        , detailsEncoder activity.details
+        , ( "duration", Encode.int activity.duration )
+        , ( "pace", paceEncoder )
         ]
-
-
-detailsEncoder : Details -> ( String, Encode.Value )
-detailsEncoder details =
-    case details of
-        Run minutes pace_ ->
-            ( "run"
-            , Encode.object
-                [ ( "duration", Encode.int minutes )
-                , ( "pace", pace.encode pace_ )
-                ]
-            )
-
-        Other duration ->
-            ( "other", Encode.object [ ( "duration", Encode.int duration ) ] )
 
 
 dateDecoder : Decode.Decoder Date
