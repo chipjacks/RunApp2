@@ -97,7 +97,11 @@ update msg model =
         Loaded state ->
             case msg of
                 LoadCalendar calendar date ->
-                    ( Loaded { state | calendar = calendar, date = date }
+                    let
+                        activityForm =
+                            Maybe.map (ActivityForm.selectDate date) state.activityForm
+                    in
+                    ( Loaded { state | calendar = calendar, date = date, activityForm = activityForm }
                     , resetScroll NoOp
                     )
 
@@ -122,7 +126,7 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew date }
+                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew (Just date) }
                     , Cmd.none
                     )
 
@@ -131,16 +135,19 @@ update msg model =
                         newState =
                             case subMsg of
                                 ActivityForm.GotSubmitResult (Ok activities) ->
-                                    { state | activities = activities }
+                                    { state | activities = activities, activityForm = Nothing }
 
                                 ActivityForm.GotDeleteResult (Ok activities) ->
-                                    { state | activities = activities }
+                                    { state | activities = activities, activityForm = Nothing }
+
+                                ActivityForm.ClickedMove ->
+                                    { state | calendar = Weekly }
 
                                 _ ->
                                     state
 
                         ( subModel, subCmd ) =
-                            case state.activityForm of
+                            case newState.activityForm of
                                 Nothing ->
                                     ( Nothing, Cmd.none )
 
@@ -292,7 +299,22 @@ viewCalendar { calendar, date, activities, activityForm } =
     let
         accessActivities =
             \date_ ->
-                List.filter (\a -> a.date == date_) activities
+                List.filter (filterActivities date_) activities
+
+        filterActivities date_ activity =
+            case activityForm of
+                Just af ->
+                    if af.date == Just date_ && ActivityForm.isEditing activity af then
+                        True
+
+                    else if activity.date == date_ && not (ActivityForm.isEditing activity af) then
+                        True
+
+                    else
+                        False
+
+                Nothing ->
+                    activity.date == date_
 
         body =
             case calendar of

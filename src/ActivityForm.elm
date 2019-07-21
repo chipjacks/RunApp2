@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, update, view)
+module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, selectDate, update, view)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -21,8 +21,11 @@ import Task exposing (Task)
 
 type alias Model =
     { status : Status
-    , date : Date
-    , form : Form
+    , date : Maybe Date
+    , description : String
+    , completed : Bool
+    , duration : Maybe Minutes
+    , pace : Maybe Activity.Pace
     , result : Result Error Activity
     }
 
@@ -30,14 +33,6 @@ type alias Model =
 type Status
     = Creating
     | Editing Activity.Id
-
-
-type alias Form =
-    { description : String
-    , completed : Bool
-    , duration : Maybe Minutes
-    , pace : Maybe Activity.Pace
-    }
 
 
 type Msg
@@ -48,6 +43,7 @@ type Msg
     | ClickedSubmit
     | ClickedReset
     | ClickedDelete
+    | ClickedMove
     | GotSubmitResult (Result Error (List Activity))
     | GotDeleteResult (Result Error (List Activity))
 
@@ -57,18 +53,23 @@ type Error
     | EmptyFieldError String
 
 
-initNew : Date -> Model
-initNew date =
-    Model Creating date (Form "" True Nothing Nothing) (Err (EmptyFieldError ""))
+initNew : Maybe Date -> Model
+initNew dateM =
+    Model Creating dateM "" True Nothing Nothing (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
 initEdit activity =
-    let
-        form =
-            Form activity.description activity.completed (Just activity.duration) activity.pace
-    in
-    Model (Editing activity.id) activity.date form (Ok activity)
+    Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace (Ok activity)
+
+
+selectDate : Date -> Model -> Model
+selectDate date model =
+    if model.date == Nothing then
+        updateResult { model | date = Just date }
+
+    else
+        model
 
 
 isEditing : Activity -> Model -> Bool
@@ -83,7 +84,7 @@ isEditing activity model =
 
 isCreating : Date -> Model -> Bool
 isCreating date model =
-    model.status == Creating && model.date == date
+    model.status == Creating && model.date == Just date
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -96,30 +97,39 @@ validateFieldExists fieldM fieldName =
             Err <| EmptyFieldError fieldName
 
 
-validate : Form -> Result Error Activity
-validate form =
-    Result.map2
-        (\description duration ->
-            Activity "" (Date.fromRataDie 0) description form.completed duration form.pace
+validate : Model -> Result Error Activity
+validate model =
+    Result.map3
+        (\date description duration ->
+            Activity "" date description model.completed duration model.pace
         )
-        (validateFieldExists (Just form.description) "description")
-        (validateFieldExists form.duration "duration")
+        (validateFieldExists model.date "date")
+        (validateFieldExists (Just model.description) "description")
+        (validateFieldExists model.duration "duration")
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         EditedDescription desc ->
-            updateForm (\form -> { form | description = desc }) model
+            ( updateResult { model | description = desc }
+            , Cmd.none
+            )
 
         CheckedCompleted bool ->
-            updateForm (\form -> { form | completed = bool }) model
+            ( updateResult { model | completed = bool }
+            , Cmd.none
+            )
 
         EditedDuration str ->
-            updateForm (\form -> { form | duration = String.toInt str }) model
+            ( updateResult { model | duration = String.toInt str }
+            , Cmd.none
+            )
 
         SelectedPace str ->
-            updateForm (\form -> { form | pace = Activity.pace.fromString str }) model
+            ( updateResult { model | pace = Activity.pace.fromString str }
+            , Cmd.none
+            )
 
         ClickedSubmit ->
             case model.result of
@@ -128,10 +138,10 @@ update msg model =
                         apiTask =
                             case model.status of
                                 Editing id ->
-                                    Api.saveActivity { activity | date = model.date, id = id }
+                                    Api.saveActivity { activity | id = id }
 
                                 Creating ->
-                                    Api.createActivity (\id -> { activity | date = model.date, id = id })
+                                    Api.createActivity (\id -> { activity | id = id })
                     in
                     ( model, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
@@ -148,6 +158,13 @@ update msg model =
 
                 _ ->
                     ( initNew model.date, Cmd.none )
+
+        ClickedMove ->
+            let
+                newModel =
+                    { model | date = Nothing }
+            in
+            ( { newModel | result = validate newModel }, Cmd.none )
 
         GotSubmitResult result ->
             case result of
@@ -166,23 +183,16 @@ update msg model =
                     ( { model | result = Err error }, Cmd.none )
 
 
-updateForm : (Form -> Form) -> Model -> ( Model, Cmd Msg )
-updateForm transform model =
-    let
-        updatedForm =
-            transform model.form
-    in
-    ( { model | form = updatedForm, result = validate updatedForm }, Cmd.none )
+updateResult : Model -> Model
+updateResult model =
+    { model | result = validate model }
 
 
 view : Model -> Html Msg
 view model =
     let
-        { description, completed, duration, pace } =
-            model.form
-
         activityShape =
-            validate model.form
+            validate model
                 |> Result.toMaybe
                 |> Maybe.map ActivityShape.view
                 |> Maybe.withDefault ActivityShape.viewDefault
@@ -191,20 +201,22 @@ view model =
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
         , column []
             [ row []
+                [ viewError model.result ]
+            , row []
                 [ input
                     [ type_ "text"
                     , placeholder "Description"
                     , onInput EditedDescription
                     , name "description"
-                    , value description
+                    , value model.description
                     , style "width" "100%"
                     ]
                     []
                 ]
             , row []
-                [ durationInput EditedDuration duration
-                , paceSelect SelectedPace pace
-                , completedCheckbox completed
+                [ durationInput EditedDuration model.duration
+                , paceSelect SelectedPace model.pace
+                , completedCheckbox model.completed
                 ]
             , row []
                 [ submitButton model.status
@@ -215,6 +227,12 @@ view model =
                     ]
                     [ text "Reset" ]
                 , deleteButton model.status
+                , button
+                    [ onClick ClickedMove
+                    , type_ "move"
+                    , style "margin-left" "1em"
+                    ]
+                    [ text "Move" ]
                 ]
             ]
         ]
