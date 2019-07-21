@@ -423,7 +423,7 @@ viewWeekDay ( date, activities ) =
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [ style "justify-content" "center" ] [ ActivityShape.viewCompact a ]) activities
+            :: List.map (\a -> row [ style "justify-content" "center", style "margin-bottom" "0.1rem" ] [ ActivityShape.viewCompact a ]) activities
 
 
 titleWeek : Date -> ( Int, Int ) -> Html msg
@@ -443,7 +443,7 @@ titleWeek start ( runDuration, otherDuration ) =
         minutes duration =
             remainderBy 60 duration
     in
-    column [ style "min-width" "3rem" ]
+    column [ style "min-width" "4rem" ]
         [ row [] [ text monthStart ]
         , row [ style "color" "limegreen" ]
             [ text <|
