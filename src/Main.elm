@@ -97,7 +97,11 @@ update msg model =
         Loaded state ->
             case msg of
                 LoadCalendar calendar date ->
-                    ( Loaded { state | calendar = calendar, date = date }
+                    let
+                        activityForm =
+                            Maybe.map (ActivityForm.selectDate date) state.activityForm
+                    in
+                    ( Loaded { state | calendar = calendar, date = date, activityForm = activityForm }
                     , resetScroll NoOp
                     )
 
@@ -122,7 +126,7 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew date }
+                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew (Just date) }
                     , Cmd.none
                     )
 
@@ -131,16 +135,19 @@ update msg model =
                         newState =
                             case subMsg of
                                 ActivityForm.GotSubmitResult (Ok activities) ->
-                                    { state | activities = activities }
+                                    { state | activities = activities, activityForm = Nothing }
 
                                 ActivityForm.GotDeleteResult (Ok activities) ->
-                                    { state | activities = activities }
+                                    { state | activities = activities, activityForm = Nothing }
+
+                                ActivityForm.ClickedMove ->
+                                    { state | calendar = Weekly }
 
                                 _ ->
                                     state
 
                         ( subModel, subCmd ) =
-                            case state.activityForm of
+                            case newState.activityForm of
                                 Nothing ->
                                     ( Nothing, Cmd.none )
 
@@ -292,12 +299,27 @@ viewCalendar { calendar, date, activities, activityForm } =
     let
         accessActivities =
             \date_ ->
-                List.filter (\a -> a.date == date_) activities
+                List.filter (filterActivities date_) activities
+
+        filterActivities date_ activity =
+            case activityForm of
+                Just af ->
+                    if af.date == Just date_ && ActivityForm.isEditing activity af then
+                        True
+
+                    else if activity.date == date_ && not (ActivityForm.isEditing activity af) then
+                        True
+
+                    else
+                        False
+
+                Nothing ->
+                    activity.date == date_
 
         body =
             case calendar of
                 Weekly ->
-                    weekList date |> List.map viewWeek
+                    weekList date |> List.map (viewWeek accessActivities)
 
                 Daily ->
                     listDays date
@@ -368,31 +390,44 @@ scrollHandler date calendar =
 -- WEEKLY VIEW
 
 
-viewWeek : Date -> Html Msg
-viewWeek start =
+viewWeek : (Date -> List Activity) -> Date -> Html Msg
+viewWeek accessActivities start =
     let
-        days =
+        dayViews =
             daysOfWeek start
+                |> List.map (\d -> ( d, accessActivities d ))
+                |> List.map viewWeekDay
+
+        ( runDuration, otherDuration ) =
+            daysOfWeek start
+                |> List.map (\d -> accessActivities d)
+                |> List.concat
+                |> List.filter (\a -> a.completed)
+                |> List.partition (\a -> a.pace /= Nothing)
+                |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
+                |> Tuple.mapBoth List.sum List.sum
     in
     expandingRow [ style "min-height" "3rem" ] <|
-        titleWeek start
-            :: List.map viewWeekDay days
+        titleWeek start ( runDuration, otherDuration )
+            :: dayViews
 
 
-viewWeekDay : Date -> Html Msg
-viewWeekDay date =
-    column []
-        [ a
-            [ onClick (LoadCalendar Daily date)
-            , attribute "data-date" (Date.toIsoString date)
+viewWeekDay : ( Date, List Activity ) -> Html Msg
+viewWeekDay ( date, activities ) =
+    column [ style "overflow" "hidden" ] <|
+        row [ style "justify-content" "center" ]
+            [ a
+                [ onClick (LoadCalendar Daily date)
+                , attribute "data-date" (Date.toIsoString date)
+                ]
+                [ text (Date.format "d" date)
+                ]
             ]
-            [ text (Date.format "d" date)
-            ]
-        ]
+            :: List.map (\a -> row [ style "justify-content" "center" ] [ ActivityShape.viewCompact a ]) activities
 
 
-titleWeek : Date -> Html msg
-titleWeek start =
+titleWeek : Date -> ( Int, Int ) -> Html msg
+titleWeek start ( runDuration, otherDuration ) =
     let
         monthStart =
             daysOfWeek start
@@ -400,9 +435,32 @@ titleWeek start =
                 |> List.head
                 |> Maybe.map (Date.format "MMM")
                 |> Maybe.withDefault ""
+
+        hours duration =
+            (toFloat duration / 60)
+                |> round
+
+        minutes duration =
+            remainderBy 60 duration
     in
-    div [ style "min-width" "3rem" ]
-        [ text monthStart
+    column [ style "min-width" "3rem" ]
+        [ row [] [ text monthStart ]
+        , row [ style "color" "limegreen" ]
+            [ text <|
+                if runDuration /= 0 then
+                    List.foldr (++) "" [ String.fromInt (hours runDuration), "h ", String.fromInt (minutes runDuration), "m" ]
+
+                else
+                    ""
+            ]
+        , row [ style "color" "grey" ]
+            [ text <|
+                if otherDuration /= 0 then
+                    List.foldr (++) "" [ String.fromInt (hours otherDuration), "h ", String.fromInt (minutes otherDuration), "m" ]
+
+                else
+                    ""
+            ]
         ]
 
 

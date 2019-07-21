@@ -1,4 +1,4 @@
-module ActivityShape exposing (view, viewDefault)
+module ActivityShape exposing (view, viewCompact, viewDefault)
 
 import Activity exposing (Activity, Pace(..))
 import Html exposing (Html, div)
@@ -31,6 +31,17 @@ view activity =
 viewDefault : Html msg
 viewDefault =
     Circle Gray False |> viewShape
+
+
+viewCompact : Activity -> Html msg
+viewCompact activity =
+    case activity.pace of
+        Just pace ->
+            Block Green activity.completed { width = 2, height = 1 }
+                |> viewShape
+
+        Nothing ->
+            view activity
 
 
 viewShape : Shape -> Html msg
