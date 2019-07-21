@@ -319,7 +319,7 @@ viewCalendar { calendar, date, activities, activityForm } =
         body =
             case calendar of
                 Weekly ->
-                    weekList date |> List.map viewWeek
+                    weekList date |> List.map (viewWeek accessActivities)
 
                 Daily ->
                     listDays date
@@ -390,27 +390,31 @@ scrollHandler date calendar =
 -- WEEKLY VIEW
 
 
-viewWeek : Date -> Html Msg
-viewWeek start =
+viewWeek : (Date -> List Activity) -> Date -> Html Msg
+viewWeek accessActivities start =
     let
-        days =
+        dayViews =
             daysOfWeek start
+                |> List.map (\d -> ( d, accessActivities d ))
+                |> List.map viewWeekDay
     in
     expandingRow [ style "min-height" "3rem" ] <|
         titleWeek start
-            :: List.map viewWeekDay days
+            :: dayViews
 
 
-viewWeekDay : Date -> Html Msg
-viewWeekDay date =
-    column []
-        [ a
-            [ onClick (LoadCalendar Daily date)
-            , attribute "data-date" (Date.toIsoString date)
+viewWeekDay : ( Date, List Activity ) -> Html Msg
+viewWeekDay ( date, activities ) =
+    column [ style "overflow" "hidden" ] <|
+        row []
+            [ a
+                [ onClick (LoadCalendar Daily date)
+                , attribute "data-date" (Date.toIsoString date)
+                ]
+                [ text (Date.format "d" date)
+                ]
             ]
-            [ text (Date.format "d" date)
-            ]
-        ]
+            :: List.map (\a -> row [] [ ActivityShape.viewCompact a ]) activities
 
 
 titleWeek : Date -> Html msg
