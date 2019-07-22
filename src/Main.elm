@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Activity exposing (Activity)
+import Activity exposing (Activity, activityType)
 import ActivityForm
 import ActivityShape
 import Api
@@ -30,7 +30,7 @@ import Window exposing (Window)
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "Home | RunApp2", body = view model |> Skeleton.layout |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout |> List.singleton }
         , update = update
         , subscriptions = subscriptions
         }
@@ -403,7 +403,7 @@ viewWeek accessActivities start =
                 |> List.map (\d -> accessActivities d)
                 |> List.concat
                 |> List.filter (\a -> a.completed)
-                |> List.partition (\a -> a.pace /= Nothing)
+                |> List.partition (\a -> activityType a == Activity.Run)
                 |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
                 |> Tuple.mapBoth List.sum List.sum
     in
@@ -423,7 +423,7 @@ viewWeekDay ( date, activities ) =
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [ style "justify-content" "center", style "margin-bottom" "0.1rem" ] [ ActivityShape.viewCompact a ]) activities
+            :: List.map (\a -> row [ style "justify-content" "center", style "margin-bottom" "0.1rem" ] [ ActivityShape.viewDefault a.completed (Activity.activityType a) ]) activities
 
 
 titleWeek : Date -> ( Int, Int ) -> Html msg
