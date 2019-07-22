@@ -126,7 +126,7 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | date = date, activityForm = Just <| ActivityForm.initNew (Just date) }
+                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew (Just date) }
                     , Cmd.none
                     )
 
