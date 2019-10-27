@@ -402,7 +402,6 @@ viewWeek accessActivities start =
             daysOfWeek start
                 |> List.map (\d -> accessActivities d)
                 |> List.concat
-                |> List.filter (\a -> a.completed)
                 |> List.partition (\a -> activityType a == Activity.Run)
                 |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
                 |> Tuple.mapBoth List.sum List.sum
