@@ -1,4 +1,4 @@
-module Activity exposing (Activity, Id, Minutes, Pace(..), decoder, encoder, pace)
+module Activity exposing (Activity, ActivityType(..), Id, Minutes, Pace(..), activityType, decoder, encoder, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
@@ -14,6 +14,21 @@ type alias Activity =
     , duration : Minutes
     , pace : Maybe Pace
     }
+
+
+type ActivityType
+    = Run
+    | Other
+
+
+activityType : Activity -> ActivityType
+activityType activity =
+    case activity.pace of
+        Nothing ->
+            Other
+
+        Just _ ->
+            Run
 
 
 type alias Id =

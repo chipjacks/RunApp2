@@ -195,7 +195,7 @@ view model =
             validate model
                 |> Result.toMaybe
                 |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault ActivityShape.viewDefault
+                |> Maybe.withDefault (ActivityShape.viewDefault True Activity.Other)
     in
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]

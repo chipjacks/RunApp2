@@ -1,6 +1,6 @@
-module ActivityShape exposing (view, viewCompact, viewDefault)
+module ActivityShape exposing (view, viewDefault)
 
-import Activity exposing (Activity, Pace(..))
+import Activity exposing (Activity, Pace(..), activityType)
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Skeleton exposing (column, row)
@@ -18,30 +18,26 @@ type Color
 
 view : Activity -> Html msg
 view activity =
-    case activity.pace of
-        Just pace ->
-            Block Green activity.completed { width = toWidth pace, height = toHeight activity.duration }
+    case activityType activity of
+        Activity.Run ->
+            Block Green activity.completed { width = toWidth (Maybe.withDefault Activity.Easy activity.pace), height = toHeight activity.duration }
                 |> viewShape
 
-        Nothing ->
+        Activity.Other ->
             Circle Gray activity.completed
                 |> viewShape
 
 
-viewDefault : Html msg
-viewDefault =
-    Circle Gray False |> viewShape
-
-
-viewCompact : Activity -> Html msg
-viewCompact activity =
-    case activity.pace of
-        Just pace ->
-            Block Green activity.completed { width = 2, height = 1 }
+viewDefault : Bool -> Activity.ActivityType -> Html msg
+viewDefault completed activityType =
+    case activityType of
+        Activity.Run ->
+            Block Green completed { width = 2, height = 1 }
                 |> viewShape
 
-        Nothing ->
-            view activity
+        Activity.Other ->
+            Circle Gray completed
+                |> viewShape
 
 
 viewShape : Shape -> Html msg
