@@ -213,26 +213,30 @@ view model =
                     ]
                     []
                 ]
-            , row []
-                [ durationInput EditedDuration model.duration
-                , paceSelect SelectedPace model.pace
-                , completedCheckbox model.completed
+            , row [ style "flex-wrap" "wrap" ]
+                [ compactColumn [] [ durationInput EditedDuration model.duration ]
+                , compactColumn [] [ paceSelect SelectedPace model.pace ]
+                , compactColumn [] [ completedCheckbox model.completed ]
                 ]
-            , row []
-                [ submitButton model.status
-                , button
-                    [ onClick ClickedReset
-                    , type_ "reset"
-                    , style "margin-left" "1em"
+            , row [ style "flex-wrap" "wrap" ]
+                [ compactColumn [] [ submitButton model.status ]
+                , compactColumn []
+                    [ button
+                        [ onClick ClickedReset
+                        , type_ "reset"
+                        , style "margin-left" "1em"
+                        ]
+                        [ text "Reset" ]
                     ]
-                    [ text "Reset" ]
-                , deleteButton model.status
-                , button
-                    [ onClick ClickedMove
-                    , type_ "move"
-                    , style "margin-left" "1em"
+                , compactColumn [] [ deleteButton model.status ]
+                , compactColumn []
+                    [ button
+                        [ onClick ClickedMove
+                        , type_ "move"
+                        , style "margin-left" "1em"
+                        ]
+                        [ text "Move" ]
                     ]
-                    [ text "Move" ]
                 ]
             ]
         ]
@@ -257,16 +261,16 @@ submitButton status =
         Editing id ->
             button
                 [ onClick ClickedSubmit
+                , class "primary"
                 , type_ "submit"
-                , style "width" "10em"
                 ]
                 [ text "Save" ]
 
         Creating ->
             button
                 [ onClick ClickedSubmit
+                , class "primary"
                 , type_ "submit"
-                , style "width" "10em"
                 ]
                 [ text "Create" ]
 

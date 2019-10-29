@@ -6,7 +6,7 @@
     "make": "elm make --optimize --output=elm.js src/Main.elm"
   },
   "dependencies": {
-    "elm": "^0.19.0-bugfix6"
+    "elm": "^0.19.1"
   },
   "devDependencies": {
     "cypress": "^3.1.5",
