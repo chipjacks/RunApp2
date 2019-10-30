@@ -344,21 +344,22 @@ viewCalendar { calendar, date, activities, activityForm } =
 scrollConfig =
     { marginBottom = "-500px"
     , center = 250
-    , loadPrevious = 10
-    , loadNext = 490
+    , loadMargin = 10
     }
 
 
 onScroll : ( msg, msg ) -> Html.Attribute msg
 onScroll ( loadPrevious, loadNext ) =
     Html.Events.on "scroll"
-        (Decode.at [ "target", "scrollTop" ] Decode.int
+        (Decode.map2 Tuple.pair
+            (Decode.at [ "target", "scrollTop" ] Decode.int)
+            (Decode.at [ "target", "scrollTopMax" ] Decode.int)
             |> Decode.andThen
-                (\scrollTop ->
-                    if scrollTop < scrollConfig.loadPrevious then
+                (\( scrollTop, scrollMax ) ->
+                    if scrollTop < scrollConfig.loadMargin then
                         Decode.succeed loadPrevious
 
-                    else if scrollTop > scrollConfig.loadNext then
+                    else if scrollTop > scrollMax - scrollConfig.loadMargin then
                         Decode.succeed loadNext
 
                     else
