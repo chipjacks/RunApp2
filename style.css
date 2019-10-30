@@ -48,6 +48,7 @@ button, .button {
 }
 button:hover, .button:hover { background-color: var(--highlight-grey); }
 .primary { background-color: #2185d0; color: #fff; }
+.primary:hover { background-color: #1678c2; }
 
 .radio-buttons > button { border-radius: 0; }
 .radio-buttons > button:first-child { border-radius: 0.25rem 0 0 0.25rem }
