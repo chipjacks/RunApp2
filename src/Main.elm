@@ -351,15 +351,16 @@ scrollConfig =
 onScroll : ( msg, msg ) -> Html.Attribute msg
 onScroll ( loadPrevious, loadNext ) =
     Html.Events.on "scroll"
-        (Decode.map2 Tuple.pair
+        (Decode.map3 (\a b c -> ( a, b, c ))
             (Decode.at [ "target", "scrollTop" ] Decode.int)
-            (Decode.at [ "target", "scrollTopMax" ] Decode.int)
+            (Decode.at [ "target", "scrollHeight" ] Decode.int)
+            (Decode.at [ "target", "clientHeight" ] Decode.int)
             |> Decode.andThen
-                (\( scrollTop, scrollMax ) ->
+                (\( scrollTop, scrollHeight, clientHeight ) ->
                     if scrollTop < scrollConfig.loadMargin then
                         Decode.succeed loadPrevious
 
-                    else if scrollTop > scrollMax - scrollConfig.loadMargin then
+                    else if scrollTop > scrollHeight - clientHeight - scrollConfig.loadMargin then
                         Decode.succeed loadNext
 
                     else
