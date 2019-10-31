@@ -9348,6 +9348,7 @@ var $elm$json$Json$Decode$at = F2(
 	function (fields, decoder) {
 		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
 	});
+var $elm$json$Json$Decode$map3 = _Json_map3;
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
 };
@@ -9369,12 +9370,16 @@ var $author$project$Main$onScroll = function (_v0) {
 			$elm$json$Json$Decode$andThen,
 			function (_v1) {
 				var scrollTop = _v1.a;
-				var scrollMax = _v1.b;
-				return (_Utils_cmp(scrollTop, $author$project$Main$scrollConfig.S) < 0) ? $elm$json$Json$Decode$succeed(loadPrevious) : ((_Utils_cmp(scrollTop, scrollMax - $author$project$Main$scrollConfig.S) > 0) ? $elm$json$Json$Decode$succeed(loadNext) : $elm$json$Json$Decode$fail(''));
+				var scrollHeight = _v1.b;
+				var clientHeight = _v1.c;
+				return (_Utils_cmp(scrollTop, $author$project$Main$scrollConfig.S) < 0) ? $elm$json$Json$Decode$succeed(loadPrevious) : ((_Utils_cmp(scrollTop, (scrollHeight - clientHeight) - $author$project$Main$scrollConfig.S) > 0) ? $elm$json$Json$Decode$succeed(loadNext) : $elm$json$Json$Decode$fail(''));
 			},
-			A3(
-				$elm$json$Json$Decode$map2,
-				$elm$core$Tuple$pair,
+			A4(
+				$elm$json$Json$Decode$map3,
+				F3(
+					function (a, b, c) {
+						return _Utils_Tuple3(a, b, c);
+					}),
 				A2(
 					$elm$json$Json$Decode$at,
 					_List_fromArray(
@@ -9383,7 +9388,12 @@ var $author$project$Main$onScroll = function (_v0) {
 				A2(
 					$elm$json$Json$Decode$at,
 					_List_fromArray(
-						['target', 'scrollTopMax']),
+						['target', 'scrollHeight']),
+					$elm$json$Json$Decode$int),
+				A2(
+					$elm$json$Json$Decode$at,
+					_List_fromArray(
+						['target', 'clientHeight']),
 					$elm$json$Json$Decode$int))));
 };
 var $elm$core$Tuple$mapBoth = F3(
