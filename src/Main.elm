@@ -323,8 +323,7 @@ viewCalendar { calendar, date, activities, activityForm } =
 
                 Daily ->
                     listDays date
-                        |> List.map (\d -> ( d, accessActivities d ))
-                        |> List.map (viewDay activityForm)
+                        |> List.map (\d -> viewDay activityForm d (accessActivities d) (d == date))
     in
     expandingRow
         [ id "calendar"
@@ -371,9 +370,17 @@ onScroll ( loadPrevious, loadNext ) =
 
 resetScroll : msg -> Cmd msg
 resetScroll msg =
-    Task.attempt
-        (\_ -> msg)
+    Task.map4
+        scrollToSelectedDate
         (Dom.setViewportOf "calendar" 0 scrollConfig.center)
+        (Dom.getViewportOf "calendar")
+        (Dom.getElement "calendar")
+        (Dom.getElement "selected-date")
+        |> Task.attempt (\_ -> msg)
+
+
+scrollToSelectedDate _ viewport calendar selectedDate =
+    Dom.setViewportOf "calendar" 0 (viewport.viewport.y + selectedDate.element.y - calendar.element.y)
 
 
 scrollHandler : Date -> CalendarView -> ( Msg, Msg )
@@ -486,8 +493,8 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : Maybe ActivityForm.Model -> ( Date, List Activity ) -> Html Msg
-viewDay activityFormM ( date, activities ) =
+viewDay : Maybe ActivityForm.Model -> Date -> List Activity -> Bool -> Html Msg
+viewDay activityFormM date activities isSelectedDate =
     let
         activityFormView =
             case activityFormM of
@@ -500,8 +507,15 @@ viewDay activityFormM ( date, activities ) =
 
                 Nothing ->
                     Html.text ""
+
+        rowId =
+            if isSelectedDate then
+                [ id "selected-date" ]
+
+            else
+                []
     in
-    row []
+    row rowId
         [ column []
             [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
                 [ text (Date.format "E MMM d" date)
@@ -518,10 +532,10 @@ listDays : Date -> List Date
 listDays date =
     let
         start =
-            Date.add Days -7 date
+            Date.add Days -3 date
 
         end =
-            Date.add Days 7 date
+            Date.add Days 11 date
     in
     Date.range Day 1 start end
 
