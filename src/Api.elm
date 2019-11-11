@@ -26,12 +26,16 @@ getActivities =
 
 saveActivity : Activity -> Task Http.Error (List Activity)
 saveActivity activity =
+    let
+        updateActivity existing =
+            if existing.id == activity.id then
+                activity
+
+            else
+                existing
+    in
     getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == activity.id) activities
-                    |> (\( _, others ) -> activity :: others)
-            )
+        |> Task.map (List.map updateActivity)
         |> Task.andThen postActivities
 
 
