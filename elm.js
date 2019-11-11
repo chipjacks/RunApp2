@@ -7373,6 +7373,174 @@ var $author$project$Main$State = F4(
 		return {F: activities, k: activityForm, z: calendar, ak: date};
 	});
 var $author$project$Main$Weekly = 0;
+var $author$project$ActivityForm$NewId = function (a) {
+	return {$: 8, a: a};
+};
+var $elm$random$Random$Generate = $elm$core$Basics$identity;
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$Generator = $elm$core$Basics$identity;
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0;
+		return function (seed0) {
+			var _v1 = genA(seed0);
+			var a = _v1.a;
+			var seed1 = _v1.b;
+			return _Utils_Tuple2(
+				func(a),
+				seed1);
+		};
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0;
+		return A2($elm$random$Random$map, func, generator);
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			A2($elm$random$Random$map, tagger, generator));
+	});
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return function (seed0) {
+			var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+			var lo = _v0.a;
+			var hi = _v0.b;
+			var range = (hi - lo) + 1;
+			if (!((range - 1) & range)) {
+				return _Utils_Tuple2(
+					(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+					$elm$random$Random$next(seed0));
+			} else {
+				var threshhold = (((-range) >>> 0) % range) >>> 0;
+				var accountForBias = function (seed) {
+					accountForBias:
+					while (true) {
+						var x = $elm$random$Random$peel(seed);
+						var seedN = $elm$random$Random$next(seed);
+						if (_Utils_cmp(x, threshhold) < 0) {
+							var $temp$seed = seedN;
+							seed = $temp$seed;
+							continue accountForBias;
+						} else {
+							return _Utils_Tuple2((x % range) + lo, seedN);
+						}
+					}
+				};
+				return accountForBias(seed0);
+			}
+		};
+	});
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0;
+		return function (seed) {
+			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+		};
+	});
+var $author$project$ActivityForm$generateNewId = function () {
+	var digitsToString = function (digits) {
+		return A2(
+			$elm$core$String$join,
+			'',
+			A2($elm$core$List$map, $elm$core$String$fromInt, digits));
+	};
+	return A2(
+		$elm$random$Random$generate,
+		$author$project$ActivityForm$NewId,
+		A2(
+			$elm$random$Random$map,
+			digitsToString,
+			A2(
+				$elm$random$Random$list,
+				10,
+				A2($elm$random$Random$int, 0, 9))));
+}();
 var $author$project$ActivityForm$Editing = function (a) {
 	return {$: 1, a: a};
 };
@@ -7391,22 +7559,25 @@ var $author$project$ActivityForm$initEdit = function (activity) {
 		activity.W,
 		$elm$core$Result$Ok(activity));
 };
-var $author$project$ActivityForm$Creating = {$: 0};
+var $author$project$ActivityForm$Creating = function (a) {
+	return {$: 0, a: a};
+};
 var $author$project$ActivityForm$EmptyFieldError = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$ActivityForm$initNew = function (dateM) {
-	return A7(
-		$author$project$ActivityForm$Model,
-		$author$project$ActivityForm$Creating,
-		dateM,
-		'',
-		true,
-		$elm$core$Maybe$Nothing,
-		$elm$core$Maybe$Nothing,
-		$elm$core$Result$Err(
-			$author$project$ActivityForm$EmptyFieldError('')));
-};
+var $author$project$ActivityForm$initNew = F2(
+	function (id, dateM) {
+		return A7(
+			$author$project$ActivityForm$Model,
+			$author$project$ActivityForm$Creating(id),
+			dateM,
+			'',
+			true,
+			$elm$core$Maybe$Nothing,
+			$elm$core$Maybe$Nothing,
+			$elm$core$Result$Err(
+				$author$project$ActivityForm$EmptyFieldError('')));
+	});
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (!maybe.$) {
@@ -7539,30 +7710,19 @@ var $author$project$ActivityForm$selectDate = F2(
 	});
 var $author$project$ActivityForm$ApiError = {$: 0};
 var $author$project$ActivityForm$GotDeleteResult = function (a) {
-	return {$: 9, a: a};
+	return {$: 10, a: a};
 };
 var $author$project$ActivityForm$GotSubmitResult = function (a) {
-	return {$: 8, a: a};
+	return {$: 9, a: a};
 };
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
 	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$int = _Json_wrap;
 var $elm$json$Json$Encode$null = _Json_encodeNull;
@@ -7685,7 +7845,6 @@ var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function (_char) {
 	return A2($elm$core$String$cons, _char, '');
 };
-var $elm$core$Bitwise$and = _Bitwise_and;
 var $elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
 var $elm$core$String$repeatHelp = F3(
 	function (n, chunk, result) {
@@ -8373,446 +8532,20 @@ var $author$project$Api$postActivities = function (activities) {
 			a2: $author$project$Api$storeUrl
 		});
 };
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0;
-		return generator(seed);
-	});
-var $elm$time$Time$toMillis = F2(
-	function (_v0, time) {
-		return A2(
-			$elm$core$Basics$modBy,
-			1000,
-			$elm$time$Time$posixToMillis(time));
-	});
-var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
-var $elm$random$Random$Generator = $elm$core$Basics$identity;
-var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $elm$random$Random$peel = function (_v0) {
-	var state = _v0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var $elm$random$Random$int = F2(
-	function (a, b) {
-		return function (seed0) {
-			var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
-			var lo = _v0.a;
-			var hi = _v0.b;
-			var range = (hi - lo) + 1;
-			if (!((range - 1) & range)) {
-				return _Utils_Tuple2(
-					(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
-					$elm$random$Random$next(seed0));
-			} else {
-				var threshhold = (((-range) >>> 0) % range) >>> 0;
-				var accountForBias = function (seed) {
-					accountForBias:
-					while (true) {
-						var x = $elm$random$Random$peel(seed);
-						var seedN = $elm$random$Random$next(seed);
-						if (_Utils_cmp(x, threshhold) < 0) {
-							var $temp$seed = seedN;
-							seed = $temp$seed;
-							continue accountForBias;
-						} else {
-							return _Utils_Tuple2((x % range) + lo, seedN);
-						}
-					}
-				};
-				return accountForBias(seed0);
-			}
-		};
-	});
-var $danyx23$elm_uuid$Uuid$Barebones$hexGenerator = A2($elm$random$Random$int, 0, 15);
-var $elm$random$Random$listHelp = F4(
-	function (revList, n, gen, seed) {
-		listHelp:
-		while (true) {
-			if (n < 1) {
-				return _Utils_Tuple2(revList, seed);
-			} else {
-				var _v0 = gen(seed);
-				var value = _v0.a;
-				var newSeed = _v0.b;
-				var $temp$revList = A2($elm$core$List$cons, value, revList),
-					$temp$n = n - 1,
-					$temp$gen = gen,
-					$temp$seed = newSeed;
-				revList = $temp$revList;
-				n = $temp$n;
-				gen = $temp$gen;
-				seed = $temp$seed;
-				continue listHelp;
-			}
-		}
-	});
-var $elm$random$Random$list = F2(
-	function (n, _v0) {
-		var gen = _v0;
-		return function (seed) {
-			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
-		};
-	});
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0;
-		return function (seed0) {
-			var _v1 = genA(seed0);
-			var a = _v1.a;
-			var seed1 = _v1.b;
-			return _Utils_Tuple2(
-				func(a),
-				seed1);
-		};
-	});
-var $elm$core$String$concat = function (strings) {
-	return A2($elm$core$String$join, '', strings);
-};
-var $elm$core$List$drop = F2(
-	function (n, list) {
-		drop:
-		while (true) {
-			if (n <= 0) {
-				return list;
-			} else {
-				if (!list.b) {
-					return list;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs;
-					n = $temp$n;
-					list = $temp$list;
-					continue drop;
-				}
-			}
-		}
-	});
-var $elm$core$String$fromList = _String_fromList;
-var $elm$core$Bitwise$or = _Bitwise_or;
-var $danyx23$elm_uuid$Uuid$Barebones$limitDigitRange8ToB = function (digit) {
-	return (digit & 3) | 8;
-};
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Array$getHelp = F3(
-	function (shift, index, tree) {
-		getHelp:
-		while (true) {
-			var pos = $elm$core$Array$bitMask & (index >>> shift);
-			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (!_v0.$) {
-				var subTree = _v0.a;
-				var $temp$shift = shift - $elm$core$Array$shiftStep,
-					$temp$index = index,
-					$temp$tree = subTree;
-				shift = $temp$shift;
-				index = $temp$index;
-				tree = $temp$tree;
-				continue getHelp;
-			} else {
-				var values = _v0.a;
-				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
-			}
-		}
-	});
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Array$tailIndex = function (len) {
-	return (len >>> 5) << 5;
-};
-var $elm$core$Array$get = F2(
-	function (index, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
-			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
-			A3($elm$core$Array$getHelp, startShift, index, tree)));
-	});
-var $elm$core$Char$fromCode = _Char_fromCode;
-var $elm$core$Array$fromListHelp = F3(
-	function (list, nodeList, nodeListSize) {
-		fromListHelp:
-		while (true) {
-			var _v0 = A2($elm$core$Elm$JsArray$initializeFromList, $elm$core$Array$branchFactor, list);
-			var jsArray = _v0.a;
-			var remainingItems = _v0.b;
-			if (_Utils_cmp(
-				$elm$core$Elm$JsArray$length(jsArray),
-				$elm$core$Array$branchFactor) < 0) {
-				return A2(
-					$elm$core$Array$builderToArray,
-					true,
-					{h: nodeList, e: nodeListSize, g: jsArray});
-			} else {
-				var $temp$list = remainingItems,
-					$temp$nodeList = A2(
-					$elm$core$List$cons,
-					$elm$core$Array$Leaf(jsArray),
-					nodeList),
-					$temp$nodeListSize = nodeListSize + 1;
-				list = $temp$list;
-				nodeList = $temp$nodeList;
-				nodeListSize = $temp$nodeListSize;
-				continue fromListHelp;
-			}
-		}
-	});
-var $elm$core$Array$fromList = function (list) {
-	if (!list.b) {
-		return $elm$core$Array$empty;
-	} else {
-		return A3($elm$core$Array$fromListHelp, list, _List_Nil, 0);
-	}
-};
-var $danyx23$elm_uuid$Uuid$Barebones$hexDigits = function () {
-	var mapChars = F2(
-		function (offset, digit) {
-			return $elm$core$Char$fromCode(digit + offset);
-		});
-	return $elm$core$Array$fromList(
-		_Utils_ap(
-			A2(
-				$elm$core$List$map,
-				mapChars(48),
-				A2($elm$core$List$range, 0, 9)),
-			A2(
-				$elm$core$List$map,
-				mapChars(97),
-				A2($elm$core$List$range, 0, 5))));
-}();
-var $danyx23$elm_uuid$Uuid$Barebones$mapToHex = function (index) {
-	var maybeResult = A2($elm$core$Array$get, index, $danyx23$elm_uuid$Uuid$Barebones$hexDigits);
-	if (maybeResult.$ === 1) {
-		return 'x';
-	} else {
-		var result = maybeResult.a;
-		return result;
-	}
-};
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
-var $danyx23$elm_uuid$Uuid$Barebones$toUuidString = function (thirtyOneHexDigits) {
-	return $elm$core$String$concat(
-		_List_fromArray(
-			[
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2($elm$core$List$take, 8, thirtyOneHexDigits))),
-				'-',
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2(
-						$elm$core$List$take,
-						4,
-						A2($elm$core$List$drop, 8, thirtyOneHexDigits)))),
-				'-',
-				'4',
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2(
-						$elm$core$List$take,
-						3,
-						A2($elm$core$List$drop, 12, thirtyOneHexDigits)))),
-				'-',
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2(
-						$elm$core$List$map,
-						$danyx23$elm_uuid$Uuid$Barebones$limitDigitRange8ToB,
-						A2(
-							$elm$core$List$take,
-							1,
-							A2($elm$core$List$drop, 15, thirtyOneHexDigits))))),
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2(
-						$elm$core$List$take,
-						3,
-						A2($elm$core$List$drop, 16, thirtyOneHexDigits)))),
-				'-',
-				$elm$core$String$fromList(
-				A2(
-					$elm$core$List$map,
-					$danyx23$elm_uuid$Uuid$Barebones$mapToHex,
-					A2(
-						$elm$core$List$take,
-						12,
-						A2($elm$core$List$drop, 19, thirtyOneHexDigits))))
-			]));
-};
-var $danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator = A2(
-	$elm$random$Random$map,
-	$danyx23$elm_uuid$Uuid$Barebones$toUuidString,
-	A2($elm$random$Random$list, 31, $danyx23$elm_uuid$Uuid$Barebones$hexGenerator));
-var $author$project$Api$createActivity = function (idToActivity) {
-	var saveTask = function (activity) {
-		return A2(
-			$elm$core$Task$andThen,
-			$author$project$Api$postActivities,
-			A2(
-				$elm$core$Task$map,
-				function (activities) {
-					return A2($elm$core$List$cons, activity, activities);
-				},
-				$author$project$Api$getActivities));
-	};
-	var addIdTask = A2(
-		$elm$core$Task$map,
-		function (_v0) {
-			var uuid = _v0.a;
-			return idToActivity(uuid);
-		},
+var $author$project$Api$createActivity = function (activity) {
+	return A2(
+		$elm$core$Task$andThen,
+		$author$project$Api$postActivities,
 		A2(
 			$elm$core$Task$map,
-			$elm$random$Random$step($danyx23$elm_uuid$Uuid$Barebones$uuidStringGenerator),
-			A2(
-				$elm$core$Task$map,
-				function (t) {
-					return $elm$random$Random$initialSeed(
-						A2($elm$time$Time$toMillis, $elm$time$Time$utc, t));
-				},
-				$elm$time$Time$now)));
-	return A2($elm$core$Task$andThen, saveTask, addIdTask);
+			function (activities) {
+				return A2(
+					$elm$core$List$append,
+					activities,
+					_List_fromArray(
+						[activity]));
+			},
+			$author$project$Api$getActivities));
 };
 var $elm$core$List$partition = F2(
 	function (pred, list) {
@@ -8931,12 +8664,11 @@ var $author$project$ActivityForm$update = F2(
 									activity,
 									{ay: id}));
 						} else {
+							var id = _v3.a;
 							return $author$project$Api$createActivity(
-								function (id) {
-									return _Utils_update(
-										activity,
-										{ay: id});
-								});
+								_Utils_update(
+									activity,
+									{ay: id}));
 						}
 					}();
 					return _Utils_Tuple2(
@@ -8955,28 +8687,29 @@ var $author$project$ActivityForm$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 5:
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$initNew(model.ak),
-					$elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
 			case 6:
 				var _v4 = model.w;
 				if (_v4.$ === 1) {
 					var id = _v4.a;
 					return _Utils_Tuple2(
-						$author$project$ActivityForm$initNew(model.ak),
-						A2(
-							$elm$core$Task$attempt,
-							$author$project$ActivityForm$GotDeleteResult,
-							A2(
-								$elm$core$Task$mapError,
-								function (_v5) {
-									return $author$project$ActivityForm$ApiError;
-								},
-								$author$project$Api$deleteActivity(id))));
+						model,
+						$elm$core$Platform$Cmd$batch(
+							_List_fromArray(
+								[
+									A2(
+									$elm$core$Task$attempt,
+									$author$project$ActivityForm$GotDeleteResult,
+									A2(
+										$elm$core$Task$mapError,
+										function (_v5) {
+											return $author$project$ActivityForm$ApiError;
+										},
+										$author$project$Api$deleteActivity(id))),
+									$author$project$ActivityForm$generateNewId
+								])));
 				} else {
-					return _Utils_Tuple2(
-						$author$project$ActivityForm$initNew(model.ak),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
 				}
 			case 7:
 				var newModel = _Utils_update(
@@ -8990,6 +8723,11 @@ var $author$project$ActivityForm$update = F2(
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 8:
+				var id = msg.a;
+				return _Utils_Tuple2(
+					A2($author$project$ActivityForm$initNew, id, model.ak),
+					$elm$core$Platform$Cmd$none);
+			case 9:
 				var result = msg.a;
 				if (!result.$) {
 					var activities = result.a;
@@ -9106,17 +8844,19 @@ var $author$project$Main$update = F2(
 								state,
 								{
 									k: $elm$core$Maybe$Just(
-										$author$project$ActivityForm$initNew(
+										A2(
+											$author$project$ActivityForm$initNew,
+											'fakeid',
 											$elm$core$Maybe$Just(date)))
 								})),
-						$elm$core$Platform$Cmd$none);
+						A2($elm$core$Platform$Cmd$map, $author$project$Main$ActivityFormMsg, $author$project$ActivityForm$generateNewId));
 				case 5:
 					var subMsg = msg.a;
 					var newState = function () {
 						_v8$3:
 						while (true) {
 							switch (subMsg.$) {
-								case 8:
+								case 9:
 									if (!subMsg.a.$) {
 										var activities = subMsg.a.a;
 										return _Utils_update(
@@ -9125,7 +8865,7 @@ var $author$project$Main$update = F2(
 									} else {
 										break _v8$3;
 									}
-								case 9:
+								case 10:
 									if (!subMsg.a.$) {
 										var activities = subMsg.a.a;
 										return _Utils_update(
@@ -9465,9 +9205,14 @@ var $author$project$Main$NewActivity = function (a) {
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $author$project$ActivityForm$isCreating = F2(
 	function (date, model) {
-		return _Utils_eq(model.w, $author$project$ActivityForm$Creating) && _Utils_eq(
-			model.ak,
-			$elm$core$Maybe$Just(date));
+		var _v0 = model.w;
+		if (!_v0.$) {
+			return _Utils_eq(
+				model.ak,
+				$elm$core$Maybe$Just(date));
+		} else {
+			return false;
+		}
 	});
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
@@ -9557,6 +9302,7 @@ var $author$project$ActivityForm$deleteButton = function (status) {
 					$elm$html$Html$text('Delete')
 				]));
 	} else {
+		var id = status.a;
 		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
 	}
 };
@@ -9667,6 +9413,7 @@ var $author$project$ActivityForm$submitButton = function (status) {
 					$elm$html$Html$text('Save')
 				]));
 	} else {
+		var id = status.a;
 		return A2(
 			$elm$html$Html$button,
 			_List_fromArray(
@@ -10124,14 +9871,6 @@ var $author$project$Main$viewDay = F4(
 						]))
 				]));
 	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
 var $elm$core$List$concat = function (lists) {
 	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
 };
@@ -10155,7 +9894,6 @@ var $elm$core$List$head = function (list) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $elm$core$Basics$round = _Basics_round;
 var $author$project$Main$titleWeek = F2(
 	function (start, _v0) {
 		var runDuration = _v0.a;
@@ -10177,7 +9915,7 @@ var $author$project$Main$titleWeek = F2(
 			return duration % 60;
 		};
 		var hours = function (duration) {
-			return $elm$core$Basics$round(duration / 60);
+			return $elm$core$Basics$floor(duration / 60);
 		};
 		return A2(
 			$author$project$Skeleton$column,
@@ -10544,10 +10282,7 @@ var $author$project$Main$viewMenu = F2(
 						[
 							A2(
 							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'width', '6rem')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
@@ -10557,8 +10292,7 @@ var $author$project$Main$viewMenu = F2(
 							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('dropdown-content'),
-									A2($elm$html$Html$Attributes$style, 'width', '6rem')
+									$elm$html$Html$Attributes$class('dropdown-content')
 								]),
 							A2($author$project$Main$listMonths, date, loadDate))
 						])),
@@ -10573,10 +10307,7 @@ var $author$project$Main$viewMenu = F2(
 						[
 							A2(
 							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'width', '4rem')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
@@ -10586,8 +10317,7 @@ var $author$project$Main$viewMenu = F2(
 							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('dropdown-content'),
-									A2($elm$html$Html$Attributes$style, 'width', '4rem')
+									$elm$html$Html$Attributes$class('dropdown-content')
 								]),
 							A2($author$project$Main$listYears, date, loadDate))
 						])),
