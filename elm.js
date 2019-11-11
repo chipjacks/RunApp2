@@ -8593,23 +8593,15 @@ var $elm$core$Task$mapError = F2(
 			task);
 	});
 var $author$project$Api$saveActivity = function (activity) {
+	var updateActivity = function (existing) {
+		return _Utils_eq(existing.ay, activity.ay) ? activity : existing;
+	};
 	return A2(
 		$elm$core$Task$andThen,
 		$author$project$Api$postActivities,
 		A2(
 			$elm$core$Task$map,
-			function (activities) {
-				return function (_v0) {
-					var others = _v0.b;
-					return A2($elm$core$List$cons, activity, others);
-				}(
-					A2(
-						$elm$core$List$partition,
-						function (a) {
-							return _Utils_eq(a.ay, activity.ay);
-						},
-						activities));
-			},
+			$elm$core$List$map(updateActivity),
 			$author$project$Api$getActivities));
 };
 var $author$project$ActivityForm$update = F2(
