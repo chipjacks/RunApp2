@@ -126,8 +126,8 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew (Just date) }
-                    , Cmd.none
+                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) }
+                    , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
                     )
 
                 ActivityFormMsg subMsg ->
@@ -230,17 +230,17 @@ viewMenu calendar date =
     row []
         [ a [ class "button", onClick toggleCalendar ] calendarIcon
         , div [ class "dropdown", style "margin-left" "0.5rem" ]
-            [ button [ style "width" "6rem" ]
+            [ button []
                 [ text (Date.format "MMMM" date)
                 ]
-            , div [ class "dropdown-content", style "width" "6rem" ]
+            , div [ class "dropdown-content" ]
                 (listMonths date loadDate)
             ]
         , div [ class "dropdown", style "margin-left" "0.5rem" ]
-            [ button [ style "width" "4rem" ]
+            [ button []
                 [ text (Date.format "yyyy" date)
                 ]
-            , div [ class "dropdown-content", style "width" "4rem" ]
+            , div [ class "dropdown-content" ]
                 (listYears date loadDate)
             ]
         , button
@@ -446,7 +446,7 @@ titleWeek start ( runDuration, otherDuration ) =
 
         hours duration =
             (toFloat duration / 60)
-                |> round
+                |> Basics.floor
 
         minutes duration =
             remainderBy 60 duration
