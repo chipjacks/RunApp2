@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), initEdit, initNew, isCreating, isEditing, selectDate, update, view)
+module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, selectDate, update, view)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -9,6 +9,7 @@ import Html exposing (Html, a, button, div, i, input, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Json.Decode as Decode
+import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row)
 import Task exposing (Task)
 
@@ -31,7 +32,7 @@ type alias Model =
 
 
 type Status
-    = Creating
+    = Creating Activity.Id
     | Editing Activity.Id
 
 
@@ -44,6 +45,7 @@ type Msg
     | ClickedReset
     | ClickedDelete
     | ClickedMove
+    | NewId String
     | GotSubmitResult (Result Error (List Activity))
     | GotDeleteResult (Result Error (List Activity))
 
@@ -53,9 +55,9 @@ type Error
     | EmptyFieldError String
 
 
-initNew : Maybe Date -> Model
-initNew dateM =
-    Model Creating dateM "" True Nothing Nothing (Err (EmptyFieldError ""))
+initNew : Activity.Id -> Maybe Date -> Model
+initNew id dateM =
+    Model (Creating id) dateM "" True Nothing Nothing (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -84,7 +86,12 @@ isEditing activity model =
 
 isCreating : Date -> Model -> Bool
 isCreating date model =
-    model.status == Creating && model.date == Just date
+    case model.status of
+        Creating _ ->
+            model.date == Just date
+
+        _ ->
+            False
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
@@ -140,8 +147,8 @@ update msg model =
                                 Editing id ->
                                     Api.saveActivity { activity | id = id }
 
-                                Creating ->
-                                    Api.createActivity (\id -> { activity | id = id })
+                                Creating id ->
+                                    Api.createActivity { activity | id = id }
                     in
                     ( model, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
@@ -149,15 +156,20 @@ update msg model =
                     ( model, Cmd.none )
 
         ClickedReset ->
-            ( initNew model.date, Cmd.none )
+            ( model, generateNewId )
 
         ClickedDelete ->
             case model.status of
                 Editing id ->
-                    ( initNew model.date, Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError)) )
+                    ( model
+                    , Cmd.batch
+                        [ Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError))
+                        , generateNewId
+                        ]
+                    )
 
                 _ ->
-                    ( initNew model.date, Cmd.none )
+                    ( model, generateNewId )
 
         ClickedMove ->
             let
@@ -165,6 +177,9 @@ update msg model =
                     { model | date = Nothing }
             in
             ( { newModel | result = validate newModel }, Cmd.none )
+
+        NewId id ->
+            ( initNew id model.date, Cmd.none )
 
         GotSubmitResult result ->
             case result of
@@ -186,6 +201,18 @@ update msg model =
 updateResult : Model -> Model
 updateResult model =
     { model | result = validate model }
+
+
+generateNewId : Cmd Msg
+generateNewId =
+    let
+        digitsToString digits =
+            List.map String.fromInt digits
+                |> String.join ""
+    in
+    Random.list 10 (Random.int 0 9)
+        |> Random.map digitsToString
+        |> Random.generate NewId
 
 
 view : Model -> Html Msg
@@ -266,7 +293,7 @@ submitButton status =
                 ]
                 [ text "Save" ]
 
-        Creating ->
+        Creating id ->
             button
                 [ onClick ClickedSubmit
                 , class "primary"
@@ -286,7 +313,7 @@ deleteButton status =
                 ]
                 [ text "Delete" ]
 
-        Creating ->
+        Creating id ->
             div [] []
 
 

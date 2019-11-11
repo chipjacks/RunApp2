@@ -126,8 +126,8 @@ update msg model =
                         date =
                             dateM |> Maybe.withDefault state.date
                     in
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew (Just date) }
-                    , Cmd.none
+                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) }
+                    , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
                     )
 
                 ActivityFormMsg subMsg ->
@@ -496,6 +496,18 @@ daysOfWeek start =
 viewDay : Maybe ActivityForm.Model -> Date -> List Activity -> Bool -> Html Msg
 viewDay activityFormM date activities isSelectedDate =
     let
+        activityFormView =
+            case activityFormM of
+                Just af ->
+                    if ActivityForm.isCreating date af then
+                        ActivityForm.view af |> Html.map ActivityFormMsg
+
+                    else
+                        Html.text ""
+
+                Nothing ->
+                    Html.text ""
+
         rowId =
             if isSelectedDate then
                 [ id "selected-date" ]
@@ -511,6 +523,7 @@ viewDay activityFormM date activities isSelectedDate =
                 ]
             , row []
                 [ column [] (List.map (viewActivity activityFormM) activities) ]
+            , activityFormView
             ]
         ]
 

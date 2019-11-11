@@ -7,7 +7,6 @@ import Json.Encode as Encode
 import Random
 import Task exposing (Task)
 import Time exposing (Month(..), utc)
-import Uuid.Barebones exposing (uuidStringGenerator)
 
 
 getActivities : Task Http.Error (List Activity)
@@ -36,23 +35,12 @@ saveActivity activity =
         |> Task.andThen postActivities
 
 
-createActivity : (Activity.Id -> Activity) -> Task Http.Error (List Activity)
-createActivity idToActivity =
-    let
-        addIdTask =
-            Time.now
-                |> Task.map (\t -> Random.initialSeed (Time.toMillis utc t))
-                |> Task.map (Random.step uuidStringGenerator)
-                |> Task.map (\( uuid, _ ) -> idToActivity uuid)
-
-        saveTask activity =
-            getActivities
-                |> Task.map
-                    (\activities -> activity :: activities)
-                |> Task.andThen postActivities
-    in
-    addIdTask
-        |> Task.andThen saveTask
+createActivity : Activity -> Task Http.Error (List Activity)
+createActivity activity =
+    getActivities
+        |> Task.map
+            (\activities -> List.append activities [ activity ])
+        |> Task.andThen postActivities
 
 
 deleteActivity : Activity.Id -> Task Http.Error (List Activity)
