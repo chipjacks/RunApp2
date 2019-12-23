@@ -1,31 +1,2434 @@
 [
   {
+    "id": "2239355436",
+    "date": "2019-11-11",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "2929875e-bd7d-4d23-b9ea-2f14e0709b83",
+    "date": "2019-11-09",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "ea6f041b-b1db-4918-bbdb-06682567fff7",
+    "date": "2019-11-09",
+    "description": "Drills",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "5375433951",
+    "date": "2019-11-10",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "5ed71f13-5f17-481b-9ead-e0b43d3014eb",
+    "date": "2019-11-08",
+    "description": "Chiropractor",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "56075a9a-23ce-4216-85a4-9513e82ed9ec",
+    "date": "2019-11-05",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "6b93f9ba-fbd5-4b60-9eb5-268a207ea07b",
+    "date": "2019-11-08",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "a9132fee-3a6d-48e5-87a0-2c4b3931f3a5",
+    "date": "2019-11-07",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "6135189d-8421-47d0-bdbe-6eb02cbd1648",
+    "date": "2019-11-07",
+    "description": "Run with Juan and Quimby",
+    "completed": true,
+    "duration": 64,
+    "pace": "Easy"
+  },
+  {
+    "id": "567cba06-7096-4ea6-b9e6-db0873da5dd7",
+    "date": "2019-11-08",
+    "description": "",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "7b4ef146-2718-4ef8-8106-15d2b6c160cb",
+    "date": "2019-11-06",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "019b1e23-63fc-4c7c-8a89-51c887125245",
+    "date": "2019-11-05",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "05b9f832-b8fb-4b54-96ef-0d00899547fa",
+    "date": "2019-11-04",
+    "description": "",
+    "completed": true,
+    "duration": 56,
+    "pace": "Easy"
+  },
+  {
+    "id": "bb79c3f2-3235-4de2-93d9-60ce47ef7bb8",
+    "date": "2019-11-04",
+    "description": "Pull ups, push ups ",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "ec3eeae0-2770-49e7-89ad-503a63550386",
+    "date": "2019-11-03",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "18689294-fc4a-4755-9071-05e05a0df775",
+    "date": "2019-11-03",
+    "description": "Drills",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "871dbf3d-0387-4e8f-af32-b9d913a25124",
+    "date": "2019-11-02",
+    "description": "Long run",
+    "completed": true,
+    "duration": 110,
+    "pace": "Easy"
+  },
+  {
+    "id": "44f4559b-7159-4285-9166-10d1325688b6",
+    "date": "2019-11-02",
+    "description": "Bike ride with Dad",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "c44b94d8-6fb7-4a4f-8dbe-9940f31fda00",
+    "date": "2019-11-01",
+    "description": "Body weight squats, RDLs, pistols squats, split squats, wall sits, calf raises, band work",
+    "completed": true,
+    "duration": 50,
+    "pace": null
+  },
+  {
+    "id": "11cee3f7-2407-4e3e-ad04-f79a965c27be",
+    "date": "2019-11-01",
+    "description": "Run with Kristen",
+    "completed": true,
+    "duration": 46,
+    "pace": "Easy"
+  },
+  {
+    "id": "a04841b6-52aa-4f71-a0ab-e6d6575f7ba4",
+    "date": "2019-10-31",
+    "description": "Fartlek - 18 x 1m on, 1m off",
+    "completed": true,
+    "duration": 60,
+    "pace": "Moderate"
+  },
+  {
+    "id": "01aaf06b-7d08-494a-afa4-f131f55b8128",
+    "date": "2019-10-30",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "abe2f854-f48d-414f-bf19-b151a70a424e",
+    "date": "2019-10-30",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "92ecca22-9a56-41cb-b412-ec335d60bdde",
+    "date": "2019-12-01",
+    "description": "Seattle Half Marathon 😅",
+    "completed": true,
+    "duration": 76,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "294c3de2-1b8f-49d0-892d-6b0bd53e4483",
+    "date": "2019-10-29",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "bf14e2f6-8865-44c7-b592-ae6a3a46350e",
+    "date": "2019-10-29",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "9a4760b4-e547-427e-97b2-c2fb007a6f4c",
+    "date": "2019-10-29",
+    "description": "Push-ups, pull-ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0f82a261-c3db-4d69-8235-d5e66af8f8fd",
+    "date": "2019-10-28",
+    "description": "",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "2668264b-3a51-41f2-952b-5f428ed61cb6",
+    "date": "2019-10-28",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "5163997a-11f6-4479-b62b-07cc7301693b",
+    "date": "2019-10-27",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "55c5f439-d291-442a-80b3-6881a4542a9e",
+    "date": "2019-10-27",
+    "description": "Long run - Dan’s traverse",
+    "completed": true,
+    "duration": 140,
+    "pace": "Easy"
+  },
+  {
+    "id": "9fb46901-e76d-4658-84d2-a5d24aad80b6",
+    "date": "2019-10-26",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "1eaad7c3-04a6-499d-8250-27bd6f9cd47a",
+    "date": "2019-10-26",
+    "description": "Morning run",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "c498115c-b404-49c1-801b-107a7ea575bb",
+    "date": "2019-10-24",
+    "description": "Morning run",
+    "completed": true,
+    "duration": 70,
+    "pace": "Easy"
+  },
+  {
+    "id": "4213a0ed-7c0d-471d-b557-dfd2b14e8996",
+    "date": "2019-10-24",
+    "description": "Squats, lunges, box jumps, calf raises",
+    "completed": true,
+    "duration": 45,
+    "pace": null
+  },
+  {
+    "id": "6f03ae68-ca6c-4b5d-b4eb-86c1c20591d9",
+    "date": "2019-10-25",
+    "description": "Morning run",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "ee5f79af-4598-432a-a3d9-ce2fb73b0f0e",
+    "date": "2019-10-23",
+    "description": "Morning run",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "2b58355e-0c32-4037-8712-4dc07df8e35c",
+    "date": "2019-10-23",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "e0e347f5-ba97-488a-8644-c24f578600ee",
+    "date": "2019-10-23",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "7dbb5aac-216e-4728-8786-5e9f9fb9c616",
+    "date": "2019-10-22",
+    "description": "10 x 200m hill repeats",
+    "completed": true,
+    "duration": 60,
+    "pace": "Moderate"
+  },
+  {
+    "id": "735fcdbd-b98a-48d6-917a-b37d74b401ae",
+    "date": "2019-10-22",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "7258851a-0ee4-442c-887c-f70b720c9ebc",
+    "date": "2019-10-21",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "13dd2d95-8f47-438e-b5a5-51034f0d866a",
+    "date": "2019-10-21",
+    "description": "Morning run",
+    "completed": true,
+    "duration": 44,
+    "pace": "Easy"
+  },
+  {
+    "id": "07167c18-aff3-4e86-950f-d67a294e08cc",
+    "date": "2019-10-19",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0f611276-0450-4c6e-891c-8adcd2521d90",
+    "date": "2019-10-19",
+    "description": "",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "c868a832-14cc-4a47-8c49-bc0f98a97102",
+    "date": "2019-10-19",
+    "description": "Core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "09253452-8d88-4300-be4e-ae32f6c2a2db",
+    "date": "2019-10-15",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "ce21761f-d4f4-49ed-9f78-6e092fd08b99",
+    "date": "2019-10-17",
+    "description": "",
+    "completed": true,
+    "duration": 41,
+    "pace": "Easy"
+  },
+  {
+    "id": "ce9b9840-6f25-43ac-becf-89ff30976b9e",
+    "date": "2019-10-17",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "c25a9b41-8c43-4da8-9485-b33378d3fbbe",
+    "date": "2019-10-16",
+    "description": "",
+    "completed": true,
+    "duration": 52,
+    "pace": "Easy"
+  },
+  {
+    "id": "ce7d4ba8-a320-4943-84c0-82f2e480e9fd",
+    "date": "2019-10-16",
+    "description": "Deadlifts, box jumps, step-ups, upper body",
+    "completed": true,
+    "duration": 45,
+    "pace": null
+  },
+  {
+    "id": "07cb9886-2a97-4615-9d5f-9944c91fde26",
+    "date": "2019-10-18",
+    "description": " Fartlek - 15 x 1 min on 1 min off",
+    "completed": true,
+    "duration": 54,
+    "pace": "Moderate"
+  },
+  {
+    "id": "7aec73cf-3792-4047-b618-0253255a091d",
+    "date": "2019-10-15",
+    "description": "",
+    "completed": true,
+    "duration": 43,
+    "pace": "Easy"
+  },
+  {
+    "id": "43158521-3275-4d3f-96da-d99f3f454a8f",
+    "date": "2019-10-14",
+    "description": "",
+    "completed": true,
+    "duration": 32,
+    "pace": "Easy"
+  },
+  {
+    "id": "b18a2c59-e30e-4c0f-a4d2-9c3b6bb67e87",
+    "date": "2019-10-13",
+    "description": "",
+    "completed": true,
+    "duration": 120,
+    "pace": "Easy"
+  },
+  {
+    "id": "3853c25d-201f-477d-9f65-7d56334e745e",
+    "date": "2019-10-12",
+    "description": "WWU XC Classic",
+    "completed": true,
+    "duration": 36,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "2ec4d74d-46a8-447a-afd7-4014d981e400",
+    "date": "2019-10-20",
+    "description": "",
+    "completed": true,
+    "duration": 120,
+    "pace": "Easy"
+  },
+  {
+    "id": "ef556dff-593e-4a07-a828-8626386715e6",
+    "date": "2019-09-18",
+    "description": "",
+    "completed": true,
+    "duration": 35,
+    "pace": "Easy"
+  },
+  {
+    "id": "62f054b3-3946-4e5e-97af-66a1797b4e70",
+    "date": "2019-09-17",
+    "description": "GSF workout ",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "b8e123ed-4c45-4918-a327-9ca3ce10d207",
+    "date": "2019-09-10",
+    "description": "GSF workout ",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "f53e9e1b-92a7-46a5-8a41-096fa6deb9e4",
+    "date": "2019-09-09",
+    "description": "",
+    "completed": true,
+    "duration": 18,
+    "pace": "Easy"
+  },
+  {
+    "id": "8b6642e1-3669-4519-99d1-57b3be4b0a65",
+    "date": "2019-09-09",
+    "description": "",
+    "completed": true,
+    "duration": 43,
+    "pace": "Easy"
+  },
+  {
+    "id": "ce1a1c85-e0fb-41f2-a76d-72177bfffaaf",
+    "date": "2019-09-08",
+    "description": "",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "26442142-1ad6-4d83-8574-950775072c02",
+    "date": "2019-09-07",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "52332576-a9ab-4add-bec2-a1ced83f9f69",
+    "date": "2019-09-07",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "080f2734-27ee-449f-9afd-8ef49033513f",
+    "date": "2019-09-05",
+    "description": "",
+    "completed": true,
+    "duration": 39,
+    "pace": "Easy"
+  },
+  {
+    "id": "9a299497-a6fa-4816-8bf3-60b3c951f737",
+    "date": "2019-09-03",
+    "description": "GSF workout ",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "acaec1a2-e28a-4a24-9c07-0cf64bc12d93",
+    "date": "2019-09-03",
+    "description": "",
+    "completed": true,
+    "duration": 36,
+    "pace": "Easy"
+  },
+  {
+    "id": "575e28ae-0566-49db-8f26-008652eb0488",
+    "date": "2019-09-02",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "49c73b81-7042-405f-885e-498ef09cee1d",
+    "date": "2019-09-01",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "b00498ec-5904-4862-9eef-f5a1256b0008",
+    "date": "2019-09-01",
+    "description": "Backpacking Indian Heaven",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "6e61b5b3-2973-43be-9782-5451b3e58c75",
+    "date": "2019-08-30",
+    "description": "",
+    "completed": true,
+    "duration": 42,
+    "pace": "Easy"
+  },
+  {
+    "id": "38911bc1-c206-4fe6-aad5-69b8fc39c496",
+    "date": "2019-08-31",
+    "description": "Backpacking Indian Heaven",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "0506428a-133f-446d-a259-f756ef6beac2",
+    "date": "2019-08-29",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "8212e446-a7d8-4bf0-8466-00d1f0afeac7",
+    "date": "2019-08-28",
+    "description": "",
+    "completed": true,
+    "duration": 43,
+    "pace": "Easy"
+  },
+  {
+    "id": "44f4559b-7159-4285-9166-10d1325688b6",
+    "date": "2019-09-06",
+    "description": "Austen & Graham Wedding 5k",
+    "completed": true,
+    "duration": 18,
+    "pace": "Lactate Threshold"
+  },
+  {
+    "id": "bc9cad56-52e9-461d-b4d3-114fb43a687f",
+    "date": "2019-08-27",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "304312f7-24a9-4a5c-b757-d324d42b1dfd",
+    "date": "2019-08-26",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "2e945c20-0321-48a4-a4b7-582e54c96dfd",
+    "date": "2019-08-26",
+    "description": "Cemetery loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "593346f7-d7c4-4929-8905-b1adbcb76a06",
+    "date": "2019-08-25",
+    "description": "St Edwards",
+    "completed": true,
+    "duration": 93,
+    "pace": "Easy"
+  },
+  {
+    "id": "cb56be9c-ae54-4618-8aba-5d16bd7c1b77",
+    "date": "2019-08-23",
+    "description": "Warmup",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "69fcca71-4b12-4e5c-b042-d37b50ff59a9",
+    "date": "2019-08-23",
+    "description": "Mile time trial",
+    "completed": true,
+    "duration": 5,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "61bf14ae-9102-49b3-bdce-fd39117ba5e3",
+    "date": "2019-08-23",
+    "description": "Cooldown",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "e2e95ed5-79b7-421d-bc41-df5276bb7710",
+    "date": "2019-08-23",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "3859970a-4279-4bd3-bd86-d23c6f1c0913",
+    "date": "2019-08-24",
+    "description": "",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "2f014b4f-beff-44e2-8c1f-270e80f4ff41",
+    "date": "2019-08-25",
+    "description": "GSF Workout",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "9a4760b4-e547-427e-97b2-c2fb007a6f4c",
+    "date": "2019-08-22",
+    "description": "Cemetery loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "b27591eb-efa5-4ac9-b9cf-9ec56d1236a7",
+    "date": "2019-08-20",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "50102d2e-c257-472c-8910-7efec1f7f497",
+    "date": "2019-08-20",
+    "description": "Cemetery loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "14fc8e5f-5700-4ac3-a1d8-9210163c8604",
+    "date": "2019-08-21",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "ac908e7b-72d0-4653-bab8-4d0429c1ab4a",
+    "date": "2019-08-21",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "ea806e2a-8c14-4a73-8784-8a8706d2d9f5",
+    "date": "2019-08-19",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "d383cc0e-ca03-4472-8d4a-89744b3354e6",
+    "date": "2019-08-19",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "6416eb7a-0d8f-46e1-922b-3d71bd4b2681",
+    "date": "2019-08-18",
+    "description": "Longish run",
+    "completed": true,
+    "duration": 104,
+    "pace": "Easy"
+  },
+  {
+    "id": "d48328b4-5d74-4a36-98cd-ece16afcac7a",
+    "date": "2019-08-17",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "f278b466-495f-4481-861a-d9465380af19",
+    "date": "2019-08-17",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 32,
+    "pace": "Easy"
+  },
+  {
+    "id": "d33b76bf-25d3-44a1-a489-b63b16ac069c",
+    "date": "2019-08-16",
+    "description": "Warmup",
+    "completed": true,
+    "duration": 12,
+    "pace": "Easy"
+  },
+  {
+    "id": "5c39c115-2afb-4d57-8ac4-4cb40b1b05dd",
+    "date": "2019-08-16",
+    "description": "400m",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "b18a2c59-e30e-4c0f-a4d2-9c3b6bb67e87",
+    "date": "2019-08-16",
+    "description": "Rest",
+    "completed": true,
+    "duration": 1,
+    "pace": "Easy"
+  },
+  {
+    "id": "633f1622-c295-4932-9cd2-b45823371a4c",
+    "date": "2019-08-16",
+    "description": "400m",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "4af57ba5-0d87-40db-bc7f-6365e6ebd4ae",
+    "date": "2019-08-16",
+    "description": "Rest",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "a9a062fd-baad-479c-badb-d9430a11e89f",
+    "date": "2019-08-16",
+    "description": "Rest",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "346a0a03-c072-4a6c-b66c-83a179b90cc5",
+    "date": "2019-08-16",
+    "description": "400m",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "505e3972-c6c9-4a96-98e2-66eb2c4fca6b",
+    "date": "2019-08-16",
+    "description": "Cooldown",
+    "completed": true,
+    "duration": 12,
+    "pace": "Easy"
+  },
+  {
+    "id": "56e250d0-4353-45c6-a7c5-e638dfa57366",
+    "date": "2019-08-16",
+    "description": "Core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "ac3db6fd-16ae-4b93-ac45-44984d338ab6",
+    "date": "2019-08-15",
+    "description": "Squats, Lunges, Deadlifts, Calf Raises",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "0da78a87-4ec4-43bf-9e4d-1eb814354a3c",
+    "date": "2019-08-15",
+    "description": "Cemetery Loop",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "61bf14ae-9102-49b3-bdce-fd39117ba5e3",
+    "date": "2019-08-14",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "e8cb0105-2b3d-4a53-bf3c-26eb31395435",
+    "date": "2019-08-14",
+    "description": "Crista Hill loop",
+    "completed": true,
+    "duration": 35,
+    "pace": "Easy"
+  },
+  {
+    "id": "cf710b64-d4c1-4fe4-b0eb-808dac21aea8",
+    "date": "2019-08-13",
+    "description": "Shoreview loop",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "ee28ba58-7380-4647-b664-f4d21c4998e0",
+    "date": "2019-08-12",
+    "description": "Crista Hill loop",
+    "completed": true,
+    "duration": 35,
+    "pace": "Easy"
+  },
+  {
+    "id": "fd1a5e76-02cd-41f4-8f94-9ac765dd6311",
+    "date": "2019-08-11",
+    "description": "GSF Workout",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "615432a5-7393-45b6-be9f-84c3281d2ebb",
+    "date": "2019-08-11",
+    "description": "Woodinville to Bear Trails loop",
+    "completed": true,
+    "duration": 64,
+    "pace": "Easy"
+  },
+  {
+    "id": "117c80ca-1e39-4cf2-9751-63acec784be6",
+    "date": "2019-08-10",
+    "description": "Woodinville to Innis Arden loop",
+    "completed": true,
+    "duration": 79,
+    "pace": "Easy"
+  },
+  {
+    "id": "bc3b14bb-b0e0-4339-ba1f-ad1f0ac8f9f9",
+    "date": "2019-08-09",
+    "description": "Crista Hill Loop",
+    "completed": true,
+    "duration": 34,
+    "pace": "Easy"
+  },
+  {
+    "id": "f8324e8c-621a-40df-abed-eb38171bdca3",
+    "date": "2019-08-08",
+    "description": "Push ups, pull ups, core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "66ae15b9-3074-48f7-a24d-7105e8fc1184",
+    "date": "2019-08-07",
+    "description": "Mt Rainier Climb - Summit and back down",
+    "completed": true,
+    "duration": 480,
+    "pace": null
+  },
+  {
+    "id": "03936c81-992f-4d43-9b94-785b7f6c2887",
+    "date": "2019-08-06",
+    "description": "Mt Rainier Climb - Camp Muir to Ingraham Flats",
+    "completed": true,
+    "duration": 120,
+    "pace": null
+  },
+  {
+    "id": "cbc29ce6-b03e-4daa-a987-5324595d8fd9",
+    "date": "2019-08-05",
+    "description": "Mt Rainier Climb - Paradise to Camp Muir",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "8d57e304-dc65-4016-89c5-cbde726e27bc",
+    "date": "2019-08-04",
+    "description": "Push ups, pull ups, core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "443a5182-5538-41b6-bf69-42a612622d70",
+    "date": "2019-08-04",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "8212e446-a7d8-4bf0-8466-00d1f0afeac7",
+    "date": "2019-08-03",
+    "description": "Cemetery Loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "3dff5054-2cf0-4df7-ab6e-4d1191f7b14a",
+    "date": "2019-08-02",
+    "description": "GSF Workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "094f37b5-ebe6-4cf1-bfa9-9c0599e59af6",
+    "date": "2019-08-01",
+    "description": "Stationary bike",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "490b6a7f-d210-43e3-85fb-0885e69c7fd8",
+    "date": "2019-08-01",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "fbb4d110-313e-4cbf-ac18-49da57f05ee2",
+    "date": "2019-08-01",
+    "description": "Innis Arden loop",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "709f77d2-a4e4-4f15-8ac5-09d94da44d07",
+    "date": "2019-07-30",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "7af02223-c1b8-4178-8abd-9a0515272884",
+    "date": "2019-07-30",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 36,
+    "pace": "Easy"
+  },
+  {
+    "id": "acaec1a2-e28a-4a24-9c07-0cf64bc12d93",
+    "date": "2019-07-29",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "d2947eb2-b5c8-4488-9f31-0b2877de5a61",
+    "date": "2019-07-29",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "8817fb6b-33d5-43a9-9a68-e1383fd0d6ab",
+    "date": "2019-07-28",
+    "description": "Hike up Granite Mountain",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "75865fcb-30d4-4c25-87d9-9979bb9fa26f",
+    "date": "2019-07-27",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "9e320418-a640-4f08-8721-82e03753cda8",
+    "date": "2019-07-26",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "4d8ab68f-d5a8-4ada-94de-c8a71eda7ac1",
+    "date": "2019-07-25",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "99528815-4dea-4a6c-9e04-8ade5d116234",
+    "date": "2019-07-25",
+    "description": "Core",
+    "completed": true,
+    "duration": 25,
+    "pace": null
+  },
+  {
+    "id": "85e91644-9070-437b-be8e-e0d9beb32cd9",
+    "date": "2019-07-24",
+    "description": "Easy run - achie ankles",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "10189715-8ab4-498a-b692-a5854f674001",
+    "date": "2019-07-23",
+    "description": "P ups, core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "39f0471d-a127-45cd-a49f-d482a6ca8ea2",
+    "date": "2019-07-22",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 36,
+    "pace": "Easy"
+  },
+  {
+    "id": "3f82d029-d2b6-48f3-a142-fb34a376ca1c",
+    "date": "2019-07-21",
+    "description": "GSF Workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "30ff3cb9-83bc-466c-86c0-332ece87f1b6",
+    "date": "2019-07-12",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "71703c0d-d166-4a70-ad8b-f176f2a904d9",
+    "date": "2019-07-11",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "d17d56be-78aa-400d-896c-89d0a437c2f4",
+    "date": "2019-05-18",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "20e8bf54-aaff-4bab-96f8-6c7100b2b1b8",
+    "date": "2019-05-19",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "a5b4766b-5ada-4bf6-b48f-e9efe40e856d",
+    "date": "2019-05-20",
+    "description": "Strength training",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "bd12b0f4-0b49-4ed0-9b3b-f03cc410fe97",
+    "date": "2019-07-10",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "4e5254a7-0af4-454b-8447-7e2e65c21a28",
+    "date": "2019-07-10",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "1a2ae894-f235-4dfc-be85-83684bf73a67",
+    "date": "2019-07-10",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "ced15151-a441-44c4-8a19-45fac9a56060",
+    "date": "2019-07-09",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "020ddf27-0cd2-4d30-b747-67722ba7310b",
+    "date": "2019-07-08",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "4433e308-e1bc-4cbf-9ef4-82e91ced2f12",
+    "date": "2019-07-08",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "22aa375a-26a7-498f-868b-5d95ba49ebb4",
+    "date": "2019-07-08",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "5fc8520f-9cf8-4648-bd84-3a7e821809c3",
+    "date": "2019-07-07",
+    "description": "Pickup car",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "a08809c0-1db3-4d35-8369-fb6bafff0aaf",
+    "date": "2019-07-07",
+    "description": "Whatcom Falls with Juan, Nathan, and Tabor",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "d9dc21b1-9614-4834-8428-80dee788f5b0",
+    "date": "2019-07-05",
+    "description": "Mt Rainier hike (6 miles)",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "43215349-f8fc-4e0a-a126-9bd5d3e0eb2e",
+    "date": "2019-07-04",
+    "description": "Mt Rainier hike (5 miles)",
+    "completed": true,
+    "duration": 300,
+    "pace": null
+  },
+  {
+    "id": "ae02f202-f52e-4fe4-9a25-9ccc8f4cfd2b",
+    "date": "2019-07-07",
+    "description": "Core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "6416eb7a-0d8f-46e1-922b-3d71bd4b2681",
+    "date": "2019-07-03",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "8817fb6b-33d5-43a9-9a68-e1383fd0d6ab",
+    "date": "2019-07-02",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "835c198b-233b-4287-a103-7400cb113520",
+    "date": "2019-07-01",
+    "description": "Swim",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "0efca105-2067-4938-aa0d-90eb5688c768",
+    "date": "2019-07-06",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "8d01b93a-72a6-4c6e-b463-4c27137075e8",
+    "date": "2019-06-26",
+    "description": "Weights",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "458435b8-41e3-4558-b2f7-2c90f98bed41",
+    "date": "2019-06-28",
+    "description": "Crista Hill Loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "da3dcb49-7021-4289-8950-fea0108eb2be",
+    "date": "2019-06-29",
+    "description": "Hike up to Silver Lake (12 miles)",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "3859970a-4279-4bd3-bd86-d23c6f1c0913",
+    "date": "2019-06-30",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "a6a5a3ef-709c-4670-b42e-e30e89a63b7e",
+    "date": "2019-06-25",
+    "description": "Push ups, pull ups, core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "1ba45a58-9ed1-4353-8c54-2f516044e135",
+    "date": "2019-06-24",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "36c8fa60-ed4f-4b61-b297-9532426d6c98",
+    "date": "2019-06-22",
+    "description": "GSF Workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "7e7565d4-bda7-494a-b7fd-6e088d0d7a06",
+    "date": "2019-06-21",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "73e44352-76a3-4440-b76b-ee98c8ff071c",
+    "date": "2019-06-21",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "6a0d80e1-8c59-49fd-a977-be09a882bb21",
+    "date": "2019-06-20",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "54fd6e75-c770-444e-97cb-458035f6b3f3",
+    "date": "2019-06-20",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "f055af76-f2e6-497c-8918-62ac9ce89183",
+    "date": "2019-06-20",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "ddaf2fb9-c570-487a-81f8-fd54c6589f80",
+    "date": "2019-06-16",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "013a0d50-f778-429c-bd01-6b18169a2b74",
+    "date": "2019-06-15",
+    "description": "Bike ride",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "6d582f9d-882c-496a-92da-7cc4400fc0e2",
+    "date": "2019-06-15",
+    "description": "Bike ride",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "31862ce5-01c6-4492-9513-aaf5f6575452",
+    "date": "2019-06-14",
+    "description": "Pull ups, push ups, core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "364b64c9-0b23-4d71-acc2-191fa204489a",
+    "date": "2019-06-13",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "ce16b19e-2036-4ab7-a71c-8c489e743cba",
+    "date": "2019-06-13",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "c3ce6985-74ab-4e16-85c8-032aa5499739",
+    "date": "2019-06-12",
+    "description": "Pull ups, push ups, core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "1b9eeb3a-7d71-4b38-8a62-459922d17c36",
+    "date": "2019-06-12",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "a4413d03-00cf-4660-aab4-96448a92ff87",
+    "date": "2019-06-12",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "02873b1c-46c2-41f2-b482-3f0bf54dd470",
+    "date": "2019-06-11",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "ab95feec-b094-4744-80a4-75647f40fcb8",
+    "date": "2019-06-11",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "70d7f62d-b104-4f23-a187-36725582aceb",
+    "date": "2019-06-10",
+    "description": "Pull-ups, push-ups, core",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "ae02f202-f52e-4fe4-9a25-9ccc8f4cfd2b",
+    "date": "2019-06-09",
+    "description": "Bike ride",
+    "completed": true,
+    "duration": 150,
+    "pace": null
+  },
+  {
+    "id": "3b2a3c51-b7d6-448a-a908-1eeccc53888f",
+    "date": "2019-06-08",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "25642d50-e7e8-46f6-8ad7-d3dcd655d7be",
+    "date": "2019-06-07",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "b4aaf67d-1db6-497c-b5bf-9454554c295b",
+    "date": "2019-06-07",
+    "description": "Bike commute",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "9b421e67-4395-467b-858b-4022034906c3",
+    "date": "2019-06-06",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "ea0163cc-eb57-41aa-ae85-43865be14a2b",
+    "date": "2019-06-04",
+    "description": "P-ups, core, squats",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "f3b2c5a9-ab58-4d5b-a242-a2ed497c7290",
+    "date": "2019-06-02",
+    "description": "Easy run with Quimby and friends",
+    "completed": true,
+    "duration": 70,
+    "pace": "Easy"
+  },
+  {
+    "id": "e827edf4-4319-4d9a-ae1e-a9905126a02b",
+    "date": "2019-06-01",
+    "description": "GSF workout",
+    "completed": true,
+    "duration": 70,
+    "pace": null
+  },
+  {
+    "id": "d49be180-5b9a-4fd7-91cf-00bea2abc41e",
+    "date": "2019-05-28",
+    "description": "Bike",
+    "completed": true,
+    "duration": 90,
+    "pace": null
+  },
+  {
+    "id": "e9dce1b5-e006-42bf-9ec5-39910c7ead4b",
+    "date": "2019-05-27",
+    "description": "Bike ride",
+    "completed": true,
+    "duration": 90,
+    "pace": null
+  },
+  {
+    "id": "9d86e007-7114-4383-9b43-7b4492f9c3f1",
+    "date": "2019-05-27",
+    "description": "Strength training",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "3611b2b7-a24f-4017-8c9c-7a66f60fd294",
+    "date": "2019-05-26",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "1d0aec15-63f2-491c-87df-e9f7a848b49e",
+    "date": "2019-05-24",
+    "description": "Easy run",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "2b0a935a-b653-4444-9729-6f63fb4149e9",
+    "date": "2019-05-22",
+    "description": "Strength training",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
     "id": "48cce67d-a40b-4112-be49-a49cb9897201",
     "date": "2019-02-28",
     "description": "Recovery",
     "completed": true,
-    "run": {
-      "duration": 60,
-      "pace": "Easy"
-    }
+    "duration": 60,
+    "pace": "Easy"
   },
   {
-    "id": "22ad68c5-56a7-424b-8258-9df96ea88581",
-    "date": "2019-03-01",
+    "id": "83d1082c-d69e-4843-bdef-cd5b29348a2b",
+    "date": "2019-07-13",
+    "description": "Mt Pugh hike with Tanner and Haley",
+    "completed": true,
+    "duration": 360,
+    "pace": null
+  },
+  {
+    "id": "15b4bd12-46f8-4395-bca7-d2cccc25e8c7",
+    "date": "2019-07-14",
+    "description": "St Edwards with Dylan and Tanner",
+    "completed": true,
+    "duration": 85,
+    "pace": "Easy"
+  },
+  {
+    "id": "f22f1c6c-da8d-436f-a539-dd2cf6e5d90b",
+    "date": "2019-07-15",
+    "description": "Core, push ups, pull ups",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "24ad258b-31df-4cfd-bbfa-775fa083716a",
+    "date": "2019-07-16",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "d899733f-d904-4967-aa31-74dd8fdaaa72",
+    "date": "2019-07-17",
+    "description": "Push ups, pull ups, core, squats, dead lifts, calf raises",
+    "completed": true,
+    "duration": 45,
+    "pace": null
+  },
+  {
+    "id": "38911bc1-c206-4fe6-aad5-69b8fc39c496",
+    "date": "2019-07-18",
+    "description": "Crista hill loop",
+    "completed": true,
+    "duration": 40,
+    "pace": "Moderate"
+  },
+  {
+    "id": "9cfaa502-fb3b-414b-976b-d654a0dde53e",
+    "date": "2019-07-19",
+    "description": "Push ups, pull ups, core, squats, dead lifts, calf raises",
+    "completed": true,
+    "duration": 45,
+    "pace": null
+  },
+  {
+    "id": "4b17b24f-1ac4-46e0-b470-0b331952c4d9",
+    "date": "2019-07-20",
+    "description": "St Edwards with Brad",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "4217f55e-2bb4-4a47-8b6e-7bf4df4f7dc5",
+    "date": "2019-07-21",
+    "description": "Woodway loop",
+    "completed": true,
+    "duration": 56,
+    "pace": "Easy"
+  },
+  {
+    "id": "9783446671",
+    "date": "2019-11-10",
+    "description": "",
+    "completed": true,
+    "duration": 30,
+    "pace": "Moderate"
+  },
+  {
+    "id": "2252630344",
+    "date": "2019-11-10",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "0911218529",
+    "date": "2019-11-09",
+    "description": "RDLs, split squats, body weight squats, calf raises, wall sits, band work",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "4616550682",
+    "date": "2019-11-12",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "3976205538",
+    "date": "2019-11-13",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "5077604582",
+    "date": "2019-11-13",
     "description": "Tempo",
     "completed": true,
-    "run": {
-      "duration": 65,
-      "pace": "Lactate Threshold"
-    }
+    "duration": 20,
+    "pace": "Steady State"
   },
   {
-    "id": "1234asdf-56a7-424b-8258-9df96ea88581",
-    "date": "2019-03-02",
-    "description": "Swim",
+    "id": "0620596703",
+    "date": "2019-11-13",
+    "description": "",
     "completed": true,
-    "other": {
-      "duration": 30
-    }
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "5768479496",
+    "date": "2019-11-12",
+    "description": "Drills and strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "8081543995",
+    "date": "2019-11-14",
+    "description": "",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "1317768158",
+    "date": "2019-11-14",
+    "description": "Core, body-weight squats, band work, etc.",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "9572220238",
+    "date": "2019-11-16",
+    "description": "",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "7034337479",
+    "date": "2019-11-15",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "0672923281",
+    "date": "2019-11-17",
+    "description": "",
+    "completed": true,
+    "duration": 110,
+    "pace": "Easy"
+  },
+  {
+    "id": "2716716193",
+    "date": "2019-11-16",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "9183934327",
+    "date": "2019-11-15",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "1887247223",
+    "date": "2019-11-12",
+    "description": "Core, push ups, pull ups",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "6449406251",
+    "date": "2019-11-16",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "3228748106",
+    "date": "2019-11-18",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "7762817483",
+    "date": "2019-11-18",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "8176499168",
+    "date": "2019-11-19",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "2503518472",
+    "date": "2019-11-19",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "7252075197",
+    "date": "2019-11-20",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "7423582663",
+    "date": "2019-11-20",
+    "description": "Drills and strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "1352056202",
+    "date": "2019-11-20",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "2845361138",
+    "date": "2019-11-21",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "3688136049",
+    "date": "2019-11-21",
+    "description": "Tempo",
+    "completed": true,
+    "duration": 25,
+    "pace": "Brisk"
+  },
+  {
+    "id": "9431841382",
+    "date": "2019-11-21",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "8326845219",
+    "date": "2019-11-22",
+    "description": "",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "8683345798",
+    "date": "2019-11-22",
+    "description": "Body weight squats, RDLs, split squats, wall sits, band work, calf raises",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "4749495430",
+    "date": "2019-11-24",
+    "description": "",
+    "completed": true,
+    "duration": 110,
+    "pace": "Easy"
+  },
+  {
+    "id": "8911139588",
+    "date": "2019-11-23",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "1073274879",
+    "date": "2019-11-24",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "4753705554",
+    "date": "2019-11-25",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "2118975145",
+    "date": "2019-11-25",
+    "description": "Push ups, pull ups ",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "7743299371",
+    "date": "2019-11-26",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "7595613679",
+    "date": "2019-11-26",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "7614498198",
+    "date": "2019-11-27",
+    "description": "Warmup",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "6729282389",
+    "date": "2019-11-27",
+    "description": "Tempo",
+    "completed": true,
+    "duration": 25,
+    "pace": "Brisk"
+  },
+  {
+    "id": "0995577561",
+    "date": "2019-11-27",
+    "description": "Cooldown",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "1245803520",
+    "date": "2019-11-28",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "7050594384",
+    "date": "2019-11-28",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "0338716637",
+    "date": "2019-11-29",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "2025975534",
+    "date": "2019-11-29",
+    "description": "Drills",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "7245679917",
+    "date": "2019-11-29",
+    "description": "Push ups, pull ups ",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "4589846642",
+    "date": "2019-11-30",
+    "description": "",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "7503344328",
+    "date": "2019-11-30",
+    "description": "Core ",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "1159976524",
+    "date": "2019-12-03",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "4445706239",
+    "date": "2019-12-08",
+    "description": "Pine & Cedar Lakes 😌",
+    "completed": true,
+    "duration": 125,
+    "pace": "Easy"
+  },
+  {
+    "id": "0590186150",
+    "date": "2019-12-03",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "3423744422",
+    "date": "2019-12-02",
+    "description": "Bike",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "5450319707",
+    "date": "2019-12-02",
+    "description": "Squats, split squats, RDLs, wall sits, calf raises",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "8664831273",
+    "date": "2019-12-04",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "3887171030",
+    "date": "2019-12-05",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "1125033261",
+    "date": "2019-12-05",
+    "description": "Drills and stride",
+    "completed": true,
+    "duration": 5,
+    "pace": null
+  },
+  {
+    "id": "2582308899",
+    "date": "2019-12-05",
+    "description": "4 x 3 min hard, 1 min easy 😩",
+    "completed": true,
+    "duration": 20,
+    "pace": "Moderate"
+  },
+  {
+    "id": "9896214724",
+    "date": "2019-12-05",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "6263034723",
+    "date": "2019-12-06",
+    "description": "",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "4754141069",
+    "date": "2019-12-06",
+    "description": "Swim 😀",
+    "completed": true,
+    "duration": 5,
+    "pace": null
+  },
+  {
+    "id": "4255316765",
+    "date": "2019-12-07",
+    "description": "",
+    "completed": true,
+    "duration": 35,
+    "pace": "Easy"
+  },
+  {
+    "id": "0497991892",
+    "date": "2019-12-07",
+    "description": "Drills",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "5841472572",
+    "date": "2019-12-07",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "4254182218",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "7534097986",
+    "date": "2019-12-11",
+    "description": "Drills",
+    "completed": true,
+    "duration": 5,
+    "pace": null
+  },
+  {
+    "id": "2945192275",
+    "date": "2019-12-11",
+    "description": "4 x 3 min on, 1 min off",
+    "completed": true,
+    "duration": 3,
+    "pace": "Groove"
+  },
+  {
+    "id": "2919689370",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "0672953693",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 3,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "9645283892",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "6883028138",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 3,
+    "pace": "Fast"
+  },
+  {
+    "id": "4674707661",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "1607791662",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 3,
+    "pace": "Fast"
+  },
+  {
+    "id": "7234259510",
+    "date": "2019-12-11",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "0687201032",
+    "date": "2019-12-10",
+    "description": "Jingle Bell course preview",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "8172151139",
+    "date": "2019-12-10",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0627841308",
+    "date": "2019-12-12",
+    "description": "Core",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0490807805",
+    "date": "2019-12-12",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "2342464589",
+    "date": "2019-12-09",
+    "description": "",
+    "completed": true,
+    "duration": 57,
+    "pace": "Easy"
+  },
+  {
+    "id": "9814880009",
+    "date": "2019-12-09",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "8257156788",
+    "date": "2019-12-13",
+    "description": "Lots of aches and pains 😬",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "4236142266",
+    "date": "2019-12-14",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "1024217910",
+    "date": "2019-12-14",
+    "description": "Jingle Bell Dash 5k",
+    "completed": true,
+    "duration": 17,
+    "pace": "Groove"
+  },
+  {
+    "id": "8903095054",
+    "date": "2019-12-14",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "1291976704",
+    "date": "2019-12-14",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "8558282461",
+    "date": "2019-12-15",
+    "description": "Slow long run 😪",
+    "completed": true,
+    "duration": 120,
+    "pace": "Easy"
+  },
+  {
+    "id": "5070478153",
+    "date": "2019-12-15",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "9416716978",
+    "date": "2019-12-16",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "0817334792",
+    "date": "2019-12-17",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "7896811026",
+    "date": "2019-12-17",
+    "description": "Drills",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "0715510575",
+    "date": "2019-12-18",
+    "description": "Squats, RDLs, split squats, wall sits, band work, calf raises",
+    "completed": true,
+    "duration": 25,
+    "pace": null
+  },
+  {
+    "id": "8608311420",
+    "date": "2019-12-18",
+    "description": "",
+    "completed": true,
+    "duration": 38,
+    "pace": "Easy"
+  },
+  {
+    "id": "2209651759",
+    "date": "2019-12-18",
+    "description": "Pull ups",
+    "completed": true,
+    "duration": 5,
+    "pace": null
+  },
+  {
+    "id": "3200799571",
+    "date": "2019-12-19",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "1545205721",
+    "date": "2019-12-19",
+    "description": "2k @ LT on the track",
+    "completed": true,
+    "duration": 7,
+    "pace": "Lactate Threshold"
+  },
+  {
+    "id": "5629830180",
+    "date": "2019-12-19",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "8170309443",
+    "date": "2019-12-19",
+    "description": "",
+    "completed": true,
+    "duration": 7,
+    "pace": "Lactate Threshold"
+  },
+  {
+    "id": "2495957301",
+    "date": "2019-12-19",
+    "description": "Left-side core giving out 🤕",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "5228949405",
+    "date": "2019-12-19",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
   }
 ]
