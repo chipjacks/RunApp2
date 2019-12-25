@@ -415,15 +415,15 @@ viewWeek accessActivities start =
                 |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
                 |> Tuple.mapBoth List.sum List.sum
     in
-    expandingRow [ style "min-height" "3rem" ] <|
+    expandingRow [] <|
         titleWeek start ( runDuration, otherDuration )
             :: dayViews
 
 
 viewWeekDay : ( Date, List Activity ) -> Html Msg
 viewWeekDay ( date, activities ) =
-    column [ style "overflow" "hidden" ] <|
-        row [ style "justify-content" "center" ]
+    column [ style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
+        row []
             [ a
                 [ onClick (LoadCalendar Daily date)
                 , attribute "data-date" (Date.toIsoString date)
@@ -431,7 +431,7 @@ viewWeekDay ( date, activities ) =
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [ style "justify-content" "center", style "margin-bottom" "0.1rem" ] [ ActivityShape.viewDefault a.completed (Activity.activityType a) ]) activities
+            :: List.map (\a -> row [ style "margin-bottom" "0.1rem" ] [ ActivityShape.view a ]) activities
 
 
 titleWeek : Date -> ( Int, Int ) -> Html msg
