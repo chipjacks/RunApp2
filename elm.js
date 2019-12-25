@@ -9979,16 +9979,14 @@ var $author$project$Main$viewWeekDay = function (_v0) {
 		$author$project$Skeleton$column,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'overflow', 'hidden')
+				A2($elm$html$Html$Attributes$style, 'min-height', '4rem'),
+				A2($elm$html$Html$Attributes$style, 'padding-bottom', '1rem')
 			]),
 		A2(
 			$elm$core$List$cons,
 			A2(
 				$author$project$Skeleton$row,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
@@ -10015,15 +10013,11 @@ var $author$project$Main$viewWeekDay = function (_v0) {
 						$author$project$Skeleton$row,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
 								A2($elm$html$Html$Attributes$style, 'margin-bottom', '0.1rem')
 							]),
 						_List_fromArray(
 							[
-								A2(
-								$author$project$ActivityShape$viewDefault,
-								a.aj,
-								$author$project$Activity$activityType(a))
+								$author$project$ActivityShape$view(a)
 							]));
 				},
 				activities)));
@@ -10071,10 +10065,7 @@ var $author$project$Main$viewWeek = F2(
 		var otherDuration = _v0.b;
 		return A2(
 			$author$project$Skeleton$expandingRow,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'min-height', '3rem')
-				]),
+			_List_Nil,
 			A2(
 				$elm$core$List$cons,
 				A2(
