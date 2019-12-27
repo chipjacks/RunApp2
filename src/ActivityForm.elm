@@ -37,7 +37,8 @@ type Status
 
 
 type Msg
-    = EditedDescription String
+    = SelectedShape Activity.ActivityType
+    | EditedDescription String
     | CheckedCompleted Bool
     | EditedDuration String
     | SelectedPace String
@@ -118,6 +119,22 @@ validate model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        SelectedShape activityType ->
+            case activityType of
+                Activity.Run ->
+                    ( updateResult
+                        { model
+                            | pace = model.pace |> Maybe.withDefault Activity.Easy |> Just
+                            , duration = model.duration |> Maybe.withDefault 30 |> Just
+                        }
+                    , Cmd.none
+                    )
+
+                Activity.Other ->
+                    ( updateResult { model | pace = Nothing }
+                    , Cmd.none
+                    )
+
         EditedDescription desc ->
             ( updateResult { model | description = desc }
             , Cmd.none
@@ -227,8 +244,7 @@ view model =
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
         , column []
-            [ row []
-                [ viewError model.result ]
+            [ shapeSelect model.completed
             , row []
                 [ input
                     [ type_ "text"
@@ -243,7 +259,6 @@ view model =
             , row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
                 , compactColumn [] [ paceSelect SelectedPace model.pace ]
-                , compactColumn [] [ completedCheckbox model.completed ]
                 ]
             , row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ submitButton model.status ]
@@ -265,7 +280,18 @@ view model =
                         [ text "Move" ]
                     ]
                 ]
+            , row []
+                [ viewError model.result ]
             ]
+        ]
+
+
+shapeSelect : Bool -> Html Msg
+shapeSelect completed =
+    row []
+        [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
+        , compactColumn [ onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
+        , compactColumn [] [ completedCheckbox completed ]
         ]
 
 
@@ -332,32 +358,29 @@ durationInput msg duration =
 
 paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
 paceSelect msg paceM =
-    let
-        selected =
-            case paceM of
-                Just pace ->
-                    Activity.pace.toString pace
+    case paceM of
+        Just pace ->
+            let
+                selectedAttr paceStr =
+                    if Activity.pace.toString pace == paceStr then
+                        [ Html.Attributes.attribute "selected" "" ]
 
-                Nothing ->
-                    ""
+                    else
+                        []
+            in
+            Html.select
+                [ onInput msg
+                , name "pace"
+                ]
+                (List.map
+                    (\( paceStr, _ ) ->
+                        Html.option (selectedAttr paceStr) [ Html.text paceStr ]
+                    )
+                    (( "", Activity.Easy ) :: Activity.pace.list)
+                )
 
-        selectedAttr paceStr =
-            if selected == paceStr then
-                [ Html.Attributes.attribute "selected" "" ]
-
-            else
-                []
-    in
-    Html.select
-        [ onInput msg
-        , name "pace"
-        ]
-        (List.map
-            (\( paceStr, _ ) ->
-                Html.option (selectedAttr paceStr) [ Html.text paceStr ]
-            )
-            (( "", Activity.Easy ) :: Activity.pace.list)
-        )
+        Nothing ->
+            div [] []
 
 
 viewError : Result Error Activity -> Html Msg

@@ -517,13 +517,17 @@ viewDay activityFormM date activities isSelectedDate =
     in
     row rowId
         [ column []
-            [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
+            [ row []
                 [ text (Date.format "E MMM d" date)
                 , a [ onClick (NewActivity (Just date)) ] [ text "+" ]
                 ]
-            , row []
-                [ column [] (List.map (viewActivity activityFormM) activities) ]
-            , activityFormView
+            , row [ style "margin" "1rem" ]
+                [ column []
+                    [ row []
+                        [ column [] (List.map (viewActivity activityFormM) activities) ]
+                    , activityFormView
+                    ]
+                ]
             ]
         ]
 
