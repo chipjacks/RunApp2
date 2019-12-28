@@ -418,7 +418,7 @@ viewWeek accessActivities start =
                 |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
                 |> Tuple.mapBoth List.sum List.sum
     in
-    expandingRow [] <|
+    row [] <|
         titleWeek start ( runDuration, otherDuration )
             :: dayViews
 
