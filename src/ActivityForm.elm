@@ -137,8 +137,8 @@ update msg model =
                     ( updateResult
                         { model
                             | pace = Nothing
-                            , distance = model.distance |> Maybe.withDefault Activity.Mile |> Just
-                            , duration = model.duration |> Maybe.withDefault 30 |> Just
+                            , distance = model.distance |> Maybe.withDefault Activity.FiveK |> Just
+                            , duration = model.duration |> Maybe.withDefault 20 |> Just
                         }
                     , Cmd.none
                     )
@@ -278,6 +278,10 @@ view model =
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
                 , compactColumn [] [ maybeView model.pace (paceSelect SelectedPace) ]
                 , compactColumn [] [ maybeView model.distance (distanceSelect SelectedDistance) ]
+                , compactColumn []
+                    [ maybeView (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
+                        (\level -> text <| "Level " ++ String.fromInt level)
+                    ]
                 ]
             , row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ submitButton model.status ]

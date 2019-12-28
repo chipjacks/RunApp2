@@ -1,9 +1,10 @@
-module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, decoder, distance, encoder, pace)
+module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, decoder, distance, encoder, mprLevel, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
 import Json.Decode as Decode
 import Json.Encode as Encode
+import MPRLevel
 
 
 type alias Activity =
@@ -34,6 +35,19 @@ activityType activity =
 
         ( Just _, _ ) ->
             Run
+
+
+mprLevel : Activity -> Maybe Int
+mprLevel activity =
+    activity.distance
+        |> Maybe.andThen
+            (\dist ->
+                MPRLevel.lookup MPRLevel.Neutral
+                    (distance.toString dist)
+                    (activity.duration * 60)
+                    |> Result.map (\( rt, level ) -> level)
+                    |> Result.toMaybe
+            )
 
 
 type alias Id =
@@ -101,35 +115,65 @@ pace =
 
 
 type Distance
-    = Mile
-    | FiveK
+    = FiveK
+    | EightK
+    | FiveMile
     | TenK
+    | FifteenK
+    | TenMile
+    | TwentyK
     | HalfMarathon
+    | TwentyFiveK
+    | ThirtyK
     | Marathon
 
 
 distance : Enum Distance
 distance =
     Enum.create
-        [ Mile
-        , FiveK
+        [ FiveK
+        , EightK
+        , FiveMile
         , TenK
+        , FifteenK
+        , TenMile
+        , TwentyK
         , HalfMarathon
+        , TwentyFiveK
+        , ThirtyK
         , Marathon
         ]
         (\a ->
             case a of
-                Mile ->
-                    "Mile"
-
                 FiveK ->
                     "5k"
+
+                EightK ->
+                    "8k"
+
+                FiveMile ->
+                    "5 mile"
 
                 TenK ->
                     "10k"
 
+                FifteenK ->
+                    "15k"
+
+                TenMile ->
+                    "10 mile"
+
+                TwentyK ->
+                    "20k"
+
                 HalfMarathon ->
                     "Half Marathon"
+
+                TwentyFiveK ->
+                    "25k"
+
+                ThirtyK ->
+                    "30k"
 
                 Marathon ->
                     "Marathon"
