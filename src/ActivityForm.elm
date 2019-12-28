@@ -27,6 +27,7 @@ type alias Model =
     , completed : Bool
     , duration : Maybe Minutes
     , pace : Maybe Activity.Pace
+    , distance : Maybe Activity.Distance
     , result : Result Error Activity
     }
 
@@ -42,6 +43,7 @@ type Msg
     | CheckedCompleted Bool
     | EditedDuration String
     | SelectedPace String
+    | SelectedDistance String
     | ClickedSubmit
     | ClickedReset
     | ClickedDelete
@@ -58,12 +60,12 @@ type Error
 
 initNew : Activity.Id -> Maybe Date -> Model
 initNew id dateM =
-    Model (Creating id) dateM "" True Nothing Nothing (Err (EmptyFieldError ""))
+    Model (Creating id) dateM "" True Nothing Nothing Nothing (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
 initEdit activity =
-    Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace (Ok activity)
+    Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
 
 
 selectDate : Date -> Model -> Model
@@ -109,7 +111,7 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map3
         (\date description duration ->
-            Activity "" date description model.completed duration model.pace
+            Activity "" date description model.completed duration model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -125,13 +127,24 @@ update msg model =
                     ( updateResult
                         { model
                             | pace = model.pace |> Maybe.withDefault Activity.Easy |> Just
+                            , distance = Nothing
+                            , duration = model.duration |> Maybe.withDefault 30 |> Just
+                        }
+                    , Cmd.none
+                    )
+
+                Activity.Race ->
+                    ( updateResult
+                        { model
+                            | pace = Nothing
+                            , distance = model.distance |> Maybe.withDefault Activity.Mile |> Just
                             , duration = model.duration |> Maybe.withDefault 30 |> Just
                         }
                     , Cmd.none
                     )
 
                 Activity.Other ->
-                    ( updateResult { model | pace = Nothing }
+                    ( updateResult { model | pace = Nothing, distance = Nothing }
                     , Cmd.none
                     )
 
@@ -152,6 +165,11 @@ update msg model =
 
         SelectedPace str ->
             ( updateResult { model | pace = Activity.pace.fromString str }
+            , Cmd.none
+            )
+
+        SelectedDistance str ->
+            ( updateResult { model | distance = Activity.distance.fromString str }
             , Cmd.none
             )
 
@@ -258,7 +276,8 @@ view model =
                 ]
             , row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
-                , compactColumn [] [ paceSelect SelectedPace model.pace ]
+                , compactColumn [] [ maybeView model.pace (paceSelect SelectedPace) ]
+                , compactColumn [] [ maybeView model.distance (distanceSelect SelectedDistance) ]
                 ]
             , row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ submitButton model.status ]
@@ -290,6 +309,7 @@ shapeSelect : Bool -> Html Msg
 shapeSelect completed =
     row []
         [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
+        , compactColumn [ onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
         , compactColumn [ onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
         , compactColumn [] [ completedCheckbox completed ]
         ]
@@ -356,31 +376,58 @@ durationInput msg duration =
         []
 
 
-paceSelect : (String -> Msg) -> Maybe Activity.Pace -> Html Msg
-paceSelect msg paceM =
-    case paceM of
-        Just pace ->
-            let
-                selectedAttr paceStr =
-                    if Activity.pace.toString pace == paceStr then
-                        [ Html.Attributes.attribute "selected" "" ]
-
-                    else
-                        []
-            in
-            Html.select
-                [ onInput msg
-                , name "pace"
-                ]
-                (List.map
-                    (\( paceStr, _ ) ->
-                        Html.option (selectedAttr paceStr) [ Html.text paceStr ]
-                    )
-                    (( "", Activity.Easy ) :: Activity.pace.list)
-                )
+maybeView : Maybe a -> (a -> Html Msg) -> Html Msg
+maybeView attrM viewF =
+    case attrM of
+        Just attr ->
+            viewF attr
 
         Nothing ->
-            div [] []
+            Html.text ""
+
+
+paceSelect : (String -> Msg) -> Activity.Pace -> Html Msg
+paceSelect msg pace =
+    let
+        selectedAttr paceStr =
+            if Activity.pace.toString pace == paceStr then
+                [ Html.Attributes.attribute "selected" "" ]
+
+            else
+                []
+    in
+    Html.select
+        [ onInput msg
+        , name "pace"
+        ]
+        (List.map
+            (\( paceStr, _ ) ->
+                Html.option (selectedAttr paceStr) [ Html.text paceStr ]
+            )
+            Activity.pace.list
+        )
+
+
+distanceSelect : (String -> Msg) -> Activity.Distance -> Html Msg
+distanceSelect msg distance =
+    let
+        selectedAttr distanceStr =
+            if Activity.distance.toString distance == distanceStr then
+                [ Html.Attributes.attribute "selected" "" ]
+
+            else
+                []
+    in
+    Html.select
+        [ onInput msg
+        , name "distance"
+        ]
+        (List.map
+            (\( distanceStr, _ ) ->
+                Html.option (selectedAttr distanceStr) [ Html.text distanceStr ]
+            )
+            Activity.distance.list
+        )
 
 
 viewError : Result Error Activity -> Html Msg
