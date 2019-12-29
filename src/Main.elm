@@ -407,15 +407,18 @@ viewWeek accessActivities start =
                 |> List.map (\d -> ( d, accessActivities d ))
                 |> List.map viewWeekDay
 
-        ( runDuration, otherDuration ) =
+        activities =
             daysOfWeek start
                 |> List.map (\d -> accessActivities d)
                 |> List.concat
+
+        ( runDuration, otherDuration ) =
+            activities
                 |> List.partition (\a -> activityType a == Activity.Run)
                 |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
                 |> Tuple.mapBoth List.sum List.sum
     in
-    expandingRow [] <|
+    row [] <|
         titleWeek start ( runDuration, otherDuration )
             :: dayViews
 
@@ -517,13 +520,17 @@ viewDay activityFormM date activities isSelectedDate =
     in
     row rowId
         [ column []
-            [ row [ style "margin-top" "1rem", style "margin-bottom" "1rem" ]
+            [ row []
                 [ text (Date.format "E MMM d" date)
                 , a [ onClick (NewActivity (Just date)) ] [ text "+" ]
                 ]
-            , row []
-                [ column [] (List.map (viewActivity activityFormM) activities) ]
-            , activityFormView
+            , row [ style "margin" "1rem" ]
+                [ column []
+                    [ row []
+                        [ column [] (List.map (viewActivity activityFormM) activities) ]
+                    , activityFormView
+                    ]
+                ]
             ]
         ]
 
@@ -543,12 +550,19 @@ listDays date =
 viewActivity : Maybe ActivityForm.Model -> Activity -> Html Msg
 viewActivity activityFormM activity =
     let
+        level =
+            Activity.mprLevel activity
+                |> Maybe.map (\l -> "Level " ++ String.fromInt l)
+                |> Maybe.withDefault ""
+
         activityView =
             a [ onClick (EditActivity activity) ]
                 [ row [ style "margin-bottom" "1rem" ]
                     [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
                     , column [ style "justify-content" "center" ]
-                        [ text activity.description ]
+                        [ row [] [ text activity.description ]
+                        , row [ style "font-size" "0.8rem" ] [ text level ]
+                        ]
                     ]
                 ]
     in

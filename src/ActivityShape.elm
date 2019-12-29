@@ -13,6 +13,7 @@ type Shape
 
 type Color
     = Green
+    | Orange
     | Gray
 
 
@@ -21,6 +22,10 @@ view activity =
     case activityType activity of
         Activity.Run ->
             Block Green activity.completed { width = toWidth (Maybe.withDefault Activity.Easy activity.pace), height = toHeight activity.duration }
+                |> viewShape
+
+        Activity.Race ->
+            Block Orange activity.completed { width = toWidth (Maybe.withDefault Activity.LactateThreshold activity.pace), height = toHeight activity.duration }
                 |> viewShape
 
         Activity.Other ->
@@ -33,6 +38,10 @@ viewDefault completed activityType =
     case activityType of
         Activity.Run ->
             Block Green completed { width = 2, height = 1 }
+                |> viewShape
+
+        Activity.Race ->
+            Block Orange completed { width = 2, height = 1 }
                 |> viewShape
 
         Activity.Other ->
@@ -76,6 +85,9 @@ colorString color =
     case color of
         Green ->
             "limegreen"
+
+        Orange ->
+            "orange"
 
         Gray ->
             "gray"
