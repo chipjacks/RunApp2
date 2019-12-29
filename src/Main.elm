@@ -20,7 +20,6 @@ import Time exposing (Month(..))
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), (<?>))
 import Url.Parser.Query as Query
-import Window exposing (Window)
 
 
 
