@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.Z.H === region.aq.H)
+	if (region.ab.I === region.at.I)
 	{
-		return 'on line ' + region.Z.H;
+		return 'on line ' + region.ab.I;
 	}
-	return 'on lines ' + region.Z.H + ' through ' + region.aq.H;
+	return 'on lines ' + region.ab.I + ' through ' + region.at.I;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bi,
-		impl.bF,
-		impl.bC,
+		impl.bk,
+		impl.bG,
+		impl.bD,
 		function() { return function() {} }
 	);
 });
@@ -2660,8 +2660,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		p: func(record.p),
-		_: record._,
-		X: record.X
+		ac: record.ac,
+		_: record._
 	}
 });
 
@@ -2930,10 +2930,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.p;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value._;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ac;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.X) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value._) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3883,11 +3883,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bi,
-		impl.bF,
-		impl.bC,
+		impl.bk,
+		impl.bG,
+		impl.bD,
 		function(sendToApp, initialModel) {
-			var view = impl.bG;
+			var view = impl.bH;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3919,12 +3919,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bi,
-		impl.bF,
-		impl.bC,
+		impl.bk,
+		impl.bG,
+		impl.bD,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.Y && impl.Y(sendToApp)
-			var view = impl.bG;
+			var divertHrefToApp = impl.aa && impl.aa(sendToApp)
+			var view = impl.bH;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3932,12 +3932,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.af);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ah);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bD) && (_VirtualDom_doc.title = title = doc.bD);
+				(title !== doc.bE) && (_VirtualDom_doc.title = title = doc.bE);
 			});
 		}
 	);
@@ -3993,12 +3993,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.bt;
-	var onUrlRequest = impl.bu;
+	var onUrlChange = impl.bu;
+	var onUrlRequest = impl.bv;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		Y: function(sendToApp)
+		aa: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4014,9 +4014,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.aN === next.aN
-							&& curr.ax === next.ax
-							&& curr.aJ.a === next.aJ.a
+							&& curr.aS === next.aS
+							&& curr.aB === next.aB
+							&& curr.aO.a === next.aO.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4024,13 +4024,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bi: function(flags)
+		bk: function(flags)
 		{
-			return A3(impl.bi, flags, _Browser_getUrl(), key);
+			return A3(impl.bk, flags, _Browser_getUrl(), key);
 		},
+		bH: impl.bH,
 		bG: impl.bG,
-		bF: impl.bF,
-		bC: impl.bC
+		bD: impl.bD
 	});
 }
 
@@ -4096,17 +4096,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { bf: 'hidden', a9: 'visibilitychange' }
+		? { bh: 'hidden', be: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { bf: 'mozHidden', a9: 'mozvisibilitychange' }
+		? { bh: 'mozHidden', be: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { bf: 'msHidden', a9: 'msvisibilitychange' }
+		? { bh: 'msHidden', be: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { bf: 'webkitHidden', a9: 'webkitvisibilitychange' }
-		: { bf: 'hidden', a9: 'visibilitychange' };
+		? { bh: 'webkitHidden', be: 'webkitvisibilitychange' }
+		: { bh: 'hidden', be: 'visibilitychange' };
 }
 
 
@@ -4187,12 +4187,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aV: _Browser_getScene(),
-		bH: {
-			N: _Browser_window.pageXOffset,
-			ac: _Browser_window.pageYOffset,
-			ab: _Browser_doc.documentElement.clientWidth,
-			Q: _Browser_doc.documentElement.clientHeight
+		a_: _Browser_getScene(),
+		bI: {
+			Q: _Browser_window.pageXOffset,
+			ae: _Browser_window.pageYOffset,
+			N: _Browser_doc.documentElement.clientWidth,
+			H: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4202,8 +4202,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		ab: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		Q: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		N: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		H: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4226,15 +4226,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aV: {
-				ab: node.scrollWidth,
-				Q: node.scrollHeight
+			a_: {
+				N: node.scrollWidth,
+				H: node.scrollHeight
 			},
-			bH: {
-				N: node.scrollLeft,
-				ac: node.scrollTop,
-				ab: node.clientWidth,
-				Q: node.clientHeight
+			bI: {
+				Q: node.scrollLeft,
+				ae: node.scrollTop,
+				N: node.clientWidth,
+				H: node.clientHeight
 			}
 		};
 	});
@@ -4264,18 +4264,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aV: _Browser_getScene(),
-			bH: {
-				N: x,
-				ac: y,
-				ab: _Browser_doc.documentElement.clientWidth,
-				Q: _Browser_doc.documentElement.clientHeight
+			a_: _Browser_getScene(),
+			bI: {
+				Q: x,
+				ae: y,
+				N: _Browser_doc.documentElement.clientWidth,
+				H: _Browser_doc.documentElement.clientHeight
 			},
-			ap: {
-				N: x + rect.left,
-				ac: y + rect.top,
-				ab: rect.width,
-				Q: rect.height
+			ar: {
+				Q: x + rect.left,
+				ae: y + rect.top,
+				N: rect.width,
+				H: rect.height
 			}
 		};
 	});
@@ -4450,25 +4450,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.P.a(response)));
+			callback(toTask(request.T.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.P.b, xhr)); });
-		$elm$core$Maybe$isJust(request.a0) && _Http_track(router, xhr, request.a0.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.T.b, xhr)); });
+		$elm$core$Maybe$isJust(request.a5) && _Http_track(router, xhr, request.a5.a);
 
 		try {
-			xhr.open(request.aE, request.a2, true);
+			xhr.open(request.aJ, request.a7, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.a2));
+			return done($elm$http$Http$BadUrl_(request.a7));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.af.a && xhr.setRequestHeader('Content-Type', request.af.a);
-		xhr.send(request.af.b);
+		request.ah.a && xhr.setRequestHeader('Content-Type', request.ah.a);
+		xhr.send(request.ah.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4479,13 +4479,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.av; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.az; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.a$.a || 0;
-	xhr.responseType = request.P.d;
-	xhr.withCredentials = request.a6;
+	xhr.timeout = request.a4.a || 0;
+	xhr.responseType = request.T.d;
+	xhr.withCredentials = request.bb;
 }
 
 
@@ -4506,10 +4506,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		a2: xhr.responseURL,
-		bz: xhr.status,
-		bA: xhr.statusText,
-		av: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		a7: xhr.responseURL,
+		bA: xhr.status,
+		bB: xhr.statusText,
+		az: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4604,15 +4604,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			by: event.loaded,
-			aX: event.total
+			bz: event.loaded,
+			a0: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			bw: event.loaded,
-			aX: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			bx: event.loaded,
+			a0: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5202,7 +5202,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {au: fragment, ax: host, aH: path, aJ: port_, aN: protocol, aO: query};
+		return {ax: fragment, aB: host, aM: path, aO: port_, aS: protocol, aT: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5517,9 +5517,9 @@ var $elm$core$Task$attempt = F2(
 					task)));
 	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $author$project$Activity$Activity = F6(
-	function (id, date, description, completed, duration, pace) {
-		return {aj: completed, ak: date, am: description, ao: duration, ay: id, W: pace};
+var $author$project$Activity$Activity = F7(
+	function (id, date, description, completed, duration, pace, distance) {
+		return {al: completed, am: date, ap: description, O: distance, S: duration, aC: id, Z: pace};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -5574,7 +5574,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {ai: col, ba: contextStack, aK: problem, aU: row};
+		return {ak: col, bf: contextStack, aP: problem, aZ: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -5582,7 +5582,7 @@ var $elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.aU, s.ai, x, s.c));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.aZ, s.ak, x, s.c));
 	});
 var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
 var $elm$core$Basics$negate = function (n) {
@@ -5599,11 +5599,11 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ai: 1, c: s.c, d: s.d, b: s.b + 1, aU: s.aU + 1, a: s.a}) : A3(
+				{ak: 1, c: s.c, d: s.d, b: s.b + 1, aZ: s.aZ + 1, a: s.a}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ai: s.ai + 1, c: s.c, d: s.d, b: newOffset, aU: s.aU, a: s.a}));
+				{ak: s.ak + 1, c: s.c, d: s.d, b: newOffset, aZ: s.aZ, a: s.a}));
 		};
 	});
 var $elm$parser$Parser$chompIf = function (isGood) {
@@ -5615,7 +5615,7 @@ var $elm$core$Basics$composeR = F3(
 			f(x));
 	});
 var $justinmimbs$date$Date$deadEndToString = function (_v0) {
-	var problem = _v0.aK;
+	var problem = _v0.aP;
 	if (problem.$ === 12) {
 		var message = problem.a;
 		return message;
@@ -5889,7 +5889,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aU, s.ai, s.a);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aZ, s.ak, s.a);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -5900,7 +5900,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{ai: newCol, c: s.c, d: s.d, b: newOffset, aU: newRow, a: s.a});
+			{ak: newCol, c: s.c, d: s.d, b: newOffset, aZ: newRow, a: s.a});
 	};
 };
 var $elm$parser$Parser$token = function (str) {
@@ -6258,10 +6258,10 @@ var $justinmimbs$date$Date$parser = A2(
 		$justinmimbs$date$Date$dayOfYear));
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {ai: col, aK: problem, aU: row};
+		return {ak: col, aP: problem, aZ: row};
 	});
 var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.aU, p.ai, p.aK);
+	return A3($elm$parser$Parser$DeadEnd, p.aZ, p.ak, p.aP);
 };
 var $elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -6293,7 +6293,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{ai: 1, c: _List_Nil, d: 1, b: 0, aU: 1, a: src});
+			{ak: 1, c: _List_Nil, d: 1, b: 0, aZ: 1, a: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -6358,28 +6358,17 @@ var $author$project$Activity$dateDecoder = function () {
 	};
 	return A2($elm$json$Json$Decode$andThen, isoStringDecoder, $elm$json$Json$Decode$string);
 }();
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$map6 = _Json_map6;
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-var $elm$json$Json$Decode$nullable = function (decoder) {
-	return $elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
-			]));
-};
-var $author$project$Activity$AerobicThreshold = 4;
-var $author$project$Activity$Brisk = 3;
-var $author$project$Activity$Easy = 0;
-var $author$project$Activity$Fast = 8;
-var $author$project$Activity$Groove = 6;
-var $author$project$Activity$LactateThreshold = 5;
-var $author$project$Activity$Moderate = 1;
-var $author$project$Activity$SteadyState = 2;
-var $author$project$Activity$VO2Max = 7;
+var $author$project$Activity$EightK = 1;
+var $author$project$Activity$FifteenK = 4;
+var $author$project$Activity$FiveK = 0;
+var $author$project$Activity$FiveMile = 2;
+var $author$project$Activity$HalfMarathon = 7;
+var $author$project$Activity$Marathon = 10;
+var $author$project$Activity$TenK = 3;
+var $author$project$Activity$TenMile = 5;
+var $author$project$Activity$ThirtyK = 9;
+var $author$project$Activity$TwentyFiveK = 8;
+var $author$project$Activity$TwentyK = 6;
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Dict$Black = 1;
@@ -6547,7 +6536,7 @@ var $author$project$Enum$create = F2(
 			list);
 		var dict = $elm$core$Dict$fromList(list2);
 		return {
-			bb: A2(
+			ao: A2(
 				$elm$json$Json$Decode$andThen,
 				function (string) {
 					var _v0 = A2($elm$core$Dict$get, string, dict);
@@ -6559,15 +6548,75 @@ var $author$project$Enum$create = F2(
 					}
 				},
 				$elm$json$Json$Decode$string),
-			an: dict,
-			bc: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
-			be: function (string) {
+			aq: dict,
+			as: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
+			ay: function (string) {
 				return A2($elm$core$Dict$get, string, dict);
 			},
-			bk: list2,
-			bE: toStr
+			aH: list2,
+			bF: toStr
 		};
 	});
+var $author$project$Activity$distance = A2(
+	$author$project$Enum$create,
+	_List_fromArray(
+		[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+	function (a) {
+		switch (a) {
+			case 0:
+				return '5k';
+			case 1:
+				return '8k';
+			case 2:
+				return '5 mile';
+			case 3:
+				return '10k';
+			case 4:
+				return '15k';
+			case 5:
+				return '10 mile';
+			case 6:
+				return '20k';
+			case 7:
+				return 'Half Marathon';
+			case 8:
+				return '25k';
+			case 9:
+				return '30k';
+			default:
+				return 'Marathon';
+		}
+	});
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map7 = _Json_map7;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $elm$json$Json$Decode$maybe = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder),
+				$elm$json$Json$Decode$succeed($elm$core$Maybe$Nothing)
+			]));
+};
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
+};
+var $author$project$Activity$AerobicThreshold = 4;
+var $author$project$Activity$Brisk = 3;
+var $author$project$Activity$Easy = 0;
+var $author$project$Activity$Fast = 8;
+var $author$project$Activity$Groove = 6;
+var $author$project$Activity$LactateThreshold = 5;
+var $author$project$Activity$Moderate = 1;
+var $author$project$Activity$SteadyState = 2;
+var $author$project$Activity$VO2Max = 7;
 var $author$project$Activity$pace = A2(
 	$author$project$Enum$create,
 	_List_fromArray(
@@ -6594,8 +6643,8 @@ var $author$project$Activity$pace = A2(
 				return 'Fast';
 		}
 	});
-var $author$project$Activity$decoder = A7(
-	$elm$json$Json$Decode$map6,
+var $author$project$Activity$decoder = A8(
+	$elm$json$Json$Decode$map7,
 	$author$project$Activity$Activity,
 	A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
 	A2($elm$json$Json$Decode$field, 'date', $author$project$Activity$dateDecoder),
@@ -6605,7 +6654,9 @@ var $author$project$Activity$decoder = A7(
 	A2(
 		$elm$json$Json$Decode$field,
 		'pace',
-		$elm$json$Json$Decode$nullable($author$project$Activity$pace.bb)));
+		$elm$json$Json$Decode$nullable($author$project$Activity$pace.ao)),
+	$elm$json$Json$Decode$maybe(
+		A2($elm$json$Json$Decode$field, 'distance', $author$project$Activity$distance.ao)));
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
@@ -7029,7 +7080,7 @@ var $author$project$Api$handleJsonResponse = F2(
 			case 1:
 				return $elm$core$Result$Err($elm$http$Http$Timeout);
 			case 3:
-				var statusCode = response.a.bz;
+				var statusCode = response.a.bA;
 				return $elm$core$Result$Err(
 					$elm$http$Http$BadStatus(statusCode));
 			case 2:
@@ -7069,21 +7120,21 @@ var $elm$http$Http$task = function (r) {
 		_Http_toTask,
 		0,
 		$elm$http$Http$resultToTask,
-		{a6: false, af: r.af, P: r.aT, av: r.av, aE: r.aE, a$: r.a$, a0: $elm$core$Maybe$Nothing, a2: r.a2});
+		{bb: false, ah: r.ah, T: r.aY, az: r.az, aJ: r.aJ, a4: r.a4, a5: $elm$core$Maybe$Nothing, a7: r.a7});
 };
 var $author$project$Api$getActivities = $elm$http$Http$task(
 	{
-		af: $elm$http$Http$emptyBody,
-		av: _List_fromArray(
+		ah: $elm$http$Http$emptyBody,
+		az: _List_fromArray(
 			[
 				A2($elm$http$Http$header, 'Content-Type', 'application/json')
 			]),
-		aE: 'GET',
-		aT: $elm$http$Http$stringResolver(
+		aJ: 'GET',
+		aY: $elm$http$Http$stringResolver(
 			$author$project$Api$handleJsonResponse(
 				$elm$json$Json$Decode$list($author$project$Activity$decoder))),
-		a$: $elm$core$Maybe$Nothing,
-		a2: $author$project$Api$storeUrl + '/latest'
+		a4: $elm$core$Maybe$Nothing,
+		a7: $author$project$Api$storeUrl + '/latest'
 	});
 var $elm$core$Basics$clamp = F3(
 	function (low, high, number) {
@@ -7114,7 +7165,7 @@ var $elm$time$Time$toAdjustedMinutesHelp = F3(
 			} else {
 				var era = eras.a;
 				var olderEras = eras.b;
-				if (_Utils_cmp(era.Z, posixMinutes) < 0) {
+				if (_Utils_cmp(era.ab, posixMinutes) < 0) {
 					return posixMinutes + era.b;
 				} else {
 					var $temp$defaultOffset = defaultOffset,
@@ -7152,20 +7203,20 @@ var $elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		al: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		aF: month,
-		a5: year + ((month <= 2) ? 1 : 0)
+		an: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		aK: month,
+		ba: year + ((month <= 2) ? 1 : 0)
 	};
 };
 var $elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).al;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).an;
 	});
 var $elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _v0 = $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aF;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aK;
 		switch (_v0) {
 			case 1:
 				return 0;
@@ -7196,7 +7247,7 @@ var $elm$time$Time$toMonth = F2(
 var $elm$time$Time$toYear = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).a5;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).ba;
 	});
 var $justinmimbs$date$Date$fromPosix = F2(
 	function (zone, posix) {
@@ -7370,11 +7421,11 @@ var $author$project$Main$Loaded = function (a) {
 var $author$project$Main$NoOp = {$: 6};
 var $author$project$Main$State = F4(
 	function (calendar, date, activities, activityForm) {
-		return {F: activities, k: activityForm, z: calendar, ak: date};
+		return {F: activities, k: activityForm, z: calendar, am: date};
 	});
 var $author$project$Main$Weekly = 0;
 var $author$project$ActivityForm$NewId = function (a) {
-	return {$: 8, a: a};
+	return {$: 10, a: a};
 };
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
@@ -7544,19 +7595,20 @@ var $author$project$ActivityForm$generateNewId = function () {
 var $author$project$ActivityForm$Editing = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$ActivityForm$Model = F7(
-	function (status, date, description, completed, duration, pace, result) {
-		return {aj: completed, ak: date, am: description, ao: duration, W: pace, v: result, w: status};
+var $author$project$ActivityForm$Model = F8(
+	function (status, date, description, completed, duration, pace, distance, result) {
+		return {al: completed, am: date, ap: description, O: distance, S: duration, Z: pace, r: result, w: status};
 	});
 var $author$project$ActivityForm$initEdit = function (activity) {
-	return A7(
+	return A8(
 		$author$project$ActivityForm$Model,
-		$author$project$ActivityForm$Editing(activity.ay),
-		$elm$core$Maybe$Just(activity.ak),
-		activity.am,
-		activity.aj,
-		$elm$core$Maybe$Just(activity.ao),
-		activity.W,
+		$author$project$ActivityForm$Editing(activity.aC),
+		$elm$core$Maybe$Just(activity.am),
+		activity.ap,
+		activity.al,
+		$elm$core$Maybe$Just(activity.S),
+		activity.Z,
+		activity.O,
 		$elm$core$Result$Ok(activity));
 };
 var $author$project$ActivityForm$Creating = function (a) {
@@ -7567,12 +7619,13 @@ var $author$project$ActivityForm$EmptyFieldError = function (a) {
 };
 var $author$project$ActivityForm$initNew = F2(
 	function (id, dateM) {
-		return A7(
+		return A8(
 			$author$project$ActivityForm$Model,
 			$author$project$ActivityForm$Creating(id),
 			dateM,
 			'',
 			true,
+			$elm$core$Maybe$Nothing,
 			$elm$core$Maybe$Nothing,
 			$elm$core$Maybe$Nothing,
 			$elm$core$Result$Err(
@@ -7625,11 +7678,11 @@ var $elm$core$Task$map4 = F5(
 			},
 			taskA);
 	});
-var $author$project$Main$scrollConfig = {ag: 250, R: 10, aD: '-500px'};
+var $author$project$Main$scrollConfig = {ai: 250, U: 10, aI: '-500px'};
 var $elm$browser$Browser$Dom$setViewportOf = _Browser_setViewportOf;
 var $author$project$Main$scrollToSelectedDate = F4(
 	function (_v0, viewport, calendar, selectedDate) {
-		return A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, (viewport.bH.ac + selectedDate.ap.ac) - calendar.ap.ac);
+		return A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, (viewport.bI.ae + selectedDate.ar.ae) - calendar.ar.ae);
 	});
 var $author$project$Main$resetScroll = function (msg) {
 	return A2(
@@ -7640,7 +7693,7 @@ var $author$project$Main$resetScroll = function (msg) {
 		A5(
 			$elm$core$Task$map4,
 			$author$project$Main$scrollToSelectedDate,
-			A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, $author$project$Main$scrollConfig.ag),
+			A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, $author$project$Main$scrollConfig.ai),
 			$elm$browser$Browser$Dom$getViewportOf('calendar'),
 			$elm$browser$Browser$Dom$getElement('calendar'),
 			$elm$browser$Browser$Dom$getElement('selected-date')));
@@ -7683,37 +7736,37 @@ var $author$project$ActivityForm$validate = function (model) {
 		$elm$core$Result$map3,
 		F3(
 			function (date, description, duration) {
-				return A6($author$project$Activity$Activity, '', date, description, model.aj, duration, model.W);
+				return A7($author$project$Activity$Activity, '', date, description, model.al, duration, model.Z, model.O);
 			}),
-		A2($author$project$ActivityForm$validateFieldExists, model.ak, 'date'),
+		A2($author$project$ActivityForm$validateFieldExists, model.am, 'date'),
 		A2(
 			$author$project$ActivityForm$validateFieldExists,
-			$elm$core$Maybe$Just(model.am),
+			$elm$core$Maybe$Just(model.ap),
 			'description'),
-		A2($author$project$ActivityForm$validateFieldExists, model.ao, 'duration'));
+		A2($author$project$ActivityForm$validateFieldExists, model.S, 'duration'));
 };
 var $author$project$ActivityForm$updateResult = function (model) {
 	return _Utils_update(
 		model,
 		{
-			v: $author$project$ActivityForm$validate(model)
+			r: $author$project$ActivityForm$validate(model)
 		});
 };
 var $author$project$ActivityForm$selectDate = F2(
 	function (date, model) {
-		return _Utils_eq(model.ak, $elm$core$Maybe$Nothing) ? $author$project$ActivityForm$updateResult(
+		return _Utils_eq(model.am, $elm$core$Maybe$Nothing) ? $author$project$ActivityForm$updateResult(
 			_Utils_update(
 				model,
 				{
-					ak: $elm$core$Maybe$Just(date)
+					am: $elm$core$Maybe$Just(date)
 				})) : model;
 	});
 var $author$project$ActivityForm$ApiError = {$: 0};
 var $author$project$ActivityForm$GotDeleteResult = function (a) {
-	return {$: 10, a: a};
+	return {$: 12, a: a};
 };
 var $author$project$ActivityForm$GotSubmitResult = function (a) {
-	return {$: 9, a: a};
+	return {$: 11, a: a};
 };
 var $elm$core$List$append = F2(
 	function (xs, ys) {
@@ -7782,7 +7835,7 @@ var $justinmimbs$date$Date$toCalendarDateHelp = F3(
 				d = $temp$d;
 				continue toCalendarDateHelp;
 			} else {
-				return {al: d, aF: m, a5: y};
+				return {an: d, aK: m, ba: y};
 			}
 		}
 	});
@@ -7813,33 +7866,33 @@ var $justinmimbs$date$Date$toOrdinalDate = function (_v0) {
 	var rd = _v0;
 	var y = $justinmimbs$date$Date$year(rd);
 	return {
-		V: rd - $justinmimbs$date$Date$daysBeforeYear(y),
-		a5: y
+		Y: rd - $justinmimbs$date$Date$daysBeforeYear(y),
+		ba: y
 	};
 };
 var $justinmimbs$date$Date$toCalendarDate = function (_v0) {
 	var rd = _v0;
 	var date = $justinmimbs$date$Date$toOrdinalDate(rd);
-	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.a5, 0, date.V);
+	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.ba, 0, date.Y);
 };
 var $justinmimbs$date$Date$day = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toCalendarDate,
 	function ($) {
-		return $.al;
+		return $.an;
 	});
 var $justinmimbs$date$Date$month = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toCalendarDate,
 	function ($) {
-		return $.aF;
+		return $.aK;
 	});
 var $justinmimbs$date$Date$monthNumber = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$month, $justinmimbs$date$Date$monthToNumber);
 var $justinmimbs$date$Date$ordinalDay = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toOrdinalDate,
 	function ($) {
-		return $.V;
+		return $.Y;
 	});
 var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function (_char) {
@@ -7925,22 +7978,22 @@ var $justinmimbs$date$Date$toWeekDate = function (_v0) {
 	var wy = $justinmimbs$date$Date$year(rd + (4 - wdn));
 	var week1Day1 = $justinmimbs$date$Date$daysBeforeWeekYear(wy) + 1;
 	return {
-		a3: 1 + (((rd - week1Day1) / 7) | 0),
-		a4: wy,
-		bI: $justinmimbs$date$Date$numberToWeekday(wdn)
+		a8: 1 + (((rd - week1Day1) / 7) | 0),
+		a9: wy,
+		bJ: $justinmimbs$date$Date$numberToWeekday(wdn)
 	};
 };
 var $justinmimbs$date$Date$weekNumber = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.a3;
+		return $.a8;
 	});
 var $justinmimbs$date$Date$weekYear = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.a4;
+		return $.a9;
 	});
 var $justinmimbs$date$Date$weekday = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$weekdayNumber, $justinmimbs$date$Date$numberToWeekday);
 var $elm$core$Basics$min = F2(
@@ -8039,16 +8092,16 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$monthNumber(date)));
 					case 3:
-						return language.M(
+						return language.P(
 							$justinmimbs$date$Date$month(date));
 					case 4:
-						return language.T(
+						return language.W(
 							$justinmimbs$date$Date$month(date));
 					case 5:
 						return A2(
 							$elm$core$String$left,
 							1,
-							language.M(
+							language.P(
 								$justinmimbs$date$Date$month(date)));
 					default:
 						return '';
@@ -8081,7 +8134,7 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$day(date)));
 					case 3:
-						return language.O(
+						return language.R(
 							$justinmimbs$date$Date$day(date));
 					default:
 						return '';
@@ -8120,7 +8173,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.y(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
-						return language.aa(
+						return language.ad(
 							$justinmimbs$date$Date$weekday(date));
 					case 5:
 						return A2(
@@ -8194,7 +8247,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.b, offset) < 0,
 					0,
-					{ai: col, c: s0.c, d: s0.d, b: offset, aU: row, a: s0.a});
+					{ak: col, c: s0.c, d: s0.d, b: offset, aZ: row, a: s0.a});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -8226,7 +8279,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aU, s.ai, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aZ, s.ak, s);
 	};
 };
 var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
@@ -8452,13 +8505,13 @@ var $justinmimbs$date$Date$weekdayToName = function (wd) {
 	}
 };
 var $justinmimbs$date$Date$language_en = {
-	O: $justinmimbs$date$Date$withOrdinalSuffix,
-	T: $justinmimbs$date$Date$monthToName,
-	M: A2(
+	R: $justinmimbs$date$Date$withOrdinalSuffix,
+	W: $justinmimbs$date$Date$monthToName,
+	P: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
-	aa: $justinmimbs$date$Date$weekdayToName,
+	ad: $justinmimbs$date$Date$weekdayToName,
 	y: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
@@ -8470,35 +8523,51 @@ var $justinmimbs$date$Date$format = function (pattern) {
 var $justinmimbs$date$Date$toIsoString = $justinmimbs$date$Date$format('yyyy-MM-dd');
 var $author$project$Activity$encoder = function (activity) {
 	var paceEncoder = function () {
-		var _v0 = activity.W;
-		if (!_v0.$) {
-			var pace_ = _v0.a;
-			return $author$project$Activity$pace.bc(pace_);
+		var _v1 = activity.Z;
+		if (!_v1.$) {
+			var pace_ = _v1.a;
+			return $author$project$Activity$pace.as(pace_);
 		} else {
 			return $elm$json$Json$Encode$null;
 		}
 	}();
+	var distanceEncoder = function () {
+		var _v0 = activity.O;
+		if (!_v0.$) {
+			var distance_ = _v0.a;
+			return _List_fromArray(
+				[
+					_Utils_Tuple2(
+					'distance',
+					$author$project$Activity$distance.as(distance_))
+				]);
+		} else {
+			return _List_Nil;
+		}
+	}();
 	return $elm$json$Json$Encode$object(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'id',
-				$elm$json$Json$Encode$string(activity.ay)),
-				_Utils_Tuple2(
-				'date',
-				$elm$json$Json$Encode$string(
-					$justinmimbs$date$Date$toIsoString(activity.ak))),
-				_Utils_Tuple2(
-				'description',
-				$elm$json$Json$Encode$string(activity.am)),
-				_Utils_Tuple2(
-				'completed',
-				$elm$json$Json$Encode$bool(activity.aj)),
-				_Utils_Tuple2(
-				'duration',
-				$elm$json$Json$Encode$int(activity.ao)),
-				_Utils_Tuple2('pace', paceEncoder)
-			]));
+		_Utils_ap(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'id',
+					$elm$json$Json$Encode$string(activity.aC)),
+					_Utils_Tuple2(
+					'date',
+					$elm$json$Json$Encode$string(
+						$justinmimbs$date$Date$toIsoString(activity.am))),
+					_Utils_Tuple2(
+					'description',
+					$elm$json$Json$Encode$string(activity.ap)),
+					_Utils_Tuple2(
+					'completed',
+					$elm$json$Json$Encode$bool(activity.al)),
+					_Utils_Tuple2(
+					'duration',
+					$elm$json$Json$Encode$int(activity.S)),
+					_Utils_Tuple2('pace', paceEncoder)
+				]),
+			distanceEncoder));
 };
 var $elm$http$Http$jsonBody = function (value) {
 	return A2(
@@ -8518,18 +8587,18 @@ var $elm$json$Json$Encode$list = F2(
 var $author$project$Api$postActivities = function (activities) {
 	return $elm$http$Http$task(
 		{
-			af: $elm$http$Http$jsonBody(
+			ah: $elm$http$Http$jsonBody(
 				A2($elm$json$Json$Encode$list, $author$project$Activity$encoder, activities)),
-			av: _List_Nil,
-			aE: 'PUT',
-			aT: $elm$http$Http$stringResolver(
+			az: _List_Nil,
+			aJ: 'PUT',
+			aY: $elm$http$Http$stringResolver(
 				$author$project$Api$handleJsonResponse(
 					A2(
 						$elm$json$Json$Decode$field,
 						'data',
 						$elm$json$Json$Decode$list($author$project$Activity$decoder)))),
-			a$: $elm$core$Maybe$Nothing,
-			a2: $author$project$Api$storeUrl
+			a4: $elm$core$Maybe$Nothing,
+			a7: $author$project$Api$storeUrl
 		});
 };
 var $author$project$Api$createActivity = function (activity) {
@@ -8579,7 +8648,7 @@ var $author$project$Api$deleteActivity = function (id) {
 					A2(
 						$elm$core$List$partition,
 						function (a) {
-							return _Utils_eq(a.ay, id);
+							return _Utils_eq(a.aC, id);
 						},
 						activities));
 			},
@@ -8594,7 +8663,7 @@ var $elm$core$Task$mapError = F2(
 	});
 var $author$project$Api$saveActivity = function (activity) {
 	var updateActivity = function (existing) {
-		return _Utils_eq(existing.ay, activity.ay) ? activity : existing;
+		return _Utils_eq(existing.aC, activity.aC) ? activity : existing;
 	};
 	return A2(
 		$elm$core$Task$andThen,
@@ -8608,30 +8677,57 @@ var $author$project$ActivityForm$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 0:
+				var activityType = msg.a;
+				switch (activityType) {
+					case 0:
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										O: $elm$core$Maybe$Nothing,
+										S: $elm$core$Maybe$Just(
+											A2($elm$core$Maybe$withDefault, 30, model.S)),
+										Z: $elm$core$Maybe$Just(
+											A2($elm$core$Maybe$withDefault, 0, model.Z))
+									})),
+							$elm$core$Platform$Cmd$none);
+					case 1:
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										O: $elm$core$Maybe$Just(
+											A2($elm$core$Maybe$withDefault, 0, model.O)),
+										S: $elm$core$Maybe$Just(
+											A2($elm$core$Maybe$withDefault, 20, model.S)),
+										Z: $elm$core$Maybe$Nothing
+									})),
+							$elm$core$Platform$Cmd$none);
+					default:
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{O: $elm$core$Maybe$Nothing, Z: $elm$core$Maybe$Nothing})),
+							$elm$core$Platform$Cmd$none);
+				}
+			case 1:
 				var desc = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
-							{am: desc})),
+							{ap: desc})),
 					$elm$core$Platform$Cmd$none);
-			case 1:
+			case 2:
 				var bool = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
-							{aj: bool})),
-					$elm$core$Platform$Cmd$none);
-			case 2:
-				var str = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								ao: $elm$core$String$toInt(str)
-							})),
+							{al: bool})),
 					$elm$core$Platform$Cmd$none);
 			case 3:
 				var str = msg.a;
@@ -8640,27 +8736,47 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								W: $author$project$Activity$pace.be(str)
+								S: $elm$core$String$toInt(str)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 4:
-				var _v1 = model.v;
-				if (!_v1.$) {
-					var activity = _v1.a;
+				var str = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								Z: $author$project$Activity$pace.ay(str)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 5:
+				var str = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								O: $author$project$Activity$distance.ay(str)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 6:
+				var _v2 = model.r;
+				if (!_v2.$) {
+					var activity = _v2.a;
 					var apiTask = function () {
-						var _v3 = model.w;
-						if (_v3.$ === 1) {
-							var id = _v3.a;
+						var _v4 = model.w;
+						if (_v4.$ === 1) {
+							var id = _v4.a;
 							return $author$project$Api$saveActivity(
 								_Utils_update(
 									activity,
-									{ay: id}));
+									{aC: id}));
 						} else {
-							var id = _v3.a;
+							var id = _v4.a;
 							return $author$project$Api$createActivity(
 								_Utils_update(
 									activity,
-									{ay: id}));
+									{aC: id}));
 						}
 					}();
 					return _Utils_Tuple2(
@@ -8670,20 +8786,20 @@ var $author$project$ActivityForm$update = F2(
 							$author$project$ActivityForm$GotSubmitResult,
 							A2(
 								$elm$core$Task$mapError,
-								function (_v2) {
+								function (_v3) {
 									return $author$project$ActivityForm$ApiError;
 								},
 								apiTask)));
 				} else {
-					var error = _v1.a;
+					var error = _v2.a;
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 5:
+			case 7:
 				return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
-			case 6:
-				var _v4 = model.w;
-				if (_v4.$ === 1) {
-					var id = _v4.a;
+			case 8:
+				var _v5 = model.w;
+				if (_v5.$ === 1) {
+					var id = _v5.a;
 					return _Utils_Tuple2(
 						model,
 						$elm$core$Platform$Cmd$batch(
@@ -8694,7 +8810,7 @@ var $author$project$ActivityForm$update = F2(
 									$author$project$ActivityForm$GotDeleteResult,
 									A2(
 										$elm$core$Task$mapError,
-										function (_v5) {
+										function (_v6) {
 											return $author$project$ActivityForm$ApiError;
 										},
 										$author$project$Api$deleteActivity(id))),
@@ -8703,23 +8819,23 @@ var $author$project$ActivityForm$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
 				}
-			case 7:
+			case 9:
 				var newModel = _Utils_update(
 					model,
-					{ak: $elm$core$Maybe$Nothing});
+					{am: $elm$core$Maybe$Nothing});
 				return _Utils_Tuple2(
 					_Utils_update(
 						newModel,
 						{
-							v: $author$project$ActivityForm$validate(newModel)
+							r: $author$project$ActivityForm$validate(newModel)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 8:
+			case 10:
 				var id = msg.a;
 				return _Utils_Tuple2(
-					A2($author$project$ActivityForm$initNew, id, model.ak),
+					A2($author$project$ActivityForm$initNew, id, model.am),
 					$elm$core$Platform$Cmd$none);
-			case 9:
+			case 11:
 				var result = msg.a;
 				if (!result.$) {
 					var activities = result.a;
@@ -8730,7 +8846,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								v: $elm$core$Result$Err(error)
+								r: $elm$core$Result$Err(error)
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
@@ -8745,7 +8861,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								v: $elm$core$Result$Err(error)
+								r: $elm$core$Result$Err(error)
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
@@ -8794,7 +8910,7 @@ var $author$project$Main$update = F2(
 						$author$project$Main$Loaded(
 							_Utils_update(
 								state,
-								{k: activityForm, z: calendar, ak: date})),
+								{k: activityForm, z: calendar, am: date})),
 						$author$project$Main$resetScroll($author$project$Main$NoOp));
 				case 1:
 					return _Utils_Tuple2(
@@ -8829,7 +8945,7 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				case 3:
 					var dateM = msg.a;
-					var date = A2($elm$core$Maybe$withDefault, state.ak, dateM);
+					var date = A2($elm$core$Maybe$withDefault, state.am, dateM);
 					return _Utils_Tuple2(
 						$author$project$Main$Loaded(
 							_Utils_update(
@@ -8848,25 +8964,25 @@ var $author$project$Main$update = F2(
 						_v8$3:
 						while (true) {
 							switch (subMsg.$) {
+								case 11:
+									if (!subMsg.a.$) {
+										var activities = subMsg.a.a;
+										return _Utils_update(
+											state,
+											{F: activities, k: $elm$core$Maybe$Nothing});
+									} else {
+										break _v8$3;
+									}
+								case 12:
+									if (!subMsg.a.$) {
+										var activities = subMsg.a.a;
+										return _Utils_update(
+											state,
+											{F: activities, k: $elm$core$Maybe$Nothing});
+									} else {
+										break _v8$3;
+									}
 								case 9:
-									if (!subMsg.a.$) {
-										var activities = subMsg.a.a;
-										return _Utils_update(
-											state,
-											{F: activities, k: $elm$core$Maybe$Nothing});
-									} else {
-										break _v8$3;
-									}
-								case 10:
-									if (!subMsg.a.$) {
-										var activities = subMsg.a.a;
-										return _Utils_update(
-											state,
-											{F: activities, k: $elm$core$Maybe$Nothing});
-									} else {
-										break _v8$3;
-									}
-								case 7:
 									return _Utils_update(
 										state,
 										{z: 0});
@@ -8939,7 +9055,7 @@ var $author$project$ActivityForm$isEditing = F2(
 		var _v0 = model.w;
 		if (_v0.$ === 1) {
 			var id = _v0.a;
-			return _Utils_eq(activity.ay, id);
+			return _Utils_eq(activity.aC, id);
 		} else {
 			return false;
 		}
@@ -8955,13 +9071,13 @@ var $justinmimbs$date$Date$add = F3(
 				return A3($justinmimbs$date$Date$add, 1, 12 * n, rd);
 			case 1:
 				var date = $justinmimbs$date$Date$toCalendarDate(rd);
-				var wholeMonths = ((12 * (date.a5 - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aF) - 1)) + n;
+				var wholeMonths = ((12 * (date.ba - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aK) - 1)) + n;
 				var m = $justinmimbs$date$Date$numberToMonth(
 					A2($elm$core$Basics$modBy, 12, wholeMonths) + 1);
 				var y = A2($justinmimbs$date$Date$floorDiv, wholeMonths, 12) + 1;
 				return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + A2(
 					$elm$core$Basics$min,
-					date.al,
+					date.an,
 					A2($justinmimbs$date$Date$daysInMonth, y, m));
 			case 2:
 				return rd + (7 * n);
@@ -9141,7 +9257,7 @@ var $author$project$Main$onScroll = function (_v0) {
 				var scrollTop = _v1.a;
 				var scrollHeight = _v1.b;
 				var clientHeight = _v1.c;
-				return (_Utils_cmp(scrollTop, $author$project$Main$scrollConfig.R) < 0) ? $elm$json$Json$Decode$succeed(loadPrevious) : ((_Utils_cmp(scrollTop, (scrollHeight - clientHeight) - $author$project$Main$scrollConfig.R) > 0) ? $elm$json$Json$Decode$succeed(loadNext) : $elm$json$Json$Decode$fail(''));
+				return (_Utils_cmp(scrollTop, $author$project$Main$scrollConfig.U) < 0) ? $elm$json$Json$Decode$succeed(loadPrevious) : ((_Utils_cmp(scrollTop, (scrollHeight - clientHeight) - $author$project$Main$scrollConfig.U) > 0) ? $elm$json$Json$Decode$succeed(loadNext) : $elm$json$Json$Decode$fail(''));
 			},
 			A4(
 				$elm$json$Json$Decode$map3,
@@ -9200,7 +9316,7 @@ var $author$project$ActivityForm$isCreating = F2(
 		var _v0 = model.w;
 		if (!_v0.$) {
 			return _Utils_eq(
-				model.ak,
+				model.am,
 				$elm$core$Maybe$Just(date));
 		} else {
 			return false;
@@ -9214,69 +9330,32 @@ var $elm$html$Html$Events$onClick = function (msg) {
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$ActivityForm$ClickedMove = {$: 7};
-var $author$project$ActivityForm$ClickedReset = {$: 5};
+var $author$project$ActivityForm$ClickedMove = {$: 9};
+var $author$project$ActivityForm$ClickedReset = {$: 7};
 var $author$project$ActivityForm$EditedDescription = function (a) {
-	return {$: 0, a: a};
-};
-var $author$project$ActivityForm$EditedDuration = function (a) {
-	return {$: 2, a: a};
-};
-var $author$project$Activity$Other = 1;
-var $author$project$ActivityForm$SelectedPace = function (a) {
-	return {$: 3, a: a};
-};
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $author$project$ActivityForm$CheckedCompleted = function (a) {
 	return {$: 1, a: a};
 };
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
+var $author$project$ActivityForm$EditedDuration = function (a) {
+	return {$: 3, a: a};
+};
+var $author$project$Activity$Other = 2;
+var $author$project$ActivityForm$SelectedDistance = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$ActivityForm$SelectedPace = function (a) {
+	return {$: 4, a: a};
+};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (!maybeValue.$) {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
 	});
-var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$label = _VirtualDom_node('label');
-var $elm$html$Html$Events$targetChecked = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'checked']),
-	$elm$json$Json$Decode$bool);
-var $elm$html$Html$Events$onCheck = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'change',
-		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
-};
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $author$project$ActivityForm$completedCheckbox = function (completed) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$type_('checkbox'),
-						$elm$html$Html$Attributes$checked(completed),
-						$elm$html$Html$Events$onCheck($author$project$ActivityForm$CheckedCompleted)
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$label,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Completed')
-					]))
-			]));
-};
-var $author$project$ActivityForm$ClickedDelete = {$: 6};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$ActivityForm$ClickedDelete = {$: 8};
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $author$project$ActivityForm$deleteButton = function (status) {
 	if (status.$ === 1) {
@@ -9325,7 +9404,42 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $author$project$ActivityForm$distanceSelect = F2(
+	function (msg, distance) {
+		var selectedAttr = function (distanceStr) {
+			return _Utils_eq(
+				$author$project$Activity$distance.bF(distance),
+				distanceStr) ? _List_fromArray(
+				[
+					A2($elm$html$Html$Attributes$attribute, 'selected', '')
+				]) : _List_Nil;
+		};
+		return A2(
+			$elm$html$Html$select,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onInput(msg),
+					$elm$html$Html$Attributes$name('distance')
+				]),
+			A2(
+				$elm$core$List$map,
+				function (_v0) {
+					var distanceStr = _v0.a;
+					return A2(
+						$elm$html$Html$option,
+						selectedAttr(distanceStr),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(distanceStr)
+							]));
+				},
+				$author$project$Activity$distance.aH));
+	});
+var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$ActivityForm$durationInput = F2(
 	function (msg, duration) {
@@ -9346,20 +9460,220 @@ var $author$project$ActivityForm$durationInput = F2(
 				]),
 			_List_Nil);
 	});
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $author$project$ActivityForm$paceSelect = F2(
-	function (msg, paceM) {
-		var selected = function () {
-			if (!paceM.$) {
-				var pace = paceM.a;
-				return $author$project$Activity$pace.bE(pace);
+var $author$project$ActivityForm$maybeView = F2(
+	function (attrM, viewF) {
+		if (!attrM.$) {
+			var attr = attrM.a;
+			return viewF(attr);
+		} else {
+			return $elm$html$Html$text('');
+		}
+	});
+var $author$project$MPRLevel$Neutral = 0;
+var $elm$core$Result$andThen = F2(
+	function (callback, result) {
+		if (!result.$) {
+			var value = result.a;
+			return callback(value);
+		} else {
+			var msg = result.a;
+			return $elm$core$Result$Err(msg);
+		}
+	});
+var $author$project$MPRData$aerobicRace = '\n{"5k":["0:28:00","0:27:45","0:27:30","0:27:15","0:27:00","0:26:45","0:26:30","0:26:15","0:26:00","0:25:45","0:25:30","0:25:15","0:25:00","0:24:45","0:24:30","0:24:15","0:24:00","0:23:45","0:23:30","0:23:15","0:23:00","0:22:45","0:22:30","0:22:15","0:22:00","0:21:45","0:21:30","0:21:15","0:21:00","0:20:45","0:20:30","0:20:15","0:20:00","0:19:45","0:19:30","0:19:15","0:19:00","0:18:45","0:18:30","0:18:15","0:18:00","0:17:45","0:17:30","0:17:15","0:17:00","0:16:45","0:16:30","0:16:15","0:16:00","0:15:45","0:15:30","0:15:15","0:15:00","0:14:45","0:14:30","0:14:15","0:14:00","0:13:45","0:13:30","0:13:15","0:13:00"],"8k":["0:45:53","0:45:28","0:45:03","0:44:39","0:44:14","0:43:50","0:43:25","0:43:00","0:42:36","0:42:11","0:41:47","0:41:22","0:40:58","0:40:33","0:40:08","0:39:44","0:39:19","0:38:55","0:38:30","0:38:06","0:37:41","0:37:16","0:36:52","0:36:27","0:36:03","0:35:38","0:35:14","0:34:49","0:34:24","0:34:00","0:33:35","0:33:11","0:32:46","0:32:22","0:31:57","0:31:32","0:31:08","0:30:43","0:30:19","0:29:54","0:29:29","0:29:05","0:28:40","0:28:16","0:27:51","0:27:27","0:27:02","0:26:37","0:26:13","0:25:48","0:25:24","0:24:59","0:24:35","0:24:10","0:23:45","0:23:21","0:22:56","0:22:32","0:22:07","0:21:43","0:21:18"],"5 mile":["0:46:09","0:45:44","0:45:19","0:44:55","0:44:30","0:44:05","0:43:40","0:43:16","0:42:51","0:42:26","0:42:01","0:41:37","0:41:12","0:40:47","0:40:23","0:39:58","0:39:33","0:39:08","0:38:44","0:38:19","0:37:54","0:37:30","0:37:05","0:36:40","0:36:15","0:35:51","0:35:26","0:35:01","0:34:37","0:34:12","0:33:47","0:33:22","0:32:58","0:32:33","0:32:08","0:31:43","0:31:19","0:30:54","0:30:29","0:30:05","0:29:40","0:29:15","0:28:50","0:28:26","0:28:01","0:27:36","0:27:12","0:26:47","0:26:22","0:25:57","0:25:33","0:25:08","0:24:43","0:24:19","0:23:54","0:23:29","0:23:04","0:22:40","0:22:15","0:21:50","0:21:25"],"10k":["0:58:14","0:57:43","0:57:12","0:56:41","0:56:10","0:55:38","0:55:07","0:54:36","0:54:05","0:53:34","0:53:02","0:52:31","0:52:00","0:51:29","0:50:58","0:50:26","0:49:55","0:49:24","0:48:53","0:48:22","0:47:50","0:47:19","0:46:48","0:46:17","0:45:46","0:45:14","0:44:43","0:44:12","0:43:41","0:43:10","0:42:38","0:42:07","0:41:36","0:41:05","0:40:34","0:40:02","0:39:31","0:39:00","0:38:29","0:37:58","0:37:26","0:36:55","0:36:24","0:35:53","0:35:22","0:34:50","0:34:19","0:33:48","0:33:17","0:32:46","0:32:14","0:31:43","0:31:12","0:30:41","0:30:10","0:29:38","0:29:07","0:28:36","0:28:05","0:27:34","0:27:02"],"15k":["1:29:06","1:28:19","1:27:31","1:26:43","1:25:55","1:25:08","1:24:20","1:23:32","1:22:45","1:21:57","1:21:09","1:20:21","1:19:34","1:18:46","1:17:58","1:17:10","1:16:23","1:15:35","1:14:47","1:13:59","1:13:12","1:12:24","1:11:36","1:10:49","1:10:01","1:09:13","1:08:25","1:07:38","1:06:50","1:06:02","1:05:14","1:04:27","1:03:39","1:02:51","1:02:03","1:01:16","1:00:28","0:59:40","0:58:52","0:58:05","0:57:17","0:56:29","0:55:42","0:54:54","0:54:06","0:53:18","0:52:31","0:51:43","0:50:55","0:50:07","0:49:20","0:48:32","0:47:44","0:46:56","0:46:09","0:45:21","0:44:33","0:43:45","0:42:58","0:42:10","0:41:22"],"10 mile":["1:35:59","1:35:07","1:34:16","1:33:25","1:32:33","1:31:42","1:30:50","1:29:59","1:29:08","1:28:16","1:27:25","1:26:33","1:25:42","1:24:50","1:23:59","1:23:08","1:22:16","1:21:25","1:20:33","1:19:42","1:18:50","1:17:59","1:17:08","1:16:16","1:15:25","1:14:33","1:13:42","1:12:51","1:11:59","1:11:08","1:10:16","1:09:25","1:08:33","1:07:42","1:06:51","1:05:59","1:05:08","1:04:16","1:03:25","1:02:34","1:01:42","1:00:51","0:59:59","0:59:08","0:58:16","0:57:25","0:56:34","0:55:42","0:54:51","0:53:59","0:53:08","0:52:17","0:51:25","0:50:34","0:49:42","0:48:51","0:47:59","0:47:08","0:46:17","0:45:25","0:44:34"],"20k":["2:01:08","2:00:03","1:58:59","1:57:54","1:56:49","1:55:44","1:54:39","1:53:34","1:52:29","1:51:24","1:50:19","1:49:14","1:48:10","1:47:05","1:46:00","1:44:55","1:43:50","1:42:45","1:41:40","1:40:35","1:39:30","1:38:26","1:37:21","1:36:16","1:35:11","1:34:06","1:33:01","1:31:56","1:30:51","1:29:46","1:28:41","1:27:37","1:26:32","1:25:27","1:24:22","1:23:17","1:22:12","1:21:07","1:20:02","1:18:57","1:17:53","1:16:48","1:15:43","1:14:38","1:13:33","1:12:28","1:11:23","1:10:18","1:09:13","1:08:08","1:07:04","1:05:59","1:04:54","1:03:49","1:02:44","1:01:39","1:00:34","0:59:29","0:58:24","0:57:19","0:56:15"],"Half Marathon":["2:08:19","2:07:11","2:06:02","2:04:53","2:03:44","2:02:36","2:01:27","2:00:18","1:59:09","1:58:01","1:56:52","1:55:43","1:54:34","1:53:26","1:52:17","1:51:08","1:49:59","1:48:51","1:47:42","1:46:33","1:45:25","1:44:16","1:43:07","1:41:58","1:40:50","1:39:41","1:38:32","1:37:23","1:36:15","1:35:06","1:33:57","1:32:48","1:31:40","1:30:31","1:29:22","1:28:13","1:27:05","1:25:56","1:24:47","1:23:38","1:22:30","1:21:21","1:20:12","1:19:03","1:17:55","1:16:46","1:15:37","1:14:28","1:13:20","1:12:11","1:11:02","1:09:53","1:08:45","1:07:36","1:06:27","1:05:18","1:04:10","1:03:01","1:01:52","1:00:43","0:59:35"],"25k":["2:32:56","2:31:34","2:30:12","2:28:51","2:27:29","2:26:07","2:24:45","2:23:23","2:22:01","2:20:39","2:19:17","2:17:55","2:16:33","2:15:11","2:13:49","2:12:27","2:11:05","2:09:43","2:08:22","2:07:00","2:05:38","2:04:16","2:02:54","2:01:32","2:00:10","1:58:48","1:57:26","1:56:04","1:54:42","1:53:20","1:51:58","1:50:36","1:49:14","1:47:53","1:46:31","1:45:09","1:43:47","1:42:25","1:41:03","1:39:41","1:38:19","1:36:57","1:35:35","1:34:13","1:32:51","1:31:29","1:30:07","1:28:46","1:27:24","1:26:02","1:24:40","1:23:18","1:21:56","1:20:34","1:19:12","1:17:50","1:16:28","1:15:06","1:13:44","1:12:22","1:11:00"],"30k":["3:05:21","3:03:41","3:02:02","3:00:23","2:58:43","2:57:04","2:55:25","2:53:46","2:52:06","2:50:27","2:48:48","2:47:08","2:45:29","2:43:50","2:42:11","2:40:31","2:38:52","2:37:13","2:35:33","2:33:54","2:32:15","2:30:35","2:28:56","2:27:17","2:25:38","2:23:58","2:22:19","2:20:40","2:19:00","2:17:21","2:15:42","2:14:03","2:12:23","2:10:44","2:09:05","2:07:25","2:05:46","2:04:07","2:02:28","2:00:48","1:59:09","1:57:30","1:55:50","1:54:11","1:52:32","1:50:52","1:49:13","1:47:34","1:45:55","1:44:15","1:42:36","1:40:57","1:39:17","1:37:38","1:35:59","1:34:20","1:32:40","1:31:01","1:29:22","1:27:42","1:26:03"],"Marathon":["4:26:25","4:24:02","4:21:39","4:19:17","4:16:54","4:14:31","4:12:08","4:09:46","4:07:23","4:05:00","4:02:38","4:00:15","3:57:52","3:55:29","3:53:07","3:50:44","3:48:21","3:45:59","3:43:36","3:41:13","3:38:50","3:36:28","3:34:05","3:31:42","3:29:19","3:26:57","3:24:34","3:22:11","3:19:49","3:17:26","3:15:03","3:12:40","3:10:18","3:07:55","3:05:32","3:03:10","3:00:47","2:58:24","2:56:01","2:53:39","2:51:16","2:48:53","2:46:30","2:44:08","2:41:45","2:39:22","2:37:00","2:34:37","2:32:14","2:29:51","2:27:29","2:25:06","2:22:43","2:20:21","2:17:58","2:15:35","2:13:12","2:10:50","2:08:27","2:06:04","2:03:41"]}\n';
+var $elm$json$Json$Decode$array = _Json_decodeArray;
+var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
+var $elm$json$Json$Decode$dict = function (decoder) {
+	return A2(
+		$elm$json$Json$Decode$map,
+		$elm$core$Dict$fromList,
+		$elm$json$Json$Decode$keyValuePairs(decoder));
+};
+var $author$project$MPRData$neutralRace = '\n{"5k":["0:28:00","0:27:45","0:27:30","0:27:15","0:27:00","0:26:45","0:26:30","0:26:15","0:26:00","0:25:45","0:25:30","0:25:15","0:25:00","0:24:45","0:24:30","0:24:15","0:24:00","0:23:45","0:23:30","0:23:15","0:23:00","0:22:45","0:22:30","0:22:15","0:22:00","0:21:45","0:21:30","0:21:15","0:21:00","0:20:45","0:20:30","0:20:15","0:20:00","0:19:45","0:19:30","0:19:15","0:19:00","0:18:45","0:18:30","0:18:15","0:18:00","0:17:45","0:17:30","0:17:15","0:17:00","0:16:45","0:16:30","0:16:15","0:16:00","0:15:45","0:15:30","0:15:15","0:15:00","0:14:45","0:14:30","0:14:15","0:14:00","0:13:45","0:13:30","0:13:15","0:13:00"],"8k":["0:46:01","0:45:36","0:45:11","0:44:47","0:44:22","0:43:57","0:43:33","0:43:08","0:42:43","0:42:19","0:41:54","0:41:29","0:41:05","0:40:40","0:40:16","0:39:51","0:39:26","0:39:02","0:38:37","0:38:12","0:37:48","0:37:23","0:36:58","0:36:34","0:36:09","0:35:44","0:35:20","0:34:55","0:34:30","0:34:06","0:33:41","0:33:16","0:32:52","0:32:27","0:32:03","0:31:38","0:31:13","0:30:49","0:30:24","0:29:59","0:29:35","0:29:10","0:28:45","0:28:21","0:27:56","0:27:31","0:27:07","0:26:42","0:26:17","0:25:53","0:25:28","0:25:04","0:24:39","0:24:14","0:23:50","0:23:25","0:23:00","0:22:36","0:22:11","0:21:46","0:21:22"],"5 mile":["0:46:17","0:45:52","0:45:27","0:45:02","0:44:38","0:44:13","0:43:48","0:43:23","0:42:58","0:42:34","0:42:09","0:41:44","0:41:19","0:40:54","0:40:30","0:40:05","0:39:40","0:39:15","0:38:51","0:38:26","0:38:01","0:37:36","0:37:11","0:36:47","0:36:22","0:35:57","0:35:32","0:35:07","0:34:43","0:34:18","0:33:53","0:33:28","0:33:03","0:32:39","0:32:14","0:31:49","0:31:24","0:30:59","0:30:35","0:30:10","0:29:45","0:29:20","0:28:55","0:28:31","0:28:06","0:27:41","0:27:16","0:26:52","0:26:27","0:26:02","0:25:37","0:25:12","0:24:48","0:24:23","0:23:58","0:23:33","0:23:08","0:22:44","0:22:19","0:21:54","0:21:29"],"10k":["0:58:31","0:58:00","0:57:28","0:56:57","0:56:26","0:55:54","0:55:23","0:54:52","0:54:20","0:53:49","0:53:18","0:52:46","0:52:15","0:51:44","0:51:12","0:50:41","0:50:10","0:49:38","0:49:07","0:48:36","0:48:04","0:47:33","0:47:01","0:46:30","0:45:59","0:45:27","0:44:56","0:44:25","0:43:53","0:43:22","0:42:51","0:42:19","0:41:48","0:41:17","0:40:45","0:40:14","0:39:43","0:39:11","0:38:40","0:38:09","0:37:37","0:37:06","0:36:34","0:36:03","0:35:32","0:35:00","0:34:29","0:33:58","0:33:26","0:32:55","0:32:24","0:31:52","0:31:21","0:30:50","0:30:18","0:29:47","0:29:16","0:28:44","0:28:13","0:27:42","0:27:10"],"15k":["1:29:45","1:28:57","1:28:09","1:27:21","1:26:33","1:25:45","1:24:57","1:24:09","1:23:21","1:22:33","1:21:44","1:20:56","1:20:08","1:19:20","1:18:32","1:17:44","1:16:56","1:16:08","1:15:20","1:14:32","1:13:44","1:12:56","1:12:07","1:11:19","1:10:31","1:09:43","1:08:55","1:08:07","1:07:19","1:06:31","1:05:43","1:04:55","1:04:07","1:03:19","1:02:30","1:01:42","1:00:54","1:00:06","0:59:18","0:58:30","0:57:42","0:56:54","0:56:06","0:55:18","0:54:30","0:53:42","0:52:53","0:52:05","0:51:17","0:50:29","0:49:41","0:48:53","0:48:05","0:47:17","0:46:29","0:45:41","0:44:53","0:44:05","0:43:16","0:42:28","0:41:40"],"10 mile":["1:36:44","1:35:52","1:35:00","1:34:08","1:33:16","1:32:24","1:31:33","1:30:41","1:29:49","1:28:57","1:28:05","1:27:14","1:26:22","1:25:30","1:24:38","1:23:46","1:22:54","1:22:03","1:21:11","1:20:19","1:19:27","1:18:35","1:17:44","1:16:52","1:16:00","1:15:08","1:14:16","1:13:24","1:12:33","1:11:41","1:10:49","1:09:57","1:09:05","1:08:14","1:07:22","1:06:30","1:05:38","1:04:46","1:03:54","1:03:03","1:02:11","1:01:19","1:00:27","0:59:35","0:58:44","0:57:52","0:57:00","0:56:08","0:55:16","0:54:24","0:53:33","0:52:41","0:51:49","0:50:57","0:50:05","0:49:14","0:48:22","0:47:30","0:46:38","0:45:46","0:44:54"],"20k":["2:02:18","2:01:13","2:00:07","1:59:02","1:57:56","1:56:51","1:55:45","1:54:40","1:53:34","1:52:29","1:51:23","1:50:18","1:49:12","1:48:07","1:47:01","1:45:56","1:44:50","1:43:45","1:42:39","1:41:33","1:40:28","1:39:22","1:38:17","1:37:11","1:36:06","1:35:00","1:33:55","1:32:49","1:31:44","1:30:38","1:29:33","1:28:27","1:27:22","1:26:16","1:25:11","1:24:05","1:23:00","1:21:54","1:20:49","1:19:43","1:18:38","1:17:32","1:16:27","1:15:21","1:14:15","1:13:10","1:12:04","1:10:59","1:09:53","1:08:48","1:07:42","1:06:37","1:05:31","1:04:26","1:03:20","1:02:15","1:01:09","1:00:04","0:58:58","0:57:53","0:56:47"],"Half Marathon":["2:09:38","2:08:28","2:07:19","2:06:09","2:05:00","2:03:50","2:02:41","2:01:32","2:00:22","1:59:13","1:58:03","1:56:54","1:55:44","1:54:35","1:53:25","1:52:16","1:51:07","1:49:57","1:48:48","1:47:38","1:46:29","1:45:19","1:44:10","1:43:00","1:41:51","1:40:42","1:39:32","1:38:23","1:37:13","1:36:04","1:34:54","1:33:45","1:32:35","1:31:26","1:30:17","1:29:07","1:27:58","1:26:48","1:25:39","1:24:29","1:23:20","1:22:10","1:21:01","1:19:52","1:18:42","1:17:33","1:16:23","1:15:14","1:14:04","1:12:55","1:11:46","1:10:36","1:09:27","1:08:17","1:07:08","1:05:58","1:04:49","1:03:39","1:02:30","1:01:21","1:00:11"],"25k":["2:34:36","2:33:13","2:31:51","2:30:28","2:29:05","2:27:42","2:26:19","2:24:56","2:23:34","2:22:11","2:20:48","2:19:25","2:18:02","2:16:40","2:15:17","2:13:54","2:12:31","2:11:08","2:09:45","2:08:23","2:07:00","2:05:37","2:04:14","2:02:51","2:01:28","2:00:06","1:58:43","1:57:20","1:55:57","1:54:34","1:53:12","1:51:49","1:50:26","1:49:03","1:47:40","1:46:17","1:44:55","1:43:32","1:42:09","1:40:46","1:39:23","1:38:00","1:36:38","1:35:15","1:33:52","1:32:29","1:31:06","1:29:44","1:28:21","1:26:58","1:25:35","1:24:12","1:22:49","1:21:27","1:20:04","1:18:41","1:17:18","1:15:55","1:14:32","1:13:10","1:11:47"],"30k":["3:07:35","3:05:55","3:04:14","3:02:34","3:00:53","2:59:13","2:57:32","2:55:52","2:54:11","2:52:31","2:50:50","2:49:10","2:47:29","2:45:49","2:44:08","2:42:28","2:40:47","2:39:07","2:37:26","2:35:46","2:34:05","2:32:25","2:30:44","2:29:04","2:27:23","2:25:43","2:24:02","2:22:22","2:20:41","2:19:01","2:17:20","2:15:40","2:13:59","2:12:19","2:10:39","2:08:58","2:07:18","2:05:37","2:03:57","2:02:16","2:00:36","1:58:55","1:57:15","1:55:34","1:53:54","1:52:13","1:50:33","1:48:52","1:47:12","1:45:31","1:43:51","1:42:10","1:40:30","1:38:49","1:37:09","1:35:28","1:33:48","1:32:07","1:30:27","1:28:46","1:27:06"],"Marathon":["4:30:21","4:27:56","4:25:31","4:23:06","4:20:42","4:18:17","4:15:52","4:13:27","4:11:02","4:08:37","4:06:13","4:03:48","4:01:23","3:58:58","3:56:33","3:54:08","3:51:44","3:49:19","3:46:54","3:44:29","3:42:04","3:39:39","3:37:15","3:34:50","3:32:25","3:30:00","3:27:35","3:25:10","3:22:46","3:20:21","3:17:56","3:15:31","3:13:06","3:10:42","3:08:17","3:05:52","3:03:27","3:01:02","2:58:37","2:56:13","2:53:48","2:51:23","2:48:58","2:46:33","2:44:08","2:41:44","2:39:19","2:36:54","2:34:29","2:32:04","2:29:39","2:27:15","2:24:50","2:22:25","2:20:00","2:17:35","2:15:10","2:12:46","2:10:21","2:07:56","2:05:31"]}\n';
+var $author$project$MPRData$speedRace = '\n{"5k":["0:28:00","0:27:45","0:27:30","0:27:15","0:27:00","0:26:45","0:26:30","0:26:15","0:26:00","0:25:45","0:25:30","0:25:15","0:25:00","0:24:45","0:24:30","0:24:15","0:24:00","0:23:45","0:23:30","0:23:15","0:23:00","0:22:45","0:22:30","0:22:15","0:22:00","0:21:45","0:21:30","0:21:15","0:21:00","0:20:45","0:20:30","0:20:15","0:20:00","0:19:45","0:19:30","0:19:15","0:19:00","0:18:45","0:18:30","0:18:15","0:18:00","0:17:45","0:17:30","0:17:15","0:17:00","0:16:45","0:16:30","0:16:15","0:16:00","0:15:45","0:15:30","0:15:15","0:15:00","0:14:45","0:14:30","0:14:15","0:14:00","0:13:45","0:13:30","0:13:15","0:13:00"],"8k":["0:46:09","0:45:44","0:45:19","0:44:54","0:44:30","0:44:05","0:43:40","0:43:16","0:42:51","0:42:26","0:42:01","0:41:37","0:41:12","0:40:47","0:40:23","0:39:58","0:39:33","0:39:08","0:38:44","0:38:19","0:37:54","0:37:30","0:37:05","0:36:40","0:36:15","0:35:51","0:35:26","0:35:01","0:34:36","0:34:12","0:33:47","0:33:22","0:32:58","0:32:33","0:32:08","0:31:43","0:31:19","0:30:54","0:30:29","0:30:05","0:29:40","0:29:15","0:28:50","0:28:26","0:28:01","0:27:36","0:27:12","0:26:47","0:26:22","0:25:57","0:25:33","0:25:08","0:24:43","0:24:18","0:23:54","0:23:29","0:23:04","0:22:40","0:22:15","0:21:50","0:21:25"],"5 mile":["0:46:25","0:46:00","0:45:35","0:45:10","0:44:45","0:44:21","0:43:56","0:43:31","0:43:06","0:42:41","0:42:16","0:41:51","0:41:27","0:41:02","0:40:37","0:40:12","0:39:47","0:39:22","0:38:57","0:38:32","0:38:08","0:37:43","0:37:18","0:36:53","0:36:28","0:36:03","0:35:38","0:35:14","0:34:49","0:34:24","0:33:59","0:33:34","0:33:09","0:32:44","0:32:19","0:31:55","0:31:30","0:31:05","0:30:40","0:30:15","0:29:50","0:29:25","0:29:01","0:28:36","0:28:11","0:27:46","0:27:21","0:26:56","0:26:31","0:26:07","0:25:42","0:25:17","0:24:52","0:24:27","0:24:02","0:23:37","0:23:12","0:22:48","0:22:23","0:21:58","0:21:33"],"10k":["0:58:48","0:58:16","0:57:45","0:57:13","0:56:42","0:56:11","0:55:39","0:55:08","0:54:36","0:54:05","0:53:33","0:53:02","0:52:30","0:51:59","0:51:27","0:50:56","0:50:24","0:49:53","0:49:21","0:48:50","0:48:18","0:47:47","0:47:15","0:46:44","0:46:12","0:45:41","0:45:09","0:44:38","0:44:06","0:43:35","0:43:03","0:42:31","0:42:00","0:41:28","0:40:57","0:40:26","0:39:54","0:39:22","0:38:51","0:38:19","0:37:48","0:37:16","0:36:45","0:36:14","0:35:42","0:35:11","0:34:39","0:34:07","0:33:36","0:33:05","0:32:33","0:32:01","0:31:30","0:30:59","0:30:27","0:29:55","0:29:24","0:28:52","0:28:21","0:27:50","0:27:18"],"15k":["1:30:24","1:29:36","1:28:47","1:27:59","1:27:11","1:26:22","1:25:34","1:24:45","1:23:57","1:23:08","1:22:20","1:21:32","1:20:43","1:19:55","1:19:06","1:18:18","1:17:29","1:16:41","1:15:53","1:15:04","1:14:16","1:13:27","1:12:39","1:11:50","1:11:02","1:10:14","1:09:25","1:08:37","1:07:48","1:07:00","1:06:11","1:05:23","1:04:34","1:03:46","1:02:58","1:02:09","1:01:21","1:00:32","0:59:44","0:58:55","0:58:07","0:57:19","0:56:30","0:55:42","0:54:53","0:54:05","0:53:16","0:52:28","0:51:40","0:50:51","0:50:03","0:49:14","0:48:26","0:47:37","0:46:49","0:46:01","0:45:12","0:44:24","0:43:35","0:42:47","0:41:58"],"10 mile":["1:37:28","1:36:36","1:35:44","1:34:52","1:33:59","1:33:07","1:32:15","1:31:23","1:30:31","1:29:38","1:28:46","1:27:54","1:27:02","1:26:09","1:25:17","1:24:25","1:23:33","1:22:41","1:21:48","1:20:56","1:20:04","1:19:12","1:18:20","1:17:27","1:16:35","1:15:43","1:14:51","1:13:58","1:13:06","1:12:14","1:11:22","1:10:30","1:09:37","1:08:45","1:07:53","1:07:01","1:06:08","1:05:16","1:04:24","1:03:32","1:02:40","1:01:47","1:00:55","1:00:03","0:59:11","0:58:19","0:57:26","0:56:34","0:55:42","0:54:50","0:53:57","0:53:05","0:52:13","0:51:21","0:50:29","0:49:36","0:48:44","0:47:52","0:47:00","0:46:08","0:45:15"],"20k":["2:03:29","2:02:23","2:01:16","2:00:10","1:59:04","1:57:58","1:56:52","1:55:46","1:54:40","1:53:33","1:52:27","1:51:21","1:50:15","1:49:09","1:48:03","1:46:57","1:45:50","1:44:44","1:43:38","1:42:32","1:41:26","1:40:20","1:39:14","1:38:07","1:37:01","1:35:55","1:34:49","1:33:43","1:32:37","1:31:30","1:30:24","1:29:18","1:28:12","1:27:06","1:26:00","1:24:54","1:23:47","1:22:41","1:21:35","1:20:29","1:19:23","1:18:17","1:17:11","1:16:04","1:14:58","1:13:52","1:12:46","1:11:40","1:10:34","1:09:27","1:08:21","1:07:15","1:06:09","1:05:03","1:03:57","1:02:51","1:01:44","1:00:38","0:59:32","0:58:26","0:57:20"],"Half Marathon":["2:10:56","2:09:46","2:08:36","2:07:26","2:06:16","2:05:06","2:03:56","2:02:45","2:01:35","2:00:25","1:59:15","1:58:05","1:56:55","1:55:44","1:54:34","1:53:24","1:52:14","1:51:04","1:49:54","1:48:44","1:47:33","1:46:23","1:45:13","1:44:03","1:42:53","1:41:43","1:40:33","1:39:22","1:38:12","1:37:02","1:35:52","1:34:42","1:33:32","1:32:22","1:31:11","1:30:01","1:28:51","1:27:41","1:26:31","1:25:21","1:24:11","1:23:00","1:21:50","1:20:40","1:19:30","1:18:20","1:17:10","1:16:00","1:14:49","1:13:39","1:12:29","1:11:19","1:10:09","1:08:59","1:07:48","1:06:38","1:05:28","1:04:18","1:03:08","1:01:58","1:00:48"],"25k":["2:36:17","2:34:53","2:33:29","2:32:06","2:30:42","2:29:18","2:27:54","2:26:31","2:25:07","2:23:43","2:22:20","2:20:56","2:19:32","2:18:08","2:16:45","2:15:21","2:13:57","2:12:34","2:11:10","2:09:46","2:08:22","2:06:59","2:05:35","2:04:11","2:02:47","2:01:24","2:00:00","1:58:36","1:57:13","1:55:49","1:54:25","1:53:01","1:51:38","1:50:14","1:48:50","1:47:27","1:46:03","1:44:39","1:43:15","1:41:52","1:40:28","1:39:04","1:37:40","1:36:17","1:34:53","1:33:29","1:32:06","1:30:42","1:29:18","1:27:54","1:26:31","1:25:07","1:23:43","1:22:20","1:20:56","1:19:32","1:18:08","1:16:45","1:15:21","1:13:57","1:12:33"],"30k":["3:09:51","3:08:09","3:06:28","3:04:46","3:03:04","3:01:23","2:59:41","2:57:59","2:56:17","2:54:36","2:52:54","2:51:12","2:49:31","2:47:49","2:46:07","2:44:25","2:42:44","2:41:02","2:39:20","2:37:39","2:35:57","2:34:15","2:32:34","2:30:52","2:29:10","2:27:28","2:25:47","2:24:05","2:22:23","2:20:42","2:19:00","2:17:18","2:15:36","2:13:55","2:12:13","2:10:31","2:08:50","2:07:08","2:05:26","2:03:45","2:02:03","2:00:21","1:58:39","1:56:58","1:55:16","1:53:34","1:51:53","1:50:11","1:48:29","1:46:47","1:45:06","1:43:24","1:41:42","1:40:01","1:38:19","1:36:37","1:34:56","1:33:14","1:31:32","1:29:50","1:28:09"],"Marathon":["4:34:19","4:31:52","4:29:25","4:26:58","4:24:31","4:22:05","4:19:38","4:17:11","4:14:44","4:12:17","4:09:50","4:07:23","4:04:56","4:02:29","4:00:02","3:57:35","3:55:08","3:52:41","3:50:14","3:47:47","3:45:20","3:42:53","3:40:26","3:37:59","3:35:32","3:33:05","3:30:38","3:28:11","3:25:44","3:23:18","3:20:51","3:18:24","3:15:57","3:13:30","3:11:03","3:08:36","3:06:09","3:03:42","3:01:15","2:58:48","2:56:21","2:53:54","2:51:27","2:49:00","2:46:33","2:44:06","2:41:39","2:39:12","2:36:45","2:34:18","2:31:51","2:29:24","2:26:57","2:24:31","2:22:04","2:19:37","2:17:10","2:14:43","2:12:16","2:09:49","2:07:22"]}\n';
+var $author$project$MPRLevel$equivalentRaceTimesTable = function (runnerType) {
+	var json = function () {
+		switch (runnerType) {
+			case 0:
+				return $author$project$MPRData$neutralRace;
+			case 1:
+				return $author$project$MPRData$aerobicRace;
+			default:
+				return $author$project$MPRData$speedRace;
+		}
+	}();
+	return A2(
+		$elm$core$Result$withDefault,
+		$elm$core$Dict$empty,
+		A2(
+			$elm$json$Json$Decode$decodeString,
+			$elm$json$Json$Decode$dict(
+				$elm$json$Json$Decode$array($elm$json$Json$Decode$string)),
+			json));
+};
+var $elm$core$Result$fromMaybe = F2(
+	function (err, maybe) {
+		if (!maybe.$) {
+			var v = maybe.a;
+			return $elm$core$Result$Ok(v);
+		} else {
+			return $elm$core$Result$Err(err);
+		}
+	});
+var $elm$core$Elm$JsArray$map = _JsArray_map;
+var $elm$core$Array$map = F2(
+	function (func, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		var helper = function (node) {
+			if (!node.$) {
+				var subTree = node.a;
+				return $elm$core$Array$SubTree(
+					A2($elm$core$Elm$JsArray$map, helper, subTree));
 			} else {
-				return '';
+				var values = node.a;
+				return $elm$core$Array$Leaf(
+					A2($elm$core$Elm$JsArray$map, func, values));
 			}
-		}();
+		};
+		return A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			A2($elm$core$Elm$JsArray$map, helper, tree),
+			A2($elm$core$Elm$JsArray$map, func, tail));
+	});
+var $elm$core$Result$map2 = F3(
+	function (func, ra, rb) {
+		if (ra.$ === 1) {
+			var x = ra.a;
+			return $elm$core$Result$Err(x);
+		} else {
+			var a = ra.a;
+			if (rb.$ === 1) {
+				var x = rb.a;
+				return $elm$core$Result$Err(x);
+			} else {
+				var b = rb.a;
+				return $elm$core$Result$Ok(
+					A2(func, a, b));
+			}
+		}
+	});
+var $author$project$MPRLevel$timeStrToHrsMinsSecs = function (str) {
+	return A2(
+		$elm$core$List$map,
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$String$toInt,
+			$elm$core$Maybe$withDefault(0)),
+		A2($elm$core$String$split, ':', str));
+};
+var $author$project$MPRLevel$timeToSeconds = F3(
+	function (hours, minutes, seconds) {
+		return (((hours * 60) * 60) + (minutes * 60)) + seconds;
+	});
+var $author$project$MPRLevel$timeStrToSeconds = function (str) {
+	var times = $author$project$MPRLevel$timeStrToHrsMinsSecs(str);
+	if (((times.b && times.b.b) && times.b.b.b) && (!times.b.b.b.b)) {
+		var hours = times.a;
+		var _v1 = times.b;
+		var minutes = _v1.a;
+		var _v2 = _v1.b;
+		var seconds = _v2.a;
+		return $elm$core$Result$Ok(
+			A3($author$project$MPRLevel$timeToSeconds, hours, minutes, seconds));
+	} else {
+		return $elm$core$Result$Err('Invalid time: ' + str);
+	}
+};
+var $author$project$MPRLevel$lookup = F3(
+	function (runnerType, distance, seconds) {
+		return A2(
+			$elm$core$Result$andThen,
+			function (l) {
+				return (l === 61) ? $elm$core$Result$Err('That time is too fast!') : ((!l) ? $elm$core$Result$Err('That time is too slow!') : $elm$core$Result$Ok(
+					_Utils_Tuple2(runnerType, l)));
+			},
+			A2(
+				$elm$core$Result$andThen,
+				A2($elm$core$Basics$composeR, $elm$core$List$length, $elm$core$Result$Ok),
+				A2(
+					$elm$core$Result$andThen,
+					A2(
+						$elm$core$Basics$composeR,
+						$elm$core$List$filter(
+							function (n) {
+								return _Utils_cmp(n, seconds) > 0;
+							}),
+						$elm$core$Result$Ok),
+					A2(
+						$elm$core$Result$andThen,
+						A2(
+							$elm$core$Array$foldr,
+							$elm$core$Result$map2($elm$core$List$cons),
+							$elm$core$Result$Ok(_List_Nil)),
+						A2(
+							$elm$core$Result$andThen,
+							A2(
+								$elm$core$Basics$composeR,
+								$elm$core$Array$map($author$project$MPRLevel$timeStrToSeconds),
+								$elm$core$Result$Ok),
+							A2(
+								$elm$core$Result$fromMaybe,
+								'Invalid distance: ' + distance,
+								A2(
+									$elm$core$Dict$get,
+									distance,
+									$author$project$MPRLevel$equivalentRaceTimesTable(runnerType))))))));
+	});
+var $elm$core$Result$map = F2(
+	function (func, ra) {
+		if (!ra.$) {
+			var a = ra.a;
+			return $elm$core$Result$Ok(
+				func(a));
+		} else {
+			var e = ra.a;
+			return $elm$core$Result$Err(e);
+		}
+	});
+var $elm$core$Result$toMaybe = function (result) {
+	if (!result.$) {
+		var v = result.a;
+		return $elm$core$Maybe$Just(v);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Activity$mprLevel = function (activity) {
+	return A2(
+		$elm$core$Maybe$andThen,
+		function (dist) {
+			return $elm$core$Result$toMaybe(
+				A2(
+					$elm$core$Result$map,
+					function (_v0) {
+						var rt = _v0.a;
+						var level = _v0.b;
+						return level;
+					},
+					A3(
+						$author$project$MPRLevel$lookup,
+						0,
+						$author$project$Activity$distance.bF(dist),
+						activity.S * 60)));
+		},
+		activity.O);
+};
+var $author$project$ActivityForm$paceSelect = F2(
+	function (msg, pace) {
 		var selectedAttr = function (paceStr) {
-			return _Utils_eq(selected, paceStr) ? _List_fromArray(
+			return _Utils_eq(
+				$author$project$Activity$pace.bF(pace),
+				paceStr) ? _List_fromArray(
 				[
 					A2($elm$html$Html$Attributes$attribute, 'selected', '')
 				]) : _List_Nil;
@@ -9383,50 +9697,59 @@ var $author$project$ActivityForm$paceSelect = F2(
 								$elm$html$Html$text(paceStr)
 							]));
 				},
-				A2(
-					$elm$core$List$cons,
-					_Utils_Tuple2('', 0),
-					$author$project$Activity$pace.bk)));
+				$author$project$Activity$pace.aH));
 	});
-var $author$project$ActivityForm$ClickedSubmit = {$: 4};
-var $author$project$ActivityForm$submitButton = function (status) {
-	if (status.$ === 1) {
-		var id = status.a;
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
-					$elm$html$Html$Attributes$class('primary'),
-					$elm$html$Html$Attributes$type_('submit')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Save')
-				]));
-	} else {
-		var id = status.a;
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
-					$elm$html$Html$Attributes$class('primary'),
-					$elm$html$Html$Attributes$type_('submit')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Create')
-				]));
-	}
+var $author$project$Activity$Race = 1;
+var $author$project$Activity$Run = 0;
+var $author$project$ActivityForm$SelectedShape = function (a) {
+	return {$: 0, a: a};
 };
-var $elm$core$Result$toMaybe = function (result) {
-	if (!result.$) {
-		var v = result.a;
-		return $elm$core$Maybe$Just(v);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
+var $author$project$ActivityForm$CheckedCompleted = function (a) {
+	return {$: 2, a: a};
+};
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Events$targetChecked = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'checked']),
+	$elm$json$Json$Decode$bool);
+var $elm$html$Html$Events$onCheck = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'change',
+		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
+};
+var $author$project$ActivityForm$completedCheckbox = function (completed) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('checkbox'),
+						$elm$html$Html$Attributes$checked(completed),
+						$elm$html$Html$Events$onCheck($author$project$ActivityForm$CheckedCompleted)
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$label,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Completed')
+					]))
+			]));
 };
 var $author$project$ActivityShape$Block = F3(
 	function (a, b, c) {
@@ -9436,47 +9759,17 @@ var $author$project$ActivityShape$Circle = F2(
 	function (a, b) {
 		return {$: 1, a: a, b: b};
 	});
-var $author$project$ActivityShape$Gray = 1;
+var $author$project$ActivityShape$Gray = 2;
 var $author$project$ActivityShape$Green = 0;
-var $author$project$Activity$Run = 0;
-var $author$project$Activity$activityType = function (activity) {
-	var _v0 = activity.W;
-	if (_v0.$ === 1) {
-		return 1;
-	} else {
-		return 0;
-	}
-};
-var $author$project$ActivityShape$toHeight = function (duration) {
-	return duration / 10;
-};
-var $author$project$ActivityShape$toWidth = function (pace) {
-	switch (pace) {
-		case 0:
-			return 1;
-		case 1:
-			return 2;
-		case 2:
-			return 3;
-		case 3:
-			return 4;
-		case 4:
-			return 5;
-		case 5:
-			return 6;
-		case 6:
-			return 7;
-		case 7:
-			return 8;
-		default:
-			return 9;
-	}
-};
+var $author$project$ActivityShape$Orange = 1;
 var $author$project$ActivityShape$colorString = function (color) {
-	if (!color) {
-		return 'limegreen';
-	} else {
-		return 'gray';
+	switch (color) {
+		case 0:
+			return 'limegreen';
+		case 1:
+			return 'orange';
+		default:
+			return 'gray';
 	}
 };
 var $elm$core$String$fromFloat = _String_fromNumber;
@@ -9484,8 +9777,8 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 	if (!shape.$) {
 		var color = shape.a;
 		var completed = shape.b;
-		var width = shape.c.ab;
-		var height = shape.c.Q;
+		var width = shape.c.N;
+		var height = shape.c.H;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -9530,38 +9823,185 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 			_List_Nil);
 	}
 };
-var $author$project$ActivityShape$view = function (activity) {
-	var _v0 = $author$project$Activity$activityType(activity);
-	if (!_v0) {
-		return $author$project$ActivityShape$viewShape(
-			A3(
-				$author$project$ActivityShape$Block,
-				0,
-				activity.aj,
-				{
-					Q: $author$project$ActivityShape$toHeight(activity.ao),
-					ab: $author$project$ActivityShape$toWidth(
-						A2($elm$core$Maybe$withDefault, 0, activity.W))
-				}));
-	} else {
-		return $author$project$ActivityShape$viewShape(
-			A2($author$project$ActivityShape$Circle, 1, activity.aj));
-	}
-};
 var $author$project$ActivityShape$viewDefault = F2(
 	function (completed, activityType) {
-		if (!activityType) {
+		switch (activityType) {
+			case 0:
+				return $author$project$ActivityShape$viewShape(
+					A3(
+						$author$project$ActivityShape$Block,
+						0,
+						completed,
+						{H: 1, N: 2}));
+			case 1:
+				return $author$project$ActivityShape$viewShape(
+					A3(
+						$author$project$ActivityShape$Block,
+						1,
+						completed,
+						{H: 1, N: 2}));
+			default:
+				return $author$project$ActivityShape$viewShape(
+					A2($author$project$ActivityShape$Circle, 2, completed));
+		}
+	});
+var $author$project$ActivityForm$shapeSelect = function (completed) {
+	return A2(
+		$author$project$Skeleton$row,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$author$project$Skeleton$compactColumn,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$ActivityForm$SelectedShape(0))
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$ActivityShape$viewDefault, completed, 0)
+					])),
+				A2(
+				$author$project$Skeleton$compactColumn,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$ActivityForm$SelectedShape(1))
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$ActivityShape$viewDefault, completed, 1)
+					])),
+				A2(
+				$author$project$Skeleton$compactColumn,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$ActivityForm$SelectedShape(2))
+					]),
+				_List_fromArray(
+					[
+						A2($author$project$ActivityShape$viewDefault, completed, 2)
+					])),
+				A2(
+				$author$project$Skeleton$compactColumn,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$author$project$ActivityForm$completedCheckbox(completed)
+					]))
+			]));
+};
+var $author$project$ActivityForm$ClickedSubmit = {$: 6};
+var $author$project$ActivityForm$submitButton = function (status) {
+	if (status.$ === 1) {
+		var id = status.a;
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
+					$elm$html$Html$Attributes$class('primary'),
+					$elm$html$Html$Attributes$type_('submit')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Save')
+				]));
+	} else {
+		var id = status.a;
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
+					$elm$html$Html$Attributes$class('primary'),
+					$elm$html$Html$Attributes$type_('submit')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Create')
+				]));
+	}
+};
+var $author$project$Activity$activityType = function (activity) {
+	var _v0 = _Utils_Tuple2(activity.Z, activity.O);
+	_v0$1:
+	while (true) {
+		if (_v0.a.$ === 1) {
+			if (_v0.b.$ === 1) {
+				var _v1 = _v0.a;
+				var _v2 = _v0.b;
+				return 2;
+			} else {
+				break _v0$1;
+			}
+		} else {
+			if (!_v0.b.$) {
+				break _v0$1;
+			} else {
+				return 0;
+			}
+		}
+	}
+	return 1;
+};
+var $author$project$ActivityShape$toHeight = function (duration) {
+	return duration / 10;
+};
+var $author$project$ActivityShape$toWidth = function (pace) {
+	switch (pace) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		case 6:
+			return 7;
+		case 7:
+			return 8;
+		default:
+			return 9;
+	}
+};
+var $author$project$ActivityShape$view = function (activity) {
+	var _v0 = $author$project$Activity$activityType(activity);
+	switch (_v0) {
+		case 0:
 			return $author$project$ActivityShape$viewShape(
 				A3(
 					$author$project$ActivityShape$Block,
 					0,
-					completed,
-					{Q: 1, ab: 2}));
-		} else {
+					activity.al,
+					{
+						H: $author$project$ActivityShape$toHeight(activity.S),
+						N: $author$project$ActivityShape$toWidth(
+							A2($elm$core$Maybe$withDefault, 0, activity.Z))
+					}));
+		case 1:
 			return $author$project$ActivityShape$viewShape(
-				A2($author$project$ActivityShape$Circle, 1, completed));
-		}
-	});
+				A3(
+					$author$project$ActivityShape$Block,
+					1,
+					activity.al,
+					{
+						H: $author$project$ActivityShape$toHeight(activity.S),
+						N: $author$project$ActivityShape$toWidth(
+							A2($elm$core$Maybe$withDefault, 5, activity.Z))
+					}));
+		default:
+			return $author$project$ActivityShape$viewShape(
+				A2($author$project$ActivityShape$Circle, 2, activity.al));
+	}
+};
 var $author$project$ActivityForm$errorMessage = function (error) {
 	if (error.$ === 1) {
 		var field = error.a;
@@ -9597,7 +10037,7 @@ var $author$project$ActivityForm$viewError = function (errorR) {
 var $author$project$ActivityForm$view = function (model) {
 	var activityShape = A2(
 		$elm$core$Maybe$withDefault,
-		A2($author$project$ActivityShape$viewDefault, true, 1),
+		A2($author$project$ActivityShape$viewDefault, true, 2),
 		A2(
 			$elm$core$Maybe$map,
 			$author$project$ActivityShape$view,
@@ -9624,13 +10064,7 @@ var $author$project$ActivityForm$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						A2(
-						$author$project$Skeleton$row,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$author$project$ActivityForm$viewError(model.v)
-							])),
+						$author$project$ActivityForm$shapeSelect(model.al),
 						A2(
 						$author$project$Skeleton$row,
 						_List_Nil,
@@ -9644,7 +10078,7 @@ var $author$project$ActivityForm$view = function (model) {
 										$elm$html$Html$Attributes$placeholder('Description'),
 										$elm$html$Html$Events$onInput($author$project$ActivityForm$EditedDescription),
 										$elm$html$Html$Attributes$name('description'),
-										$elm$html$Html$Attributes$value(model.am),
+										$elm$html$Html$Attributes$value(model.ap),
 										A2($elm$html$Html$Attributes$style, 'width', '100%')
 									]),
 								_List_Nil)
@@ -9662,21 +10096,43 @@ var $author$project$ActivityForm$view = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										A2($author$project$ActivityForm$durationInput, $author$project$ActivityForm$EditedDuration, model.ao)
+										A2($author$project$ActivityForm$durationInput, $author$project$ActivityForm$EditedDuration, model.S)
 									])),
 								A2(
 								$author$project$Skeleton$compactColumn,
 								_List_Nil,
 								_List_fromArray(
 									[
-										A2($author$project$ActivityForm$paceSelect, $author$project$ActivityForm$SelectedPace, model.W)
+										A2(
+										$author$project$ActivityForm$maybeView,
+										model.Z,
+										$author$project$ActivityForm$paceSelect($author$project$ActivityForm$SelectedPace))
 									])),
 								A2(
 								$author$project$Skeleton$compactColumn,
 								_List_Nil,
 								_List_fromArray(
 									[
-										$author$project$ActivityForm$completedCheckbox(model.aj)
+										A2(
+										$author$project$ActivityForm$maybeView,
+										model.O,
+										$author$project$ActivityForm$distanceSelect($author$project$ActivityForm$SelectedDistance))
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$author$project$ActivityForm$maybeView,
+										A2(
+											$elm$core$Maybe$andThen,
+											$author$project$Activity$mprLevel,
+											$elm$core$Result$toMaybe(model.r)),
+										function (level) {
+											return $elm$html$Html$text(
+												'Level ' + $elm$core$String$fromInt(level));
+										})
 									]))
 							])),
 						A2(
@@ -9737,6 +10193,13 @@ var $author$project$ActivityForm$view = function (model) {
 												$elm$html$Html$text('Move')
 											]))
 									]))
+							])),
+						A2(
+						$author$project$Skeleton$row,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$author$project$ActivityForm$viewError(model.r)
 							]))
 					]))
 			]));
@@ -9746,6 +10209,15 @@ var $author$project$Main$EditActivity = function (a) {
 };
 var $author$project$Main$viewActivity = F2(
 	function (activityFormM, activity) {
+		var level = A2(
+			$elm$core$Maybe$withDefault,
+			'',
+			A2(
+				$elm$core$Maybe$map,
+				function (l) {
+					return 'Level ' + $elm$core$String$fromInt(l);
+				},
+				$author$project$Activity$mprLevel(activity)));
 		var activityView = A2(
 			$elm$html$Html$a,
 			_List_fromArray(
@@ -9781,7 +10253,23 @@ var $author$project$Main$viewActivity = F2(
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text(activity.am)
+									A2(
+									$author$project$Skeleton$row,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(activity.ap)
+										])),
+									A2(
+									$author$project$Skeleton$row,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text(level)
+										]))
 								]))
 						]))
 				]));
@@ -9824,11 +10312,7 @@ var $author$project$Main$viewDay = F4(
 						[
 							A2(
 							$author$project$Skeleton$row,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'margin-top', '1rem'),
-									A2($elm$html$Html$Attributes$style, 'margin-bottom', '1rem')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
@@ -9848,18 +10332,33 @@ var $author$project$Main$viewDay = F4(
 								])),
 							A2(
 							$author$project$Skeleton$row,
-							_List_Nil,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'margin', '1rem')
+								]),
 							_List_fromArray(
 								[
 									A2(
 									$author$project$Skeleton$column,
 									_List_Nil,
-									A2(
-										$elm$core$List$map,
-										$author$project$Main$viewActivity(activityFormM),
-										activities))
-								])),
-							activityFormView
+									_List_fromArray(
+										[
+											A2(
+											$author$project$Skeleton$row,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2(
+													$author$project$Skeleton$column,
+													_List_Nil,
+													A2(
+														$elm$core$List$map,
+														$author$project$Main$viewActivity(activityFormM),
+														activities))
+												])),
+											activityFormView
+										]))
+								]))
 						]))
 				]));
 	});
@@ -10035,6 +10534,13 @@ var $author$project$Main$viewWeek = F2(
 						accessActivities(d));
 				},
 				$author$project$Main$daysOfWeek(start)));
+		var activities = $elm$core$List$concat(
+			A2(
+				$elm$core$List$map,
+				function (d) {
+					return accessActivities(d);
+				},
+				$author$project$Main$daysOfWeek(start)));
 		var _v0 = A3(
 			$elm$core$Tuple$mapBoth,
 			$elm$core$List$sum,
@@ -10043,28 +10549,22 @@ var $author$project$Main$viewWeek = F2(
 				$elm$core$Tuple$mapBoth,
 				$elm$core$List$map(
 					function (a) {
-						return a.ao;
+						return a.S;
 					}),
 				$elm$core$List$map(
 					function (a) {
-						return a.ao;
+						return a.S;
 					}),
 				A2(
 					$elm$core$List$partition,
 					function (a) {
 						return !$author$project$Activity$activityType(a);
 					},
-					$elm$core$List$concat(
-						A2(
-							$elm$core$List$map,
-							function (d) {
-								return accessActivities(d);
-							},
-							$author$project$Main$daysOfWeek(start))))));
+					activities)));
 		var runDuration = _v0.a;
 		var otherDuration = _v0.b;
 		return A2(
-			$author$project$Skeleton$expandingRow,
+			$author$project$Skeleton$row,
 			_List_Nil,
 			A2(
 				$elm$core$List$cons,
@@ -10086,7 +10586,7 @@ var $author$project$Main$weekList = function (date) {
 };
 var $author$project$Main$viewCalendar = function (_v0) {
 	var calendar = _v0.z;
-	var date = _v0.ak;
+	var date = _v0.am;
 	var activities = _v0.F;
 	var activityForm = _v0.k;
 	var filterActivities = F2(
@@ -10094,10 +10594,10 @@ var $author$project$Main$viewCalendar = function (_v0) {
 			if (!activityForm.$) {
 				var af = activityForm.a;
 				return (_Utils_eq(
-					af.ak,
-					$elm$core$Maybe$Just(date_)) && A2($author$project$ActivityForm$isEditing, activity, af)) ? true : ((_Utils_eq(activity.ak, date_) && (!A2($author$project$ActivityForm$isEditing, activity, af))) ? true : false);
+					af.am,
+					$elm$core$Maybe$Just(date_)) && A2($author$project$ActivityForm$isEditing, activity, af)) ? true : ((_Utils_eq(activity.am, date_) && (!A2($author$project$ActivityForm$isEditing, activity, af))) ? true : false);
 			} else {
-				return _Utils_eq(activity.ak, date_);
+				return _Utils_eq(activity.am, date_);
 			}
 		});
 	var accessActivities = function (date_) {
@@ -10145,7 +10645,7 @@ var $author$project$Main$viewCalendar = function (_v0) {
 				$author$project$Skeleton$column,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'margin-bottom', $author$project$Main$scrollConfig.aD),
+						A2($elm$html$Html$Attributes$style, 'margin-bottom', $author$project$Main$scrollConfig.aI),
 						A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 					]),
 				body)
@@ -10340,7 +10840,7 @@ var $author$project$Main$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								A2($author$project$Main$viewMenu, state.z, state.ak),
+								A2($author$project$Main$viewMenu, state.z, state.am),
 								$author$project$Main$viewCalendar(state)
 							]))
 					]);
@@ -10349,15 +10849,15 @@ var $author$project$Main$view = function (model) {
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
 	{
-		bi: $author$project$Main$init,
-		bC: $author$project$Main$subscriptions,
-		bF: $author$project$Main$update,
-		bG: function (model) {
+		bk: $author$project$Main$init,
+		bD: $author$project$Main$subscriptions,
+		bG: $author$project$Main$update,
+		bH: function (model) {
 			return {
-				af: $elm$core$List$singleton(
+				ah: $elm$core$List$singleton(
 					$author$project$Skeleton$layout(
 						$author$project$Main$view(model))),
-				bD: 'RunApp2'
+				bE: 'RunApp2'
 			};
 		}
 	});
