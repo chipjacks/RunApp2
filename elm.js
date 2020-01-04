@@ -9755,9 +9755,9 @@ var $author$project$ActivityShape$Block = F3(
 	function (a, b, c) {
 		return {$: 0, a: a, b: b, c: c};
 	});
-var $author$project$ActivityShape$Circle = F2(
-	function (a, b) {
-		return {$: 1, a: a, b: b};
+var $author$project$ActivityShape$Circle = F3(
+	function (a, b, c) {
+		return {$: 1, a: a, b: b, c: c};
 	});
 var $author$project$ActivityShape$Gray = 2;
 var $author$project$ActivityShape$Green = 0;
@@ -9804,23 +9804,38 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 	} else {
 		var color = shape.a;
 		var completed = shape.b;
+		var charM = shape.c;
+		var _v1 = completed ? _Utils_Tuple2(
+			$author$project$ActivityShape$colorString(color),
+			'white') : _Utils_Tuple2(
+			'white',
+			$author$project$ActivityShape$colorString(color));
+		var backgroundColor = _v1.a;
+		var textColor = _v1.b;
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
 					A2($elm$html$Html$Attributes$style, 'width', '1rem'),
 					A2($elm$html$Html$Attributes$style, 'height', '1rem'),
-					A2($elm$html$Html$Attributes$style, 'border-radius', '0.6rem'),
+					A2($elm$html$Html$Attributes$style, 'border-radius', '50%'),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'border',
 					'2px solid ' + $author$project$ActivityShape$colorString(color)),
-					completed ? A2(
-					$elm$html$Html$Attributes$style,
-					'background-color',
-					$author$project$ActivityShape$colorString(color)) : A2($elm$html$Html$Attributes$style, 'background-color', 'white')
+					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+					A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem'),
+					A2($elm$html$Html$Attributes$style, 'background-color', backgroundColor),
+					A2($elm$html$Html$Attributes$style, 'color', textColor)
 				]),
-			_List_Nil);
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					A2(
+						$elm$core$Maybe$withDefault,
+						'',
+						A2($elm$core$Maybe$map, $elm$core$String$fromChar, charM)))
+				]));
 	}
 };
 var $author$project$ActivityShape$viewDefault = F2(
@@ -9842,7 +9857,7 @@ var $author$project$ActivityShape$viewDefault = F2(
 						{H: 1, N: 2}));
 			default:
 				return $author$project$ActivityShape$viewShape(
-					A2($author$project$ActivityShape$Circle, 2, completed));
+					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
 		}
 	});
 var $author$project$ActivityForm$shapeSelect = function (completed) {
@@ -9947,6 +9962,15 @@ var $author$project$Activity$activityType = function (activity) {
 	}
 	return 1;
 };
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $author$project$ActivityShape$toHeight = function (duration) {
 	return duration / 10;
 };
@@ -9999,7 +10023,12 @@ var $author$project$ActivityShape$view = function (activity) {
 					}));
 		default:
 			return $author$project$ActivityShape$viewShape(
-				A2($author$project$ActivityShape$Circle, 2, activity.al));
+				A3(
+					$author$project$ActivityShape$Circle,
+					2,
+					activity.al,
+					$elm$core$List$head(
+						$elm$core$String$toList(activity.ap))));
 	}
 };
 var $author$project$ActivityForm$errorMessage = function (error) {
@@ -10323,7 +10352,8 @@ var $author$project$Main$viewDay = F4(
 										[
 											$elm$html$Html$Events$onClick(
 											$author$project$Main$NewActivity(
-												$elm$core$Maybe$Just(date)))
+												$elm$core$Maybe$Just(date))),
+											A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem')
 										]),
 									_List_fromArray(
 										[
@@ -10375,15 +10405,6 @@ var $author$project$Main$daysOfWeek = function (start) {
 };
 var $elm$core$List$sum = function (numbers) {
 	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
 };
 var $author$project$Main$titleWeek = F2(
 	function (start, _v0) {
