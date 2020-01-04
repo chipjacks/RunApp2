@@ -8,7 +8,7 @@ import Skeleton exposing (column, row)
 
 type Shape
     = Block Color Bool { width : Float, height : Float }
-    | Circle Color Bool
+    | Circle Color Bool (Maybe Char)
 
 
 type Color
@@ -29,7 +29,7 @@ view activity =
                 |> viewShape
 
         Activity.Other ->
-            Circle Gray activity.completed
+            Circle Gray activity.completed (String.toList activity.description |> List.head)
                 |> viewShape
 
 
@@ -45,7 +45,7 @@ viewDefault completed activityType =
                 |> viewShape
 
         Activity.Other ->
-            Circle Gray completed
+            Circle Gray completed Nothing
                 |> viewShape
 
 
@@ -65,19 +65,26 @@ viewShape shape =
                 ]
                 []
 
-        Circle color completed ->
+        Circle color completed charM ->
+            let
+                ( backgroundColor, textColor ) =
+                    if completed then
+                        ( colorString color, "white" )
+
+                    else
+                        ( "white", colorString color )
+            in
             div
                 [ style "width" "1rem"
                 , style "height" "1rem"
-                , style "border-radius" "0.6rem"
+                , style "border-radius" "50%"
                 , style "border" ("2px solid " ++ colorString color)
-                , if completed then
-                    style "background-color" (colorString color)
-
-                  else
-                    style "background-color" "white"
+                , style "text-align" "center"
+                , style "font-size" "0.8rem"
+                , style "background-color" backgroundColor
+                , style "color" textColor
                 ]
-                []
+                [ Html.text (charM |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
 
 
 colorString : Color -> String

@@ -521,7 +521,7 @@ viewDay activityFormM date activities isSelectedDate =
         [ column []
             [ row []
                 [ text (Date.format "E MMM d" date)
-                , a [ onClick (NewActivity (Just date)) ] [ text "+" ]
+                , a [ onClick (NewActivity (Just date)), style "margin-left" "0.2rem" ] [ text "+" ]
                 ]
             , row [ style "margin" "1rem" ]
                 [ column []
