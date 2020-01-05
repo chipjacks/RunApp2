@@ -7424,6 +7424,12 @@ var $author$project$Main$State = F4(
 		return {F: activities, k: activityForm, z: calendar, am: date};
 	});
 var $author$project$Main$Weekly = 0;
+var $justinmimbs$date$Date$compare = F2(
+	function (_v0, _v1) {
+		var a = _v0;
+		var b = _v1;
+		return A2($elm$core$Basics$compare, a, b);
+	});
 var $author$project$ActivityForm$NewId = function (a) {
 	return {$: 10, a: a};
 };
@@ -7617,16 +7623,16 @@ var $author$project$ActivityForm$Creating = function (a) {
 var $author$project$ActivityForm$EmptyFieldError = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$ActivityForm$initNew = F2(
-	function (id, dateM) {
+var $author$project$ActivityForm$initNew = F3(
+	function (id, dateM, completed) {
 		return A8(
 			$author$project$ActivityForm$Model,
 			$author$project$ActivityForm$Creating(id),
 			dateM,
 			'',
-			true,
-			$elm$core$Maybe$Nothing,
-			$elm$core$Maybe$Nothing,
+			completed,
+			$elm$core$Maybe$Just(30),
+			$elm$core$Maybe$Just(0),
 			$elm$core$Maybe$Nothing,
 			$elm$core$Result$Err(
 				$author$project$ActivityForm$EmptyFieldError('')));
@@ -8833,7 +8839,7 @@ var $author$project$ActivityForm$update = F2(
 			case 10:
 				var id = msg.a;
 				return _Utils_Tuple2(
-					A2($author$project$ActivityForm$initNew, id, model.am),
+					A3($author$project$ActivityForm$initNew, id, model.am, model.al),
 					$elm$core$Platform$Cmd$none);
 			case 11:
 				var result = msg.a;
@@ -8946,16 +8952,18 @@ var $author$project$Main$update = F2(
 				case 3:
 					var dateM = msg.a;
 					var date = A2($elm$core$Maybe$withDefault, state.am, dateM);
+					var completed = (!A2($justinmimbs$date$Date$compare, date, state.am)) || _Utils_eq(date, state.am);
 					return _Utils_Tuple2(
 						$author$project$Main$Loaded(
 							_Utils_update(
 								state,
 								{
 									k: $elm$core$Maybe$Just(
-										A2(
+										A3(
 											$author$project$ActivityForm$initNew,
 											'fakeid',
-											$elm$core$Maybe$Just(date)))
+											$elm$core$Maybe$Just(date),
+											completed))
 								})),
 						A2($elm$core$Platform$Cmd$map, $author$project$Main$ActivityFormMsg, $author$project$ActivityForm$generateNewId));
 				case 5:
@@ -9421,7 +9429,8 @@ var $author$project$ActivityForm$distanceSelect = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Events$onInput(msg),
-					$elm$html$Html$Attributes$name('distance')
+					$elm$html$Html$Attributes$name('distance'),
+					$elm$html$Html$Attributes$class('input-small')
 				]),
 			A2(
 				$elm$core$List$map,
@@ -9452,6 +9461,7 @@ var $author$project$ActivityForm$durationInput = F2(
 					$elm$html$Html$Events$onInput(msg),
 					$elm$html$Html$Attributes$name('duration'),
 					A2($elm$html$Html$Attributes$style, 'width', '3rem'),
+					$elm$html$Html$Attributes$class('input-small'),
 					$elm$html$Html$Attributes$value(
 					A2(
 						$elm$core$Maybe$withDefault,
@@ -9683,7 +9693,8 @@ var $author$project$ActivityForm$paceSelect = F2(
 			_List_fromArray(
 				[
 					$elm$html$Html$Events$onInput(msg),
-					$elm$html$Html$Attributes$name('pace')
+					$elm$html$Html$Attributes$name('pace'),
+					$elm$html$Html$Attributes$class('input-small')
 				]),
 			A2(
 				$elm$core$List$map,
@@ -9773,6 +9784,7 @@ var $author$project$ActivityShape$colorString = function (color) {
 	}
 };
 var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$Char$toUpper = _Char_toUpper;
 var $author$project$ActivityShape$viewShape = function (shape) {
 	if (!shape.$) {
 		var color = shape.a;
@@ -9795,6 +9807,7 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 					$elm$html$Html$Attributes$style,
 					'border',
 					'2px solid ' + $author$project$ActivityShape$colorString(color)),
+					A2($elm$html$Html$Attributes$style, 'border-radius', '2px'),
 					completed ? A2(
 					$elm$html$Html$Attributes$style,
 					'background-color',
@@ -9834,7 +9847,10 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 					A2(
 						$elm$core$Maybe$withDefault,
 						'',
-						A2($elm$core$Maybe$map, $elm$core$String$fromChar, charM)))
+						A2(
+							$elm$core$Maybe$map,
+							$elm$core$String$fromChar,
+							A2($elm$core$Maybe$map, $elm$core$Char$toUpper, charM))))
 				]));
 	}
 };
@@ -9881,6 +9897,7 @@ var $author$project$ActivityForm$shapeSelect = function (completed) {
 				$author$project$Skeleton$compactColumn,
 				_List_fromArray(
 					[
+						A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
 						$elm$html$Html$Events$onClick(
 						$author$project$ActivityForm$SelectedShape(1))
 					]),
@@ -9892,6 +9909,7 @@ var $author$project$ActivityForm$shapeSelect = function (completed) {
 				$author$project$Skeleton$compactColumn,
 				_List_fromArray(
 					[
+						A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
 						$elm$html$Html$Events$onClick(
 						$author$project$ActivityForm$SelectedShape(2))
 					]),
@@ -9901,7 +9919,10 @@ var $author$project$ActivityForm$shapeSelect = function (completed) {
 					])),
 				A2(
 				$author$project$Skeleton$compactColumn,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+					]),
 				_List_fromArray(
 					[
 						$author$project$ActivityForm$completedCheckbox(completed)
@@ -10499,6 +10520,8 @@ var $author$project$Main$viewWeekDay = function (_v0) {
 		$author$project$Skeleton$column,
 		_List_fromArray(
 			[
+				$elm$html$Html$Events$onClick(
+				A2($author$project$Main$LoadCalendar, 1, date)),
 				A2($elm$html$Html$Attributes$style, 'min-height', '4rem'),
 				A2($elm$html$Html$Attributes$style, 'padding-bottom', '1rem')
 			]),
@@ -10513,8 +10536,6 @@ var $author$project$Main$viewWeekDay = function (_v0) {
 						$elm$html$Html$a,
 						_List_fromArray(
 							[
-								$elm$html$Html$Events$onClick(
-								A2($author$project$Main$LoadCalendar, 1, date)),
 								A2(
 								$elm$html$Html$Attributes$attribute,
 								'data-date',
