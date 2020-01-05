@@ -124,8 +124,11 @@ update msg model =
                     let
                         date =
                             dateM |> Maybe.withDefault state.date
+
+                        completed =
+                            Date.compare date state.date == LT || date == state.date
                     in
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) }
+                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) completed }
                     , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
                     )
 
@@ -424,11 +427,10 @@ viewWeek accessActivities start =
 
 viewWeekDay : ( Date, List Activity ) -> Html Msg
 viewWeekDay ( date, activities ) =
-    column [ style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
+    column [ onClick (LoadCalendar Daily date), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
         row []
             [ a
-                [ onClick (LoadCalendar Daily date)
-                , attribute "data-date" (Date.toIsoString date)
+                [ attribute "data-date" (Date.toIsoString date)
                 ]
                 [ text (Date.format "d" date)
                 ]

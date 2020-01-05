@@ -57,6 +57,7 @@ viewShape shape =
                 [ style "width" <| String.fromFloat (width * 0.5) ++ "rem"
                 , style "height" <| String.fromFloat height ++ "rem"
                 , style "border" ("2px solid " ++ colorString color)
+                , style "border-radius" "2px"
                 , if completed then
                     style "background-color" (colorString color)
 
@@ -84,7 +85,7 @@ viewShape shape =
                 , style "background-color" backgroundColor
                 , style "color" textColor
                 ]
-                [ Html.text (charM |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
+                [ Html.text (charM |> Maybe.map Char.toUpper |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
 
 
 colorString : Color -> String
