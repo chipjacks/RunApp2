@@ -58,9 +58,9 @@ type Error
     | EmptyFieldError String
 
 
-initNew : Activity.Id -> Maybe Date -> Model
-initNew id dateM =
-    Model (Creating id) dateM "" True Nothing Nothing Nothing (Err (EmptyFieldError ""))
+initNew : Activity.Id -> Maybe Date -> Bool -> Model
+initNew id dateM completed =
+    Model (Creating id) dateM "" completed (Just 30) (Just Activity.Easy) Nothing (Err (EmptyFieldError ""))
 
 
 initEdit : Activity -> Model
@@ -214,7 +214,7 @@ update msg model =
             ( { newModel | result = validate newModel }, Cmd.none )
 
         NewId id ->
-            ( initNew id model.date, Cmd.none )
+            ( initNew id model.date model.completed, Cmd.none )
 
         GotSubmitResult result ->
             case result of
@@ -313,9 +313,9 @@ shapeSelect : Bool -> Html Msg
 shapeSelect completed =
     row []
         [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
-        , compactColumn [ onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
-        , compactColumn [ onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
-        , compactColumn [] [ completedCheckbox completed ]
+        , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
+        , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
+        , compactColumn [ style "margin-left" "0.5rem" ] [ completedCheckbox completed ]
         ]
 
 
@@ -375,6 +375,7 @@ durationInput msg duration =
         , onInput msg
         , name "duration"
         , style "width" "3rem"
+        , class "input-small"
         , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
         ]
         []
@@ -403,6 +404,7 @@ paceSelect msg pace =
     Html.select
         [ onInput msg
         , name "pace"
+        , class "input-small"
         ]
         (List.map
             (\( paceStr, _ ) ->
@@ -425,6 +427,7 @@ distanceSelect msg distance =
     Html.select
         [ onInput msg
         , name "distance"
+        , class "input-small"
         ]
         (List.map
             (\( distanceStr, _ ) ->

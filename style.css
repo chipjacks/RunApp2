@@ -35,6 +35,7 @@ html, body { height: 100%; margin: 0; }
 body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
 a { text-decoration: none; color: var(--accent-blue); }
 input { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
+.input-small { padding: 0.4rem; font-size: 0.8rem; }
 input:focus { border-color: var(--accent-blue); }
 select { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
 select:focus { border-color: var(--accent-blue); }
