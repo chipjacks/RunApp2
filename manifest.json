@@ -1,0 +1,15 @@
+{
+  "short_name": "RunApp2",
+  "name": "RunApp2",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "480x480",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#4183c4",
+  "background_color": "#4183c4"
+}
