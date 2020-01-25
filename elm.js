@@ -10257,6 +10257,7 @@ var $author$project$ActivityForm$view = function (model) {
 var $author$project$Main$EditActivity = function (a) {
 	return {$: 4, a: a};
 };
+var $elm$core$String$toLower = _String_toLower;
 var $author$project$Main$viewActivity = F2(
 	function (activityFormM, activity) {
 		var level = A2(
@@ -10265,7 +10266,7 @@ var $author$project$Main$viewActivity = F2(
 			A2(
 				$elm$core$Maybe$map,
 				function (l) {
-					return 'Level ' + $elm$core$String$fromInt(l);
+					return 'level ' + $elm$core$String$fromInt(l);
 				},
 				$author$project$Activity$mprLevel(activity)));
 		var activityView = A2(
@@ -10318,7 +10319,28 @@ var $author$project$Main$viewActivity = F2(
 										]),
 									_List_fromArray(
 										[
-											$elm$html$Html$text(level)
+											A2(
+											$author$project$Skeleton$column,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													$elm$core$String$fromInt(activity.S) + (' min ' + $elm$core$String$toLower(
+														A2(
+															$elm$core$Maybe$withDefault,
+															'',
+															A2($elm$core$Maybe$map, $author$project$Activity$pace.bF, activity.Z)))))
+												])),
+											A2(
+											$author$project$Skeleton$compactColumn,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(level)
+												]))
 										]))
 								]))
 						]))
