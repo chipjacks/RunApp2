@@ -137,11 +137,12 @@
   },
   {
     "id": "44f4559b-7159-4285-9166-10d1325688b6",
-    "date": "2019-11-02",
-    "description": "Bike ride with Dad",
+    "date": "2019-09-06",
+    "description": "Austen & Graham Wedding 5k",
     "completed": true,
-    "duration": 60,
-    "pace": null
+    "duration": 18,
+    "pace": null,
+    "distance": "5k"
   },
   {
     "id": "c44b94d8-6fb7-4a4f-8dbe-9940f31fda00",
@@ -189,7 +190,8 @@
     "description": "Seattle Half Marathon 😅",
     "completed": true,
     "duration": 76,
-    "pace": "Aerobic Threshold"
+    "pace": null,
+    "distance": "Half Marathon"
   },
   {
     "id": "294c3de2-1b8f-49d0-892d-6b0bd53e4483",
@@ -445,7 +447,8 @@
     "description": "WWU XC Classic",
     "completed": true,
     "duration": 36,
-    "pace": "Aerobic Threshold"
+    "pace": null,
+    "distance": "10k"
   },
   {
     "id": "2ec4d74d-46a8-447a-afd7-4014d981e400",
@@ -605,7 +608,8 @@
     "description": "Austen & Graham Wedding 5k",
     "completed": true,
     "duration": 18,
-    "pace": "Lactate Threshold"
+    "pace": null,
+    "distance": "5k"
   },
   {
     "id": "bc9cad56-52e9-461d-b4d3-114fb43a687f",
@@ -2301,7 +2305,8 @@
     "description": "Jingle Bell Dash 5k",
     "completed": true,
     "duration": 17,
-    "pace": "Groove"
+    "pace": null,
+    "distance": "5k"
   },
   {
     "id": "8903095054",
@@ -2429,6 +2434,656 @@
     "description": "Core",
     "completed": true,
     "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "1344375721",
+    "date": "2019-12-23",
+    "description": "Barefoot on turf 😀",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "3123323069",
+    "date": "2019-12-23",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "0191972584",
+    "date": "2019-12-22",
+    "description": "",
+    "completed": true,
+    "duration": 33,
+    "pace": "Easy"
+  },
+  {
+    "id": "9555340174",
+    "date": "2019-12-22",
+    "description": "Body weight lower body",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "4763904506",
+    "date": "2019-12-21",
+    "description": "",
+    "completed": true,
+    "duration": 32,
+    "pace": "Easy"
+  },
+  {
+    "id": "7265165104",
+    "date": "2019-12-21",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "0195890485",
+    "date": "2019-12-22",
+    "description": "Push ups, pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "5630648487",
+    "date": "2019-12-20",
+    "description": "Achy! 😑",
+    "completed": true,
+    "duration": 38,
+    "pace": "Easy"
+  },
+  {
+    "id": "7367926682",
+    "date": "2019-12-24",
+    "description": "",
+    "completed": true,
+    "duration": 115,
+    "pace": "Easy"
+  },
+  {
+    "id": "5749195094",
+    "date": "2020-04-05",
+    "description": "Cherry Blossom 10 miler",
+    "completed": false,
+    "duration": 57,
+    "pace": null,
+    "distance": "10 mile"
+  },
+  {
+    "id": "8137189315",
+    "date": "2019-12-25",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "2619384585",
+    "date": "2019-12-25",
+    "description": "Drills n strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "6801217245",
+    "date": "2019-12-25",
+    "description": "Weights",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "5318301175",
+    "date": "2019-12-26",
+    "description": "",
+    "completed": true,
+    "duration": 56,
+    "pace": "Easy"
+  },
+  {
+    "id": "2047582813",
+    "date": "2019-12-26",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "4125022724",
+    "date": "2019-12-27",
+    "description": "Winded and achy! 😩",
+    "completed": true,
+    "duration": 44,
+    "pace": "Easy"
+  },
+  {
+    "id": "5298920057",
+    "date": "2019-12-28",
+    "description": "",
+    "completed": true,
+    "duration": 105,
+    "pace": "Easy"
+  },
+  {
+    "id": "9925636648",
+    "date": "2019-12-28",
+    "description": "Drills and strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0478215853",
+    "date": "2019-12-29",
+    "description": "",
+    "completed": true,
+    "duration": 40,
+    "pace": "Easy"
+  },
+  {
+    "id": "4603992373",
+    "date": "2019-12-29",
+    "description": "GSF",
+    "completed": true,
+    "duration": 60,
+    "pace": null
+  },
+  {
+    "id": "7616873241",
+    "date": "2019-12-30",
+    "description": "",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "9180626601",
+    "date": "2019-12-30",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "9370431182",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "5700314976",
+    "date": "2020-01-01",
+    "description": "5 x 400m",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "1942575459",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "Easy"
+  },
+  {
+    "id": "2073301038",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "9952285987",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "Easy"
+  },
+  {
+    "id": "6311685812",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "7395836499",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "Easy"
+  },
+  {
+    "id": "8857218784",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "2981104729",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "Easy"
+  },
+  {
+    "id": "5867091674",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 1,
+    "pace": "VO2 Max"
+  },
+  {
+    "id": "4384375783",
+    "date": "2020-01-01",
+    "description": "",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "8022030399",
+    "date": "2019-12-31",
+    "description": "",
+    "completed": true,
+    "duration": 45,
+    "pace": "Easy"
+  },
+  {
+    "id": "0042463651",
+    "date": "2019-12-31",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "1446139748",
+    "date": "2020-01-02",
+    "description": "",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "5142543032",
+    "date": "2020-01-01",
+    "description": "Pull ups",
+    "completed": true,
+    "duration": 5,
+    "pace": null
+  },
+  {
+    "id": "7572596225",
+    "date": "2019-12-31",
+    "description": "Push ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "9352633052",
+    "date": "2020-01-02",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "9905837525",
+    "date": "2020-01-03",
+    "description": "",
+    "completed": true,
+    "duration": 80,
+    "pace": "Easy"
+  },
+  {
+    "id": "2613910584",
+    "date": "2020-01-04",
+    "description": "",
+    "completed": true,
+    "duration": 30,
+    "pace": "Easy"
+  },
+  {
+    "id": "0634023121",
+    "date": "2020-01-05",
+    "description": "Ankle pain 😔",
+    "completed": true,
+    "duration": 100,
+    "pace": "Easy"
+  },
+  {
+    "id": "4895796543",
+    "date": "2020-01-04",
+    "description": "Drills and strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "5944452449",
+    "date": "2020-01-04",
+    "description": "Core and push ups",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "1375116956",
+    "date": "2020-01-06",
+    "description": "Weights",
+    "completed": true,
+    "duration": 30,
+    "pace": null
+  },
+  {
+    "id": "8844494841",
+    "date": "2020-01-06",
+    "description": "",
+    "completed": true,
+    "duration": 35,
+    "pace": "Easy"
+  },
+  {
+    "id": "2561141575",
+    "date": "2020-01-07",
+    "description": "",
+    "completed": true,
+    "duration": 25,
+    "pace": "Easy"
+  },
+  {
+    "id": "2975497986",
+    "date": "2020-01-07",
+    "description": "Drills and strides",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "9895808917",
+    "date": "2020-01-08",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "6070860920",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "0377320780",
+    "date": "2020-01-08",
+    "description": "Cornwall 4 x ~1 mile",
+    "completed": true,
+    "duration": 5,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "1298325839",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "6120704928",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 5,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "1804433462",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "9153481824",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 5,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "8605441392",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 2,
+    "pace": "Easy"
+  },
+  {
+    "id": "5603532619",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 5,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "0829422335",
+    "date": "2020-01-08",
+    "description": "",
+    "completed": true,
+    "duration": 15,
+    "pace": "Easy"
+  },
+  {
+    "id": "3779300595",
+    "date": "2020-01-09",
+    "description": "Achy ankles",
+    "completed": true,
+    "duration": 60,
+    "pace": "Easy"
+  },
+  {
+    "id": "2030532445",
+    "date": "2020-01-10",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "5424833241",
+    "date": "2020-01-10",
+    "description": "Starting to loosen up 😌",
+    "completed": true,
+    "duration": 55,
+    "pace": "Easy"
+  },
+  {
+    "id": "1107297117",
+    "date": "2020-01-11",
+    "description": "My ankles tho 😭",
+    "completed": true,
+    "duration": 105,
+    "pace": "Easy"
+  },
+  {
+    "id": "1180048491",
+    "date": "2020-01-12",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "7394159521",
+    "date": "2020-01-12",
+    "description": "Push ups and pull ups",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "0865358228",
+    "date": "2020-01-13",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "8868715311",
+    "date": "2020-01-13",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "5831641216",
+    "date": "2020-01-14",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "0155010387",
+    "date": "2020-01-14",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Aerobic Threshold"
+  },
+  {
+    "id": "1362685173",
+    "date": "2020-01-14",
+    "description": "",
+    "completed": true,
+    "duration": 20,
+    "pace": "Easy"
+  },
+  {
+    "id": "9257927450",
+    "date": "2020-01-14",
+    "description": "Core",
+    "completed": true,
+    "duration": 20,
+    "pace": null
+  },
+  {
+    "id": "0782765853",
+    "date": "2020-01-15",
+    "description": "Snowy!",
+    "completed": true,
+    "duration": 63,
+    "pace": "Easy"
+  },
+  {
+    "id": "5049736623",
+    "date": "2020-02-08",
+    "description": "GBRC Whatcom Falls 5k",
+    "completed": false,
+    "duration": 17,
+    "pace": null,
+    "distance": "5k"
+  },
+  {
+    "id": "4630579913",
+    "date": "2020-01-16",
+    "description": "🏋️‍♂️ Weights",
+    "completed": true,
+    "duration": 45,
+    "pace": null
+  },
+  {
+    "id": "3739319631",
+    "date": "2020-01-16",
+    "description": "Treadmill",
+    "completed": true,
+    "duration": 10,
+    "pace": "Easy"
+  },
+  {
+    "id": "5557481596",
+    "date": "2020-01-17",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "6236091118",
+    "date": "2020-01-17",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "2530107942",
+    "date": "2020-01-17",
+    "description": "💆‍♂️ Chiro",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "3700655346",
+    "date": "2020-01-18",
+    "description": "",
+    "completed": true,
+    "duration": 50,
+    "pace": "Easy"
+  },
+  {
+    "id": "7163143239",
+    "date": "2020-01-18",
+    "description": "Drills",
+    "completed": true,
+    "duration": 10,
+    "pace": null
+  },
+  {
+    "id": "7599885558",
+    "date": "2020-01-18",
+    "description": "Core",
+    "completed": true,
+    "duration": 15,
+    "pace": null
+  },
+  {
+    "id": "9432367462",
+    "date": "2020-01-18",
+    "description": "😴 Rest",
+    "completed": true,
+    "duration": 1,
     "pace": null
   }
 ]
