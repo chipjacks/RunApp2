@@ -553,7 +553,7 @@ viewActivity activityFormM activity =
     let
         level =
             Activity.mprLevel activity
-                |> Maybe.map (\l -> "Level " ++ String.fromInt l)
+                |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
 
         activityView =
@@ -562,7 +562,10 @@ viewActivity activityFormM activity =
                     [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
                     , column [ style "justify-content" "center" ]
                         [ row [] [ text activity.description ]
-                        , row [ style "font-size" "0.8rem" ] [ text level ]
+                        , row [ style "font-size" "0.8rem" ]
+                            [ column [] [ text <| String.fromInt activity.duration ++ " min " ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower) ]
+                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
+                            ]
                         ]
                     ]
                 ]
