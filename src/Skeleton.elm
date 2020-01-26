@@ -1,4 +1,4 @@
-module Skeleton exposing (column, compactColumn, expandingRow, layout, row)
+module Skeleton exposing (column, compactColumn, expandingRow, layout, row, styleIf)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -47,3 +47,12 @@ compactColumn attributes children =
     div
         (class "column compact" :: attributes)
         children
+
+
+styleIf : Bool -> String -> String -> Html.Attribute msg
+styleIf bool name value =
+    if bool then
+        style name value
+
+    else
+        style "" ""

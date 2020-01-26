@@ -14,7 +14,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
-import Skeleton exposing (column, compactColumn, expandingRow, row)
+import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Task
 import Time exposing (Month(..))
 import Url exposing (Url)
@@ -45,6 +45,7 @@ type alias State =
     , date : Date
     , activities : List Activity
     , activityForm : Maybe ActivityForm.Model
+    , today : Date
     }
 
 
@@ -126,7 +127,7 @@ update msg model =
                             dateM |> Maybe.withDefault state.date
 
                         completed =
-                            Date.compare date state.date == LT || date == state.date
+                            Date.compare date state.today == LT || date == state.today
                     in
                     ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) completed }
                     , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
@@ -172,6 +173,7 @@ updateLoading model =
                     date
                     activities
                     Nothing
+                    date
             )
                 |> update NoOp
 
@@ -297,7 +299,7 @@ type CalendarView
 
 
 viewCalendar : State -> Html Msg
-viewCalendar { calendar, date, activities, activityForm } =
+viewCalendar { calendar, date, activities, activityForm, today } =
     let
         accessActivities =
             \date_ ->
@@ -321,11 +323,11 @@ viewCalendar { calendar, date, activities, activityForm } =
         body =
             case calendar of
                 Weekly ->
-                    weekList date |> List.map (viewWeek accessActivities)
+                    weekList date |> List.map (viewWeek accessActivities today)
 
                 Daily ->
                     listDays date
-                        |> List.map (\d -> viewDay activityForm d (accessActivities d) (d == date))
+                        |> List.map (\d -> viewDay activityForm d (accessActivities d) (d == today))
     in
     expandingRow
         [ id "calendar"
@@ -401,13 +403,12 @@ scrollHandler date calendar =
 -- WEEKLY VIEW
 
 
-viewWeek : (Date -> List Activity) -> Date -> Html Msg
-viewWeek accessActivities start =
+viewWeek : (Date -> List Activity) -> Date -> Date -> Html Msg
+viewWeek accessActivities today start =
     let
         dayViews =
             daysOfWeek start
-                |> List.map (\d -> ( d, accessActivities d ))
-                |> List.map viewWeekDay
+                |> List.map (\d -> viewWeekDay ( d, accessActivities d ) (d == today))
 
         activities =
             daysOfWeek start
@@ -425,12 +426,13 @@ viewWeek accessActivities start =
             :: dayViews
 
 
-viewWeekDay : ( Date, List Activity ) -> Html Msg
-viewWeekDay ( date, activities ) =
+viewWeekDay : ( Date, List Activity ) -> Bool -> Html Msg
+viewWeekDay ( date, activities ) isToday =
     column [ onClick (LoadCalendar Daily date), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
         row []
             [ a
                 [ attribute "data-date" (Date.toIsoString date)
+                , styleIf isToday "text-decoration" "underline"
                 ]
                 [ text (Date.format "d" date)
                 ]
@@ -498,7 +500,7 @@ daysOfWeek start =
 
 
 viewDay : Maybe ActivityForm.Model -> Date -> List Activity -> Bool -> Html Msg
-viewDay activityFormM date activities isSelectedDate =
+viewDay activityFormM date activities isToday =
     let
         activityFormView =
             case activityFormM of
@@ -511,15 +513,8 @@ viewDay activityFormM date activities isSelectedDate =
 
                 Nothing ->
                     Html.text ""
-
-        rowId =
-            if isSelectedDate then
-                [ id "selected-date" ]
-
-            else
-                []
     in
-    row rowId
+    row [ styleIf isToday "font-weight" "bold" ]
         [ column []
             [ row []
                 [ text (Date.format "E MMM d" date)
