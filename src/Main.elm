@@ -514,9 +514,9 @@ viewDay activityFormM date activities isToday =
                 Nothing ->
                     Html.text ""
     in
-    row [ styleIf isToday "font-weight" "bold" ]
+    row []
         [ column []
-            [ row []
+            [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
                 , a [ onClick (NewActivity (Just date)), style "margin-left" "0.2rem" ] [ text "+" ]
                 ]
