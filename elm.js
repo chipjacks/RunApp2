@@ -7421,7 +7421,7 @@ var $author$project$Main$Loaded = function (a) {
 var $author$project$Main$NoOp = {$: 6};
 var $author$project$Main$State = F5(
 	function (calendar, date, activities, activityForm, today) {
-		return {F: activities, k: activityForm, z: calendar, an: date, Q: today};
+		return {F: activities, k: activityForm, y: calendar, an: date, Q: today};
 	});
 var $author$project$Main$Weekly = 0;
 var $justinmimbs$date$Date$compare = F2(
@@ -7431,7 +7431,7 @@ var $justinmimbs$date$Date$compare = F2(
 		return A2($elm$core$Basics$compare, a, b);
 	});
 var $author$project$ActivityForm$NewId = function (a) {
-	return {$: 10, a: a};
+	return {$: 9, a: a};
 };
 var $elm$random$Random$Generate = $elm$core$Basics$identity;
 var $elm$random$Random$Seed = F2(
@@ -7603,7 +7603,7 @@ var $author$project$ActivityForm$Editing = function (a) {
 };
 var $author$project$ActivityForm$Model = F8(
 	function (status, date, description, completed, duration, pace, distance, result) {
-		return {am: completed, an: date, aq: description, O: distance, T: duration, _: pace, r: result, w: status};
+		return {am: completed, an: date, aq: description, O: distance, T: duration, _: pace, r: result, D: status};
 	});
 var $author$project$ActivityForm$initEdit = function (activity) {
 	return A8(
@@ -7768,11 +7768,12 @@ var $author$project$ActivityForm$selectDate = F2(
 				})) : model;
 	});
 var $author$project$ActivityForm$ApiError = {$: 0};
+var $author$project$ActivityForm$Close = {$: 12};
 var $author$project$ActivityForm$GotDeleteResult = function (a) {
-	return {$: 12, a: a};
+	return {$: 11, a: a};
 };
 var $author$project$ActivityForm$GotSubmitResult = function (a) {
-	return {$: 11, a: a};
+	return {$: 10, a: a};
 };
 var $elm$core$List$append = F2(
 	function (xs, ys) {
@@ -8170,13 +8171,13 @@ var $justinmimbs$date$Date$formatField = F4(
 			case 'E':
 				switch (length) {
 					case 1:
-						return language.y(
+						return language.x(
 							$justinmimbs$date$Date$weekday(date));
 					case 2:
-						return language.y(
+						return language.x(
 							$justinmimbs$date$Date$weekday(date));
 					case 3:
-						return language.y(
+						return language.x(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
 						return language.ae(
@@ -8185,13 +8186,13 @@ var $justinmimbs$date$Date$formatField = F4(
 						return A2(
 							$elm$core$String$left,
 							1,
-							language.y(
+							language.x(
 								$justinmimbs$date$Date$weekday(date)));
 					case 6:
 						return A2(
 							$elm$core$String$left,
 							2,
-							language.y(
+							language.x(
 								$justinmimbs$date$Date$weekday(date)));
 					default:
 						return '';
@@ -8518,7 +8519,7 @@ var $justinmimbs$date$Date$language_en = {
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
 	ae: $justinmimbs$date$Date$weekdayToName,
-	y: A2(
+	x: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
 		$elm$core$String$left(3))
@@ -8770,7 +8771,7 @@ var $author$project$ActivityForm$update = F2(
 				if (!_v2.$) {
 					var activity = _v2.a;
 					var apiTask = function () {
-						var _v4 = model.w;
+						var _v4 = model.D;
 						if (_v4.$ === 1) {
 							var id = _v4.a;
 							return $author$project$Api$saveActivity(
@@ -8801,9 +8802,7 @@ var $author$project$ActivityForm$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			case 7:
-				return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
-			case 8:
-				var _v5 = model.w;
+				var _v5 = model.D;
 				if (_v5.$ === 1) {
 					var id = _v5.a;
 					return _Utils_Tuple2(
@@ -8812,20 +8811,33 @@ var $author$project$ActivityForm$update = F2(
 							_List_fromArray(
 								[
 									A2(
+									$elm$core$Task$perform,
+									function (_v6) {
+										return $author$project$ActivityForm$Close;
+									},
+									$elm$core$Task$succeed(0)),
+									A2(
 									$elm$core$Task$attempt,
 									$author$project$ActivityForm$GotDeleteResult,
 									A2(
 										$elm$core$Task$mapError,
-										function (_v6) {
+										function (_v7) {
 											return $author$project$ActivityForm$ApiError;
 										},
 										$author$project$Api$deleteActivity(id))),
 									$author$project$ActivityForm$generateNewId
 								])));
 				} else {
-					return _Utils_Tuple2(model, $author$project$ActivityForm$generateNewId);
+					return _Utils_Tuple2(
+						model,
+						A2(
+							$elm$core$Task$perform,
+							function (_v8) {
+								return $author$project$ActivityForm$Close;
+							},
+							$elm$core$Task$succeed(0)));
 				}
-			case 9:
+			case 8:
 				var newModel = _Utils_update(
 					model,
 					{an: $elm$core$Maybe$Nothing});
@@ -8836,11 +8848,26 @@ var $author$project$ActivityForm$update = F2(
 							r: $author$project$ActivityForm$validate(newModel)
 						}),
 					$elm$core$Platform$Cmd$none);
-			case 10:
+			case 9:
 				var id = msg.a;
 				return _Utils_Tuple2(
 					A3($author$project$ActivityForm$initNew, id, model.an, model.am),
 					$elm$core$Platform$Cmd$none);
+			case 10:
+				var result = msg.a;
+				if (!result.$) {
+					var activities = result.a;
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				} else {
+					var error = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								r: $elm$core$Result$Err(error)
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 			case 11:
 				var result = msg.a;
 				if (!result.$) {
@@ -8857,20 +8884,7 @@ var $author$project$ActivityForm$update = F2(
 						$elm$core$Platform$Cmd$none);
 				}
 			default:
-				var result = msg.a;
-				if (!result.$) {
-					var activities = result.a;
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				} else {
-					var error = result.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								r: $elm$core$Result$Err(error)
-							}),
-						$elm$core$Platform$Cmd$none);
-				}
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$update = F2(
@@ -8916,14 +8930,14 @@ var $author$project$Main$update = F2(
 						$author$project$Main$Loaded(
 							_Utils_update(
 								state,
-								{k: activityForm, z: calendar, an: date})),
+								{k: activityForm, y: calendar, an: date})),
 						$author$project$Main$resetScroll($author$project$Main$NoOp));
 				case 1:
 					return _Utils_Tuple2(
 						model,
 						A2(
 							$elm$core$Task$perform,
-							$author$project$Main$LoadCalendar(state.z),
+							$author$project$Main$LoadCalendar(state.y),
 							$justinmimbs$date$Date$today));
 				case 2:
 					var result = msg.a;
@@ -8969,9 +8983,18 @@ var $author$project$Main$update = F2(
 				case 5:
 					var subMsg = msg.a;
 					var newState = function () {
-						_v8$3:
+						_v8$4:
 						while (true) {
 							switch (subMsg.$) {
+								case 10:
+									if (!subMsg.a.$) {
+										var activities = subMsg.a.a;
+										return _Utils_update(
+											state,
+											{F: activities, k: $elm$core$Maybe$Nothing});
+									} else {
+										break _v8$4;
+									}
 								case 11:
 									if (!subMsg.a.$) {
 										var activities = subMsg.a.a;
@@ -8979,23 +9002,18 @@ var $author$project$Main$update = F2(
 											state,
 											{F: activities, k: $elm$core$Maybe$Nothing});
 									} else {
-										break _v8$3;
+										break _v8$4;
 									}
-								case 12:
-									if (!subMsg.a.$) {
-										var activities = subMsg.a.a;
-										return _Utils_update(
-											state,
-											{F: activities, k: $elm$core$Maybe$Nothing});
-									} else {
-										break _v8$3;
-									}
-								case 9:
+								case 8:
 									return _Utils_update(
 										state,
-										{z: 0});
+										{y: 0});
+								case 12:
+									return _Utils_update(
+										state,
+										{k: $elm$core$Maybe$Nothing});
 								default:
-									break _v8$3;
+									break _v8$4;
 							}
 						}
 						return state;
@@ -9060,7 +9078,7 @@ var $elm$core$List$filter = F2(
 	});
 var $author$project$ActivityForm$isEditing = F2(
 	function (activity, model) {
-		var _v0 = model.w;
+		var _v0 = model.D;
 		if (_v0.$ === 1) {
 			var id = _v0.a;
 			return _Utils_eq(activity.aD, id);
@@ -9321,7 +9339,7 @@ var $author$project$Main$NewActivity = function (a) {
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $author$project$ActivityForm$isCreating = F2(
 	function (date, model) {
-		var _v0 = model.w;
+		var _v0 = model.D;
 		if (!_v0.$) {
 			return _Utils_eq(
 				model.an,
@@ -9342,8 +9360,7 @@ var $author$project$Skeleton$styleIf = F3(
 	function (bool, name, value) {
 		return bool ? A2($elm$html$Html$Attributes$style, name, value) : A2($elm$html$Html$Attributes$style, '', '');
 	});
-var $author$project$ActivityForm$ClickedMove = {$: 9};
-var $author$project$ActivityForm$ClickedReset = {$: 7};
+var $author$project$ActivityForm$ClickedMove = {$: 8};
 var $author$project$ActivityForm$EditedDescription = function (a) {
 	return {$: 1, a: a};
 };
@@ -9366,29 +9383,26 @@ var $elm$core$Maybe$andThen = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $elm$html$Html$button = _VirtualDom_node('button');
-var $author$project$ActivityForm$ClickedDelete = {$: 8};
-var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $author$project$ActivityForm$deleteButton = function (status) {
-	if (status.$ === 1) {
-		var id = status.a;
-		return A2(
-			$elm$html$Html$button,
+var $author$project$ActivityForm$ClickedDelete = {$: 7};
+var $elm$html$Html$i = _VirtualDom_node('i');
+var $author$project$ActivityForm$deleteButton = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('button small'),
+			$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedDelete)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$i,
 			_List_fromArray(
 				[
-					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedDelete),
-					$elm$html$Html$Attributes$name('delete'),
-					A2($elm$html$Html$Attributes$style, 'margin-left', '1em')
+					$elm$html$Html$Attributes$class('fas fa-times')
 				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Delete')
-				]));
-	} else {
-		var id = status.a;
-		return A2($elm$html$Html$div, _List_Nil, _List_Nil);
-	}
-};
+			_List_Nil)
+		]));
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -9730,7 +9744,6 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
-var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm$html$Html$Events$targetChecked = A2(
 	$elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -9756,14 +9769,7 @@ var $author$project$ActivityForm$completedCheckbox = function (completed) {
 						$elm$html$Html$Attributes$checked(completed),
 						$elm$html$Html$Events$onCheck($author$project$ActivityForm$CheckedCompleted)
 					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$label,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Completed')
-					]))
+				_List_Nil)
 			]));
 };
 var $author$project$ActivityShape$Block = F3(
@@ -9935,35 +9941,25 @@ var $author$project$ActivityForm$shapeSelect = function (completed) {
 };
 var $author$project$ActivityForm$ClickedSubmit = {$: 6};
 var $author$project$ActivityForm$submitButton = function (status) {
-	if (status.$ === 1) {
-		var id = status.a;
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
-					$elm$html$Html$Attributes$class('primary'),
-					$elm$html$Html$Attributes$type_('submit')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Save')
-				]));
-	} else {
-		var id = status.a;
-		return A2(
-			$elm$html$Html$button,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit),
-					$elm$html$Html$Attributes$class('primary'),
-					$elm$html$Html$Attributes$type_('submit')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Create')
-				]));
-	}
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('button medium'),
+				$elm$html$Html$Attributes$class('primary'),
+				$elm$html$Html$Attributes$type_('submit'),
+				$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedSubmit)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$i,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('fas fa-check')
+					]),
+				_List_Nil)
+			]));
 };
 var $author$project$Activity$activityType = function (activity) {
 	var _v0 = _Utils_Tuple2(activity._, activity.O);
@@ -10118,7 +10114,56 @@ var $author$project$ActivityForm$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$author$project$ActivityForm$shapeSelect(model.am),
+						A2(
+						$author$project$Skeleton$row,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$author$project$ActivityForm$shapeSelect(model.am)
+									])),
+								A2(
+								$author$project$Skeleton$column,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$author$project$Skeleton$row,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'align-items', 'flex-start')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$a,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$class('button small'),
+														A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+														$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedMove)
+													]),
+												_List_fromArray(
+													[
+														A2(
+														$elm$html$Html$i,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('fas fa-arrow-right')
+															]),
+														_List_Nil)
+													])),
+												$author$project$ActivityForm$deleteButton
+											]))
+									]))
+							])),
 						A2(
 						$author$project$Skeleton$row,
 						_List_Nil,
@@ -10141,7 +10186,8 @@ var $author$project$ActivityForm$view = function (model) {
 						$author$project$Skeleton$row,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap')
+								A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center')
 							]),
 						_List_fromArray(
 							[
@@ -10187,65 +10233,16 @@ var $author$project$ActivityForm$view = function (model) {
 											return $elm$html$Html$text(
 												'Level ' + $elm$core$String$fromInt(level));
 										})
-									]))
-							])),
-						A2(
-						$author$project$Skeleton$row,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$author$project$ActivityForm$submitButton(model.w)
 									])),
 								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
+								$author$project$Skeleton$column,
 								_List_fromArray(
 									[
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedReset),
-												$elm$html$Html$Attributes$type_('reset'),
-												A2($elm$html$Html$Attributes$style, 'margin-left', '1em')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Reset')
-											]))
-									])),
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
+										A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
+									]),
 								_List_fromArray(
 									[
-										$author$project$ActivityForm$deleteButton(model.w)
-									])),
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$button,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick($author$project$ActivityForm$ClickedMove),
-												$elm$html$Html$Attributes$type_('move'),
-												A2($elm$html$Html$Attributes$style, 'margin-left', '1em')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text('Move')
-											]))
+										$author$project$ActivityForm$submitButton(model.D)
 									]))
 							])),
 						A2(
@@ -10374,10 +10371,7 @@ var $author$project$Main$viewDay = F4(
 		}();
 		return A2(
 			$author$project$Skeleton$row,
-			_List_fromArray(
-				[
-					A3($author$project$Skeleton$styleIf, isToday, 'font-weight', 'bold')
-				]),
+			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
@@ -10387,7 +10381,10 @@ var $author$project$Main$viewDay = F4(
 						[
 							A2(
 							$author$project$Skeleton$row,
-							_List_Nil,
+							_List_fromArray(
+								[
+									A3($author$project$Skeleton$styleIf, isToday, 'font-weight', 'bold')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
@@ -10654,7 +10651,7 @@ var $author$project$Main$weekList = function (date) {
 	return A4($justinmimbs$date$Date$range, 3, 1, start, end);
 };
 var $author$project$Main$viewCalendar = function (_v0) {
-	var calendar = _v0.z;
+	var calendar = _v0.y;
 	var date = _v0.an;
 	var activities = _v0.F;
 	var activityForm = _v0.k;
@@ -10722,7 +10719,7 @@ var $author$project$Main$viewCalendar = function (_v0) {
 			]));
 };
 var $author$project$Main$LoadToday = {$: 1};
-var $elm$html$Html$i = _VirtualDom_node('i');
+var $elm$html$Html$button = _VirtualDom_node('button');
 var $justinmimbs$date$Date$Month = 2;
 var $author$project$Main$viewDropdownItem = F3(
 	function (changeDate, formatDate, date) {
@@ -10910,7 +10907,7 @@ var $author$project$Main$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								A2($author$project$Main$viewMenu, state.z, state.an),
+								A2($author$project$Main$viewMenu, state.y, state.an),
 								$author$project$Main$viewCalendar(state)
 							]))
 					]);
