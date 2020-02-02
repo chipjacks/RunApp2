@@ -45,12 +45,12 @@ type Msg
     | SelectedPace String
     | SelectedDistance String
     | ClickedSubmit
-    | ClickedReset
     | ClickedDelete
     | ClickedMove
     | NewId String
     | GotSubmitResult (Result Error (List Activity))
     | GotDeleteResult (Result Error (List Activity))
+    | Close
 
 
 type Error
@@ -190,21 +190,19 @@ update msg model =
                 Err error ->
                     ( model, Cmd.none )
 
-        ClickedReset ->
-            ( model, generateNewId )
-
         ClickedDelete ->
             case model.status of
                 Editing id ->
                     ( model
                     , Cmd.batch
-                        [ Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError))
+                        [ Task.perform (\_ -> Close) (Task.succeed ())
+                        , Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError))
                         , generateNewId
                         ]
                     )
 
-                _ ->
-                    ( model, generateNewId )
+                Creating _ ->
+                    ( model, Task.perform (\_ -> Close) (Task.succeed ()) )
 
         ClickedMove ->
             let
@@ -231,6 +229,9 @@ update msg model =
 
                 Err error ->
                     ( { model | result = Err error }, Cmd.none )
+
+        Close ->
+            ( model, Cmd.none )
 
 
 updateResult : Model -> Model
@@ -262,7 +263,15 @@ view model =
     row [ id "activity" ]
         [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
         , column []
-            [ shapeSelect model.completed
+            [ row []
+                [ compactColumn [] [ shapeSelect model.completed ]
+                , column [ style "align-items" "flex-end" ]
+                    [ row [ style "align-items" "flex-start" ]
+                        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+                        , deleteButton
+                        ]
+                    ]
+                ]
             , row []
                 [ input
                     [ type_ "text"
@@ -274,7 +283,7 @@ view model =
                     ]
                     []
                 ]
-            , row [ style "flex-wrap" "wrap" ]
+            , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
                 , compactColumn [] [ maybeView model.pace (paceSelect SelectedPace) ]
                 , compactColumn [] [ maybeView model.distance (distanceSelect SelectedDistance) ]
@@ -282,26 +291,7 @@ view model =
                     [ maybeView (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
                         (\level -> text <| "Level " ++ String.fromInt level)
                     ]
-                ]
-            , row [ style "flex-wrap" "wrap" ]
-                [ compactColumn [] [ submitButton model.status ]
-                , compactColumn []
-                    [ button
-                        [ onClick ClickedReset
-                        , type_ "reset"
-                        , style "margin-left" "1em"
-                        ]
-                        [ text "Reset" ]
-                    ]
-                , compactColumn [] [ deleteButton model.status ]
-                , compactColumn []
-                    [ button
-                        [ onClick ClickedMove
-                        , type_ "move"
-                        , style "margin-left" "1em"
-                        ]
-                        [ text "Move" ]
-                    ]
+                , column [ style "align-items" "flex-end" ] [ submitButton model.status ]
                 ]
             , row []
                 [ viewError model.result ]
@@ -328,43 +318,27 @@ completedCheckbox completed =
             , Html.Events.onCheck CheckedCompleted
             ]
             []
-        , Html.label [] [ text "Completed" ]
         ]
 
 
 submitButton : Status -> Html Msg
 submitButton status =
-    case status of
-        Editing id ->
-            button
-                [ onClick ClickedSubmit
-                , class "primary"
-                , type_ "submit"
-                ]
-                [ text "Save" ]
-
-        Creating id ->
-            button
-                [ onClick ClickedSubmit
-                , class "primary"
-                , type_ "submit"
-                ]
-                [ text "Create" ]
+    a
+        [ class "button medium"
+        , class "primary"
+        , type_ "submit"
+        , onClick ClickedSubmit
+        ]
+        [ i [ class "fas fa-check" ] [] ]
 
 
-deleteButton : Status -> Html Msg
-deleteButton status =
-    case status of
-        Editing id ->
-            button
-                [ onClick ClickedDelete
-                , name "delete"
-                , style "margin-left" "1em"
-                ]
-                [ text "Delete" ]
-
-        Creating id ->
-            div [] []
+deleteButton : Html Msg
+deleteButton =
+    a
+        [ class "button small"
+        , onClick ClickedDelete
+        ]
+        [ i [ class "fas fa-times" ] [] ]
 
 
 durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg

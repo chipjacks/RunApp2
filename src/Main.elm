@@ -146,6 +146,9 @@ update msg model =
                                 ActivityForm.ClickedMove ->
                                     { state | calendar = Weekly }
 
+                                ActivityForm.Close ->
+                                    { state | activityForm = Nothing }
+
                                 _ ->
                                     state
 
@@ -514,9 +517,9 @@ viewDay activityFormM date activities isToday =
                 Nothing ->
                     Html.text ""
     in
-    row [ styleIf isToday "font-weight" "bold" ]
+    row []
         [ column []
-            [ row []
+            [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
                 , a [ onClick (NewActivity (Just date)), style "margin-left" "0.2rem" ] [ text "+" ]
                 ]
