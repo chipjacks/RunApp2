@@ -146,6 +146,9 @@ update msg model =
                                 ActivityForm.ClickedMove ->
                                     { state | calendar = Weekly }
 
+                                ActivityForm.Close ->
+                                    { state | activityForm = Nothing }
+
                                 _ ->
                                     state
 

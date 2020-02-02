@@ -49,6 +49,8 @@ button, .button {
   text-decoration: none;
   color: black;
 }
+.button.small { padding: 0rem 1rem; }
+.button.medium { padding: 0.3rem 1rem; }
 button:hover, .button:hover { background-color: var(--highlight-grey); }
 .primary { background-color: #2185d0; color: #fff; }
 .primary:hover { background-color: #1678c2; }
