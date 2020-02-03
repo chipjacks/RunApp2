@@ -9696,6 +9696,15 @@ var $author$project$Activity$mprLevel = function (activity) {
 		},
 		activity.O);
 };
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $author$project$ActivityForm$paceSelect = F2(
 	function (msg, pace) {
 		var selectedAttr = function (paceStr) {
@@ -9723,7 +9732,12 @@ var $author$project$ActivityForm$paceSelect = F2(
 						selectedAttr(paceStr),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(paceStr)
+								$elm$html$Html$text(
+								A2(
+									$elm$core$Maybe$withDefault,
+									'',
+									$elm$core$List$head(
+										A2($elm$core$String$split, ' ', paceStr))))
 							]));
 				},
 				$author$project$Activity$pace.aI));
@@ -9982,15 +9996,6 @@ var $author$project$Activity$activityType = function (activity) {
 		}
 	}
 	return 1;
-};
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
 };
 var $author$project$ActivityShape$toHeight = function (duration) {
 	return duration / 10;
