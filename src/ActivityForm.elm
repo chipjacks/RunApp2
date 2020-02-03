@@ -382,7 +382,7 @@ paceSelect msg pace =
         ]
         (List.map
             (\( paceStr, _ ) ->
-                Html.option (selectedAttr paceStr) [ Html.text paceStr ]
+                Html.option (selectedAttr paceStr) [ Html.text (String.split " " paceStr |> List.head |> Maybe.withDefault "") ]
             )
             Activity.pace.list
         )
