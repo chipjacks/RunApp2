@@ -6608,15 +6608,15 @@ var $elm$json$Json$Decode$nullable = function (decoder) {
 				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
 			]));
 };
-var $author$project$Activity$AerobicThreshold = 4;
+var $author$project$Activity$Aerobic = 4;
 var $author$project$Activity$Brisk = 3;
 var $author$project$Activity$Easy = 0;
 var $author$project$Activity$Fast = 8;
 var $author$project$Activity$Groove = 6;
-var $author$project$Activity$LactateThreshold = 5;
+var $author$project$Activity$Lactate = 5;
 var $author$project$Activity$Moderate = 1;
-var $author$project$Activity$SteadyState = 2;
-var $author$project$Activity$VO2Max = 7;
+var $author$project$Activity$Steady = 2;
+var $author$project$Activity$VO2 = 7;
 var $author$project$Activity$pace = A2(
 	$author$project$Enum$create,
 	_List_fromArray(
@@ -6628,17 +6628,17 @@ var $author$project$Activity$pace = A2(
 			case 1:
 				return 'Moderate';
 			case 2:
-				return 'Steady State';
+				return 'Steady';
 			case 3:
 				return 'Brisk';
 			case 4:
-				return 'Aerobic Threshold';
+				return 'Aerobic';
 			case 5:
-				return 'Lactate Threshold';
+				return 'Lactate';
 			case 6:
 				return 'Groove';
 			case 7:
-				return 'VO2 Max';
+				return 'VO2';
 			default:
 				return 'Fast';
 		}
