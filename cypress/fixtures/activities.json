@@ -657,7 +657,7 @@
     "description": "Mile time trial",
     "completed": true,
     "duration": 5,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "61bf14ae-9102-49b3-bdce-fd39117ba5e3",
@@ -785,7 +785,7 @@
     "description": "400m",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "b18a2c59-e30e-4c0f-a4d2-9c3b6bb67e87",
@@ -801,7 +801,7 @@
     "description": "400m",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "4af57ba5-0d87-40db-bc7f-6365e6ebd4ae",
@@ -825,7 +825,7 @@
     "description": "400m",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "505e3972-c6c9-4a96-98e2-66eb2c4fca6b",
@@ -1713,7 +1713,7 @@
     "description": "Tempo",
     "completed": true,
     "duration": 20,
-    "pace": "Steady State"
+    "pace": "Steady"
   },
   {
     "id": "0620596703",
@@ -2193,7 +2193,7 @@
     "description": "",
     "completed": true,
     "duration": 3,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "9645283892",
@@ -2402,7 +2402,7 @@
     "description": "2k @ LT on the track",
     "completed": true,
     "duration": 7,
-    "pace": "Lactate Threshold"
+    "pace": "Lactate"
   },
   {
     "id": "5629830180",
@@ -2418,7 +2418,7 @@
     "description": "",
     "completed": true,
     "duration": 7,
-    "pace": "Lactate Threshold"
+    "pace": "Lactate"
   },
   {
     "id": "2495957301",
@@ -2627,7 +2627,7 @@
     "description": "5 x 400m",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "1942575459",
@@ -2643,7 +2643,7 @@
     "description": "",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "9952285987",
@@ -2659,7 +2659,7 @@
     "description": "",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "7395836499",
@@ -2675,7 +2675,7 @@
     "description": "",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "2981104729",
@@ -2691,7 +2691,7 @@
     "description": "",
     "completed": true,
     "duration": 1,
-    "pace": "VO2 Max"
+    "pace": "VO2"
   },
   {
     "id": "4384375783",
@@ -2843,7 +2843,7 @@
     "description": "Cornwall 4 x ~1 mile",
     "completed": true,
     "duration": 5,
-    "pace": "Aerobic Threshold"
+    "pace": "Aerobic"
   },
   {
     "id": "1298325839",
@@ -2859,7 +2859,7 @@
     "description": "",
     "completed": true,
     "duration": 5,
-    "pace": "Aerobic Threshold"
+    "pace": "Aerobic"
   },
   {
     "id": "1804433462",
@@ -2875,7 +2875,7 @@
     "description": "",
     "completed": true,
     "duration": 5,
-    "pace": "Aerobic Threshold"
+    "pace": "Aerobic"
   },
   {
     "id": "8605441392",
@@ -2891,7 +2891,7 @@
     "description": "",
     "completed": true,
     "duration": 5,
-    "pace": "Aerobic Threshold"
+    "pace": "Aerobic"
   },
   {
     "id": "0829422335",
@@ -2979,7 +2979,7 @@
     "description": "",
     "completed": true,
     "duration": 20,
-    "pace": "Aerobic Threshold"
+    "pace": "Aerobic"
   },
   {
     "id": "1362685173",
