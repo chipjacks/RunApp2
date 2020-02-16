@@ -25,7 +25,7 @@ view activity =
                 |> viewShape
 
         Activity.Race ->
-            Block Orange activity.completed { width = toWidth (Maybe.withDefault Activity.LactateThreshold activity.pace), height = toHeight activity.duration }
+            Block Orange activity.completed { width = toWidth (Maybe.withDefault Activity.Lactate activity.pace), height = toHeight activity.duration }
                 |> viewShape
 
         Activity.Other ->
@@ -115,22 +115,22 @@ toWidth pace =
         Moderate ->
             2
 
-        SteadyState ->
+        Steady ->
             3
 
         Brisk ->
             4
 
-        AerobicThreshold ->
+        Aerobic ->
             5
 
-        LactateThreshold ->
+        Lactate ->
             6
 
         Groove ->
             7
 
-        VO2Max ->
+        VO2 ->
             8
 
         Fast ->

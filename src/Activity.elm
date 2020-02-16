@@ -61,12 +61,12 @@ type alias Minutes =
 type Pace
     = Easy
     | Moderate
-    | SteadyState
+    | Steady
     | Brisk
-    | AerobicThreshold
-    | LactateThreshold
+    | Aerobic
+    | Lactate
     | Groove
-    | VO2Max
+    | VO2
     | Fast
 
 
@@ -75,12 +75,12 @@ pace =
     Enum.create
         [ Easy
         , Moderate
-        , SteadyState
+        , Steady
         , Brisk
-        , AerobicThreshold
-        , LactateThreshold
+        , Aerobic
+        , Lactate
         , Groove
-        , VO2Max
+        , VO2
         , Fast
         ]
         (\a ->
@@ -91,23 +91,23 @@ pace =
                 Moderate ->
                     "Moderate"
 
-                SteadyState ->
-                    "Steady State"
+                Steady ->
+                    "Steady"
 
                 Brisk ->
                     "Brisk"
 
-                AerobicThreshold ->
-                    "Aerobic Threshold"
+                Aerobic ->
+                    "Aerobic"
 
-                LactateThreshold ->
-                    "Lactate Threshold"
+                Lactate ->
+                    "Lactate"
 
                 Groove ->
                     "Groove"
 
-                VO2Max ->
-                    "VO2 Max"
+                VO2 ->
+                    "VO2"
 
                 Fast ->
                     "Fast"
