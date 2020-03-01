@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, selectDate, update, view)
+module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, update, view)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -8,6 +8,7 @@ import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, input, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
+import Http
 import Json.Decode as Decode
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row)
@@ -35,6 +36,7 @@ type alias Model =
 type Status
     = Creating Activity.Id
     | Editing Activity.Id
+    | Saving
 
 
 type Msg
@@ -66,6 +68,19 @@ initNew id dateM completed =
 initEdit : Activity -> Model
 initEdit activity =
     Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
+
+
+save : Model -> List Activity -> List Activity
+save { result, status } activities =
+    case ( result, status ) of
+        ( Ok activity, Editing id ) ->
+            Api.updateActivity { activity | id = id } False activities
+
+        ( Ok activity, Creating id ) ->
+            Api.updateActivity { activity | id = id } True activities
+
+        _ ->
+            activities
 
 
 selectDate : Date -> Model -> Model
@@ -184,8 +199,11 @@ update msg model =
 
                                 Creating id ->
                                     Api.createActivity { activity | id = id }
+
+                                Saving ->
+                                    Task.fail (Http.BadUrl "Invalid submit")
                     in
-                    ( model, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
+                    ( { model | status = Saving }, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
 
                 Err error ->
                     ( model, Cmd.none )
@@ -201,7 +219,7 @@ update msg model =
                         ]
                     )
 
-                Creating _ ->
+                _ ->
                     ( model, Task.perform (\_ -> Close) (Task.succeed ()) )
 
         ClickedMove ->
