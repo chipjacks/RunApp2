@@ -1,4 +1,4 @@
-module Api exposing (createActivity, deleteActivity, getActivities, saveActivity)
+module Api exposing (createActivity, deleteActivity, getActivities, saveActivity, updateActivity)
 
 import Activity exposing (Activity)
 import Http
@@ -26,16 +26,8 @@ getActivities =
 
 saveActivity : Activity -> Task Http.Error (List Activity)
 saveActivity activity =
-    let
-        updateActivity existing =
-            if existing.id == activity.id then
-                activity
-
-            else
-                existing
-    in
     getActivities
-        |> Task.map (List.map updateActivity)
+        |> Task.map (updateActivity activity False)
         |> Task.andThen postActivities
 
 
@@ -43,7 +35,7 @@ createActivity : Activity -> Task Http.Error (List Activity)
 createActivity activity =
     getActivities
         |> Task.map
-            (\activities -> List.append activities [ activity ])
+            (updateActivity activity True)
         |> Task.andThen postActivities
 
 
@@ -56,6 +48,23 @@ deleteActivity id =
                     |> (\( _, others ) -> others)
             )
         |> Task.andThen postActivities
+
+
+updateActivity : Activity -> Bool -> List Activity -> List Activity
+updateActivity update isNew activities =
+    if isNew then
+        List.append activities [ update ]
+
+    else
+        List.map
+            (\existing ->
+                if existing.id == update.id then
+                    update
+
+                else
+                    existing
+            )
+            activities
 
 
 
