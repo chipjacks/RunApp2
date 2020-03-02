@@ -138,7 +138,7 @@ update msg model =
                         newState =
                             case subMsg of
                                 ActivityForm.GotSubmitResult (Ok activities) ->
-                                    { state | activities = activities, activityForm = Nothing }
+                                    { state | activities = activities }
 
                                 ActivityForm.GotDeleteResult (Ok activities) ->
                                     { state | activities = activities, activityForm = Nothing }
