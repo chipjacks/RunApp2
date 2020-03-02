@@ -7421,7 +7421,7 @@ var $author$project$Main$Loaded = function (a) {
 var $author$project$Main$NoOp = {$: 6};
 var $author$project$Main$State = F5(
 	function (calendar, date, activities, activityForm, today) {
-		return {p: activities, j: activityForm, A: calendar, an: date, Q: today};
+		return {p: activities, k: activityForm, A: calendar, an: date, Q: today};
 	});
 var $author$project$Main$Weekly = 0;
 var $justinmimbs$date$Date$compare = F2(
@@ -8974,12 +8974,12 @@ var $author$project$Main$update = F2(
 					var activityForm = A2(
 						$elm$core$Maybe$map,
 						$author$project$ActivityForm$selectDate(date),
-						state.j);
+						state.k);
 					return _Utils_Tuple2(
 						$author$project$Main$Loaded(
 							_Utils_update(
 								state,
-								{j: activityForm, A: calendar, an: date})),
+								{k: activityForm, A: calendar, an: date})),
 						$author$project$Main$resetScroll($author$project$Main$NoOp));
 				case 1:
 					return _Utils_Tuple2(
@@ -9008,7 +9008,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								state,
 								{
-									j: $elm$core$Maybe$Just(
+									k: $elm$core$Maybe$Just(
 										$author$project$ActivityForm$initEdit(activity))
 								})),
 						$elm$core$Platform$Cmd$none);
@@ -9021,7 +9021,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								state,
 								{
-									j: $elm$core$Maybe$Just(
+									k: $elm$core$Maybe$Just(
 										A3(
 											$author$project$ActivityForm$initNew,
 											'fakeid',
@@ -9040,7 +9040,7 @@ var $author$project$Main$update = F2(
 										var activities = subMsg.a.a;
 										return _Utils_update(
 											state,
-											{p: activities, j: $elm$core$Maybe$Nothing});
+											{p: activities});
 									} else {
 										break _v8$5;
 									}
@@ -9049,7 +9049,7 @@ var $author$project$Main$update = F2(
 										var activities = subMsg.a.a;
 										return _Utils_update(
 											state,
-											{p: activities, j: $elm$core$Maybe$Nothing});
+											{p: activities, k: $elm$core$Maybe$Nothing});
 									} else {
 										break _v8$5;
 									}
@@ -9060,7 +9060,7 @@ var $author$project$Main$update = F2(
 								case 12:
 									return _Utils_update(
 										state,
-										{j: $elm$core$Maybe$Nothing});
+										{k: $elm$core$Maybe$Nothing});
 								case 6:
 									var activities = A2(
 										$elm$core$Maybe$withDefault,
@@ -9070,7 +9070,7 @@ var $author$project$Main$update = F2(
 											function (af) {
 												return A2($author$project$ActivityForm$save, af, state.p);
 											},
-											state.j));
+											state.k));
 									return _Utils_update(
 										state,
 										{p: activities});
@@ -9081,7 +9081,7 @@ var $author$project$Main$update = F2(
 						return state;
 					}();
 					var _v6 = function () {
-						var _v7 = newState.j;
+						var _v7 = newState.k;
 						if (_v7.$ === 1) {
 							return _Utils_Tuple2($elm$core$Maybe$Nothing, $elm$core$Platform$Cmd$none);
 						} else {
@@ -9098,7 +9098,7 @@ var $author$project$Main$update = F2(
 						$author$project$Main$Loaded(
 							_Utils_update(
 								newState,
-								{j: subModel})),
+								{k: subModel})),
 						A2($elm$core$Platform$Cmd$map, $author$project$Main$ActivityFormMsg, subCmd));
 				default:
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -10721,7 +10721,7 @@ var $author$project$Main$viewCalendar = function (_v0) {
 	var calendar = _v0.A;
 	var date = _v0.an;
 	var activities = _v0.p;
-	var activityForm = _v0.j;
+	var activityForm = _v0.k;
 	var today = _v0.Q;
 	var filterActivities = F2(
 		function (date_, activity) {
