@@ -2,9 +2,13 @@
  * COLORS
 */
 :root {
+  --header-blue: #4183c4;
   --accent-blue: #4183c4;
   --interact-grey: #f9f9f9;
   --highlight-grey: #f1f1f1;
+  --activity-orange: orange;
+  --activity-green: limegreen;
+  --activity-gray: gray;
 }
 
 /*
@@ -17,7 +21,7 @@ html, body { height: 100%; margin: 0; }
 @media screen and (max-width: 390px) { html { font-size: 15px; } }
 .container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto; padding-left: 1rem;}
 .container-y {  min-height: 450px; height: 100%; overflow: hidden; }
-.navbar { padding: 0.7rem; color: white; background-color: var(--accent-blue); margin-bottom: 0.5rem; }
+.navbar { padding: 0.7rem; color: white; background-color: var(--header-blue); margin-bottom: 0.5rem; }
 
 /* FLEXBOX PARENTS */
 .row { display: flex; flex-direction: row; }

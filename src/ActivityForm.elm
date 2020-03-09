@@ -11,7 +11,7 @@ import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as Decode
 import Random
-import Skeleton exposing (column, compactColumn, expandingRow, row)
+import Skeleton exposing (column, compactColumn, expandingRow, row, viewIf)
 import Task exposing (Task)
 
 
@@ -278,8 +278,8 @@ view model =
                 |> Maybe.map ActivityShape.view
                 |> Maybe.withDefault (ActivityShape.viewDefault True Activity.Other)
     in
-    row [ id "activity" ]
-        [ compactColumn [ style "flex-basis" "5rem" ] [ activityShape ]
+    row [ id "activity", style "margin-bottom" "1rem" ]
+        [ compactColumn [ style "flex-basis" "5rem", style "justify-content" "center" ] [ activityShape ]
         , column []
             [ row []
                 [ compactColumn [] [ shapeSelect model.completed ]

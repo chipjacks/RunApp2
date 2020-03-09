@@ -1,4 +1,4 @@
-module Skeleton exposing (column, compactColumn, expandingRow, layout, row, styleIf)
+module Skeleton exposing (column, compactColumn, expandingRow, layout, row, styleIf, viewIf)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -56,3 +56,12 @@ styleIf bool name value =
 
     else
         style "" ""
+
+
+viewIf : Bool -> Html msg -> Html msg
+viewIf bool html =
+    if bool then
+        html
+
+    else
+        Html.text ""
