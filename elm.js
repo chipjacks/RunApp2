@@ -9862,11 +9862,11 @@ var $author$project$ActivityShape$Orange = 1;
 var $author$project$ActivityShape$colorString = function (color) {
 	switch (color) {
 		case 0:
-			return 'limegreen';
+			return 'var(--activity-green)';
 		case 1:
-			return 'orange';
+			return 'var(--activity-orange)';
 		default:
-			return 'gray';
+			return 'var(--activity-gray)';
 	}
 };
 var $elm$core$String$fromFloat = _String_fromNumber;
@@ -10164,7 +10164,8 @@ var $author$project$ActivityForm$view = function (model) {
 		$author$project$Skeleton$row,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$id('activity')
+				$elm$html$Html$Attributes$id('activity'),
+				A2($elm$html$Html$Attributes$style, 'margin-bottom', '1rem')
 			]),
 		_List_fromArray(
 			[
@@ -10172,7 +10173,8 @@ var $author$project$ActivityForm$view = function (model) {
 				$author$project$Skeleton$compactColumn,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
+						A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem'),
+						A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 					]),
 				_List_fromArray(
 					[activityShape])),
