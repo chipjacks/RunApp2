@@ -92,13 +92,13 @@ colorString : Color -> String
 colorString color =
     case color of
         Green ->
-            "limegreen"
+            "var(--activity-green)"
 
         Orange ->
-            "orange"
+            "var(--activity-orange)"
 
         Gray ->
-            "gray"
+            "var(--activity-gray)"
 
 
 toHeight : Activity.Minutes -> Float
