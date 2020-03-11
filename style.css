@@ -4,8 +4,8 @@
 :root {
   --header-blue: #4183c4;
   --accent-blue: #4183c4;
-  --interact-grey: #f9f9f9;
-  --highlight-grey: #f1f1f1;
+  --interact-gray: #f9f9f9;
+  --highlight-gray: #f1f1f1;
   --activity-orange: orange;
   --activity-green: limegreen;
   --activity-gray: gray;
@@ -38,13 +38,13 @@ html, body { height: 100%; margin: 0; }
 */
 body { font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif; }
 a { text-decoration: none; color: var(--accent-blue); }
-input { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
+input { border: 1px solid var(--highlight-gray); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
 .input-small { padding: 0.4rem; font-size: 0.8rem; }
 input:focus { border-color: var(--accent-blue); }
-select { border: 1px solid var(--highlight-grey); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
+select { border: 1px solid var(--highlight-gray); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
 select:focus { border-color: var(--accent-blue); }
 button, .button {
-  background-color: var(--interact-grey);
+  background-color: var(--interact-gray);
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
   border: none;
@@ -55,14 +55,14 @@ button, .button {
 }
 .button.small { padding: 0rem 1rem; }
 .button.medium { padding: 0.3rem 1rem; }
-button:hover, .button:hover { background-color: var(--highlight-grey); }
+button:hover, .button:hover { background-color: var(--highlight-gray); }
 .primary { background-color: #2185d0; color: #fff; }
 .primary:hover { background-color: #1678c2; }
 
 .radio-buttons > button { border-radius: 0; }
 .radio-buttons > button:first-child { border-radius: 0.25rem 0 0 0.25rem }
 .radio-buttons > button:last-child { border-radius: 0 0.25rem 0.25rem 0 }
-.radio-buttons > button.selected { background-color: var(--highlight-grey); }
+.radio-buttons > button.selected { background-color: var(--highlight-gray); }
 
 
 /* DROPDOWN */
@@ -72,7 +72,7 @@ button:hover, .button:hover { background-color: var(--highlight-grey); }
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: var(--interact-grey);
+  background-color: var(--interact-gray);
   z-index: 1;
   border-radius: 0 0 0.25rem 0.25rem;
 }
@@ -87,6 +87,6 @@ button:hover, .button:hover { background-color: var(--highlight-grey); }
   color: black;
 }
 
-.dropdown-content a:hover { background-color: var(--highlight-grey) }
+.dropdown-content a:hover { background-color: var(--highlight-gray) }
 
 .dropdown:hover .dropdown-content { display: block; }
