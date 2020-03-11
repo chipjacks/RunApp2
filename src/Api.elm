@@ -72,7 +72,7 @@ updateActivity update isNew activities =
 
 
 storeUrl =
-    "https://api.jsonbin.io/b/5c745db056292a73eb718d29"
+    "https://api.jsonbin.io/b/5e68d2b6243ad4332b54b78d"
 
 
 postActivities : List Activity -> Task Http.Error (List Activity)
