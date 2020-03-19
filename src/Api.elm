@@ -1,4 +1,4 @@
-module Api exposing (createActivity, deleteActivity, getActivities, saveActivity, updateActivity)
+module Api exposing (createActivity, deleteActivity, getActivities, saveActivity, shiftActivity, updateActivity)
 
 import Activity exposing (Activity)
 import Http
@@ -64,6 +64,31 @@ updateActivity update isNew activities =
                 else
                     existing
             )
+            activities
+
+
+shiftActivity : Activity -> Bool -> List Activity -> List Activity
+shiftActivity activity moveUp activities =
+    case activities of
+        a :: b :: tail ->
+            if a.id == activity.id then
+                if moveUp then
+                    activities
+
+                else
+                    b :: a :: tail
+
+            else if b.id == activity.id then
+                if moveUp then
+                    b :: a :: tail
+
+                else
+                    a :: shiftActivity activity moveUp (b :: tail)
+
+            else
+                a :: shiftActivity activity moveUp (b :: tail)
+
+        _ ->
             activities
 
 

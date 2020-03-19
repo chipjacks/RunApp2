@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, update, view)
+module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, shift, update, view)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -49,6 +49,7 @@ type Msg
     | ClickedSubmit
     | ClickedDelete
     | ClickedMove
+    | ClickedShift Bool
     | NewId String
     | GotSubmitResult (Result Error (List Activity))
     | GotDeleteResult (Result Error (List Activity))
@@ -78,6 +79,16 @@ save { result, status } activities =
 
         ( Ok activity, Creating id ) ->
             Api.updateActivity { activity | id = id } True activities
+
+        _ ->
+            activities
+
+
+shift : Model -> Bool -> List Activity -> List Activity
+shift { result, status } up activities =
+    case ( result, status ) of
+        ( Ok activity, Editing id ) ->
+            Api.shiftActivity { activity | id = id } up activities
 
         _ ->
             activities
@@ -229,6 +240,9 @@ update msg model =
             in
             ( { newModel | result = validate newModel }, Cmd.none )
 
+        ClickedShift _ ->
+            ( model, Cmd.none )
+
         NewId id ->
             ( initNew id model.date model.completed, Cmd.none )
 
@@ -285,7 +299,9 @@ view model =
                 [ compactColumn [] [ shapeSelect model.completed ]
                 , column [ style "align-items" "flex-end" ]
                     [ row [ style "align-items" "flex-start" ]
-                        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+                        [ a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
+                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
                         , deleteButton
                         ]
                     ]
@@ -323,7 +339,7 @@ shapeSelect completed =
         [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
         , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
         , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
-        , compactColumn [ style "margin-left" "0.5rem" ] [ completedCheckbox completed ]
+        , compactColumn [ style "margin-left" "0.2rem" ] [ completedCheckbox completed ]
         ]
 
 

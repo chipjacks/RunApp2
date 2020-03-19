@@ -149,6 +149,15 @@ update msg model =
                                 ActivityForm.Close ->
                                     { state | activityForm = Nothing }
 
+                                ActivityForm.ClickedShift up ->
+                                    let
+                                        activities =
+                                            state.activityForm
+                                                |> Maybe.map (\af -> ActivityForm.shift af up state.activities)
+                                                |> Maybe.withDefault state.activities
+                                    in
+                                    { state | activities = activities }
+
                                 ActivityForm.ClickedSubmit ->
                                     let
                                         activities =
