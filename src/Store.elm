@@ -1,4 +1,4 @@
-module Store exposing (Model, Msg(..), cmd, flush, get, init, update)
+module Store exposing (Model, Msg(..), cmd, flush, get, init, needsFlush, update)
 
 import Activity exposing (Activity)
 import Api
@@ -36,6 +36,11 @@ get (Model state _) f =
 cmd : Msg -> Cmd Msg
 cmd msg =
     Task.perform (\_ -> msg) (Task.succeed ())
+
+
+needsFlush : Model -> Bool
+needsFlush (Model _ msgs) =
+    not (List.isEmpty msgs)
 
 
 updateState : Msg -> State -> State

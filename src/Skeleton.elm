@@ -4,13 +4,14 @@ import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
 
 
-layout : Html msg -> Html msg
-layout page =
+layout : Bool -> Html msg -> Html msg
+layout updating page =
     column [ class "container-y" ]
         [ row [ class "navbar" ]
             [ column [ class "container-x" ]
                 [ row [ style "font-size" "1.5rem" ]
                     [ compactColumn [ style "font-style" "italic" ] [ text "RunApp2" ]
+                    , viewIf updating (compactColumn [] [ text "..." ])
                     ]
                 ]
             ]

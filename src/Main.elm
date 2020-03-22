@@ -30,7 +30,7 @@ import Url.Parser.Query as Query
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (isPersisting model) |> List.singleton }
         , update = update
         , subscriptions = subscriptions
         }
@@ -58,6 +58,16 @@ init _ =
         , Task.attempt GotActivities Api.getActivities
         ]
     )
+
+
+isPersisting : Model -> Bool
+isPersisting model =
+    case model of
+        Loaded { store } ->
+            Store.needsFlush store
+
+        _ ->
+            False
 
 
 
