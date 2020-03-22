@@ -1,4 +1,4 @@
-module Api exposing (createActivity, deleteActivity, getActivities, saveActivity, shiftActivity, updateActivity)
+module Api exposing (getActivities, postActivities)
 
 import Activity exposing (Activity)
 import Http
@@ -24,82 +24,6 @@ getActivities =
         }
 
 
-saveActivity : Activity -> Task Http.Error (List Activity)
-saveActivity activity =
-    getActivities
-        |> Task.map (updateActivity activity False)
-        |> Task.andThen postActivities
-
-
-createActivity : Activity -> Task Http.Error (List Activity)
-createActivity activity =
-    getActivities
-        |> Task.map
-            (updateActivity activity True)
-        |> Task.andThen postActivities
-
-
-deleteActivity : Activity.Id -> Task Http.Error (List Activity)
-deleteActivity id =
-    getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == id) activities
-                    |> (\( _, others ) -> others)
-            )
-        |> Task.andThen postActivities
-
-
-updateActivity : Activity -> Bool -> List Activity -> List Activity
-updateActivity update isNew activities =
-    if isNew then
-        List.append activities [ update ]
-
-    else
-        List.map
-            (\existing ->
-                if existing.id == update.id then
-                    update
-
-                else
-                    existing
-            )
-            activities
-
-
-shiftActivity : Activity -> Bool -> List Activity -> List Activity
-shiftActivity activity moveUp activities =
-    case activities of
-        a :: b :: tail ->
-            if a.id == activity.id then
-                if moveUp then
-                    activities
-
-                else
-                    b :: a :: tail
-
-            else if b.id == activity.id then
-                if moveUp then
-                    b :: a :: tail
-
-                else
-                    a :: shiftActivity activity moveUp (b :: tail)
-
-            else
-                a :: shiftActivity activity moveUp (b :: tail)
-
-        _ ->
-            activities
-
-
-
--- INTERNAL
-
-
-storeUrl =
-    "https://api.jsonbin.io/b/5e68d2b6243ad4332b54b78d"
-
-
 postActivities : List Activity -> Task Http.Error (List Activity)
 postActivities activities =
     Http.task
@@ -113,6 +37,14 @@ postActivities activities =
                     Decode.field "data" (Decode.list Activity.decoder)
         , timeout = Nothing
         }
+
+
+
+-- INTERNAL
+
+
+storeUrl =
+    "https://api.jsonbin.io/b/5e68d2b6243ad4332b54b78d"
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result Http.Error a

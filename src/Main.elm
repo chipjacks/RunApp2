@@ -15,6 +15,7 @@ import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
+import Store
 import Task
 import Time exposing (Month(..))
 import Url exposing (Url)
@@ -43,7 +44,7 @@ type Model
 type alias State =
     { calendar : CalendarView
     , date : Date
-    , activities : List Activity
+    , store : Store.Model
     , activityForm : Maybe ActivityForm.Model
     , today : Date
     }
@@ -70,7 +71,9 @@ type Msg
     | NewActivity (Maybe Date)
     | EditActivity Activity
     | ActivityFormMsg ActivityForm.Msg
+    | StoreMsg Store.Msg
     | NoOp
+    | FlushStore
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,7 +116,7 @@ update msg model =
                 GotActivities result ->
                     case result of
                         Ok activities ->
-                            ( Loaded { state | activities = activities }, Cmd.none )
+                            ( Loaded { state | store = Store.init activities }, Cmd.none )
 
                         _ ->
                             ( model, Cmd.none )
@@ -137,35 +140,14 @@ update msg model =
                     let
                         newState =
                             case subMsg of
-                                ActivityForm.GotSubmitResult (Ok activities) ->
-                                    { state | activities = activities }
+                                ActivityForm.StoreResult (Store.Shift up activity) ->
+                                    { state | store = Store.update (Store.Shift up activity) state.store }
 
-                                ActivityForm.GotDeleteResult (Ok activities) ->
-                                    { state | activities = activities, activityForm = Nothing }
+                                ActivityForm.StoreResult storeMsg ->
+                                    { state | activityForm = Nothing, store = Store.update storeMsg state.store }
 
                                 ActivityForm.ClickedMove ->
                                     { state | calendar = Weekly }
-
-                                ActivityForm.Close ->
-                                    { state | activityForm = Nothing }
-
-                                ActivityForm.ClickedShift up ->
-                                    let
-                                        activities =
-                                            state.activityForm
-                                                |> Maybe.map (\af -> ActivityForm.shift af up state.activities)
-                                                |> Maybe.withDefault state.activities
-                                    in
-                                    { state | activities = activities }
-
-                                ActivityForm.ClickedSubmit ->
-                                    let
-                                        activities =
-                                            state.activityForm
-                                                |> Maybe.map (\af -> ActivityForm.save af state.activities)
-                                                |> Maybe.withDefault state.activities
-                                    in
-                                    { state | activities = activities }
 
                                 _ ->
                                     state
@@ -180,6 +162,12 @@ update msg model =
                     in
                     ( Loaded { newState | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
 
+                StoreMsg storeMsg ->
+                    ( Loaded { state | store = Store.update storeMsg state.store }, Cmd.none )
+
+                FlushStore ->
+                    ( model, Cmd.map StoreMsg (Store.flush state.store) )
+
                 NoOp ->
                     ( model, Cmd.none )
 
@@ -192,7 +180,7 @@ updateLoading model =
                 State
                     Daily
                     date
-                    activities
+                    (Store.init activities)
                     Nothing
                     date
             )
@@ -220,7 +208,7 @@ view model =
             Loaded state ->
                 [ column []
                     [ viewMenu state.calendar state.date
-                    , viewCalendar state
+                    , viewCalendar state (Store.get state.store .activities)
                     ]
                 ]
 
@@ -319,8 +307,8 @@ type CalendarView
     | Daily
 
 
-viewCalendar : State -> Html Msg
-viewCalendar { calendar, date, activities, activityForm, today } =
+viewCalendar : State -> List Activity -> Html Msg
+viewCalendar { calendar, date, activityForm, today } activities =
     let
         accessActivities =
             \date_ ->
@@ -604,4 +592,4 @@ viewActivity activityFormM activity =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Time.every 10000 (\_ -> FlushStore)
