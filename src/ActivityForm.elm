@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, update, view)
+module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, shift, update, view)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -12,6 +12,7 @@ import Http
 import Json.Decode as Decode
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, viewIf)
+import Store
 import Task exposing (Task)
 
 
@@ -49,10 +50,9 @@ type Msg
     | ClickedSubmit
     | ClickedDelete
     | ClickedMove
+    | ClickedShift Bool
     | NewId String
-    | GotSubmitResult (Result Error (List Activity))
-    | GotDeleteResult (Result Error (List Activity))
-    | Close
+    | StoreResult Store.Msg
 
 
 type Error
@@ -70,17 +70,37 @@ initEdit activity =
     Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
 
 
-save : Model -> List Activity -> List Activity
-save { result, status } activities =
+save : Model -> Store.Msg
+save { result, status } =
     case ( result, status ) of
         ( Ok activity, Editing id ) ->
-            Api.updateActivity { activity | id = id } False activities
+            Store.Update { activity | id = id }
 
         ( Ok activity, Creating id ) ->
-            Api.updateActivity { activity | id = id } True activities
+            Store.Create { activity | id = id }
 
         _ ->
-            activities
+            Store.NoOp
+
+
+delete : Model -> Store.Msg
+delete { result, status } =
+    case ( result, status ) of
+        ( Ok activity, Editing id ) ->
+            Store.Delete { activity | id = id }
+
+        _ ->
+            Store.NoOp
+
+
+shift : Model -> Bool -> Store.Msg
+shift { result, status } up =
+    case ( result, status ) of
+        ( Ok activity, Editing id ) ->
+            Store.Shift up { activity | id = id }
+
+        _ ->
+            Store.NoOp
 
 
 selectDate : Date -> Model -> Model
@@ -189,38 +209,10 @@ update msg model =
             )
 
         ClickedSubmit ->
-            case model.result of
-                Ok activity ->
-                    let
-                        apiTask =
-                            case model.status of
-                                Editing id ->
-                                    Api.saveActivity { activity | id = id }
-
-                                Creating id ->
-                                    Api.createActivity { activity | id = id }
-
-                                Saving ->
-                                    Task.fail (Http.BadUrl "Invalid submit")
-                    in
-                    ( { model | status = Saving }, Task.attempt GotSubmitResult (apiTask |> Task.mapError (\_ -> ApiError)) )
-
-                Err error ->
-                    ( model, Cmd.none )
+            ( model, Cmd.map StoreResult (Store.cmd (save model)) )
 
         ClickedDelete ->
-            case model.status of
-                Editing id ->
-                    ( model
-                    , Cmd.batch
-                        [ Task.perform (\_ -> Close) (Task.succeed ())
-                        , Task.attempt GotDeleteResult (Api.deleteActivity id |> Task.mapError (\_ -> ApiError))
-                        , generateNewId
-                        ]
-                    )
-
-                _ ->
-                    ( model, Task.perform (\_ -> Close) (Task.succeed ()) )
+            ( model, Cmd.map StoreResult (Store.cmd (delete model)) )
 
         ClickedMove ->
             let
@@ -229,26 +221,13 @@ update msg model =
             in
             ( { newModel | result = validate newModel }, Cmd.none )
 
+        ClickedShift up ->
+            ( model, Cmd.map StoreResult (Store.cmd (shift model up)) )
+
         NewId id ->
             ( initNew id model.date model.completed, Cmd.none )
 
-        GotSubmitResult result ->
-            case result of
-                Ok activities ->
-                    ( model, Cmd.none )
-
-                Err error ->
-                    ( { model | result = Err error }, Cmd.none )
-
-        GotDeleteResult result ->
-            case result of
-                Ok activities ->
-                    ( model, Cmd.none )
-
-                Err error ->
-                    ( { model | result = Err error }, Cmd.none )
-
-        Close ->
+        StoreResult _ ->
             ( model, Cmd.none )
 
 
@@ -285,7 +264,9 @@ view model =
                 [ compactColumn [] [ shapeSelect model.completed ]
                 , column [ style "align-items" "flex-end" ]
                     [ row [ style "align-items" "flex-start" ]
-                        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+                        [ a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
+                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
                         , deleteButton
                         ]
                     ]
@@ -323,7 +304,7 @@ shapeSelect completed =
         [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
         , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
         , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
-        , compactColumn [ style "margin-left" "0.5rem" ] [ completedCheckbox completed ]
+        , compactColumn [ style "margin-left" "0.2rem" ] [ completedCheckbox completed ]
         ]
 
 

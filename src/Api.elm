@@ -1,4 +1,4 @@
-module Api exposing (createActivity, deleteActivity, getActivities, saveActivity, updateActivity)
+module Api exposing (getActivities, postActivities)
 
 import Activity exposing (Activity)
 import Http
@@ -24,57 +24,6 @@ getActivities =
         }
 
 
-saveActivity : Activity -> Task Http.Error (List Activity)
-saveActivity activity =
-    getActivities
-        |> Task.map (updateActivity activity False)
-        |> Task.andThen postActivities
-
-
-createActivity : Activity -> Task Http.Error (List Activity)
-createActivity activity =
-    getActivities
-        |> Task.map
-            (updateActivity activity True)
-        |> Task.andThen postActivities
-
-
-deleteActivity : Activity.Id -> Task Http.Error (List Activity)
-deleteActivity id =
-    getActivities
-        |> Task.map
-            (\activities ->
-                List.partition (\a -> a.id == id) activities
-                    |> (\( _, others ) -> others)
-            )
-        |> Task.andThen postActivities
-
-
-updateActivity : Activity -> Bool -> List Activity -> List Activity
-updateActivity update isNew activities =
-    if isNew then
-        List.append activities [ update ]
-
-    else
-        List.map
-            (\existing ->
-                if existing.id == update.id then
-                    update
-
-                else
-                    existing
-            )
-            activities
-
-
-
--- INTERNAL
-
-
-storeUrl =
-    "https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c"
-
-
 postActivities : List Activity -> Task Http.Error (List Activity)
 postActivities activities =
     Http.task
@@ -88,6 +37,14 @@ postActivities activities =
                     Decode.field "data" (Decode.list Activity.decoder)
         , timeout = Nothing
         }
+
+
+
+-- INTERNAL
+
+
+storeUrl =
+    "https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c"
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result Http.Error a
