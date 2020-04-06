@@ -20,7 +20,7 @@ type Msg
     | Shift Bool Activity
     | Delete Activity
     | NoOp
-    | Posted (Result Http.Error (List Activity))
+    | Posted (List Msg) (Result Http.Error (List Activity))
 
 
 init : List Activity -> Model
@@ -65,10 +65,10 @@ updateState msg state =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Posted result ->
+        Posted sentMsgs result ->
             case model of
                 Model state msgs ->
-                    Model state []
+                    Model state (List.take (List.length msgs - List.length sentMsgs) msgs)
 
         _ ->
             case model of
@@ -87,7 +87,7 @@ flush model =
                 |> Task.map State
                 |> Task.map (\remoteState -> List.foldr (\msg rs -> updateState msg rs) remoteState msgs)
                 |> Task.andThen (\newRemoteState -> Api.postActivities newRemoteState.activities)
-                |> Task.attempt Posted
+                |> Task.attempt (Posted msgs)
 
 
 updateActivity : Activity -> Bool -> List Activity -> List Activity
