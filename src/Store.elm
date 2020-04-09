@@ -1,8 +1,9 @@
-module Store exposing (Model, Msg(..), cmd, flush, get, init, needsFlush, update)
+module Store exposing (Model, cmd, flush, get, init, needsFlush, update)
 
 import Activity exposing (Activity)
 import Api
 import Http
+import Msg exposing (Msg(..))
 import Task exposing (Task)
 
 
@@ -12,15 +13,6 @@ type Model
 
 type alias State =
     { activities : List Activity }
-
-
-type Msg
-    = Create Activity
-    | Update Activity
-    | Shift Bool Activity
-    | Delete Activity
-    | NoOp
-    | Posted (List Msg) (Result Http.Error (List Activity))
 
 
 init : List Activity -> Model

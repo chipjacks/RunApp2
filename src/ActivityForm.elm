@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, shift, update, view)
+module ActivityForm exposing (Model, generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, shift, update, viewActivity)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -10,6 +10,7 @@ import Html.Attributes exposing (class, href, id, name, placeholder, style, type
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as Decode
+import Msg exposing (Msg(..))
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, viewIf)
 import Store
@@ -40,21 +41,6 @@ type Status
     | Saving
 
 
-type Msg
-    = SelectedShape Activity.ActivityType
-    | EditedDescription String
-    | CheckedCompleted Bool
-    | EditedDuration String
-    | SelectedPace String
-    | SelectedDistance String
-    | ClickedSubmit
-    | ClickedDelete
-    | ClickedMove
-    | ClickedShift Bool
-    | NewId String
-    | StoreResult Store.Msg
-
-
 type Error
     = ApiError
     | EmptyFieldError String
@@ -70,37 +56,37 @@ initEdit activity =
     Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
 
 
-save : Model -> Store.Msg
+save : Model -> Msg
 save { result, status } =
     case ( result, status ) of
         ( Ok activity, Editing id ) ->
-            Store.Update { activity | id = id }
+            Update { activity | id = id }
 
         ( Ok activity, Creating id ) ->
-            Store.Create { activity | id = id }
+            Create { activity | id = id }
 
         _ ->
-            Store.NoOp
+            NoOp
 
 
-delete : Model -> Store.Msg
+delete : Model -> Msg
 delete { result, status } =
     case ( result, status ) of
         ( Ok activity, Editing id ) ->
-            Store.Delete { activity | id = id }
+            Delete { activity | id = id }
 
         _ ->
-            Store.NoOp
+            NoOp
 
 
-shift : Model -> Bool -> Store.Msg
+shift : Model -> Bool -> Msg
 shift { result, status } up =
     case ( result, status ) of
         ( Ok activity, Editing id ) ->
-            Store.Shift up { activity | id = id }
+            Shift up { activity | id = id }
 
         _ ->
-            Store.NoOp
+            NoOp
 
 
 selectDate : Date -> Model -> Model
@@ -209,10 +195,10 @@ update msg model =
             )
 
         ClickedSubmit ->
-            ( model, Cmd.map StoreResult (Store.cmd (save model)) )
+            ( model, Store.cmd (save model) )
 
         ClickedDelete ->
-            ( model, Cmd.map StoreResult (Store.cmd (delete model)) )
+            ( model, Store.cmd (delete model) )
 
         ClickedMove ->
             let
@@ -222,12 +208,12 @@ update msg model =
             ( { newModel | result = validate newModel }, Cmd.none )
 
         ClickedShift up ->
-            ( model, Cmd.map StoreResult (Store.cmd (shift model up)) )
+            ( model, Store.cmd (shift model up) )
 
         NewId id ->
             ( initNew id model.date model.completed, Cmd.none )
 
-        StoreResult _ ->
+        _ ->
             ( model, Cmd.none )
 
 

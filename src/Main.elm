@@ -15,6 +15,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
+import Msg exposing (Msg(..))
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Store
 import Task
@@ -54,7 +55,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( Loading Nothing Nothing
     , Cmd.batch
-        [ Task.perform (\d -> CalendarMsg (Calendar.Jump d)) Date.today
+        [ Task.perform Jump Date.today
         , Task.attempt GotActivities Api.getActivities
         ]
     )
@@ -74,24 +75,12 @@ isPersisting model =
 -- UPDATING MODEL
 
 
-type Msg
-    = LoadToday
-    | GotActivities (Result Http.Error (List Activity))
-    | NewActivity (Maybe Date)
-    | EditActivity Activity
-    | CalendarMsg Calendar.Msg
-    | ActivityFormMsg ActivityForm.Msg
-    | StoreMsg Store.Msg
-    | FlushStore
-    | NoOp
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
         Loading dateM activitiesM ->
             case msg of
-                CalendarMsg (Calendar.Jump date) ->
+                Jump date ->
                     Loading (Just date) activitiesM
                         |> updateLoading
 
@@ -109,23 +98,9 @@ update msg model =
 
         Loaded state ->
             case msg of
-                CalendarMsg subMsg ->
-                    let
-                        activityForm =
-                            case subMsg of
-                                Calendar.Jump date ->
-                                    Maybe.map (ActivityForm.selectDate date) state.activityForm
-
-                                _ ->
-                                    state.activityForm
-                    in
-                    ( Loaded { state | calendar = Calendar.update subMsg state.calendar, activityForm = activityForm }
-                    , Cmd.none
-                    )
-
                 LoadToday ->
                     ( model
-                    , Task.perform (CalendarMsg << Calendar.Jump) Date.today
+                    , Task.perform Jump Date.today
                     )
 
                 GotActivities result ->
@@ -148,43 +123,68 @@ update msg model =
                             Date.compare date state.today == LT || date == state.today
                     in
                     ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) completed }
-                    , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
+                    , ActivityForm.generateNewId
                     )
-
-                ActivityFormMsg subMsg ->
-                    let
-                        newState =
-                            case subMsg of
-                                ActivityForm.StoreResult (Store.Shift up activity) ->
-                                    { state | store = Store.update (Store.Shift up activity) state.store }
-
-                                ActivityForm.StoreResult storeMsg ->
-                                    { state | activityForm = Nothing, store = Store.update storeMsg state.store }
-
-                                ActivityForm.ClickedMove ->
-                                    { state | calendar = Calendar.weekly state.calendar }
-
-                                _ ->
-                                    state
-
-                        ( subModel, subCmd ) =
-                            case newState.activityForm of
-                                Nothing ->
-                                    ( Nothing, Cmd.none )
-
-                                Just activityForm ->
-                                    ActivityForm.update subMsg activityForm |> Tuple.mapFirst Just
-                    in
-                    ( Loaded { newState | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
-
-                StoreMsg storeMsg ->
-                    ( Loaded { state | store = Store.update storeMsg state.store }, Cmd.none )
-
-                FlushStore ->
-                    ( model, Cmd.map StoreMsg (Store.flush state.store) )
 
                 NoOp ->
                     ( model, Cmd.none )
+
+                Create _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Update _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Shift _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Delete _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Posted _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                FlushStore ->
+                    ( model, Store.flush state.store )
+
+                Jump date ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar, activityForm = Maybe.map (ActivityForm.selectDate date) state.activityForm }, Cmd.none )
+
+                Toggle ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
+
+                SelectedShape _ ->
+                    updateActivityForm msg state
+
+                EditedDescription _ ->
+                    updateActivityForm msg state
+
+                CheckedCompleted _ ->
+                    updateActivityForm msg state
+
+                EditedDuration _ ->
+                    updateActivityForm msg state
+
+                SelectedPace _ ->
+                    updateActivityForm msg state
+
+                SelectedDistance _ ->
+                    updateActivityForm msg state
+
+                ClickedSubmit ->
+                    updateActivityForm msg state
+
+                ClickedDelete ->
+                    updateActivityForm msg state
+
+                ClickedMove ->
+                    ( Loaded { state | calendar = Calendar.weekly state.calendar }, Cmd.none )
+
+                ClickedShift _ ->
+                    updateActivityForm msg state
+
+                NewId _ ->
+                    updateActivityForm msg state
 
 
 updateLoading : Model -> ( Model, Cmd Msg )
@@ -202,6 +202,13 @@ updateLoading model =
 
         _ ->
             ( model, Cmd.none )
+
+
+updateActivityForm : Msg -> State -> ( Model, Cmd Msg )
+updateActivityForm msg state =
+    Maybe.map (ActivityForm.update msg) state.activityForm
+        |> Maybe.map (Tuple.mapFirst (\af -> Loaded { state | activityForm = Just af }))
+        |> Maybe.withDefault ( Loaded state, Cmd.none )
 
 
 

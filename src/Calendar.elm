@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Msg(..), getDate, init, update, view, weekly)
+module Calendar exposing (Model, getDate, init, update, view, weekly)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -9,6 +9,7 @@ import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
+import Msg exposing (Msg(..))
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Time exposing (Month(..))
 
@@ -21,11 +22,6 @@ type Model
 init : Date -> Model
 init date =
     Daily date
-
-
-type Msg
-    = Jump Date
-    | Toggle
 
 
 weekly : Model -> Model
@@ -66,6 +62,9 @@ update msg model =
 
                 Daily date ->
                     Weekly date
+
+        _ ->
+            model
 
 
 
