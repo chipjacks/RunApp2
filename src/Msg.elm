@@ -9,7 +9,6 @@ type Msg
     = LoadToday
     | GotActivities (Result Http.Error (List Activity))
     | EditActivity Activity
-    | NewActivity (Maybe Date)
     | NoOp
       -- STORE
     | Create Activity
@@ -22,6 +21,8 @@ type Msg
     | Jump Date
     | Toggle
       -- ACTIVITY FORM
+    | ClickedNewActivity Date
+    | NewActivity Activity
     | SelectedShape Activity.ActivityType
     | EditedDescription String
     | CheckedCompleted Bool

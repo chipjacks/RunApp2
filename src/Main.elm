@@ -16,9 +16,10 @@ import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
+import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Store
-import Task
+import Task exposing (Task)
 import Time exposing (Month(..))
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), (<?>))
@@ -111,29 +112,29 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
-                EditActivity activity ->
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initEdit activity }, Cmd.none )
+                ClickedNewActivity date ->
+                    ( model, initActivity state.today (Just date) )
 
-                NewActivity dateM ->
-                    let
-                        date =
-                            dateM |> Maybe.withDefault (Calendar.getDate state.calendar)
-
-                        completed =
-                            Date.compare date state.today == LT || date == state.today
-                    in
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) completed }
-                    , ActivityForm.generateNewId
+                NewActivity activity ->
+                    ( Loaded
+                        { state
+                            | store = Store.update (Create activity) state.store
+                            , activityForm = Just <| ActivityForm.init activity
+                        }
+                    , Cmd.none
                     )
+
+                EditActivity activity ->
+                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
 
                 NoOp ->
                     ( model, Cmd.none )
 
                 Create _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
 
                 Update _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
 
                 Shift _ _ ->
                     ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
@@ -211,6 +212,20 @@ updateActivityForm msg state =
         |> Maybe.withDefault ( Loaded state, Cmd.none )
 
 
+initActivity : Date -> Maybe Date -> Cmd Msg
+initActivity today dateM =
+    let
+        date =
+            dateM |> Maybe.withDefault today
+
+        completed =
+            Date.compare date today == GT || date == today
+    in
+    Activity.newId
+        |> Random.map (\id -> Activity id date "" completed 30 Nothing Nothing)
+        |> Random.generate NewActivity
+
+
 
 -- VIEW
 
@@ -227,43 +242,8 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                [ Calendar.view state.calendar (\_ -> Html.text "") Calendar.Jump state.today (Store.get state.store .activities)
-                    |> Html.map CalendarMsg
+                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm) ClickedNewActivity state.today (Store.get state.store .activities)
                 ]
-
-
-viewActivity : Maybe ActivityForm.Model -> Activity -> Html Msg
-viewActivity activityFormM activity =
-    let
-        level =
-            Activity.mprLevel activity
-                |> Maybe.map (\l -> "level " ++ String.fromInt l)
-                |> Maybe.withDefault ""
-
-        activityView =
-            a [ onClick (EditActivity activity) ]
-                [ row [ style "margin-bottom" "1rem" ]
-                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-                    , column [ style "justify-content" "center" ]
-                        [ row [] [ text activity.description ]
-                        , row [ style "font-size" "0.8rem" ]
-                            [ column [] [ text <| String.fromInt activity.duration ++ " min " ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower) ]
-                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
-                            ]
-                        ]
-                    ]
-                ]
-    in
-    case activityFormM of
-        Just af ->
-            if ActivityForm.isEditing activity af then
-                ActivityForm.view af |> Html.map ActivityFormMsg
-
-            else
-                activityView
-
-        Nothing ->
-            activityView
 
 
 

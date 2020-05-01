@@ -337,11 +337,7 @@ viewDay date activities isToday viewActivity newActivity =
                 , a [ onClick (newActivity date), style "margin-left" "0.2rem" ] [ text "+" ]
                 ]
             , row [ style "margin" "1rem" ]
-                [ column []
-                    [ row []
-                        [ column [] (List.map viewActivity activities) ]
-                    ]
-                ]
+                [ column [] (List.map viewActivity activities) ]
             ]
         ]
 
