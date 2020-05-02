@@ -107,7 +107,7 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map3
         (\date description duration ->
-            Activity "" date description model.completed duration model.pace model.distance
+            Activity model.id date description model.completed duration model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -220,6 +220,7 @@ viewForm model =
             , row []
                 [ input
                     [ type_ "text"
+                    , Html.Attributes.autocomplete False
                     , placeholder "Description"
                     , onInput EditedDescription
                     , name "description"
