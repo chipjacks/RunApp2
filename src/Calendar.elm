@@ -14,54 +14,54 @@ import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Time exposing (Month(..))
 
 
-type Model
-    = Weekly Date
-    | Daily Date
+type alias Model =
+    { zoom : Zoom, start : Date, selected : Date, end : Date }
+
+
+type Zoom
+    = Weekly
+    | Daily
 
 
 init : Date -> Model
 init date =
-    Daily date
+    Model Daily (Date.add Days -3 date) date (Date.add Days 11 date)
 
 
 weekly : Model -> Model
 weekly model =
-    case model of
-        Daily date ->
-            Weekly date
-
-        _ ->
-            model
+    { model | zoom = Weekly }
 
 
 getDate : Model -> Date
-getDate model =
-    case model of
-        Weekly date ->
-            date
-
-        Daily date ->
-            date
+getDate { selected } =
+    selected
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
         Jump date ->
-            case model of
-                Weekly _ ->
-                    Weekly date
-
-                Daily _ ->
-                    Daily date
+            let
+                newModel =
+                    init date
+            in
+            { newModel | zoom = model.zoom }
 
         Toggle ->
-            case model of
-                Weekly date ->
-                    Daily date
+            case model.zoom of
+                Weekly ->
+                    { model | zoom = Daily }
 
-                Daily date ->
-                    Weekly date
+                Daily ->
+                    { model | zoom = Weekly }
+
+        Scroll up date ->
+            if up then
+                { model | start = date }
+
+            else
+                { model | end = date }
 
         _ ->
             model
@@ -75,8 +75,8 @@ viewMenu : Model -> Msg -> Html Msg
 viewMenu model loadToday =
     let
         calendarIcon =
-            case model of
-                Weekly _ ->
+            case model.zoom of
+                Weekly ->
                     [ i [ class "far fa-calendar-minus" ] [] ]
 
                 _ ->
@@ -154,12 +154,12 @@ view calendar viewActivity newActivity today activities =
             activity.date == date_
 
         body =
-            case calendar of
-                Weekly date ->
-                    weekList date |> List.map (viewWeek accessActivities today)
+            case calendar.zoom of
+                Weekly ->
+                    weekList calendar.start calendar.end |> List.map (viewWeek accessActivities today)
 
-                Daily date ->
-                    listDays date
+                Daily ->
+                    listDays calendar.start calendar.end
                         |> List.map (\d -> viewDay d (accessActivities d) (d == today) viewActivity newActivity)
     in
     column []
@@ -167,9 +167,7 @@ view calendar viewActivity newActivity today activities =
         , column
             [ id "calendar"
             , style "overflow" "scroll"
-            , attribute "overflow-anchor" "none"
             , onScroll <| scrollHandler calendar
-            , style "scroll-snap-type" "y mandatory"
             ]
             body
         ]
@@ -207,25 +205,20 @@ onScroll ( loadPrevious, loadNext ) =
         )
 
 
-resetScroll : msg -> Cmd msg
-resetScroll msg =
-    Cmd.none
-
-
 scrollToSelectedDate _ viewport calendar selectedDate =
     Dom.setViewportOf "calendar" 0 (viewport.viewport.y + selectedDate.element.y - calendar.element.y)
 
 
 scrollHandler : Model -> ( Msg, Msg )
 scrollHandler model =
-    (case model of
-        Weekly date ->
-            ( Date.add Weeks -4 date, Date.add Weeks 4 date )
+    (case model.zoom of
+        Weekly ->
+            ( Date.add Weeks -4 model.start, Date.add Weeks 4 model.end )
 
-        Daily date ->
-            ( Date.add Days -3 date, Date.add Days 3 date )
+        Daily ->
+            ( Date.add Days -3 model.start, Date.add Days 3 model.end )
     )
-        |> Tuple.mapBoth Jump Jump
+        |> Tuple.mapBoth (Scroll True) (Scroll False)
 
 
 
@@ -307,16 +300,9 @@ titleWeek start ( runDuration, otherDuration ) =
         ]
 
 
-weekList : Date -> List Date
-weekList date =
-    let
-        start =
-            Date.add Weeks -4 (Date.floor Week date)
-
-        end =
-            Date.add Weeks 12 start
-    in
-    Date.range Week 1 start end
+weekList : Date -> Date -> List Date
+weekList start end =
+    Date.range Week 1 (Date.floor Week start) end
 
 
 daysOfWeek : Date -> List Date
@@ -330,7 +316,7 @@ daysOfWeek start =
 
 viewDay : Date -> List Activity -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
 viewDay date activities isToday viewActivity newActivity =
-    row [ style "scroll-snap-align" "start", styleIf isToday "overflow-anchor" "auto" ]
+    row []
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
@@ -342,13 +328,6 @@ viewDay date activities isToday viewActivity newActivity =
         ]
 
 
-listDays : Date -> List Date
-listDays date =
-    let
-        start =
-            Date.add Days -3 date
-
-        end =
-            Date.add Days 11 date
-    in
+listDays : Date -> Date -> List Date
+listDays start end =
     Date.range Day 1 start end

@@ -154,6 +154,9 @@ update msg model =
                 Toggle ->
                     ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
 
+                Scroll _ _ ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
+
                 SelectedShape _ ->
                     updateActivityForm msg state
 

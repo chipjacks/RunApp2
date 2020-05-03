@@ -20,6 +20,7 @@ type Msg
       -- CALENDAR
     | Jump Date
     | Toggle
+    | Scroll Bool Date
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
