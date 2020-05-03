@@ -1,4 +1,4 @@
-module Calendar exposing (Model, getDate, init, update, view, weekly)
+module Calendar exposing (Model, getDate, init, scrollToSelectedDate, update, view, weekly)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -11,6 +11,7 @@ import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
+import Task
 import Time exposing (Month(..))
 
 
@@ -58,7 +59,7 @@ update msg model =
 
         Scroll up date ->
             if up then
-                { model | start = date }
+                { model | start = date, selected = model.start }
 
             else
                 { model | end = date }
@@ -160,7 +161,7 @@ view calendar viewActivity newActivity today activities =
 
                 Daily ->
                     listDays calendar.start calendar.end
-                        |> List.map (\d -> viewDay d (accessActivities d) (d == today) viewActivity newActivity)
+                        |> List.map (\d -> viewDay d (accessActivities d) (d == today) (d == calendar.selected) viewActivity newActivity)
     in
     column []
         [ viewMenu calendar (Jump today)
@@ -205,8 +206,18 @@ onScroll ( loadPrevious, loadNext ) =
         )
 
 
-scrollToSelectedDate _ viewport calendar selectedDate =
-    Dom.setViewportOf "calendar" 0 (viewport.viewport.y + selectedDate.element.y - calendar.element.y)
+scrollToSelectedDate : Cmd Msg
+scrollToSelectedDate =
+    Dom.getElement "selected-date"
+        |> Task.andThen
+            (\selectedDate ->
+                let
+                    navbarAndMenuHeight =
+                        86
+                in
+                Dom.setViewportOf "calendar" 0 (selectedDate.element.y - navbarAndMenuHeight)
+            )
+        |> Task.attempt (\_ -> NoOp)
 
 
 scrollHandler : Model -> ( Msg, Msg )
@@ -314,9 +325,15 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : Date -> List Activity -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
-viewDay date activities isToday viewActivity newActivity =
-    row []
+viewDay : Date -> List Activity -> Bool -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
+viewDay date activities isToday isSelected viewActivity newActivity =
+    row
+        [ if isSelected then
+            id "selected-date"
+
+          else
+            id ""
+        ]
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
