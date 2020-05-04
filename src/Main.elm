@@ -149,10 +149,10 @@ update msg model =
                     ( model, Store.flush state.store )
 
                 Jump date ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar, activityForm = Maybe.map (ActivityForm.selectDate date) state.activityForm }, Cmd.none )
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar, activityForm = Maybe.map (ActivityForm.selectDate date) state.activityForm }, Calendar.scrollToSelectedDate )
 
                 Toggle ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Calendar.scrollToSelectedDate )
 
                 Scroll up _ ->
                     ( Loaded { state | calendar = Calendar.update msg state.calendar }
@@ -188,7 +188,7 @@ update msg model =
                     updateActivityForm msg state
 
                 ClickedMove ->
-                    ( Loaded { state | calendar = Calendar.weekly state.calendar }, Cmd.none )
+                    ( Loaded { state | calendar = Calendar.init Calendar.Weekly state.calendar.selected }, Cmd.none )
 
                 ClickedShift _ ->
                     updateActivityForm msg state
@@ -203,7 +203,7 @@ updateLoading model =
         Loading (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    (Calendar.init date)
+                    (Calendar.init Calendar.Daily date)
                     (Store.init activities)
                     Nothing
                     date

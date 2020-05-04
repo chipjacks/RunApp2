@@ -1,4 +1,4 @@
-module Calendar exposing (Model, getDate, init, scrollToSelectedDate, update, view, weekly)
+module Calendar exposing (Model, Zoom(..), getDate, init, scrollToSelectedDate, update, view)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -24,14 +24,14 @@ type Zoom
     | Daily
 
 
-init : Date -> Model
-init date =
-    Model Daily (Date.add Days -3 date) date (Date.add Days 11 date)
+init : Zoom -> Date -> Model
+init zoom date =
+    case zoom of
+        Daily ->
+            Model Daily (Date.add Days -3 date) date (Date.add Days 20 date)
 
-
-weekly : Model -> Model
-weekly model =
-    { model | zoom = Weekly }
+        Weekly ->
+            Model Weekly (Date.add Weeks -3 date) date (Date.add Weeks 20 date)
 
 
 getDate : Model -> Date
@@ -43,19 +43,15 @@ update : Msg -> Model -> Model
 update msg model =
     case msg of
         Jump date ->
-            let
-                newModel =
-                    init date
-            in
-            { newModel | zoom = model.zoom }
+            init model.zoom date
 
         Toggle ->
             case model.zoom of
                 Weekly ->
-                    { model | zoom = Daily }
+                    init Daily model.selected
 
                 Daily ->
-                    { model | zoom = Weekly }
+                    init Weekly model.selected
 
         Scroll up date ->
             if up then
@@ -178,15 +174,12 @@ view calendar viewActivity newActivity today activities =
 -- SCROLLING
 
 
-scrollConfig =
-    { marginBottom = "-500px"
-    , center = 250
-    , loadMargin = 10
-    }
-
-
 onScroll : ( msg, msg ) -> Html.Attribute msg
 onScroll ( loadPrevious, loadNext ) =
+    let
+        loadMargin =
+            10
+    in
     Html.Events.on "scroll"
         (Decode.map3 (\a b c -> ( a, b, c ))
             (Decode.at [ "target", "scrollTop" ] Decode.int)
@@ -194,10 +187,10 @@ onScroll ( loadPrevious, loadNext ) =
             (Decode.at [ "target", "clientHeight" ] Decode.int)
             |> Decode.andThen
                 (\( scrollTop, scrollHeight, clientHeight ) ->
-                    if scrollTop < scrollConfig.loadMargin then
+                    if scrollTop < loadMargin then
                         Decode.succeed loadPrevious
 
-                    else if scrollTop > scrollHeight - clientHeight - scrollConfig.loadMargin then
+                    else if scrollTop > scrollHeight - clientHeight - loadMargin then
                         Decode.succeed loadNext
 
                     else
