@@ -1,10 +1,12 @@
-module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, decoder, distance, encoder, mprLevel, pace)
+module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
 import Json.Decode as Decode
 import Json.Encode as Encode
 import MPRLevel
+import Random
+import Task exposing (Task)
 
 
 type alias Activity =
@@ -35,6 +37,17 @@ activityType activity =
 
         ( Just _, _ ) ->
             Run
+
+
+newId : Random.Generator String
+newId =
+    let
+        digitsToString digits =
+            List.map String.fromInt digits
+                |> String.join ""
+    in
+    Random.list 10 (Random.int 0 9)
+        |> Random.map digitsToString
 
 
 mprLevel : Activity -> Maybe Int

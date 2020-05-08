@@ -7,6 +7,7 @@ import Api
 import Array
 import Browser
 import Browser.Dom as Dom
+import Calendar
 import Config exposing (config)
 import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, i, text)
@@ -14,9 +15,11 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
+import Msg exposing (Msg(..))
+import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Store
-import Task
+import Task exposing (Task)
 import Time exposing (Month(..))
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), (<?>))
@@ -42,8 +45,7 @@ type Model
 
 
 type alias State =
-    { calendar : CalendarView
-    , date : Date
+    { calendar : Calendar.Model
     , store : Store.Model
     , activityForm : Maybe ActivityForm.Model
     , today : Date
@@ -54,7 +56,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( Loading Nothing Nothing
     , Cmd.batch
-        [ Task.perform (\d -> LoadCalendar Daily d) Date.today
+        [ Task.perform Jump Date.today
         , Task.attempt GotActivities Api.getActivities
         ]
     )
@@ -74,24 +76,12 @@ isPersisting model =
 -- UPDATING MODEL
 
 
-type Msg
-    = LoadCalendar CalendarView Date
-    | LoadToday
-    | GotActivities (Result Http.Error (List Activity))
-    | NewActivity (Maybe Date)
-    | EditActivity Activity
-    | ActivityFormMsg ActivityForm.Msg
-    | StoreMsg Store.Msg
-    | NoOp
-    | FlushStore
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case model of
         Loading dateM activitiesM ->
             case msg of
-                LoadCalendar calendar date ->
+                Jump date ->
                     Loading (Just date) activitiesM
                         |> updateLoading
 
@@ -109,18 +99,9 @@ update msg model =
 
         Loaded state ->
             case msg of
-                LoadCalendar calendar date ->
-                    let
-                        activityForm =
-                            Maybe.map (ActivityForm.selectDate date) state.activityForm
-                    in
-                    ( Loaded { state | calendar = calendar, date = date, activityForm = activityForm }
-                    , resetScroll NoOp
-                    )
-
                 LoadToday ->
                     ( model
-                    , Task.perform (LoadCalendar state.calendar) Date.today
+                    , Task.perform Jump Date.today
                     )
 
                 GotActivities result ->
@@ -131,55 +112,94 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
-                EditActivity activity ->
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initEdit activity }, Cmd.none )
+                ClickedNewActivity date ->
+                    ( model, initActivity state.today (Just date) )
 
-                NewActivity dateM ->
-                    let
-                        date =
-                            dateM |> Maybe.withDefault state.date
-
-                        completed =
-                            Date.compare date state.today == LT || date == state.today
-                    in
-                    ( Loaded { state | activityForm = Just <| ActivityForm.initNew "fakeid" (Just date) completed }
-                    , ActivityForm.generateNewId |> Cmd.map ActivityFormMsg
+                NewActivity activity ->
+                    ( Loaded
+                        { state
+                            | store = Store.update (Create activity) state.store
+                            , activityForm = Just <| ActivityForm.init activity
+                        }
+                    , Cmd.none
                     )
 
-                ActivityFormMsg subMsg ->
-                    let
-                        newState =
-                            case subMsg of
-                                ActivityForm.StoreResult (Store.Shift up activity) ->
-                                    { state | store = Store.update (Store.Shift up activity) state.store }
-
-                                ActivityForm.StoreResult storeMsg ->
-                                    { state | activityForm = Nothing, store = Store.update storeMsg state.store }
-
-                                ActivityForm.ClickedMove ->
-                                    { state | calendar = Weekly }
-
-                                _ ->
-                                    state
-
-                        ( subModel, subCmd ) =
-                            case newState.activityForm of
-                                Nothing ->
-                                    ( Nothing, Cmd.none )
-
-                                Just activityForm ->
-                                    ActivityForm.update subMsg activityForm |> Tuple.mapFirst Just
-                    in
-                    ( Loaded { newState | activityForm = subModel }, Cmd.map ActivityFormMsg subCmd )
-
-                StoreMsg storeMsg ->
-                    ( Loaded { state | store = Store.update storeMsg state.store }, Cmd.none )
-
-                FlushStore ->
-                    ( model, Cmd.map StoreMsg (Store.flush state.store) )
+                EditActivity activity ->
+                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
 
                 NoOp ->
                     ( model, Cmd.none )
+
+                Create _ ->
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+
+                Update _ ->
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+
+                Shift _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Delete _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                Posted _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+
+                FlushStore ->
+                    ( model, Store.flush state.store )
+
+                Jump date ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar, activityForm = Maybe.map (ActivityForm.selectDate date) state.activityForm }
+                    , Calendar.scrollToSelectedDate
+                    )
+
+                Toggle dateM ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Calendar.scrollToSelectedDate )
+
+                Scroll up _ ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }
+                    , if up then
+                        Calendar.scrollToSelectedDate
+
+                      else
+                        Cmd.none
+                    )
+
+                ScrollCompleted ->
+                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
+
+                SelectedShape _ ->
+                    updateActivityForm msg state
+
+                EditedDescription _ ->
+                    updateActivityForm msg state
+
+                CheckedCompleted _ ->
+                    updateActivityForm msg state
+
+                EditedDuration _ ->
+                    updateActivityForm msg state
+
+                SelectedPace _ ->
+                    updateActivityForm msg state
+
+                SelectedDistance _ ->
+                    updateActivityForm msg state
+
+                ClickedSubmit ->
+                    updateActivityForm msg state
+
+                ClickedDelete ->
+                    updateActivityForm msg state
+
+                ClickedMove ->
+                    ( Loaded { state | calendar = Calendar.init Calendar.Weekly state.calendar.selected }, Cmd.none )
+
+                ClickedShift _ ->
+                    updateActivityForm msg state
+
+                NewId _ ->
+                    updateActivityForm msg state
 
 
 updateLoading : Model -> ( Model, Cmd Msg )
@@ -188,16 +208,36 @@ updateLoading model =
         Loading (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    Daily
-                    date
+                    (Calendar.init Calendar.Daily date)
                     (Store.init activities)
                     Nothing
                     date
             )
-                |> update NoOp
+                |> update (Jump date)
 
         _ ->
             ( model, Cmd.none )
+
+
+updateActivityForm : Msg -> State -> ( Model, Cmd Msg )
+updateActivityForm msg state =
+    Maybe.map (ActivityForm.update msg) state.activityForm
+        |> Maybe.map (Tuple.mapFirst (\af -> Loaded { state | activityForm = Just af }))
+        |> Maybe.withDefault ( Loaded state, Cmd.none )
+
+
+initActivity : Date -> Maybe Date -> Cmd Msg
+initActivity today dateM =
+    let
+        date =
+            dateM |> Maybe.withDefault today
+
+        completed =
+            Date.compare date today == GT || date == today
+    in
+    Activity.newId
+        |> Random.map (\id -> Activity id date "" completed 30 Nothing Nothing)
+        |> Random.generate NewActivity
 
 
 
@@ -216,384 +256,8 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                [ column []
-                    [ viewMenu state.calendar state.date
-                    , viewCalendar state (Store.get state.store .activities)
-                    ]
+                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm) ClickedNewActivity state.today (Store.get state.store .activities)
                 ]
-
-
-
--- VIEW MENU
-
-
-viewMenu : CalendarView -> Date -> Html Msg
-viewMenu calendar date =
-    let
-        calendarIcon =
-            case calendar of
-                Weekly ->
-                    [ i [ class "far fa-calendar-minus" ] [] ]
-
-                _ ->
-                    [ i [ class "far fa-calendar-alt" ] [] ]
-
-        ( loadDate, toggleCalendar ) =
-            case calendar of
-                Weekly ->
-                    ( LoadCalendar Weekly
-                    , LoadCalendar Daily date
-                    )
-
-                Daily ->
-                    ( LoadCalendar Daily
-                    , LoadCalendar Weekly date
-                    )
-    in
-    row []
-        [ a [ class "button", onClick toggleCalendar ] calendarIcon
-        , div [ class "dropdown", style "margin-left" "0.5rem" ]
-            [ button []
-                [ text (Date.format "MMMM" date)
-                ]
-            , div [ class "dropdown-content" ]
-                (listMonths date loadDate)
-            ]
-        , div [ class "dropdown", style "margin-left" "0.5rem" ]
-            [ button []
-                [ text (Date.format "yyyy" date)
-                ]
-            , div [ class "dropdown-content" ]
-                (listYears date loadDate)
-            ]
-        , button
-            [ style "margin-left" "0.5rem"
-            , onClick LoadToday
-            ]
-            [ text "Today" ]
-        ]
-
-
-listMonths : Date -> (Date -> Msg) -> List (Html Msg)
-listMonths date changeDate =
-    let
-        start =
-            Date.fromCalendarDate (Date.year date) Jan 1
-
-        end =
-            Date.fromCalendarDate (Date.add Years 1 date |> Date.year) Jan 1
-    in
-    Date.range Month 1 start end
-        |> List.map (viewDropdownItem changeDate "MMMM")
-
-
-listYears : Date -> (Date -> Msg) -> List (Html Msg)
-listYears date changeDate =
-    let
-        middle =
-            Date.fromCalendarDate 2019 (Date.month date) 1
-
-        start =
-            Date.add Years -3 middle
-
-        end =
-            Date.add Years 3 middle
-    in
-    Date.range Month 12 start end
-        |> List.map (viewDropdownItem changeDate "yyyy")
-
-
-viewDropdownItem : (Date -> Msg) -> String -> Date -> Html Msg
-viewDropdownItem changeDate formatDate date =
-    a [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
-
-
-
--- VIEW CALENDAR
-
-
-type CalendarView
-    = Weekly
-    | Daily
-
-
-viewCalendar : State -> List Activity -> Html Msg
-viewCalendar { calendar, date, activityForm, today } activities =
-    let
-        accessActivities =
-            \date_ ->
-                List.filter (filterActivities date_) activities
-
-        filterActivities date_ activity =
-            case activityForm of
-                Just af ->
-                    if af.date == Just date_ && ActivityForm.isEditing activity af then
-                        True
-
-                    else if activity.date == date_ && not (ActivityForm.isEditing activity af) then
-                        True
-
-                    else
-                        False
-
-                Nothing ->
-                    activity.date == date_
-
-        body =
-            case calendar of
-                Weekly ->
-                    weekList date |> List.map (viewWeek accessActivities today)
-
-                Daily ->
-                    listDays date
-                        |> List.map (\d -> viewDay activityForm d (accessActivities d) (d == today))
-    in
-    expandingRow
-        [ id "calendar"
-        , style "overflow" "scroll"
-        , attribute "data-date" (Date.toIsoString date)
-        , onScroll <| scrollHandler date calendar
-        ]
-        [ column [ style "margin-bottom" scrollConfig.marginBottom, style "justify-content" "space-between" ]
-            body
-        ]
-
-
-
--- SCROLLING
-
-
-scrollConfig =
-    { marginBottom = "-500px"
-    , center = 250
-    , loadMargin = 10
-    }
-
-
-onScroll : ( msg, msg ) -> Html.Attribute msg
-onScroll ( loadPrevious, loadNext ) =
-    Html.Events.on "scroll"
-        (Decode.map3 (\a b c -> ( a, b, c ))
-            (Decode.at [ "target", "scrollTop" ] Decode.int)
-            (Decode.at [ "target", "scrollHeight" ] Decode.int)
-            (Decode.at [ "target", "clientHeight" ] Decode.int)
-            |> Decode.andThen
-                (\( scrollTop, scrollHeight, clientHeight ) ->
-                    if scrollTop < scrollConfig.loadMargin then
-                        Decode.succeed loadPrevious
-
-                    else if scrollTop > scrollHeight - clientHeight - scrollConfig.loadMargin then
-                        Decode.succeed loadNext
-
-                    else
-                        Decode.fail ""
-                )
-        )
-
-
-resetScroll : msg -> Cmd msg
-resetScroll msg =
-    Task.map4
-        scrollToSelectedDate
-        (Dom.setViewportOf "calendar" 0 scrollConfig.center)
-        (Dom.getViewportOf "calendar")
-        (Dom.getElement "calendar")
-        (Dom.getElement "selected-date")
-        |> Task.attempt (\_ -> msg)
-
-
-scrollToSelectedDate _ viewport calendar selectedDate =
-    Dom.setViewportOf "calendar" 0 (viewport.viewport.y + selectedDate.element.y - calendar.element.y)
-
-
-scrollHandler : Date -> CalendarView -> ( Msg, Msg )
-scrollHandler date calendar =
-    (case calendar of
-        Weekly ->
-            ( Date.add Weeks -4 date, Date.add Weeks 4 date )
-
-        Daily ->
-            ( Date.add Days -3 date, Date.add Days 3 date )
-    )
-        |> Tuple.mapBoth (LoadCalendar calendar) (LoadCalendar calendar)
-
-
-
--- WEEKLY VIEW
-
-
-viewWeek : (Date -> List Activity) -> Date -> Date -> Html Msg
-viewWeek accessActivities today start =
-    let
-        dayViews =
-            daysOfWeek start
-                |> List.map (\d -> viewWeekDay ( d, accessActivities d ) (d == today))
-
-        activities =
-            daysOfWeek start
-                |> List.map (\d -> accessActivities d)
-                |> List.concat
-
-        ( runDuration, otherDuration ) =
-            activities
-                |> List.partition (\a -> activityType a == Activity.Run)
-                |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
-                |> Tuple.mapBoth List.sum List.sum
-    in
-    row [] <|
-        titleWeek start ( runDuration, otherDuration )
-            :: dayViews
-
-
-viewWeekDay : ( Date, List Activity ) -> Bool -> Html Msg
-viewWeekDay ( date, activities ) isToday =
-    column [ onClick (LoadCalendar Daily date), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
-        row []
-            [ a
-                [ attribute "data-date" (Date.toIsoString date)
-                , styleIf isToday "text-decoration" "underline"
-                ]
-                [ text (Date.format "d" date)
-                ]
-            ]
-            :: List.map (\a -> row [ style "margin-bottom" "0.1rem" ] [ ActivityShape.view a ]) activities
-
-
-titleWeek : Date -> ( Int, Int ) -> Html msg
-titleWeek start ( runDuration, otherDuration ) =
-    let
-        monthStart =
-            daysOfWeek start
-                |> List.filter (\d -> Date.day d == 1)
-                |> List.head
-                |> Maybe.map (Date.format "MMM")
-                |> Maybe.withDefault ""
-
-        hours duration =
-            (toFloat duration / 60)
-                |> Basics.floor
-
-        minutes duration =
-            remainderBy 60 duration
-    in
-    column [ style "min-width" "4rem" ]
-        [ row [] [ text monthStart ]
-        , row [ style "color" "limegreen" ]
-            [ text <|
-                if runDuration /= 0 then
-                    List.foldr (++) "" [ String.fromInt (hours runDuration), "h ", String.fromInt (minutes runDuration), "m" ]
-
-                else
-                    ""
-            ]
-        , row [ style "color" "grey" ]
-            [ text <|
-                if otherDuration /= 0 then
-                    List.foldr (++) "" [ String.fromInt (hours otherDuration), "h ", String.fromInt (minutes otherDuration), "m" ]
-
-                else
-                    ""
-            ]
-        ]
-
-
-weekList : Date -> List Date
-weekList date =
-    let
-        start =
-            Date.add Weeks -4 (Date.floor Week date)
-
-        end =
-            Date.add Weeks 12 start
-    in
-    Date.range Week 1 start end
-
-
-daysOfWeek : Date -> List Date
-daysOfWeek start =
-    Date.range Day 1 start (Date.add Weeks 1 start)
-
-
-
--- DAILY VIEW
-
-
-viewDay : Maybe ActivityForm.Model -> Date -> List Activity -> Bool -> Html Msg
-viewDay activityFormM date activities isToday =
-    let
-        activityFormView =
-            case activityFormM of
-                Just af ->
-                    if ActivityForm.isCreating date af then
-                        ActivityForm.view af |> Html.map ActivityFormMsg
-
-                    else
-                        Html.text ""
-
-                Nothing ->
-                    Html.text ""
-    in
-    row []
-        [ column []
-            [ row [ styleIf isToday "font-weight" "bold" ]
-                [ text (Date.format "E MMM d" date)
-                , a [ onClick (NewActivity (Just date)), style "margin-left" "0.2rem" ] [ text "+" ]
-                ]
-            , row [ style "margin" "1rem" ]
-                [ column []
-                    [ row []
-                        [ column [] (List.map (viewActivity activityFormM) activities) ]
-                    , activityFormView
-                    ]
-                ]
-            ]
-        ]
-
-
-listDays : Date -> List Date
-listDays date =
-    let
-        start =
-            Date.add Days -3 date
-
-        end =
-            Date.add Days 11 date
-    in
-    Date.range Day 1 start end
-
-
-viewActivity : Maybe ActivityForm.Model -> Activity -> Html Msg
-viewActivity activityFormM activity =
-    let
-        level =
-            Activity.mprLevel activity
-                |> Maybe.map (\l -> "level " ++ String.fromInt l)
-                |> Maybe.withDefault ""
-
-        activityView =
-            a [ onClick (EditActivity activity) ]
-                [ row [ style "margin-bottom" "1rem" ]
-                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-                    , column [ style "justify-content" "center" ]
-                        [ row [] [ text activity.description ]
-                        , row [ style "font-size" "0.8rem" ]
-                            [ column [] [ text <| String.fromInt activity.duration ++ " min " ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower) ]
-                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
-                            ]
-                        ]
-                    ]
-                ]
-    in
-    case activityFormM of
-        Just af ->
-            if ActivityForm.isEditing activity af then
-                ActivityForm.view af |> Html.map ActivityFormMsg
-
-            else
-                activityView
-
-        Nothing ->
-            activityView
 
 
 

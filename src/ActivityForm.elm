@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, Msg(..), generateNewId, initEdit, initNew, isCreating, isEditing, save, selectDate, shift, update, view)
+module ActivityForm exposing (Model, init, isEditing, save, selectDate, shift, update, viewActivity)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -10,7 +10,7 @@ import Html.Attributes exposing (class, href, id, name, placeholder, style, type
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as Decode
-import Random
+import Msg exposing (Msg(..))
 import Skeleton exposing (column, compactColumn, expandingRow, row, viewIf)
 import Store
 import Task exposing (Task)
@@ -23,7 +23,7 @@ import Task exposing (Task)
 
 
 type alias Model =
-    { status : Status
+    { id : Activity.Id
     , date : Maybe Date
     , description : String
     , completed : Bool
@@ -34,73 +34,44 @@ type alias Model =
     }
 
 
-type Status
-    = Creating Activity.Id
-    | Editing Activity.Id
-    | Saving
-
-
-type Msg
-    = SelectedShape Activity.ActivityType
-    | EditedDescription String
-    | CheckedCompleted Bool
-    | EditedDuration String
-    | SelectedPace String
-    | SelectedDistance String
-    | ClickedSubmit
-    | ClickedDelete
-    | ClickedMove
-    | ClickedShift Bool
-    | NewId String
-    | StoreResult Store.Msg
-
-
 type Error
     = ApiError
     | EmptyFieldError String
 
 
-initNew : Activity.Id -> Maybe Date -> Bool -> Model
-initNew id dateM completed =
-    Model (Creating id) dateM "" completed (Just 30) (Just Activity.Easy) Nothing (Err (EmptyFieldError ""))
+init : Activity -> Model
+init activity =
+    Model activity.id (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
 
 
-initEdit : Activity -> Model
-initEdit activity =
-    Model (Editing activity.id) (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
-
-
-save : Model -> Store.Msg
-save { result, status } =
-    case ( result, status ) of
-        ( Ok activity, Editing id ) ->
-            Store.Update { activity | id = id }
-
-        ( Ok activity, Creating id ) ->
-            Store.Create { activity | id = id }
+save : Model -> Msg
+save { result } =
+    case result of
+        Ok activity ->
+            Update activity
 
         _ ->
-            Store.NoOp
+            NoOp
 
 
-delete : Model -> Store.Msg
-delete { result, status } =
-    case ( result, status ) of
-        ( Ok activity, Editing id ) ->
-            Store.Delete { activity | id = id }
-
-        _ ->
-            Store.NoOp
-
-
-shift : Model -> Bool -> Store.Msg
-shift { result, status } up =
-    case ( result, status ) of
-        ( Ok activity, Editing id ) ->
-            Store.Shift up { activity | id = id }
+delete : Model -> Msg
+delete { result } =
+    case result of
+        Ok activity ->
+            Delete activity
 
         _ ->
-            Store.NoOp
+            NoOp
+
+
+shift : Model -> Bool -> Msg
+shift { result } up =
+    case result of
+        Ok activity ->
+            Shift up activity
+
+        _ ->
+            NoOp
 
 
 selectDate : Date -> Model -> Model
@@ -113,20 +84,10 @@ selectDate date model =
 
 
 isEditing : Activity -> Model -> Bool
-isEditing activity model =
-    case model.status of
-        Editing id ->
-            activity.id == id
-
-        _ ->
-            False
-
-
-isCreating : Date -> Model -> Bool
-isCreating date model =
-    case model.status of
-        Creating _ ->
-            model.date == Just date
+isEditing activity { result } =
+    case result of
+        Ok resultActivity ->
+            activity.id == resultActivity.id
 
         _ ->
             False
@@ -146,7 +107,7 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map3
         (\date description duration ->
-            Activity "" date description model.completed duration model.pace model.distance
+            Activity model.id date description model.completed duration model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -209,10 +170,10 @@ update msg model =
             )
 
         ClickedSubmit ->
-            ( model, Cmd.map StoreResult (Store.cmd (save model)) )
+            ( model, Store.cmd (save model) )
 
         ClickedDelete ->
-            ( model, Cmd.map StoreResult (Store.cmd (delete model)) )
+            ( model, Store.cmd (delete model) )
 
         ClickedMove ->
             let
@@ -222,12 +183,9 @@ update msg model =
             ( { newModel | result = validate newModel }, Cmd.none )
 
         ClickedShift up ->
-            ( model, Cmd.map StoreResult (Store.cmd (shift model up)) )
+            ( model, Store.cmd (shift model up) )
 
-        NewId id ->
-            ( initNew id model.date model.completed, Cmd.none )
-
-        StoreResult _ ->
+        _ ->
             ( model, Cmd.none )
 
 
@@ -236,20 +194,8 @@ updateResult model =
     { model | result = validate model }
 
 
-generateNewId : Cmd Msg
-generateNewId =
-    let
-        digitsToString digits =
-            List.map String.fromInt digits
-                |> String.join ""
-    in
-    Random.list 10 (Random.int 0 9)
-        |> Random.map digitsToString
-        |> Random.generate NewId
-
-
-view : Model -> Html Msg
-view model =
+viewForm : Model -> Html Msg
+viewForm model =
     let
         activityShape =
             validate model
@@ -274,6 +220,7 @@ view model =
             , row []
                 [ input
                     [ type_ "text"
+                    , Html.Attributes.autocomplete False
                     , placeholder "Description"
                     , onInput EditedDescription
                     , name "description"
@@ -290,12 +237,46 @@ view model =
                     [ maybeView (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
                         (\level -> text <| "Level " ++ String.fromInt level)
                     ]
-                , column [ style "align-items" "flex-end" ] [ submitButton model.status ]
+                , column [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row []
                 [ viewError model.result ]
             ]
         ]
+
+
+viewActivity : Maybe Model -> Activity -> Html Msg
+viewActivity activityFormM activity =
+    let
+        level =
+            Activity.mprLevel activity
+                |> Maybe.map (\l -> "level " ++ String.fromInt l)
+                |> Maybe.withDefault ""
+
+        activityView =
+            a [ onClick (EditActivity activity) ]
+                [ row [ style "margin-bottom" "1rem" ]
+                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
+                    , column [ style "justify-content" "center" ]
+                        [ row [] [ text activity.description ]
+                        , row [ style "font-size" "0.8rem" ]
+                            [ column [] [ text <| String.fromInt activity.duration ++ " min " ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower) ]
+                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
+                            ]
+                        ]
+                    ]
+                ]
+    in
+    case activityFormM of
+        Just af ->
+            if isEditing activity af then
+                viewForm af
+
+            else
+                activityView
+
+        Nothing ->
+            activityView
 
 
 shapeSelect : Bool -> Html Msg
@@ -320,8 +301,8 @@ completedCheckbox completed =
         ]
 
 
-submitButton : Status -> Html Msg
-submitButton status =
+submitButton : Html Msg
+submitButton =
     a
         [ class "button medium"
         , class "primary"
