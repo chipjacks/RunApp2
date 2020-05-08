@@ -16,7 +16,7 @@ import Time exposing (Month(..))
 
 
 type alias Model =
-    { zoom : Zoom, start : Date, selected : Date, end : Date }
+    { zoom : Zoom, start : Date, selected : Date, end : Date, scrollCompleted : Bool }
 
 
 type Zoom
@@ -28,10 +28,10 @@ init : Zoom -> Date -> Model
 init zoom date =
     case zoom of
         Daily ->
-            Model Daily (Date.add Days -3 date) date (Date.add Days 20 date)
+            Model Daily (Date.add Days -3 date) date (Date.add Days 20 date) False
 
         Weekly ->
-            Model Weekly (Date.add Weeks -3 date) date (Date.add Weeks 20 date)
+            Model Weekly (Date.add Weeks -3 date) date (Date.add Weeks 20 date) False
 
 
 getDate : Model -> Date
@@ -55,10 +55,13 @@ update msg model =
 
         Scroll up date ->
             if up then
-                { model | start = date, selected = model.start }
+                { model | start = date, selected = model.start, scrollCompleted = False }
 
             else
-                { model | end = date }
+                { model | selected = model.end, end = date }
+
+        ScrollCompleted ->
+            { model | scrollCompleted = True }
 
         _ ->
             model
@@ -78,25 +81,22 @@ viewMenu model loadToday =
 
                 _ ->
                     [ i [ class "far fa-calendar-alt" ] [] ]
-
-        date =
-            getDate model
     in
     row []
         [ a [ class "button", onClick Toggle ] calendarIcon
         , div [ class "dropdown", style "margin-left" "0.5rem" ]
             [ button []
-                [ text (Date.format "MMMM" date)
+                [ text (Date.format "MMMM" model.selected)
                 ]
             , div [ class "dropdown-content" ]
-                (listMonths date Jump)
+                (listMonths model.selected Jump)
             ]
         , div [ class "dropdown", style "margin-left" "0.5rem" ]
             [ button []
-                [ text (Date.format "yyyy" date)
+                [ text (Date.format "yyyy" model.selected)
                 ]
             , div [ class "dropdown-content" ]
-                (listYears date Jump)
+                (listYears model.selected Jump)
             ]
         , button
             [ style "margin-left" "0.5rem"
@@ -164,7 +164,11 @@ view calendar viewActivity newActivity today activities =
         , column
             [ id "calendar"
             , style "overflow" "scroll"
-            , onScroll <| scrollHandler calendar
+            , if calendar.scrollCompleted then
+                onScroll <| scrollHandler calendar
+
+              else
+                style "" ""
             ]
             body
         ]
@@ -210,7 +214,7 @@ scrollToSelectedDate =
                 in
                 Dom.setViewportOf "calendar" 0 (selectedDate.element.y - navbarAndMenuHeight)
             )
-        |> Task.attempt (\_ -> NoOp)
+        |> Task.attempt (\_ -> ScrollCompleted)
 
 
 scrollHandler : Model -> ( Msg, Msg )

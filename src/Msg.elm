@@ -21,6 +21,7 @@ type Msg
     | Jump Date
     | Toggle
     | Scroll Bool Date
+    | ScrollCompleted
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
