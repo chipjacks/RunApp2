@@ -45,13 +45,13 @@ update msg model =
         Jump date ->
             init model.zoom date
 
-        Toggle ->
+        Toggle dateM ->
             case model.zoom of
                 Weekly ->
-                    init Daily model.selected
+                    init Daily (Maybe.withDefault model.selected dateM)
 
                 Daily ->
-                    init Weekly model.selected
+                    init Weekly (Maybe.withDefault model.selected dateM)
 
         Scroll up date ->
             if up then
@@ -83,7 +83,7 @@ viewMenu model loadToday =
                     [ i [ class "far fa-calendar-alt" ] [] ]
     in
     row []
-        [ a [ class "button", onClick Toggle ] calendarIcon
+        [ a [ class "button", onClick (Toggle Nothing) ] calendarIcon
         , div [ class "dropdown", style "margin-left" "0.5rem" ]
             [ button []
                 [ text (Date.format "MMMM" model.selected)
@@ -254,7 +254,13 @@ viewWeek accessActivities today selected start =
 
 viewWeekDay : ( Date, List Activity ) -> Bool -> Bool -> Html Msg
 viewWeekDay ( date, activities ) isToday isSelected =
-    column [ onClick (Jump date), attributeIf isSelected (id "selected-date"), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
+    column
+        [ onClick (Toggle (Just date))
+        , attributeIf isSelected (id "selected-date")
+        , style "min-height" "4rem"
+        , style "padding-bottom" "1rem"
+        ]
+    <|
         row []
             [ a
                 [ attribute "data-date" (Date.toIsoString date)

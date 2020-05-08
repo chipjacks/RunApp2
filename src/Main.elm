@@ -153,7 +153,7 @@ update msg model =
                     , Calendar.scrollToSelectedDate
                     )
 
-                Toggle ->
+                Toggle dateM ->
                     ( Loaded { state | calendar = Calendar.update msg state.calendar }, Calendar.scrollToSelectedDate )
 
                 Scroll up _ ->

@@ -19,7 +19,7 @@ type Msg
     | FlushStore
       -- CALENDAR
     | Jump Date
-    | Toggle
+    | Toggle (Maybe Date)
     | Scroll Bool Date
     | ScrollCompleted
       -- ACTIVITY FORM
