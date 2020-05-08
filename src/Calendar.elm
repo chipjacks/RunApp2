@@ -10,7 +10,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
-import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
+import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf)
 import Task
 import Time exposing (Month(..))
 
@@ -153,7 +153,7 @@ view calendar viewActivity newActivity today activities =
         body =
             case calendar.zoom of
                 Weekly ->
-                    weekList calendar.start calendar.end |> List.map (viewWeek accessActivities today)
+                    weekList calendar.start calendar.end |> List.map (viewWeek accessActivities today calendar.selected)
 
                 Daily ->
                     listDays calendar.start calendar.end
@@ -164,11 +164,7 @@ view calendar viewActivity newActivity today activities =
         , column
             [ id "calendar"
             , style "overflow" "scroll"
-            , if calendar.scrollCompleted then
-                onScroll <| scrollHandler calendar
-
-              else
-                style "" ""
+            , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
             ]
             body
         ]
@@ -233,12 +229,12 @@ scrollHandler model =
 -- WEEKLY VIEW
 
 
-viewWeek : (Date -> List Activity) -> Date -> Date -> Html Msg
-viewWeek accessActivities today start =
+viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
+viewWeek accessActivities today selected start =
     let
         dayViews =
             daysOfWeek start
-                |> List.map (\d -> viewWeekDay ( d, accessActivities d ) (d == today))
+                |> List.map (\d -> viewWeekDay ( d, accessActivities d ) (d == today) (d == selected))
 
         activities =
             daysOfWeek start
@@ -256,9 +252,9 @@ viewWeek accessActivities today start =
             :: dayViews
 
 
-viewWeekDay : ( Date, List Activity ) -> Bool -> Html Msg
-viewWeekDay ( date, activities ) isToday =
-    column [ onClick (Jump date), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
+viewWeekDay : ( Date, List Activity ) -> Bool -> Bool -> Html Msg
+viewWeekDay ( date, activities ) isToday isSelected =
+    column [ onClick (Jump date), attributeIf isSelected (id "selected-date"), style "min-height" "4rem", style "padding-bottom" "1rem" ] <|
         row []
             [ a
                 [ attribute "data-date" (Date.toIsoString date)
@@ -324,13 +320,7 @@ daysOfWeek start =
 
 viewDay : Date -> List Activity -> Bool -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
 viewDay date activities isToday isSelected viewActivity newActivity =
-    row
-        [ if isSelected then
-            id "selected-date"
-
-          else
-            id ""
-        ]
+    row [ attributeIf isSelected (id "selected-date") ]
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
