@@ -84,13 +84,8 @@ selectDate date model =
 
 
 isEditing : Activity -> Model -> Bool
-isEditing activity { result } =
-    case result of
-        Ok resultActivity ->
-            activity.id == resultActivity.id
-
-        _ ->
-            False
+isEditing activity { id } =
+    activity.id == id
 
 
 validateFieldExists : Maybe a -> String -> Result Error a
