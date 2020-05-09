@@ -2659,7 +2659,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		t: func(record.t),
+		s: func(record.s),
 		ae: record.ae,
 		ac: record.ac
 	}
@@ -2929,7 +2929,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.t;
+		var message = !tag ? value : tag < 3 ? value.a : value.s;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ae;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -8677,7 +8677,7 @@ var $author$project$Store$flush = function (model) {
 };
 var $author$project$ActivityForm$Model = F8(
 	function (id, date, description, completed, duration, pace, distance, result) {
-		return {am: completed, an: date, aq: description, R: distance, W: duration, aB: id, ab: pace, q: result};
+		return {am: completed, an: date, aq: description, R: distance, W: duration, aB: id, ab: pace, u: result};
 	});
 var $author$project$ActivityForm$init = function (activity) {
 	return A8(
@@ -9013,7 +9013,7 @@ var $author$project$ActivityForm$updateResult = function (model) {
 	return _Utils_update(
 		model,
 		{
-			q: $author$project$ActivityForm$validate(model)
+			u: $author$project$ActivityForm$validate(model)
 		});
 };
 var $author$project$ActivityForm$selectDate = F2(
@@ -9231,7 +9231,7 @@ var $author$project$Msg$Delete = function (a) {
 };
 var $author$project$Msg$NoOp = {$: 3};
 var $author$project$ActivityForm$delete = function (_v0) {
-	var result = _v0.q;
+	var result = _v0.u;
 	if (!result.$) {
 		var activity = result.a;
 		return $author$project$Msg$Delete(activity);
@@ -9243,7 +9243,7 @@ var $author$project$Msg$Update = function (a) {
 	return {$: 5, a: a};
 };
 var $author$project$ActivityForm$save = function (_v0) {
-	var result = _v0.q;
+	var result = _v0.u;
 	if (!result.$) {
 		var activity = result.a;
 		return $author$project$Msg$Update(activity);
@@ -9257,7 +9257,7 @@ var $author$project$Msg$Shift = F2(
 	});
 var $author$project$ActivityForm$shift = F2(
 	function (_v0, up) {
-		var result = _v0.q;
+		var result = _v0.u;
 		if (!result.$) {
 			var activity = result.a;
 			return A2($author$project$Msg$Shift, up, activity);
@@ -9369,7 +9369,7 @@ var $author$project$ActivityForm$update = F2(
 					_Utils_update(
 						newModel,
 						{
-							q: $author$project$ActivityForm$validate(newModel)
+							u: $author$project$ActivityForm$validate(newModel)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 25:
@@ -10597,13 +10597,8 @@ var $author$project$Msg$EditActivity = function (a) {
 };
 var $author$project$ActivityForm$isEditing = F2(
 	function (activity, _v0) {
-		var result = _v0.q;
-		if (!result.$) {
-			var resultActivity = result.a;
-			return _Utils_eq(activity.aB, resultActivity.aB);
-		} else {
-			return false;
-		}
+		var id = _v0.aB;
+		return _Utils_eq(activity.aB, id);
 	});
 var $author$project$MPRLevel$Neutral = 0;
 var $elm$core$Maybe$andThen = F2(
@@ -11340,7 +11335,7 @@ var $author$project$ActivityForm$viewForm = function (model) {
 										A2(
 											$elm$core$Maybe$andThen,
 											$author$project$Activity$mprLevel,
-											$elm$core$Result$toMaybe(model.q)),
+											$elm$core$Result$toMaybe(model.u)),
 										function (level) {
 											return $elm$html$Html$text(
 												'Level ' + $elm$core$String$fromInt(level));
@@ -11360,7 +11355,7 @@ var $author$project$ActivityForm$viewForm = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$author$project$ActivityForm$viewError(model.q)
+								$author$project$ActivityForm$viewError(model.u)
 							]))
 					]))
 			]));
