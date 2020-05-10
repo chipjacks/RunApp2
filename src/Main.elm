@@ -233,7 +233,7 @@ initActivity today dateM =
             dateM |> Maybe.withDefault today
 
         completed =
-            Date.compare date today == GT || date == today
+            Date.compare date today == LT || date == today
     in
     Activity.newId
         |> Random.map (\id -> Activity id date "" completed 30 Nothing Nothing)
