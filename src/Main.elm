@@ -148,25 +148,17 @@ update msg model =
                 FlushStore ->
                     ( model, Store.flush state.store )
 
-                Jump date ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar, activityForm = Maybe.map (ActivityForm.selectDate date) state.activityForm }
-                    , Calendar.scrollToSelectedDate
-                    )
+                Jump _ ->
+                    updateCalendar msg state
 
-                Toggle dateM ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Calendar.scrollToSelectedDate )
+                Toggle _ ->
+                    updateCalendar msg state
 
-                Scroll up _ ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar }
-                    , if up then
-                        Calendar.scrollToSelectedDate
+                Scroll _ _ _ ->
+                    updateCalendar msg state
 
-                      else
-                        Cmd.none
-                    )
-
-                ScrollCompleted ->
-                    ( Loaded { state | calendar = Calendar.update msg state.calendar }, Cmd.none )
+                ScrollCompleted _ ->
+                    updateCalendar msg state
 
                 SelectedShape _ ->
                     updateActivityForm msg state
@@ -224,6 +216,12 @@ updateActivityForm msg state =
     Maybe.map (ActivityForm.update msg) state.activityForm
         |> Maybe.map (Tuple.mapFirst (\af -> Loaded { state | activityForm = Just af }))
         |> Maybe.withDefault ( Loaded state, Cmd.none )
+
+
+updateCalendar : Msg -> State -> ( Model, Cmd Msg )
+updateCalendar msg state =
+    Calendar.update msg state.calendar
+        |> Tuple.mapFirst (\calendar -> Loaded { state | calendar = calendar })
 
 
 initActivity : Date -> Maybe Date -> Cmd Msg
