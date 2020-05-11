@@ -10,6 +10,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
+import Process
 import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf)
 import Task
 import Time exposing (Month(..))
@@ -217,9 +218,13 @@ returnScroll previousHeight =
     Dom.getViewportOf "calendar"
         |> Task.andThen
             (\info ->
-                Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
+                Task.sequence
+                    [ Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
+                    , Process.sleep 100
+                    , Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
+                    ]
             )
-        |> Task.attempt (\result -> ScrollCompleted result)
+        |> Task.attempt (\result -> ScrollCompleted (Ok ()))
 
 
 scrollToSelectedDate : Cmd Msg
