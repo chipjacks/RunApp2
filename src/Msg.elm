@@ -1,6 +1,7 @@
 module Msg exposing (Msg(..))
 
 import Activity exposing (Activity)
+import Browser.Dom as Dom
 import Date exposing (Date)
 import Http
 
@@ -20,8 +21,8 @@ type Msg
       -- CALENDAR
     | Jump Date
     | Toggle (Maybe Date)
-    | Scroll Bool Date
-    | ScrollCompleted
+    | Scroll Bool Date Int
+    | ScrollCompleted (Result Dom.Error ())
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity

@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Zoom(..), getDate, init, scrollToSelectedDate, update, view)
+module Calendar exposing (Model, Zoom(..), getDate, init, update, view)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -10,6 +10,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
+import Process
 import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf)
 import Task
 import Time exposing (Month(..))
@@ -28,10 +29,10 @@ init : Zoom -> Date -> Model
 init zoom date =
     case zoom of
         Daily ->
-            Model Daily (Date.add Days -3 date) date (Date.add Days 20 date) False
+            Model Daily (Date.add Days -10 date) date (Date.add Days 10 date) False
 
         Weekly ->
-            Model Weekly (Date.add Weeks -3 date) date (Date.add Weeks 20 date) False
+            Model Weekly (Date.add Weeks -10 date) date (Date.add Weeks 10 date) False
 
 
 getDate : Model -> Date
@@ -39,32 +40,45 @@ getDate { selected } =
     selected
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Jump date ->
-            init model.zoom date
+            ( init model.zoom date, scrollToSelectedDate )
 
         Toggle dateM ->
             case model.zoom of
                 Weekly ->
-                    init Daily (Maybe.withDefault model.selected dateM)
+                    ( init Daily (Maybe.withDefault model.selected dateM)
+                    , scrollToSelectedDate
+                    )
 
                 Daily ->
-                    init Weekly (Maybe.withDefault model.selected dateM)
+                    ( init Weekly (Maybe.withDefault model.selected dateM)
+                    , scrollToSelectedDate
+                    )
 
-        Scroll up date ->
-            if up then
-                { model | start = date, selected = model.start, scrollCompleted = False }
+        Scroll up date currentHeight ->
+            if not model.scrollCompleted then
+                ( model, Cmd.none )
+
+            else if up then
+                ( { model | start = date, selected = model.start, scrollCompleted = False }
+                , returnScroll currentHeight
+                )
 
             else
-                { model | selected = model.end, end = date }
+                ( { model | selected = model.end, end = date }
+                , Cmd.none
+                )
 
-        ScrollCompleted ->
-            { model | scrollCompleted = True }
+        ScrollCompleted result ->
+            ( { model | scrollCompleted = True }
+            , Cmd.none
+            )
 
         _ ->
-            model
+            ( model, Cmd.none )
 
 
 
@@ -174,7 +188,7 @@ view calendar viewActivity newActivity today activities =
 -- SCROLLING
 
 
-onScroll : ( msg, msg ) -> Html.Attribute msg
+onScroll : ( Int -> msg, Int -> msg ) -> Html.Attribute msg
 onScroll ( loadPrevious, loadNext ) =
     let
         loadMargin =
@@ -188,15 +202,29 @@ onScroll ( loadPrevious, loadNext ) =
             |> Decode.andThen
                 (\( scrollTop, scrollHeight, clientHeight ) ->
                     if scrollTop < loadMargin then
-                        Decode.succeed loadPrevious
+                        Decode.succeed (loadPrevious scrollHeight)
 
                     else if scrollTop > scrollHeight - clientHeight - loadMargin then
-                        Decode.succeed loadNext
+                        Decode.succeed (loadNext scrollHeight)
 
                     else
                         Decode.fail ""
                 )
         )
+
+
+returnScroll : Int -> Cmd Msg
+returnScroll previousHeight =
+    Dom.getViewportOf "calendar"
+        |> Task.andThen
+            (\info ->
+                Task.sequence
+                    [ Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
+                    , Process.sleep 100
+                    , Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
+                    ]
+            )
+        |> Task.attempt (\result -> ScrollCompleted (Ok ()))
 
 
 scrollToSelectedDate : Cmd Msg
@@ -210,17 +238,17 @@ scrollToSelectedDate =
                 in
                 Dom.setViewportOf "calendar" 0 (selectedDate.element.y - navbarAndMenuHeight)
             )
-        |> Task.attempt (\_ -> ScrollCompleted)
+        |> Task.attempt (\result -> ScrollCompleted result)
 
 
-scrollHandler : Model -> ( Msg, Msg )
+scrollHandler : Model -> ( Int -> Msg, Int -> Msg )
 scrollHandler model =
     (case model.zoom of
         Weekly ->
             ( Date.add Weeks -4 model.start, Date.add Weeks 4 model.end )
 
         Daily ->
-            ( Date.add Days -3 model.start, Date.add Days 3 model.end )
+            ( Date.add Days -10 model.start, Date.add Days 10 model.end )
     )
         |> Tuple.mapBoth (Scroll True) (Scroll False)
 
