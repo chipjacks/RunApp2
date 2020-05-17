@@ -151,8 +151,15 @@ update msg model =
                 Jump _ ->
                     updateCalendar msg state
 
-                Toggle _ ->
+                Toggle dateM ->
+                    let
+                        activityFormCmd =
+                            Maybe.map2 ActivityForm.selectDate dateM state.activityForm
+                                |> Maybe.map Store.cmd
+                                |> Maybe.withDefault Cmd.none
+                    in
                     updateCalendar msg state
+                        |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, activityFormCmd ])
 
                 Scroll _ _ _ ->
                     updateCalendar msg state
@@ -185,7 +192,11 @@ update msg model =
                     updateActivityForm msg state
 
                 ClickedMove ->
-                    ( Loaded { state | calendar = Calendar.init Calendar.Weekly state.calendar.selected }, Cmd.none )
+                    let
+                        newState =
+                            { state | calendar = Calendar.init Calendar.Weekly state.calendar.selected }
+                    in
+                    updateActivityForm msg newState
 
                 ClickedShift _ ->
                     updateActivityForm msg state

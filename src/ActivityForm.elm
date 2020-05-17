@@ -74,13 +74,13 @@ shift { result } up =
             NoOp
 
 
-selectDate : Date -> Model -> Model
+selectDate : Date -> Model -> Msg
 selectDate date model =
     if model.date == Nothing then
-        updateResult { model | date = Just date }
+        save (updateResult { model | date = Just date })
 
     else
-        model
+        NoOp
 
 
 isEditing : Activity -> Model -> Bool
@@ -171,11 +171,7 @@ update msg model =
             ( model, Store.cmd (delete model) )
 
         ClickedMove ->
-            let
-                newModel =
-                    { model | date = Nothing }
-            in
-            ( { newModel | result = validate newModel }, Cmd.none )
+            ( { model | date = Nothing }, Cmd.none )
 
         ClickedShift up ->
             ( model, Store.cmd (shift model up) )
