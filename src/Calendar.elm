@@ -10,6 +10,7 @@ import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
+import Ports exposing (scrollToSelectedDate)
 import Process
 import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf)
 import Task
@@ -27,12 +28,7 @@ type Zoom
 
 init : Zoom -> Date -> Model
 init zoom date =
-    case zoom of
-        Daily ->
-            Model Daily (Date.add Days -10 date) date (Date.add Days 10 date) False
-
-        Weekly ->
-            Model Weekly (Date.add Weeks -10 date) date (Date.add Weeks 10 date) False
+    Model zoom (Date.floor Year date) date (Date.ceiling Year date) True
 
 
 getDate : Model -> Date
@@ -44,18 +40,18 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Jump date ->
-            ( init model.zoom date, scrollToSelectedDate )
+            ( init model.zoom date, scrollToSelectedDate () )
 
         Toggle dateM ->
             case model.zoom of
                 Weekly ->
                     ( init Daily (Maybe.withDefault model.selected dateM)
-                    , scrollToSelectedDate
+                    , scrollToSelectedDate ()
                     )
 
                 Daily ->
                     ( init Weekly (Maybe.withDefault model.selected dateM)
-                    , scrollToSelectedDate
+                    , scrollToSelectedDate ()
                     )
 
         Scroll up date currentHeight ->
@@ -225,21 +221,6 @@ returnScroll previousHeight =
                     ]
             )
         |> Task.andThen (\_ -> Dom.getElement "calendar")
-        |> Task.attempt (\result -> ScrollCompleted result)
-
-
-scrollToSelectedDate : Cmd Msg
-scrollToSelectedDate =
-    Dom.getElement "selected-date"
-        |> Task.andThen
-            (\selectedDate ->
-                let
-                    navbarAndMenuHeight =
-                        86
-                in
-                Dom.setViewportOf "calendar" 0 (selectedDate.element.y - navbarAndMenuHeight)
-            )
-        |> Task.andThen (\_ -> Dom.getElement "selected-date")
         |> Task.attempt (\result -> ScrollCompleted result)
 
 
