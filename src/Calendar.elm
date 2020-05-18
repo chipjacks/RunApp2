@@ -63,12 +63,12 @@ update msg model =
                 ( model, Cmd.none )
 
             else if up then
-                ( { model | start = date, selected = model.start, scrollCompleted = False }
+                ( { model | start = date, scrollCompleted = False }
                 , returnScroll currentHeight
                 )
 
             else
-                ( { model | selected = model.end, end = date }
+                ( { model | end = date }
                 , Cmd.none
                 )
 
@@ -224,7 +224,8 @@ returnScroll previousHeight =
                     , Dom.setViewportOf "calendar" 0 (info.scene.height - toFloat previousHeight)
                     ]
             )
-        |> Task.attempt (\result -> ScrollCompleted (Ok ()))
+        |> Task.andThen (\_ -> Dom.getElement "calendar")
+        |> Task.attempt (\result -> ScrollCompleted result)
 
 
 scrollToSelectedDate : Cmd Msg
@@ -238,6 +239,7 @@ scrollToSelectedDate =
                 in
                 Dom.setViewportOf "calendar" 0 (selectedDate.element.y - navbarAndMenuHeight)
             )
+        |> Task.andThen (\_ -> Dom.getElement "selected-date")
         |> Task.attempt (\result -> ScrollCompleted result)
 
 
