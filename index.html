@@ -24,6 +24,13 @@
           .register('/service-worker.js')
           .then(function() { console.log("Service Worker Registered"); });
       }
+
+      app.ports.scrollToSelectedDate.subscribe(function() {
+        setTimeout(() => {
+          const element = document.getElementById('selected-date')
+          element.scrollIntoView();
+        }, 100);
+      });
     </script>
   </body>
 </html>

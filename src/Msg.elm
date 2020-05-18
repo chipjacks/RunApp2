@@ -22,7 +22,7 @@ type Msg
     | Jump Date
     | Toggle (Maybe Date)
     | Scroll Bool Date Int
-    | ScrollCompleted (Result Dom.Error ())
+    | ScrollCompleted (Result Dom.Error Dom.Element)
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
