@@ -7701,6 +7701,9 @@ var $author$project$Calendar$Daily = 1;
 var $author$project$Main$Loaded = function (a) {
 	return {$: 1, a: a};
 };
+var $author$project$Msg$NewActivity = function (a) {
+	return {$: 15, a: a};
+};
 var $author$project$Main$State = F4(
 	function (calendar, store, activityForm, today) {
 		return {n: activityForm, A: calendar, i: store, ag: today};
@@ -8683,9 +8686,89 @@ var $author$project$Store$flush = function (model) {
 					A2($elm$core$Task$map, $author$project$Store$State, $author$project$Api$getActivities))));
 	}
 };
+var $elm$random$Random$Generate = $elm$core$Basics$identity;
+var $elm$random$Random$Seed = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$Generator = $elm$core$Basics$identity;
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0;
+		return function (seed0) {
+			var _v1 = genA(seed0);
+			var a = _v1.a;
+			var seed1 = _v1.b;
+			return _Utils_Tuple2(
+				func(a),
+				seed1);
+		};
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0;
+		return A2($elm$random$Random$map, func, generator);
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			A2($elm$random$Random$map, tagger, generator));
+	});
 var $author$project$ActivityForm$Model = F8(
 	function (id, date, description, completed, duration, pace, distance, result) {
-		return {an: completed, ao: date, ar: description, S: distance, X: duration, aC: id, ac: pace, x: result};
+		return {an: completed, ao: date, ar: description, S: distance, X: duration, aC: id, ac: pace, t: result};
 	});
 var $author$project$ActivityForm$init = function (activity) {
 	return A8(
@@ -8847,94 +8930,11 @@ var $author$project$Store$init = function (activities) {
 		$author$project$Store$State(activities),
 		_List_Nil);
 };
-var $author$project$Msg$NewActivity = function (a) {
-	return {$: 15, a: a};
-};
 var $justinmimbs$date$Date$compare = F2(
 	function (_v0, _v1) {
 		var a = _v0;
 		var b = _v1;
 		return A2($elm$core$Basics$compare, a, b);
-	});
-var $elm$random$Random$Generate = $elm$core$Basics$identity;
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
-	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$random$Random$init = A2(
-	$elm$core$Task$andThen,
-	function (time) {
-		return $elm$core$Task$succeed(
-			$elm$random$Random$initialSeed(
-				$elm$time$Time$posixToMillis(time)));
-	},
-	$elm$time$Time$now);
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0;
-		return generator(seed);
-	});
-var $elm$random$Random$onEffects = F3(
-	function (router, commands, seed) {
-		if (!commands.b) {
-			return $elm$core$Task$succeed(seed);
-		} else {
-			var generator = commands.a;
-			var rest = commands.b;
-			var _v1 = A2($elm$random$Random$step, generator, seed);
-			var value = _v1.a;
-			var newSeed = _v1.b;
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$random$Random$onEffects, router, rest, newSeed);
-				},
-				A2($elm$core$Platform$sendToApp, router, value));
-		}
-	});
-var $elm$random$Random$onSelfMsg = F3(
-	function (_v0, _v1, seed) {
-		return $elm$core$Task$succeed(seed);
-	});
-var $elm$random$Random$Generator = $elm$core$Basics$identity;
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0;
-		return function (seed0) {
-			var _v1 = genA(seed0);
-			var a = _v1.a;
-			var seed1 = _v1.b;
-			return _Utils_Tuple2(
-				func(a),
-				seed1);
-		};
-	});
-var $elm$random$Random$cmdMap = F2(
-	function (func, _v0) {
-		var generator = _v0;
-		return A2($elm$random$Random$map, func, generator);
-	});
-_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
-var $elm$random$Random$command = _Platform_leaf('Random');
-var $elm$random$Random$generate = F2(
-	function (tagger, generator) {
-		return $elm$random$Random$command(
-			A2($elm$random$Random$map, tagger, generator));
 	});
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
@@ -9069,7 +9069,7 @@ var $author$project$Msg$Update = function (a) {
 	return {$: 5, a: a};
 };
 var $author$project$ActivityForm$save = function (_v0) {
-	var result = _v0.x;
+	var result = _v0.t;
 	if (!result.$) {
 		var activity = result.a;
 		return $author$project$Msg$Update(activity);
@@ -9131,7 +9131,7 @@ var $author$project$ActivityForm$updateResult = function (model) {
 	return _Utils_update(
 		model,
 		{
-			x: $author$project$ActivityForm$validate(model)
+			t: $author$project$ActivityForm$validate(model)
 		});
 };
 var $author$project$ActivityForm$selectDate = F2(
@@ -9305,7 +9305,7 @@ var $author$project$Msg$Delete = function (a) {
 	return {$: 7, a: a};
 };
 var $author$project$ActivityForm$delete = function (_v0) {
-	var result = _v0.x;
+	var result = _v0.t;
 	if (!result.$) {
 		var activity = result.a;
 		return $author$project$Msg$Delete(activity);
@@ -9319,7 +9319,7 @@ var $author$project$Msg$Shift = F2(
 	});
 var $author$project$ActivityForm$shift = F2(
 	function (_v0, up) {
-		var result = _v0.x;
+		var result = _v0.t;
 		if (!result.$) {
 			var activity = result.a;
 			return A2($author$project$Msg$Shift, up, activity);
@@ -9423,13 +9423,13 @@ var $author$project$ActivityForm$update = F2(
 					model,
 					$author$project$Store$cmd(
 						$author$project$ActivityForm$delete(model)));
-			case 24:
+			case 25:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{ao: $elm$core$Maybe$Nothing}),
 					$elm$core$Platform$Cmd$none);
-			case 25:
+			case 26:
 				var up = msg.a;
 				return _Utils_Tuple2(
 					model,
@@ -9737,13 +9737,28 @@ var $author$project$Main$update = F2(
 				case 23:
 					return A2($author$project$Main$updateActivityForm, msg, state);
 				case 24:
+					var activity = msg.a;
+					return _Utils_Tuple2(
+						model,
+						A2(
+							$elm$random$Random$generate,
+							$author$project$Msg$NewActivity,
+							A2(
+								$elm$random$Random$map,
+								function (id) {
+									return _Utils_update(
+										activity,
+										{aC: id});
+								},
+								$author$project$Activity$newId)));
+				case 25:
 					var newState = _Utils_update(
 						state,
 						{
 							A: A2($author$project$Calendar$init, 0, state.A.m)
 						});
 					return A2($author$project$Main$updateActivityForm, msg, newState);
-				case 25:
+				case 26:
 					return A2($author$project$Main$updateActivityForm, msg, state);
 				default:
 					return A2($author$project$Main$updateActivityForm, msg, state);
@@ -10358,7 +10373,7 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 					A2(
 					$elm$html$Html$Attributes$style,
 					'width',
-					$elm$core$String$fromFloat(width * 0.5) + 'rem'),
+					$elm$core$String$fromFloat(width * 0.3) + 'rem'),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'height',
@@ -10497,7 +10512,8 @@ var $author$project$Calendar$viewWeekDay = F3(
 							$author$project$Skeleton$row,
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$style, 'margin-bottom', '0.1rem')
+									A2($elm$html$Html$Attributes$style, 'margin-bottom', '0.1rem'),
+									A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
 								]),
 							_List_fromArray(
 								[
@@ -10846,9 +10862,12 @@ var $author$project$Activity$mprLevel = function (activity) {
 		activity.S);
 };
 var $elm$core$String$toLower = _String_toLower;
-var $author$project$Msg$ClickedMove = {$: 24};
+var $author$project$Msg$ClickedCopy = function (a) {
+	return {$: 24, a: a};
+};
+var $author$project$Msg$ClickedMove = {$: 25};
 var $author$project$Msg$ClickedShift = function (a) {
-	return {$: 25, a: a};
+	return {$: 26, a: a};
 };
 var $author$project$Msg$EditedDescription = function (a) {
 	return {$: 17, a: a};
@@ -11069,14 +11088,14 @@ var $author$project$ActivityShape$viewDefault = F2(
 						$author$project$ActivityShape$Block,
 						0,
 						completed,
-						{K: 1, R: 2}));
+						{K: 1, R: 3}));
 			case 1:
 				return $author$project$ActivityShape$viewShape(
 					A3(
 						$author$project$ActivityShape$Block,
 						1,
 						completed,
-						{K: 1, R: 2}));
+						{K: 1, R: 3}));
 			default:
 				return $author$project$ActivityShape$viewShape(
 					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
@@ -11209,7 +11228,7 @@ var $author$project$ActivityForm$viewForm = function (model) {
 				$author$project$Skeleton$compactColumn,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem'),
+						A2($elm$html$Html$Attributes$style, 'flex-basis', '3.3rem'),
 						A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 					]),
 				_List_fromArray(
@@ -11221,7 +11240,10 @@ var $author$project$ActivityForm$viewForm = function (model) {
 					[
 						A2(
 						$author$project$Skeleton$row,
-						_List_Nil,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap')
+							]),
 						_List_fromArray(
 							[
 								A2(
@@ -11247,6 +11269,30 @@ var $author$project$ActivityForm$viewForm = function (model) {
 											]),
 										_List_fromArray(
 											[
+												A2(
+												$author$project$ActivityForm$maybeView,
+												$elm$core$Result$toMaybe(model.t),
+												function (activity) {
+													return A2(
+														$elm$html$Html$a,
+														_List_fromArray(
+															[
+																$elm$html$Html$Attributes$class('button tiny'),
+																A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+																$elm$html$Html$Events$onClick(
+																$author$project$Msg$ClickedCopy(activity))
+															]),
+														_List_fromArray(
+															[
+																A2(
+																$elm$html$Html$i,
+																_List_fromArray(
+																	[
+																		$elm$html$Html$Attributes$class('far fa-clone')
+																	]),
+																_List_Nil)
+															]));
+												}),
 												A2(
 												$elm$html$Html$a,
 												_List_fromArray(
@@ -11372,7 +11418,7 @@ var $author$project$ActivityForm$viewForm = function (model) {
 										A2(
 											$elm$core$Maybe$andThen,
 											$author$project$Activity$mprLevel,
-											$elm$core$Result$toMaybe(model.x)),
+											$elm$core$Result$toMaybe(model.t)),
 										function (level) {
 											return $elm$html$Html$text(
 												'Level ' + $elm$core$String$fromInt(level));
@@ -11392,7 +11438,7 @@ var $author$project$ActivityForm$viewForm = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$author$project$ActivityForm$viewError(model.x)
+								$author$project$ActivityForm$viewError(model.t)
 							]))
 					]))
 			]));
