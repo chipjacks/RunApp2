@@ -191,6 +191,13 @@ update msg model =
                 ClickedDelete ->
                     updateActivityForm msg state
 
+                ClickedCopy activity ->
+                    ( model
+                    , Activity.newId
+                        |> Random.map (\id -> { activity | id = id })
+                        |> Random.generate NewActivity
+                    )
+
                 ClickedMove ->
                     let
                         newState =

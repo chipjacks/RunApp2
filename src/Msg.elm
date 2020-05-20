@@ -34,6 +34,7 @@ type Msg
     | SelectedDistance String
     | ClickedSubmit
     | ClickedDelete
+    | ClickedCopy Activity
     | ClickedMove
     | ClickedShift Bool
     | NewId String

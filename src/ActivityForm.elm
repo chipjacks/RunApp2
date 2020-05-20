@@ -195,13 +195,14 @@ viewForm model =
                 |> Maybe.withDefault (ActivityShape.viewDefault True Activity.Other)
     in
     row [ id "activity", style "margin-bottom" "1rem" ]
-        [ compactColumn [ style "flex-basis" "5rem", style "justify-content" "center" ] [ activityShape ]
+        [ compactColumn [ style "flex-basis" "3.3rem", style "justify-content" "center" ] [ activityShape ]
         , column []
-            [ row []
+            [ row [ style "flex-wrap" "wrap" ]
                 [ compactColumn [] [ shapeSelect model.completed ]
                 , column [ style "align-items" "flex-end" ]
                     [ row [ style "align-items" "flex-start" ]
-                        [ a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+                        [ maybeView (Result.toMaybe model.result) (\activity -> a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
+                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
                         , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
                         , a [ class "button tiny", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
                         , deleteButton

@@ -37,11 +37,11 @@ viewDefault : Bool -> Activity.ActivityType -> Html msg
 viewDefault completed activityType =
     case activityType of
         Activity.Run ->
-            Block Green completed { width = 2, height = 1 }
+            Block Green completed { width = 3, height = 1 }
                 |> viewShape
 
         Activity.Race ->
-            Block Orange completed { width = 2, height = 1 }
+            Block Orange completed { width = 3, height = 1 }
                 |> viewShape
 
         Activity.Other ->
@@ -54,7 +54,7 @@ viewShape shape =
     case shape of
         Block color completed { width, height } ->
             div
-                [ style "width" <| String.fromFloat (width * 0.5) ++ "rem"
+                [ style "width" <| String.fromFloat (width * 0.3) ++ "rem"
                 , style "height" <| String.fromFloat height ++ "rem"
                 , style "border" ("2px solid " ++ colorString color)
                 , style "border-radius" "2px"
