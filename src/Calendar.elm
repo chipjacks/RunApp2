@@ -280,7 +280,7 @@ viewWeekDay ( date, activities ) isToday isSelected =
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [ style "margin-bottom" "0.1rem" ] [ ActivityShape.view a ]) activities
+            :: List.map (\a -> row [ style "margin-bottom" "0.1rem", style "margin-right" "0.2rem" ] [ ActivityShape.view a ]) activities
 
 
 titleWeek : Date -> ( Int, Int ) -> Html msg
