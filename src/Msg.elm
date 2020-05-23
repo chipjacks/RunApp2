@@ -10,6 +10,7 @@ type Msg
     = LoadToday
     | GotActivities (Result Http.Error (List Activity))
     | EditActivity Activity
+    | ReceiveSelectDate String
     | NoOp
       -- STORE
     | Create Activity

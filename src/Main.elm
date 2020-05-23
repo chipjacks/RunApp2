@@ -16,6 +16,7 @@ import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
+import Ports exposing (selectDateFromScroll)
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
 import Store
@@ -167,6 +168,9 @@ update msg model =
                 ScrollCompleted _ ->
                     updateCalendar msg state
 
+                ReceiveSelectDate _ ->
+                    updateCalendar msg state
+
                 SelectedShape _ ->
                     updateActivityForm msg state
 
@@ -282,4 +286,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every 10000 (\_ -> FlushStore)
+    Sub.batch
+        [ Time.every 10000 (\_ -> FlushStore)
+        , selectDateFromScroll ReceiveSelectDate
+        ]

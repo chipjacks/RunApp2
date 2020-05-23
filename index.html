@@ -25,6 +25,28 @@
           .then(function() { console.log("Service Worker Registered"); });
       }
 
+      function handleIntersect(entries, observer) {
+        let newSelectedDate = Array.from(document.getElementsByClassName('month-header'))
+          .map(e => ({ element: e, rect: e.getBoundingClientRect() }))
+          .filter(r => r.rect.top < 0)
+          .pop().element.dataset.date;
+        app.ports.selectDateFromScroll.send(newSelectedDate);
+      }
+
+      let observer;
+      function reloadObserver() {
+        if (observer) {
+          observer.disconnect();
+        }
+        observer = new IntersectionObserver(handleIntersect, {root: document.querySelector('#calendar'), threshold: 1});
+        const element = document.getElementById('selected-date')
+        observer.observe(element);
+      }
+
+      setInterval(() => {
+        reloadObserver();
+      }, 1000);
+
       app.ports.scrollToSelectedDate.subscribe(function() {
         setTimeout(() => {
           const element = document.getElementById('selected-date')

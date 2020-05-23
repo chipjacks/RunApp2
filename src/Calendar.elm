@@ -73,6 +73,13 @@ update msg model =
             , Cmd.none
             )
 
+        ReceiveSelectDate selectDate ->
+            let
+                log =
+                    Debug.log "selectdate" selectDate
+            in
+            ( { model | selected = Date.fromIsoString selectDate |> Result.withDefault model.selected }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -290,8 +297,6 @@ titleWeek start ( runDuration, otherDuration ) =
             daysOfWeek start
                 |> List.filter (\d -> Date.day d == 1)
                 |> List.head
-                |> Maybe.map (Date.format "MMM")
-                |> Maybe.withDefault ""
 
         hours duration =
             (toFloat duration / 60)
@@ -301,7 +306,13 @@ titleWeek start ( runDuration, otherDuration ) =
             remainderBy 60 duration
     in
     column [ style "min-width" "4rem" ]
-        [ row [] [ text monthStart ]
+        [ row
+            (Maybe.map (\month -> [ class "month-header", attribute "data-date" (Date.toIsoString month) ]) monthStart
+                |> Maybe.withDefault []
+            )
+            [ text
+                (monthStart |> Maybe.map (Date.format "MMM") |> Maybe.withDefault "")
+            ]
         , row [ style "color" "limegreen" ]
             [ text <|
                 if runDuration /= 0 then
