@@ -25,13 +25,19 @@
           .then(function() { console.log("Service Worker Registered"); });
       }
 
-      function handleIntersect(entries, observer) {
-        let newSelectedDate = Array.from(document.getElementsByClassName('month-header'))
+       function handleCalendarScroll(event) {
+         const calendar = document.getElementById('calendar');
+         if (calendar.scrollTop < 100 || (calendar.scrollHeight - calendar.scrollTop === calendar.clientHeight)) {
+          return;
+        }
+        let monthHeader = Array.from(document.getElementsByClassName('month-header'))
           .map(e => ({ element: e, rect: e.getBoundingClientRect() }))
-          .filter(r => r.rect.top < 0)
-          .pop().element.dataset.date;
-        app.ports.selectDateFromScroll.send(newSelectedDate);
-      }
+          .filter(r => r.rect.top < 100)
+          .pop()
+        if (monthHeader) {
+          app.ports.selectDateFromScroll.send(monthHeader.element.dataset.date);
+        }
+      };
 
       let observer;
       function reloadObserver() {
@@ -39,18 +45,20 @@
           observer.disconnect();
         }
         observer = new IntersectionObserver(handleIntersect, {root: document.querySelector('#calendar'), threshold: 1});
-        const element = document.getElementById('selected-date')
-        observer.observe(element);
+        const elements = Array.from(document.getElementsByClassName('month-header'))
+        elements.map(e => observer.observe(e));
       }
-
-      setInterval(() => {
-        reloadObserver();
-      }, 1000);
 
       app.ports.scrollToSelectedDate.subscribe(function() {
         setTimeout(() => {
+          document.getElementById('calendar').removeEventListener('scroll', handleCalendarScroll);
           const element = document.getElementById('selected-date')
-          element.scrollIntoView();
+          if (element) {
+            element.scrollIntoView();
+          }
+          setTimeout(() => {
+            document.getElementById('calendar').addEventListener('scroll', handleCalendarScroll);
+          }, 500);
         }, 100);
       });
     </script>
