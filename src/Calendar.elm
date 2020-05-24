@@ -73,6 +73,13 @@ update msg model =
             , Cmd.none
             )
 
+        ReceiveSelectDate selectDate ->
+            let
+                newSelected =
+                    Date.fromIsoString selectDate |> Result.withDefault model.selected
+            in
+            ( { model | selected = newSelected }, Cmd.none )
+
         _ ->
             ( model, Cmd.none )
 
@@ -226,13 +233,7 @@ returnScroll previousHeight =
 
 scrollHandler : Model -> ( Int -> Msg, Int -> Msg )
 scrollHandler model =
-    (case model.zoom of
-        Weekly ->
-            ( Date.add Weeks -4 model.start, Date.add Weeks 4 model.end )
-
-        Daily ->
-            ( Date.add Days -10 model.start, Date.add Days 10 model.end )
-    )
+    ( Date.add Months -2 model.start, Date.add Months 2 model.end )
         |> Tuple.mapBoth (Scroll True) (Scroll False)
 
 
@@ -290,8 +291,6 @@ titleWeek start ( runDuration, otherDuration ) =
             daysOfWeek start
                 |> List.filter (\d -> Date.day d == 1)
                 |> List.head
-                |> Maybe.map (Date.format "MMM")
-                |> Maybe.withDefault ""
 
         hours duration =
             (toFloat duration / 60)
@@ -301,7 +300,13 @@ titleWeek start ( runDuration, otherDuration ) =
             remainderBy 60 duration
     in
     column [ style "min-width" "4rem" ]
-        [ row [] [ text monthStart ]
+        [ row
+            (Maybe.map (\month -> [ class "month-header", attribute "data-date" (Date.toIsoString month) ]) monthStart
+                |> Maybe.withDefault []
+            )
+            [ text
+                (monthStart |> Maybe.map (Date.format "MMM") |> Maybe.withDefault "")
+            ]
         , row [ style "color" "limegreen" ]
             [ text <|
                 if runDuration /= 0 then
@@ -337,7 +342,11 @@ daysOfWeek start =
 
 viewDay : Date -> List Activity -> Bool -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
 viewDay date activities isToday isSelected viewActivity newActivity =
-    row [ attributeIf isSelected (id "selected-date") ]
+    row
+        [ attributeIf (Date.day date == 1) (class "month-header")
+        , attributeIf isSelected (id "selected-date")
+        , attribute "data-date" (Date.toIsoString date)
+        ]
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
