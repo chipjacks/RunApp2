@@ -2,6 +2,7 @@ module Store exposing (Model, cmd, flush, get, init, needsFlush, update)
 
 import Activity exposing (Activity)
 import Api
+import Date exposing (Date)
 import Http
 import Msg exposing (Msg(..))
 import Task exposing (Task)
@@ -85,7 +86,8 @@ flush model =
 updateActivity : Activity -> Bool -> List Activity -> List Activity
 updateActivity activity isNew activities =
     if isNew then
-        List.append activities [ activity ]
+        List.partition (\a -> Date.compare a.date activity.date == GT) activities
+            |> (\( after, before ) -> List.concat [ before, [ activity ], after ])
 
     else
         List.map
