@@ -137,6 +137,9 @@ update msg model =
                 Update _ ->
                     ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
 
+                Move _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+
                 Shift _ _ ->
                     ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
 
@@ -151,6 +154,7 @@ update msg model =
 
                 Jump _ ->
                     updateCalendar msg state
+                        |> loaded
 
                 Toggle dateM ->
                     let
@@ -160,40 +164,52 @@ update msg model =
                                 |> Maybe.withDefault Cmd.none
                     in
                     updateCalendar msg state
+                        |> loaded
                         |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, activityFormCmd ])
 
                 Scroll _ _ _ ->
                     updateCalendar msg state
+                        |> loaded
 
                 ScrollCompleted _ ->
                     updateCalendar msg state
+                        |> loaded
 
                 ReceiveSelectDate _ ->
                     updateCalendar msg state
+                        |> loaded
 
                 SelectedShape _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 EditedDescription _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 CheckedCompleted _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 EditedDuration _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 SelectedPace _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 SelectedDistance _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 ClickedSubmit ->
                     updateActivityForm msg state
+                        |> loaded
 
                 ClickedDelete ->
                     updateActivityForm msg state
+                        |> loaded
 
                 ClickedCopy activity ->
                     ( model
@@ -204,16 +220,22 @@ update msg model =
 
                 ClickedMove ->
                     let
-                        newState =
-                            { state | calendar = Calendar.init Calendar.Weekly state.calendar.selected }
+                        ( calendarState, calendarCmd ) =
+                            updateCalendar (Toggle Nothing) state
+
+                        ( activityFormState, activityFormCmd ) =
+                            updateActivityForm msg calendarState
                     in
-                    updateActivityForm msg newState
+                    ( activityFormState, Cmd.batch [ calendarCmd, activityFormCmd ] )
+                        |> loaded
 
                 ClickedShift _ ->
                     updateActivityForm msg state
+                        |> loaded
 
                 NewId _ ->
                     updateActivityForm msg state
+                        |> loaded
 
 
 updateLoading : Model -> ( Model, Cmd Msg )
@@ -233,17 +255,22 @@ updateLoading model =
             ( model, Cmd.none )
 
 
-updateActivityForm : Msg -> State -> ( Model, Cmd Msg )
+updateActivityForm : Msg -> State -> ( State, Cmd Msg )
 updateActivityForm msg state =
     Maybe.map (ActivityForm.update msg) state.activityForm
-        |> Maybe.map (Tuple.mapFirst (\af -> Loaded { state | activityForm = Just af }))
-        |> Maybe.withDefault ( Loaded state, Cmd.none )
+        |> Maybe.map (Tuple.mapFirst (\activityForm -> { state | activityForm = Just activityForm }))
+        |> Maybe.withDefault ( state, Cmd.none )
 
 
-updateCalendar : Msg -> State -> ( Model, Cmd Msg )
+updateCalendar : Msg -> State -> ( State, Cmd Msg )
 updateCalendar msg state =
     Calendar.update msg state.calendar
-        |> Tuple.mapFirst (\calendar -> Loaded { state | calendar = calendar })
+        |> Tuple.mapFirst (\calendar -> { state | calendar = calendar })
+
+
+loaded : ( State, Cmd Msg ) -> ( Model, Cmd Msg )
+loaded stateTuple =
+    Tuple.mapFirst Loaded stateTuple
 
 
 initActivity : Date -> Maybe Date -> Cmd Msg

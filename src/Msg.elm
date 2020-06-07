@@ -15,6 +15,7 @@ type Msg
       -- STORE
     | Create Activity
     | Update Activity
+    | Move Date Activity
     | Shift Bool Activity
     | Delete Activity
     | Posted (List Msg) (Result Http.Error (List Activity))

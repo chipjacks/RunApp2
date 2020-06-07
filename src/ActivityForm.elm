@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, save, selectDate, shift, update, viewActivity)
+module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity)
 
 import Activity exposing (Activity, Minutes)
 import ActivityShape
@@ -44,31 +44,11 @@ init activity =
     Model activity.id (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
 
 
-save : Model -> Msg
-save { result } =
+apply : (Activity -> Msg) -> Model -> Msg
+apply toMsg { result } =
     case result of
         Ok activity ->
-            Update activity
-
-        _ ->
-            NoOp
-
-
-delete : Model -> Msg
-delete { result } =
-    case result of
-        Ok activity ->
-            Delete activity
-
-        _ ->
-            NoOp
-
-
-shift : Model -> Bool -> Msg
-shift { result } up =
-    case result of
-        Ok activity ->
-            Shift up activity
+            toMsg activity
 
         _ ->
             NoOp
@@ -77,7 +57,7 @@ shift { result } up =
 selectDate : Date -> Model -> Msg
 selectDate date model =
     if model.date == Nothing then
-        save (updateResult { model | date = Just date })
+        apply (Move date) (updateResult { model | date = Just date })
 
     else
         NoOp
@@ -165,16 +145,16 @@ update msg model =
             )
 
         ClickedSubmit ->
-            ( model, Store.cmd (save model) )
+            ( model, Store.cmd (apply Update model) )
 
         ClickedDelete ->
-            ( model, Store.cmd (delete model) )
+            ( model, Store.cmd (apply Delete model) )
 
         ClickedMove ->
             ( { model | date = Nothing }, Cmd.none )
 
         ClickedShift up ->
-            ( model, Store.cmd (shift model up) )
+            ( model, Store.cmd (apply (Shift up) model) )
 
         _ ->
             ( model, Cmd.none )
