@@ -90,15 +90,8 @@ updateActivity activity isNew activities =
             |> (\( after, before ) -> List.concat [ before, [ activity ], after ])
 
     else
-        List.map
-            (\existing ->
-                if existing.id == activity.id then
-                    activity
-
-                else
-                    existing
-            )
-            activities
+        List.filter (\a -> a.id /= activity.id) activities
+            |> updateActivity activity True
 
 
 shiftActivity : Activity -> Bool -> List Activity -> List Activity
