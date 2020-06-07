@@ -45,6 +45,9 @@ updateState msg state =
         Update activity ->
             { state | activities = updateActivity activity False state.activities }
 
+        Move date activity ->
+            { state | activities = moveActivity activity date state.activities }
+
         Shift up activity ->
             { state | activities = shiftActivity activity up state.activities }
 
@@ -90,30 +93,53 @@ updateActivity activity isNew activities =
             |> (\( after, before ) -> List.concat [ before, [ activity ], after ])
 
     else
-        List.filter (\a -> a.id /= activity.id) activities
-            |> updateActivity activity True
+        List.map
+            (\existing ->
+                if existing.id == activity.id then
+                    activity
+
+                else
+                    existing
+            )
+            activities
+
+
+moveActivity : Activity -> Date -> List Activity -> List Activity
+moveActivity activity toDate activities =
+    updateActivity { activity | date = toDate } True (List.filter (\a -> a.id /= activity.id) activities)
 
 
 shiftActivity : Activity -> Bool -> List Activity -> List Activity
 shiftActivity activity moveUp activities =
+    let
+        before =
+            List.filter (\a -> Date.compare a.date activity.date == LT) activities
+
+        on =
+            List.filter (\a -> a.date == activity.date) activities
+
+        after =
+            List.filter (\a -> Date.compare a.date activity.date == GT) activities
+    in
+    if moveUp then
+        List.concat [ before, shiftUp activity.id on, after ]
+
+    else
+        List.concat [ before, shiftUp activity.id (List.reverse on) |> List.reverse, after ]
+
+
+shiftUp : Activity.Id -> List Activity -> List Activity
+shiftUp id activities =
     case activities of
         a :: b :: tail ->
-            if a.id == activity.id then
-                if moveUp then
-                    activities
+            if a.id == id then
+                activities
 
-                else
-                    b :: a :: tail
-
-            else if b.id == activity.id then
-                if moveUp then
-                    b :: a :: tail
-
-                else
-                    a :: shiftActivity activity moveUp (b :: tail)
+            else if b.id == id then
+                b :: a :: tail
 
             else
-                a :: shiftActivity activity moveUp (b :: tail)
+                a :: shiftUp id (b :: tail)
 
         _ ->
             activities

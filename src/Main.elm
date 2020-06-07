@@ -137,6 +137,9 @@ update msg model =
                 Update _ ->
                     ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
 
+                Move _ _ ->
+                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+
                 Shift _ _ ->
                     ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
 
