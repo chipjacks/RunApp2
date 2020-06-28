@@ -10,8 +10,9 @@ import Html.Attributes exposing (class, href, id, name, placeholder, style, type
 import Html.Events exposing (on, onClick, onInput)
 import Http
 import Json.Decode as Decode
+import MPRLevel exposing (stripTimeStr)
 import Msg exposing (Msg(..))
-import Skeleton exposing (column, compactColumn, expandingRow, row, viewIf)
+import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 
@@ -165,8 +166,8 @@ updateResult model =
     { model | result = validate model }
 
 
-viewForm : Model -> Html Msg
-viewForm model =
+viewForm : Model -> Maybe Int -> Html Msg
+viewForm model levelM =
     let
         activityShape =
             validate model
@@ -181,7 +182,7 @@ viewForm model =
                 [ compactColumn [] [ shapeSelect model.completed ]
                 , column [ style "align-items" "flex-end" ]
                     [ row [ style "align-items" "flex-start" ]
-                        [ maybeView (Result.toMaybe model.result) (\activity -> a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
+                        [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
                         , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
                         , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
                         , a [ class "button tiny", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
@@ -203,10 +204,10 @@ viewForm model =
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
-                , compactColumn [] [ maybeView model.pace (paceSelect SelectedPace) ]
-                , compactColumn [] [ maybeView model.distance (distanceSelect SelectedDistance) ]
+                , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
+                , compactColumn [] [ viewMaybe model.distance (distanceSelect SelectedDistance) ]
                 , compactColumn []
-                    [ maybeView (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
+                    [ viewMaybe (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
                         (\level -> text <| "Level " ++ String.fromInt level)
                     ]
                 , column [ style "align-items" "flex-end" ] [ submitButton ]
@@ -217,8 +218,8 @@ viewForm model =
         ]
 
 
-viewActivity : Maybe Model -> Activity -> Html Msg
-viewActivity activityFormM activity =
+viewActivity : Maybe Model -> Maybe Int -> Activity -> Html Msg
+viewActivity activityFormM levelM activity =
     let
         level =
             Activity.mprLevel activity
@@ -242,7 +243,7 @@ viewActivity activityFormM activity =
     case activityFormM of
         Just af ->
             if isEditing activity af then
-                viewForm af
+                viewForm af levelM
 
             else
                 activityView
@@ -307,36 +308,37 @@ durationInput msg duration =
         []
 
 
-maybeView : Maybe a -> (a -> Html Msg) -> Html Msg
-maybeView attrM viewF =
-    case attrM of
-        Just attr ->
-            viewF attr
-
-        Nothing ->
-            Html.text ""
-
-
-paceSelect : (String -> Msg) -> Activity.Pace -> Html Msg
-paceSelect msg pace =
+paceSelect : Maybe Int -> (String -> Msg) -> Activity.Pace -> Html Msg
+paceSelect levelM msg pace =
     let
         selectedAttr paceStr =
-            if Activity.pace.toString pace == paceStr then
-                [ Html.Attributes.attribute "selected" "" ]
+            attributeIf (Activity.pace.toString pace == paceStr)
+                (Html.Attributes.attribute "selected" "")
 
-            else
-                []
+        paceNames =
+            Activity.pace.list |> List.map Tuple.first
+
+        paceTimes =
+            case levelM of
+                Just level ->
+                    MPRLevel.trainingPaces ( MPRLevel.Neutral, level )
+                        |> Result.map (List.map (\( name, ( minPace, maxPace ) ) -> stripTimeStr maxPace))
+                        |> Result.withDefault (List.repeat (List.length Activity.pace.list) "")
+
+                Nothing ->
+                    List.repeat (List.length Activity.pace.list) ""
     in
     Html.select
         [ onInput msg
         , name "pace"
         , class "input-small"
         ]
-        (List.map
-            (\( paceStr, _ ) ->
-                Html.option (selectedAttr paceStr) [ Html.text (String.split " " paceStr |> List.head |> Maybe.withDefault "") ]
+        (List.map2
+            (\name time ->
+                Html.option [ selectedAttr name, Html.Attributes.value name ] [ Html.text (time ++ " - " ++ name) ]
             )
-            Activity.pace.list
+            paceNames
+            paceTimes
         )
 
 

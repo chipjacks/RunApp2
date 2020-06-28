@@ -18,7 +18,7 @@ import Json.Decode as Decode
 import Msg exposing (Msg(..))
 import Ports exposing (selectDateFromScroll)
 import Random
-import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf)
+import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 import Time exposing (Month(..))
@@ -34,7 +34,7 @@ import Url.Parser.Query as Query
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (isPersisting model) |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (navbarItems model) |> List.singleton }
         , update = update
         , subscriptions = subscriptions
         }
@@ -63,14 +63,15 @@ init _ =
     )
 
 
-isPersisting : Model -> Bool
-isPersisting model =
+navbarItems : Model -> List (Html msg)
+navbarItems model =
     case model of
         Loaded { store } ->
-            Store.needsFlush store
+            [ viewIf (Store.needsFlush store) (compactColumn [] [ text "..." ])
+            ]
 
         _ ->
-            False
+            []
 
 
 
@@ -287,6 +288,14 @@ initActivity today dateM =
         |> Random.generate NewActivity
 
 
+calculateLevel : List Activity -> Maybe Int
+calculateLevel activities =
+    activities
+        |> List.filterMap Activity.mprLevel
+        |> List.reverse
+        |> List.head
+
+
 
 -- VIEW
 
@@ -303,7 +312,11 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm) ClickedNewActivity state.today (Store.get state.store .activities)
+                let
+                    activities =
+                        Store.get state.store .activities
+                in
+                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm (calculateLevel activities)) ClickedNewActivity state.today activities
                 ]
 
 

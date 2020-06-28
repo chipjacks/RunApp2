@@ -1,18 +1,18 @@
-module Skeleton exposing (attributeIf, column, compactColumn, expandingRow, layout, row, styleIf, viewIf)
+module Skeleton exposing (attributeIf, column, compactColumn, expandingRow, layout, row, styleIf, viewIf, viewMaybe)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
 
 
-layout : Bool -> Html msg -> Html msg
-layout updating page =
+layout : List (Html msg) -> Html msg -> Html msg
+layout navbarItems page =
     column [ class "container-y" ]
         [ row [ class "navbar" ]
             [ column [ class "container-x" ]
                 [ row [ style "font-size" "1.5rem" ]
-                    [ compactColumn [ style "font-style" "italic" ] [ text "RunApp2" ]
-                    , viewIf updating (compactColumn [] [ text "..." ])
-                    ]
+                    (compactColumn [ style "font-style" "italic" ] [ text "RunApp2" ]
+                        :: navbarItems
+                    )
                 ]
             ]
         , expandingRow []
@@ -66,6 +66,16 @@ viewIf bool html =
 
     else
         Html.text ""
+
+
+viewMaybe : Maybe a -> (a -> Html msg) -> Html msg
+viewMaybe attrM viewF =
+    case attrM of
+        Just attr ->
+            viewF attr
+
+        Nothing ->
+            Html.text ""
 
 
 attributeIf : Bool -> Html.Attribute msg -> Html.Attribute msg
