@@ -11012,6 +11012,9 @@ var $author$project$ActivityForm$isEditing = F2(
 		return _Utils_eq(activity.aD, id);
 	});
 var $elm$core$String$toLower = _String_toLower;
+var $author$project$Msg$CheckedCompleted = function (a) {
+	return {$: 20, a: a};
+};
 var $author$project$Msg$ClickedCopy = function (a) {
 	return {$: 26, a: a};
 };
@@ -11030,6 +11033,9 @@ var $author$project$Msg$SelectedDistance = function (a) {
 };
 var $author$project$Msg$SelectedPace = function (a) {
 	return {$: 22, a: a};
+};
+var $author$project$Msg$SelectedShape = function (a) {
+	return {$: 18, a: a};
 };
 var $elm$html$Html$Attributes$autocomplete = function (bool) {
 	return A2(
@@ -11358,48 +11364,26 @@ var $author$project$ActivityForm$paceSelect = F3(
 				paceNames,
 				paceTimes));
 	});
-var $author$project$Msg$SelectedShape = function (a) {
-	return {$: 18, a: a};
-};
-var $author$project$Msg$CheckedCompleted = function (a) {
-	return {$: 20, a: a};
-};
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
-var $elm$html$Html$Events$targetChecked = A2(
-	$elm$json$Json$Decode$at,
+var $author$project$Msg$ClickedSubmit = {$: 24};
+var $author$project$ActivityForm$submitButton = A2(
+	$elm$html$Html$a,
 	_List_fromArray(
-		['target', 'checked']),
-	$elm$json$Json$Decode$bool);
-var $elm$html$Html$Events$onCheck = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'change',
-		A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetChecked));
-};
-var $author$project$ActivityForm$completedCheckbox = function (completed) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$type_('checkbox'),
-						$elm$html$Html$Attributes$checked(completed),
-						$elm$html$Html$Events$onCheck($author$project$Msg$CheckedCompleted)
-					]),
-				_List_Nil)
-			]));
-};
+		[
+			$elm$html$Html$Attributes$class('button small'),
+			$elm$html$Html$Attributes$class('primary'),
+			$elm$html$Html$Attributes$type_('submit'),
+			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$i,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('fas fa-check')
+				]),
+			_List_Nil)
+		]));
 var $author$project$ActivityShape$viewDefault = F2(
 	function (completed, activityType) {
 		switch (activityType) {
@@ -11422,79 +11406,6 @@ var $author$project$ActivityShape$viewDefault = F2(
 					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
 		}
 	});
-var $author$project$ActivityForm$shapeSelect = function (completed) {
-	return A2(
-		$author$project$Skeleton$row,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$author$project$Skeleton$compactColumn,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Msg$SelectedShape(0))
-					]),
-				_List_fromArray(
-					[
-						A2($author$project$ActivityShape$viewDefault, completed, 0)
-					])),
-				A2(
-				$author$project$Skeleton$compactColumn,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
-						$elm$html$Html$Events$onClick(
-						$author$project$Msg$SelectedShape(1))
-					]),
-				_List_fromArray(
-					[
-						A2($author$project$ActivityShape$viewDefault, completed, 1)
-					])),
-				A2(
-				$author$project$Skeleton$compactColumn,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
-						$elm$html$Html$Events$onClick(
-						$author$project$Msg$SelectedShape(2))
-					]),
-				_List_fromArray(
-					[
-						A2($author$project$ActivityShape$viewDefault, completed, 2)
-					])),
-				A2(
-				$author$project$Skeleton$compactColumn,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem')
-					]),
-				_List_fromArray(
-					[
-						$author$project$ActivityForm$completedCheckbox(completed)
-					]))
-			]));
-};
-var $author$project$Msg$ClickedSubmit = {$: 24};
-var $author$project$ActivityForm$submitButton = A2(
-	$elm$html$Html$a,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('button medium'),
-			$elm$html$Html$Attributes$class('primary'),
-			$elm$html$Html$Attributes$type_('submit'),
-			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$i,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('fas fa-check')
-				]),
-			_List_Nil)
-		]));
 var $author$project$ActivityForm$errorMessage = function (error) {
 	if (error.$ === 1) {
 		var field = error.a;
@@ -11560,7 +11471,9 @@ var $author$project$ActivityForm$viewForm = F2(
 					_List_fromArray(
 						[
 							A2($elm$html$Html$Attributes$style, 'flex-basis', '3.3rem'),
-							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
+							A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+							$elm$html$Html$Events$onClick(
+							$author$project$Msg$CheckedCompleted(!model.ao))
 						]),
 					_List_fromArray(
 						[activityShape])),
@@ -11578,12 +11491,86 @@ var $author$project$ActivityForm$viewForm = F2(
 							_List_fromArray(
 								[
 									A2(
-									$author$project$Skeleton$compactColumn,
-									_List_Nil,
+									$author$project$Skeleton$viewMaybe,
+									$elm$core$Result$toMaybe(model.C),
+									function (activity) {
+										return A2(
+											$elm$html$Html$a,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('button small'),
+													A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+													$elm$html$Html$Events$onClick(
+													$author$project$Msg$ClickedCopy(activity))
+												]),
+											_List_fromArray(
+												[
+													A2(
+													$elm$html$Html$i,
+													_List_fromArray(
+														[
+															$elm$html$Html$Attributes$class('far fa-clone')
+														]),
+													_List_Nil)
+												]));
+									}),
+									A2(
+									$elm$html$Html$a,
 									_List_fromArray(
 										[
-											$author$project$ActivityForm$shapeSelect(model.ao)
+											$elm$html$Html$Attributes$class('button tiny'),
+											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+											$elm$html$Html$Events$onClick(
+											$author$project$Msg$ClickedShift(true))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$i,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('fas fa-arrow-up')
+												]),
+											_List_Nil)
 										])),
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button tiny'),
+											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+											$elm$html$Html$Events$onClick(
+											$author$project$Msg$ClickedShift(false))
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$i,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('fas fa-arrow-down')
+												]),
+											_List_Nil)
+										])),
+									A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button small'),
+											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+											$elm$html$Html$Events$onClick($author$project$Msg$ClickedMove)
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$i,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('fas fa-arrow-right')
+												]),
+											_List_Nil)
+										])),
+									$author$project$ActivityForm$deleteButton,
 									A2(
 									$author$project$Skeleton$column,
 									_List_fromArray(
@@ -11591,98 +11578,7 @@ var $author$project$ActivityForm$viewForm = F2(
 											A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
 										]),
 									_List_fromArray(
-										[
-											A2(
-											$author$project$Skeleton$row,
-											_List_fromArray(
-												[
-													A2($elm$html$Html$Attributes$style, 'align-items', 'flex-start')
-												]),
-											_List_fromArray(
-												[
-													A2(
-													$author$project$Skeleton$viewMaybe,
-													$elm$core$Result$toMaybe(model.C),
-													function (activity) {
-														return A2(
-															$elm$html$Html$a,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('button tiny'),
-																	A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-																	$elm$html$Html$Events$onClick(
-																	$author$project$Msg$ClickedCopy(activity))
-																]),
-															_List_fromArray(
-																[
-																	A2(
-																	$elm$html$Html$i,
-																	_List_fromArray(
-																		[
-																			$elm$html$Html$Attributes$class('far fa-clone')
-																		]),
-																	_List_Nil)
-																]));
-													}),
-													A2(
-													$elm$html$Html$a,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('button tiny'),
-															A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-															$elm$html$Html$Events$onClick(
-															$author$project$Msg$ClickedShift(true))
-														]),
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$i,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('fas fa-arrow-up')
-																]),
-															_List_Nil)
-														])),
-													A2(
-													$elm$html$Html$a,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('button tiny'),
-															A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-															$elm$html$Html$Events$onClick(
-															$author$project$Msg$ClickedShift(false))
-														]),
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$i,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('fas fa-arrow-down')
-																]),
-															_List_Nil)
-														])),
-													A2(
-													$elm$html$Html$a,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('button tiny'),
-															A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-															$elm$html$Html$Events$onClick($author$project$Msg$ClickedMove)
-														]),
-													_List_fromArray(
-														[
-															A2(
-															$elm$html$Html$i,
-															_List_fromArray(
-																[
-																	$elm$html$Html$Attributes$class('fas fa-arrow-right')
-																]),
-															_List_Nil)
-														])),
-													$author$project$ActivityForm$deleteButton
-												]))
-										]))
+										[$author$project$ActivityForm$submitButton]))
 								])),
 							A2(
 							$author$project$Skeleton$row,
@@ -11720,6 +11616,21 @@ var $author$project$ActivityForm$viewForm = F2(
 											A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, model.Y)
 										])),
 									A2(
+									$author$project$Skeleton$viewIf,
+									(!_Utils_eq(model.ad, $elm$core$Maybe$Nothing)) || (!_Utils_eq(model.S, $elm$core$Maybe$Nothing)),
+									A2(
+										$author$project$Skeleton$compactColumn,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
+												$elm$html$Html$Events$onClick(
+												$author$project$Msg$SelectedShape(2))
+											]),
+										_List_fromArray(
+											[
+												A2($author$project$ActivityShape$viewDefault, model.ao, 2)
+											]))),
+									A2(
 									$author$project$Skeleton$compactColumn,
 									_List_Nil,
 									_List_fromArray(
@@ -11740,6 +11651,36 @@ var $author$project$ActivityForm$viewForm = F2(
 											$author$project$ActivityForm$distanceSelect($author$project$Msg$SelectedDistance))
 										])),
 									A2(
+									$author$project$Skeleton$viewIf,
+									_Utils_eq(model.ad, $elm$core$Maybe$Nothing),
+									A2(
+										$author$project$Skeleton$compactColumn,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
+												$elm$html$Html$Events$onClick(
+												$author$project$Msg$SelectedShape(0))
+											]),
+										_List_fromArray(
+											[
+												A2($author$project$ActivityShape$viewDefault, model.ao, 0)
+											]))),
+									A2(
+									$author$project$Skeleton$viewIf,
+									_Utils_eq(model.S, $elm$core$Maybe$Nothing),
+									A2(
+										$author$project$Skeleton$compactColumn,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
+												$elm$html$Html$Events$onClick(
+												$author$project$Msg$SelectedShape(1))
+											]),
+										_List_fromArray(
+											[
+												A2($author$project$ActivityShape$viewDefault, model.ao, 1)
+											]))),
+									A2(
 									$author$project$Skeleton$compactColumn,
 									_List_Nil,
 									_List_fromArray(
@@ -11754,15 +11695,7 @@ var $author$project$ActivityForm$viewForm = F2(
 												return $elm$html$Html$text(
 													'Level ' + $elm$core$String$fromInt(level));
 											})
-										])),
-									A2(
-									$author$project$Skeleton$column,
-									_List_fromArray(
-										[
-											A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
-										]),
-									_List_fromArray(
-										[$author$project$ActivityForm$submitButton]))
+										]))
 								])),
 							A2(
 							$author$project$Skeleton$row,
