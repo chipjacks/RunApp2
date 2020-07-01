@@ -1,6 +1,6 @@
 module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity)
 
-import Activity exposing (Activity, Minutes)
+import Activity exposing (Activity, ActivityType, Minutes)
 import ActivityShape
 import Api
 import Array exposing (Array)
@@ -176,19 +176,20 @@ viewForm model levelM =
                 |> Maybe.withDefault (ActivityShape.viewDefault True Activity.Other)
     in
     row [ id "activity", style "margin-bottom" "1rem" ]
-        [ compactColumn [ style "flex-basis" "3.3rem", style "justify-content" "center" ] [ activityShape ]
+        [ compactColumn
+            [ style "flex-basis" "3.3rem"
+            , style "justify-content" "center"
+            , Html.Events.onClick (CheckedCompleted (not model.completed))
+            ]
+            [ activityShape ]
         , column []
             [ row [ style "flex-wrap" "wrap" ]
-                [ compactColumn [] [ shapeSelect model.completed ]
-                , column [ style "align-items" "flex-end" ]
-                    [ row [ style "align-items" "flex-start" ]
-                        [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
-                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
-                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
-                        , a [ class "button tiny", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
-                        , deleteButton
-                        ]
-                    ]
+                [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
+                , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+                , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
+                , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+                , deleteButton
+                , column [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row []
                 [ input
@@ -204,13 +205,15 @@ viewForm model levelM =
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
                 [ compactColumn [] [ durationInput EditedDuration model.duration ]
+                , viewIf (model.pace /= Nothing || model.distance /= Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault model.completed Activity.Other ])
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
                 , compactColumn [] [ viewMaybe model.distance (distanceSelect SelectedDistance) ]
+                , viewIf (model.pace == Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault model.completed Activity.Run ])
+                , viewIf (model.distance == Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault model.completed Activity.Race ])
                 , compactColumn []
                     [ viewMaybe (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
                         (\level -> text <| "Level " ++ String.fromInt level)
                     ]
-                , column [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row []
                 [ viewError model.result ]
@@ -252,32 +255,10 @@ viewActivity activityFormM levelM activity =
             activityView
 
 
-shapeSelect : Bool -> Html Msg
-shapeSelect completed =
-    row []
-        [ compactColumn [ onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault completed Activity.Run ]
-        , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault completed Activity.Race ]
-        , compactColumn [ style "margin-left" "0.5rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault completed Activity.Other ]
-        , compactColumn [ style "margin-left" "0.2rem" ] [ completedCheckbox completed ]
-        ]
-
-
-completedCheckbox : Bool -> Html Msg
-completedCheckbox completed =
-    div []
-        [ input
-            [ type_ "checkbox"
-            , Html.Attributes.checked completed
-            , Html.Events.onCheck CheckedCompleted
-            ]
-            []
-        ]
-
-
 submitButton : Html Msg
 submitButton =
     a
-        [ class "button medium"
+        [ class "button small"
         , class "primary"
         , type_ "submit"
         , onClick ClickedSubmit
