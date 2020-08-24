@@ -42,6 +42,7 @@ input { border: 1px solid var(--highlight-gray); border-radius: 0.25rem; padding
 .input-small { padding: 0.4rem; font-size: 0.8rem; }
 input:focus { border-color: var(--accent-blue); }
 select { border: 1px solid var(--highlight-gray); border-radius: 0.25rem; padding: 0.5rem; font-size: 1rem; }
+select.input-small { padding: 0.3rem; }
 select:focus { border-color: var(--accent-blue); }
 button, .button {
   background-color: var(--interact-gray);
@@ -55,7 +56,7 @@ button, .button {
 }
 .button.tiny { padding: 0rem 0.3rem; }
 .button.small { padding: 0rem 1rem; }
-.button.medium { padding: 0.3rem 1rem; }
+.button.medium { padding: 0.45rem 1rem; }
 button:hover, .button:hover { background-color: var(--highlight-gray); }
 .primary { background-color: #2185d0; color: #fff; }
 .primary:hover { background-color: #1678c2; }

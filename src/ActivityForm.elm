@@ -185,8 +185,8 @@ viewForm model levelM =
         , column []
             [ row [ style "flex-wrap" "wrap" ]
                 [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
-                , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
-                , a [ class "button tiny", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
+                , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+                , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
                 , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
                 , deleteButton
                 , column [ style "align-items" "flex-end" ] [ submitButton ]
@@ -204,12 +204,10 @@ viewForm model levelM =
                     []
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
-                [ compactColumn [] [ durationInput EditedDuration model.duration ]
-                , viewIf (model.pace /= Nothing || model.distance /= Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Other) ] [ ActivityShape.viewDefault model.completed Activity.Other ])
+                [ compactColumn [] [ shapeSelect model SelectedShape ]
+                , compactColumn [] [ durationInput EditedDuration model.duration ]
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
                 , compactColumn [] [ viewMaybe model.distance (distanceSelect SelectedDistance) ]
-                , viewIf (model.pace == Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Run) ] [ ActivityShape.viewDefault model.completed Activity.Run ])
-                , viewIf (model.distance == Nothing) (compactColumn [ style "margin" "0.2rem", onClick (SelectedShape Activity.Race) ] [ ActivityShape.viewDefault model.completed Activity.Race ])
                 , compactColumn []
                     [ viewMaybe (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
                         (\level -> text <| "Level " ++ String.fromInt level)
@@ -253,6 +251,25 @@ viewActivity activityFormM levelM activity =
 
         Nothing ->
             activityView
+
+
+shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg
+shapeSelect model selectedShape =
+    let
+        aType =
+            Result.toMaybe model.result
+                |> Maybe.map Activity.activityType
+                |> Maybe.withDefault Activity.Run
+    in
+    div [ class "dropdown", style "font-size" "0.8rem" ]
+        [ button [ class "button medium", style "font-size" "0.8rem" ]
+            [ text (Activity.activityTypeToString aType) ]
+        , div [ class "dropdown-content" ]
+            [ a [ onClick (SelectedShape Activity.Run) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Run, compactColumn [ style "margin-left" "0.5rem" ] [ text "Run" ] ] ]
+            , a [ onClick (SelectedShape Activity.Race) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Race, compactColumn [ style "margin-left" "0.5rem" ] [ text "Race" ] ] ]
+            , a [ onClick (SelectedShape Activity.Other) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Other, compactColumn [ style "margin-left" "0.5rem" ] [ text "Other" ] ] ]
+            ]
+        ]
 
 
 submitButton : Html Msg
