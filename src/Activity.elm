@@ -1,4 +1,4 @@
-module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, decoder, distance, encoder, mprLevel, newId, pace)
+module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Enum exposing (Enum)
@@ -37,6 +37,19 @@ activityType activity =
 
         ( Just _, _ ) ->
             Run
+
+
+activityTypeToString : ActivityType -> String
+activityTypeToString aType =
+    case aType of
+        Run ->
+            "Run"
+
+        Race ->
+            "Race"
+
+        Other ->
+            "Other"
 
 
 newId : Random.Generator String
