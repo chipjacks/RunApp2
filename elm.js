@@ -8128,13 +8128,13 @@ var $justinmimbs$date$Date$formatField = F4(
 			case 'E':
 				switch (length) {
 					case 1:
-						return language.y(
+						return language.z(
 							$justinmimbs$date$Date$weekday(date));
 					case 2:
-						return language.y(
+						return language.z(
 							$justinmimbs$date$Date$weekday(date));
 					case 3:
-						return language.y(
+						return language.z(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
 						return language.ai(
@@ -8143,13 +8143,13 @@ var $justinmimbs$date$Date$formatField = F4(
 						return A2(
 							$elm$core$String$left,
 							1,
-							language.y(
+							language.z(
 								$justinmimbs$date$Date$weekday(date)));
 					case 6:
 						return A2(
 							$elm$core$String$left,
 							2,
-							language.y(
+							language.z(
 								$justinmimbs$date$Date$weekday(date)));
 					default:
 						return '';
@@ -8476,7 +8476,7 @@ var $justinmimbs$date$Date$language_en = {
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
 	ai: $justinmimbs$date$Date$weekdayToName,
-	y: A2(
+	z: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
 		$elm$core$String$left(3))
@@ -8872,7 +8872,7 @@ var $elm$random$Random$generate = F2(
 	});
 var $author$project$ActivityForm$Model = F8(
 	function (id, date, description, completed, duration, pace, distance, result) {
-		return {ao: completed, ap: date, as: description, S: distance, Y: duration, aD: id, ad: pace, C: result};
+		return {ao: completed, ap: date, as: description, S: distance, Y: duration, aD: id, ad: pace, x: result};
 	});
 var $author$project$ActivityForm$init = function (activity) {
 	return A8(
@@ -9180,7 +9180,7 @@ var $author$project$Msg$Move = F2(
 var $author$project$Msg$NoOp = {$: 4};
 var $author$project$ActivityForm$apply = F2(
 	function (toMsg, _v0) {
-		var result = _v0.C;
+		var result = _v0.x;
 		if (!result.$) {
 			var activity = result.a;
 			return toMsg(activity);
@@ -9242,7 +9242,7 @@ var $author$project$ActivityForm$updateResult = function (model) {
 	return _Utils_update(
 		model,
 		{
-			C: $author$project$ActivityForm$validate(model)
+			x: $author$project$ActivityForm$validate(model)
 		});
 };
 var $author$project$ActivityForm$selectDate = F2(
@@ -11364,26 +11364,16 @@ var $author$project$ActivityForm$paceSelect = F3(
 				paceNames,
 				paceTimes));
 	});
-var $author$project$Msg$ClickedSubmit = {$: 24};
-var $author$project$ActivityForm$submitButton = A2(
-	$elm$html$Html$a,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('button small'),
-			$elm$html$Html$Attributes$class('primary'),
-			$elm$html$Html$Attributes$type_('submit'),
-			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$i,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('fas fa-check')
-				]),
-			_List_Nil)
-		]));
+var $author$project$Activity$activityTypeToString = function (aType) {
+	switch (aType) {
+		case 0:
+			return 'Run';
+		case 1:
+			return 'Race';
+		default:
+			return 'Other';
+	}
+};
 var $author$project$ActivityShape$viewDefault = F2(
 	function (completed, activityType) {
 		switch (activityType) {
@@ -11406,6 +11396,148 @@ var $author$project$ActivityShape$viewDefault = F2(
 					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
 		}
 	});
+var $author$project$ActivityForm$shapeSelect = F2(
+	function (model, selectedShape) {
+		var aType = A2(
+			$elm$core$Maybe$withDefault,
+			0,
+			A2(
+				$elm$core$Maybe$map,
+				$author$project$Activity$activityType,
+				$elm$core$Result$toMaybe(model.x)));
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('dropdown'),
+					A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('button medium'),
+							A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Activity$activityTypeToString(aType))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown-content')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Msg$SelectedShape(0))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Skeleton$row,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2($author$project$ActivityShape$viewDefault, model.ao, 0),
+											A2(
+											$author$project$Skeleton$compactColumn,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Run')
+												]))
+										]))
+								])),
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Msg$SelectedShape(1))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Skeleton$row,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2($author$project$ActivityShape$viewDefault, model.ao, 1),
+											A2(
+											$author$project$Skeleton$compactColumn,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Race')
+												]))
+										]))
+								])),
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Msg$SelectedShape(2))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Skeleton$row,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2($author$project$ActivityShape$viewDefault, model.ao, 2),
+											A2(
+											$author$project$Skeleton$compactColumn,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Other')
+												]))
+										]))
+								]))
+						]))
+				]));
+	});
+var $author$project$Msg$ClickedSubmit = {$: 24};
+var $author$project$ActivityForm$submitButton = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('button small'),
+			$elm$html$Html$Attributes$class('primary'),
+			$elm$html$Html$Attributes$type_('submit'),
+			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$i,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('fas fa-check')
+				]),
+			_List_Nil)
+		]));
 var $author$project$ActivityForm$errorMessage = function (error) {
 	if (error.$ === 1) {
 		var field = error.a;
@@ -11492,7 +11624,7 @@ var $author$project$ActivityForm$viewForm = F2(
 								[
 									A2(
 									$author$project$Skeleton$viewMaybe,
-									$elm$core$Result$toMaybe(model.C),
+									$elm$core$Result$toMaybe(model.x),
 									function (activity) {
 										return A2(
 											$elm$html$Html$a,
@@ -11518,7 +11650,7 @@ var $author$project$ActivityForm$viewForm = F2(
 									$elm$html$Html$a,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$class('button tiny'),
+											$elm$html$Html$Attributes$class('button small'),
 											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
 											$elm$html$Html$Events$onClick(
 											$author$project$Msg$ClickedShift(true))
@@ -11537,7 +11669,7 @@ var $author$project$ActivityForm$viewForm = F2(
 									$elm$html$Html$a,
 									_List_fromArray(
 										[
-											$elm$html$Html$Attributes$class('button tiny'),
+											$elm$html$Html$Attributes$class('button small'),
 											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
 											$elm$html$Html$Events$onClick(
 											$author$project$Msg$ClickedShift(false))
@@ -11613,23 +11745,15 @@ var $author$project$ActivityForm$viewForm = F2(
 									_List_Nil,
 									_List_fromArray(
 										[
-											A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, model.Y)
+											A2($author$project$ActivityForm$shapeSelect, model, $author$project$Msg$SelectedShape)
 										])),
 									A2(
-									$author$project$Skeleton$viewIf,
-									(!_Utils_eq(model.ad, $elm$core$Maybe$Nothing)) || (!_Utils_eq(model.S, $elm$core$Maybe$Nothing)),
-									A2(
-										$author$project$Skeleton$compactColumn,
-										_List_fromArray(
-											[
-												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
-												$elm$html$Html$Events$onClick(
-												$author$project$Msg$SelectedShape(2))
-											]),
-										_List_fromArray(
-											[
-												A2($author$project$ActivityShape$viewDefault, model.ao, 2)
-											]))),
+									$author$project$Skeleton$compactColumn,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, model.Y)
+										])),
 									A2(
 									$author$project$Skeleton$compactColumn,
 									_List_Nil,
@@ -11651,36 +11775,6 @@ var $author$project$ActivityForm$viewForm = F2(
 											$author$project$ActivityForm$distanceSelect($author$project$Msg$SelectedDistance))
 										])),
 									A2(
-									$author$project$Skeleton$viewIf,
-									_Utils_eq(model.ad, $elm$core$Maybe$Nothing),
-									A2(
-										$author$project$Skeleton$compactColumn,
-										_List_fromArray(
-											[
-												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
-												$elm$html$Html$Events$onClick(
-												$author$project$Msg$SelectedShape(0))
-											]),
-										_List_fromArray(
-											[
-												A2($author$project$ActivityShape$viewDefault, model.ao, 0)
-											]))),
-									A2(
-									$author$project$Skeleton$viewIf,
-									_Utils_eq(model.S, $elm$core$Maybe$Nothing),
-									A2(
-										$author$project$Skeleton$compactColumn,
-										_List_fromArray(
-											[
-												A2($elm$html$Html$Attributes$style, 'margin', '0.2rem'),
-												$elm$html$Html$Events$onClick(
-												$author$project$Msg$SelectedShape(1))
-											]),
-										_List_fromArray(
-											[
-												A2($author$project$ActivityShape$viewDefault, model.ao, 1)
-											]))),
-									A2(
 									$author$project$Skeleton$compactColumn,
 									_List_Nil,
 									_List_fromArray(
@@ -11690,7 +11784,7 @@ var $author$project$ActivityForm$viewForm = F2(
 											A2(
 												$elm$core$Maybe$andThen,
 												$author$project$Activity$mprLevel,
-												$elm$core$Result$toMaybe(model.C)),
+												$elm$core$Result$toMaybe(model.x)),
 											function (level) {
 												return $elm$html$Html$text(
 													'Level ' + $elm$core$String$fromInt(level));
@@ -11702,7 +11796,7 @@ var $author$project$ActivityForm$viewForm = F2(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$author$project$ActivityForm$viewError(model.C)
+									$author$project$ActivityForm$viewError(model.x)
 								]))
 						]))
 				]));
