@@ -70,6 +70,8 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
 /* DROPDOWN */
 
 .dropdown { position: relative; display: inline-block; }
+.dropdown.medium { font-size: 0.8rem; }
+.dropdown.medium > .button { font-size: 0.8rem; }
 
 .dropdown-content {
   display: none;

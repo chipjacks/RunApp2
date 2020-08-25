@@ -5,7 +5,7 @@ import ActivityShape
 import Api
 import Array exposing (Array)
 import Date exposing (Date)
-import Html exposing (Html, a, button, div, i, input, text)
+import Html exposing (Html, a, button, div, i, input, span, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
 import Http
@@ -187,8 +187,7 @@ viewForm model levelM =
                 [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
                 , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
                 , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
-                , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
-                , deleteButton
+                , moreButtons
                 , column [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row []
@@ -261,8 +260,8 @@ shapeSelect model selectedShape =
                 |> Maybe.map Activity.activityType
                 |> Maybe.withDefault Activity.Run
     in
-    div [ class "dropdown", style "font-size" "0.8rem" ]
-        [ button [ class "button medium", style "font-size" "0.8rem" ]
+    div [ class "dropdown medium" ]
+        [ button [ class "button medium" ]
             [ text (Activity.activityTypeToString aType) ]
         , div [ class "dropdown-content" ]
             [ a [ onClick (SelectedShape Activity.Run) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Run, compactColumn [ style "margin-left" "0.5rem" ] [ text "Run" ] ] ]
@@ -283,13 +282,16 @@ submitButton =
         [ i [ class "fas fa-check" ] [] ]
 
 
-deleteButton : Html Msg
-deleteButton =
-    a
-        [ class "button small"
-        , onClick ClickedDelete
+moreButtons : Html Msg
+moreButtons =
+    div [ class "dropdown" ]
+        [ button [ class "button small", style "height" "100%" ]
+            [ i [ class "fas fa-ellipsis-h" ] [] ]
+        , div [ class "dropdown-content" ]
+            [ a [ onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+            , a [ onClick ClickedDelete ] [ i [ class "fas fa-times" ] [] ]
+            ]
         ]
-        [ i [ class "fas fa-times" ] [] ]
 
 
 durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg
@@ -309,10 +311,6 @@ durationInput msg duration =
 paceSelect : Maybe Int -> (String -> Msg) -> Activity.Pace -> Html Msg
 paceSelect levelM msg pace =
     let
-        selectedAttr paceStr =
-            attributeIf (Activity.pace.toString pace == paceStr)
-                (Html.Attributes.attribute "selected" "")
-
         paceNames =
             Activity.pace.list |> List.map Tuple.first
 
@@ -326,41 +324,33 @@ paceSelect levelM msg pace =
                 Nothing ->
                     List.repeat (List.length Activity.pace.list) ""
     in
-    Html.select
-        [ onInput msg
-        , name "pace"
-        , class "input-small"
-        ]
-        (List.map2
-            (\name time ->
-                Html.option [ selectedAttr name, Html.Attributes.value name ] [ Html.text (time ++ " - " ++ name) ]
+    div [ class "dropdown medium" ]
+        [ button [ class "button medium" ]
+            [ text (Activity.pace.toString pace) ]
+        , div [ class "dropdown-content" ]
+            (List.map2
+                (\name time ->
+                    a [ onClick (msg name), style "text-align" "left" ] [ span [ style "color" "var(--accent-blue)", style "margin-right" "0.5rem" ] [ Html.text time ], Html.text name ]
+                )
+                paceNames
+                paceTimes
             )
-            paceNames
-            paceTimes
-        )
+        ]
 
 
 distanceSelect : (String -> Msg) -> Activity.Distance -> Html Msg
 distanceSelect msg distance =
-    let
-        selectedAttr distanceStr =
-            if Activity.distance.toString distance == distanceStr then
-                [ Html.Attributes.attribute "selected" "" ]
-
-            else
-                []
-    in
-    Html.select
-        [ onInput msg
-        , name "distance"
-        , class "input-small"
-        ]
-        (List.map
-            (\( distanceStr, _ ) ->
-                Html.option (selectedAttr distanceStr) [ Html.text distanceStr ]
+    div [ class "dropdown medium" ]
+        [ button [ class "button medium" ]
+            [ text (Activity.distance.toString distance) ]
+        , div [ class "dropdown-content" ]
+            (List.map
+                (\( distanceOpt, _ ) ->
+                    a [ onClick (msg distanceOpt), style "text-align" "left" ] [ Html.text distanceOpt ]
+                )
+                Activity.distance.list
             )
-            Activity.distance.list
-        )
+        ]
 
 
 viewError : Result Error Activity -> Html Msg
