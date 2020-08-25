@@ -11018,7 +11018,6 @@ var $author$project$Msg$CheckedCompleted = function (a) {
 var $author$project$Msg$ClickedCopy = function (a) {
 	return {$: 26, a: a};
 };
-var $author$project$Msg$ClickedMove = {$: 27};
 var $author$project$Msg$ClickedShift = function (a) {
 	return {$: 28, a: a};
 };
@@ -11043,24 +11042,54 @@ var $elm$html$Html$Attributes$autocomplete = function (bool) {
 		'autocomplete',
 		bool ? 'on' : 'off');
 };
-var $author$project$Msg$ClickedDelete = {$: 25};
-var $author$project$ActivityForm$deleteButton = A2(
-	$elm$html$Html$a,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('button small'),
-			$elm$html$Html$Events$onClick($author$project$Msg$ClickedDelete)
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$i,
+var $author$project$ActivityForm$distanceSelect = F2(
+	function (msg, distance) {
+		return A2(
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('fas fa-times')
+					$elm$html$Html$Attributes$class('dropdown medium')
 				]),
-			_List_Nil)
-		]));
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('button medium')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Activity$distance.bH(distance))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown-content')
+						]),
+					A2(
+						$elm$core$List$map,
+						function (_v0) {
+							var distanceOpt = _v0.a;
+							return A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										msg(distanceOpt)),
+										A2($elm$html$Html$Attributes$style, 'text-align', 'left')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(distanceOpt)
+									]));
+						},
+						$author$project$Activity$distance.T))
+				]));
+	});
+var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
@@ -11089,41 +11118,6 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $author$project$ActivityForm$distanceSelect = F2(
-	function (msg, distance) {
-		var selectedAttr = function (distanceStr) {
-			return _Utils_eq(
-				$author$project$Activity$distance.bH(distance),
-				distanceStr) ? _List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$attribute, 'selected', '')
-				]) : _List_Nil;
-		};
-		return A2(
-			$elm$html$Html$select,
-			_List_fromArray(
-				[
-					$elm$html$Html$Events$onInput(msg),
-					$elm$html$Html$Attributes$name('distance'),
-					$elm$html$Html$Attributes$class('input-small')
-				]),
-			A2(
-				$elm$core$List$map,
-				function (_v0) {
-					var distanceStr = _v0.a;
-					return A2(
-						$elm$html$Html$option,
-						selectedAttr(distanceStr),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(distanceStr)
-							]));
-				},
-				$author$project$Activity$distance.T));
-	});
-var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
@@ -11147,6 +11141,75 @@ var $author$project$ActivityForm$durationInput = F2(
 				]),
 			_List_Nil);
 	});
+var $author$project$Msg$ClickedDelete = {$: 25};
+var $author$project$Msg$ClickedMove = {$: 27};
+var $author$project$ActivityForm$moreButtons = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('dropdown')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('button small'),
+					A2($elm$html$Html$Attributes$style, 'height', '100%')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$i,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('fas fa-ellipsis-h')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('dropdown-content')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick($author$project$Msg$ClickedMove)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$i,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('fas fa-arrow-right')
+								]),
+							_List_Nil)
+						])),
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onClick($author$project$Msg$ClickedDelete)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$i,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('fas fa-times')
+								]),
+							_List_Nil)
+						]))
+				]))
+		]));
 var $elm$core$List$repeatHelp = F3(
 	function (result, n, value) {
 		repeatHelp:
@@ -11168,6 +11231,7 @@ var $elm$core$List$repeat = F2(
 	function (n, value) {
 		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
 	});
+var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$MPRLevel$stripTimeStr = function (str) {
 	var _v0 = $author$project$MPRLevel$timeStrToHrsMinsSecs(str);
 	if ((((_v0.b && (!_v0.a)) && _v0.b.b) && _v0.b.b.b) && (!_v0.b.b.b.b)) {
@@ -11300,14 +11364,6 @@ var $author$project$MPRLevel$trainingPaces = function (_v0) {
 };
 var $author$project$ActivityForm$paceSelect = F3(
 	function (levelM, msg, pace) {
-		var selectedAttr = function (paceStr) {
-			return A2(
-				$author$project$Skeleton$attributeIf,
-				_Utils_eq(
-					$author$project$Activity$pace.bH(pace),
-					paceStr),
-				A2($elm$html$Html$Attributes$attribute, 'selected', ''));
-		};
 		var paceTimes = function () {
 			if (!levelM.$) {
 				var level = levelM.a;
@@ -11338,31 +11394,61 @@ var $author$project$ActivityForm$paceSelect = F3(
 		}();
 		var paceNames = A2($elm$core$List$map, $elm$core$Tuple$first, $author$project$Activity$pace.T);
 		return A2(
-			$elm$html$Html$select,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Events$onInput(msg),
-					$elm$html$Html$Attributes$name('pace'),
-					$elm$html$Html$Attributes$class('input-small')
+					$elm$html$Html$Attributes$class('dropdown medium')
 				]),
-			A3(
-				$elm$core$List$map2,
-				F2(
-					function (name, time) {
-						return A2(
-							$elm$html$Html$option,
-							_List_fromArray(
-								[
-									selectedAttr(name),
-									$elm$html$Html$Attributes$value(name)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text(time + (' - ' + name))
-								]));
-					}),
-				paceNames,
-				paceTimes));
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('button medium')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Activity$pace.bH(pace))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown-content')
+						]),
+					A3(
+						$elm$core$List$map2,
+						F2(
+							function (name, time) {
+								return A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick(
+											msg(name)),
+											A2($elm$html$Html$Attributes$style, 'text-align', 'left')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$span,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'color', 'var(--accent-blue)'),
+													A2($elm$html$Html$Attributes$style, 'margin-right', '0.5rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(time)
+												])),
+											$elm$html$Html$text(name)
+										]));
+							}),
+						paceNames,
+						paceTimes))
+				]));
 	});
 var $author$project$Activity$activityTypeToString = function (aType) {
 	switch (aType) {
@@ -11409,8 +11495,7 @@ var $author$project$ActivityForm$shapeSelect = F2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('dropdown'),
-					A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem')
+					$elm$html$Html$Attributes$class('dropdown medium')
 				]),
 			_List_fromArray(
 				[
@@ -11418,8 +11503,7 @@ var $author$project$ActivityForm$shapeSelect = F2(
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('button medium'),
-							A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem')
+							$elm$html$Html$Attributes$class('button medium')
 						]),
 					_List_fromArray(
 						[
@@ -11684,25 +11768,7 @@ var $author$project$ActivityForm$viewForm = F2(
 												]),
 											_List_Nil)
 										])),
-									A2(
-									$elm$html$Html$a,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('button small'),
-											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-											$elm$html$Html$Events$onClick($author$project$Msg$ClickedMove)
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$i,
-											_List_fromArray(
-												[
-													$elm$html$Html$Attributes$class('fas fa-arrow-right')
-												]),
-											_List_Nil)
-										])),
-									$author$project$ActivityForm$deleteButton,
+									$author$project$ActivityForm$moreButtons,
 									A2(
 									$author$project$Skeleton$column,
 									_List_fromArray(
