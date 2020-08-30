@@ -5,6 +5,7 @@ import ActivityShape
 import Api
 import Array exposing (Array)
 import Date exposing (Date)
+import Emoji
 import Html exposing (Html, a, button, div, i, input, span, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
 import Html.Events exposing (on, onClick, onInput)
@@ -27,6 +28,7 @@ type alias Model =
     { id : Activity.Id
     , date : Maybe Date
     , description : String
+    , emoji : Maybe Char
     , completed : Bool
     , duration : Maybe Minutes
     , pace : Maybe Activity.Pace
@@ -42,7 +44,7 @@ type Error
 
 init : Activity -> Model
 init activity =
-    Model activity.id (Just activity.date) activity.description activity.completed activity.duration activity.pace activity.distance (Ok activity)
+    Model activity.id (Just activity.date) activity.description activity.emoji activity.completed activity.duration activity.pace activity.distance (Ok activity)
 
 
 apply : (Activity -> Msg) -> Model -> Msg
@@ -83,7 +85,7 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map2
         (\date description ->
-            Activity model.id date description model.completed model.duration model.pace model.distance
+            Activity model.id date description model.emoji model.completed model.duration model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -100,6 +102,7 @@ update msg model =
                             | pace = Just pace_
                             , distance = Nothing
                             , duration = Just mins
+                            , emoji = Nothing
                         }
                     , Cmd.none
                     )
@@ -110,22 +113,40 @@ update msg model =
                             | pace = Nothing
                             , distance = Just dist
                             , duration = Just mins
+                            , emoji = Nothing
                         }
                     , Cmd.none
                     )
 
                 Activity.Other mins ->
-                    ( updateResult { model | pace = Nothing, distance = Nothing, duration = Just mins }
+                    ( updateResult
+                        { model
+                            | pace = Nothing
+                            , distance = Nothing
+                            , duration = Just mins
+                            , emoji = Nothing
+                        }
                     , Cmd.none
                     )
 
-                Activity.Note ->
-                    ( updateResult { model | pace = Nothing, distance = Nothing, duration = Nothing }
+                Activity.Note emoji ->
+                    ( updateResult
+                        { model
+                            | emoji = Just emoji
+                            , pace = Nothing
+                            , distance = Nothing
+                            , duration = Nothing
+                        }
                     , Cmd.none
                     )
 
         EditedDescription desc ->
             ( updateResult { model | description = desc }
+            , Cmd.none
+            )
+
+        SelectedEmoji char ->
+            ( updateResult { model | emoji = Just char }
             , Cmd.none
             )
 
@@ -208,6 +229,7 @@ viewForm model levelM =
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
                 [ compactColumn [] [ shapeSelect model SelectedShape ]
+                , compactColumn [] [ viewMaybe model.emoji (emojiSelect SelectedEmoji) ]
                 , compactColumn [] [ viewMaybe model.duration (durationInput EditedDuration) ]
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
                 , compactColumn [] [ viewMaybe model.distance (distanceSelect SelectedDistance) ]
@@ -300,6 +322,9 @@ toActivityType typeStr model =
 
         dist =
             Maybe.withDefault Activity.FiveK model.distance
+
+        emoji =
+            Maybe.withDefault Emoji.default model.emoji
     in
     case typeStr of
         "Run" ->
@@ -312,7 +337,7 @@ toActivityType typeStr model =
             Activity.Other mins
 
         _ ->
-            Activity.Note
+            Activity.Note emoji
 
 
 submitButton : Html Msg
@@ -335,6 +360,21 @@ moreButtons =
             [ a [ onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
             , a [ onClick ClickedDelete ] [ i [ class "fas fa-times" ] [] ]
             ]
+        ]
+
+
+emojiSelect : (Char -> Msg) -> Char -> Html Msg
+emojiSelect msg emoji =
+    div [ class "dropdown emoji" ]
+        [ button [ class "button" ]
+            [ text ([ emoji ] |> String.fromList) ]
+        , div [ class "dropdown-content emoji" ]
+            (List.map
+                (\emojiChar ->
+                    a [ onClick (msg emojiChar), style "text-align" "left" ] [ Html.text (String.fromList [ emojiChar ]) ]
+                )
+                Emoji.list
+            )
         ]
 
 

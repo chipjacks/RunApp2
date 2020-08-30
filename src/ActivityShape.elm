@@ -1,6 +1,7 @@
 module ActivityShape exposing (view, viewDefault)
 
 import Activity exposing (Activity, Pace(..), activityType)
+import Emoji
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
 import Skeleton exposing (column, row)
@@ -9,6 +10,7 @@ import Skeleton exposing (column, row)
 type Shape
     = Block Color Bool { width : Float, height : Float }
     | Circle Color Bool (Maybe Char)
+    | Emoji Char
 
 
 type Color
@@ -32,8 +34,8 @@ view activity =
             Circle Gray activity.completed (String.toList activity.description |> List.head)
                 |> viewShape
 
-        Activity.Note ->
-            Circle Gray activity.completed (String.toList activity.description |> List.head)
+        Activity.Note emoji ->
+            Emoji emoji
                 |> viewShape
 
 
@@ -52,8 +54,8 @@ viewDefault completed activityType =
             Circle Gray completed Nothing
                 |> viewShape
 
-        Activity.Note ->
-            Circle Gray completed Nothing
+        Activity.Note _ ->
+            Emoji Emoji.default
                 |> viewShape
 
 
@@ -94,6 +96,13 @@ viewShape shape =
                 , style "color" textColor
                 ]
                 [ Html.text (charM |> Maybe.map Char.toUpper |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
+
+        Emoji char ->
+            div
+                [ style "margin-top" "-5px"
+                , style "font-size" "1rem"
+                ]
+                [ Html.text (String.fromChar char) ]
 
 
 colorString : Color -> String

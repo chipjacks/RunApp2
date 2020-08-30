@@ -188,6 +188,10 @@ update msg model =
                     updateActivityForm msg state
                         |> loaded
 
+                SelectedEmoji _ ->
+                    updateActivityForm msg state
+                        |> loaded
+
                 CheckedCompleted _ ->
                     updateActivityForm msg state
                         |> loaded
@@ -284,7 +288,7 @@ initActivity today dateM =
             Date.compare date today == LT || date == today
     in
     Activity.newId
-        |> Random.map (\id -> Activity id date "" completed (Just 30) (Just Activity.Easy) Nothing)
+        |> Random.map (\id -> Activity id date "" Nothing completed (Just 30) (Just Activity.Easy) Nothing)
         |> Random.generate NewActivity
 
 

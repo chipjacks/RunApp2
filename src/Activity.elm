@@ -1,6 +1,7 @@
 module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
+import Emoji
 import Enum exposing (Enum)
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -13,6 +14,7 @@ type alias Activity =
     { id : Id
     , date : Date
     , description : String
+    , emoji : Maybe Char
     , completed : Bool
     , duration : Maybe Minutes
     , pace : Maybe Pace
@@ -24,14 +26,14 @@ type ActivityType
     = Run Minutes Pace
     | Race Minutes Distance
     | Other Minutes
-    | Note
+    | Note Char
 
 
 activityType : Activity -> ActivityType
 activityType activity =
     case ( activity.pace, activity.distance, activity.duration ) of
         ( Nothing, Nothing, Nothing ) ->
-            Note
+            Note (activity.emoji |> Maybe.withDefault Emoji.default)
 
         ( Nothing, Nothing, Just mins ) ->
             Other mins
@@ -43,7 +45,7 @@ activityType activity =
             Run mins pace_
 
         _ ->
-            Note
+            Note Emoji.default
 
 
 activityTypeToString : ActivityType -> String
@@ -58,7 +60,7 @@ activityTypeToString aType =
         Other _ ->
             "Other"
 
-        Note ->
+        Note _ ->
             "Note"
 
 
@@ -224,10 +226,11 @@ distance =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map7 Activity
+    Decode.map8 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
+        (Decode.maybe (Decode.field "emoji" (Decode.int |> Decode.map Char.fromCode)))
         (Decode.field "completed" Decode.bool)
         (Decode.maybe (Decode.field "duration" Decode.int))
         (Decode.field "pace" (Decode.nullable pace.decoder))
@@ -257,6 +260,7 @@ encoder activity =
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
+        , ( "emoji", activity.emoji |> Maybe.map Char.toCode |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "completed", Encode.bool activity.completed )
         , ( "duration", activity.duration |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "pace", paceEncoder )

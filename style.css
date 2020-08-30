@@ -72,6 +72,7 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
 .dropdown { position: relative; display: inline-block; }
 .dropdown.medium { font-size: 0.8rem; }
 .dropdown.medium > .button { font-size: 0.8rem; }
+.emoji > .button { padding-top: 1px; padding-bottom: 2px; }
 
 .dropdown-content {
   display: none;
@@ -90,6 +91,7 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
   text-align: center;
   color: black;
 }
+.emoji > a { padding-top: 1px; padding-bottom: 2px; }
 
 .dropdown-content a:hover { background-color: var(--highlight-gray) }
 
