@@ -11251,7 +11251,7 @@ var $author$project$ActivityForm$durationInput = F2(
 	});
 var $elm$core$String$fromList = _String_fromList;
 var $author$project$Emoji$list = _List_fromArray(
-	['😀', '😅', '😌', '😬', '😪', '😓', '\uD83E\uDD75', '\uD83E\uDD12', '😷', '😴', '💆', '🚴', '🏋', '\uD83D\uDEF6', '💭', '👟']);
+	['😀', '😅', '😌', '😬', '😪', '😓', '\uD83E\uDD75', '\uD83E\uDD12', '😷', '😴', '💆', '🚴', '🏋', '\uD83D\uDEF6', '⛰', '💭', '👟']);
 var $author$project$ActivityForm$emojiSelect = F2(
 	function (msg, emoji) {
 		return A2(
