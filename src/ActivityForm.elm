@@ -30,7 +30,7 @@ type alias Model =
     , description : String
     , emoji : Maybe Char
     , completed : Bool
-    , duration : Maybe Minutes
+    , duration : Maybe String
     , pace : Maybe Activity.Pace
     , distance : Maybe Activity.Distance
     , result : Result Error Activity
@@ -44,7 +44,7 @@ type Error
 
 init : Activity -> Model
 init activity =
-    Model activity.id (Just activity.date) activity.description activity.emoji activity.completed activity.duration activity.pace activity.distance (Ok activity)
+    Model activity.id (Just activity.date) activity.description activity.emoji activity.completed (Maybe.map String.fromInt activity.duration) activity.pace activity.distance (Ok activity)
 
 
 apply : (Activity -> Msg) -> Model -> Msg
@@ -85,7 +85,7 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map2
         (\date description ->
-            Activity model.id date description model.emoji model.completed model.duration model.pace model.distance
+            Activity model.id date description model.emoji model.completed (Maybe.andThen String.toInt model.duration) model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -101,7 +101,7 @@ update msg model =
                         { model
                             | pace = Just pace_
                             , distance = Nothing
-                            , duration = Just mins
+                            , duration = Just (String.fromInt mins)
                             , emoji = Nothing
                         }
                     , Cmd.none
@@ -112,7 +112,7 @@ update msg model =
                         { model
                             | pace = Nothing
                             , distance = Just dist
-                            , duration = Just mins
+                            , duration = Just (String.fromInt mins)
                             , emoji = Nothing
                         }
                     , Cmd.none
@@ -123,7 +123,7 @@ update msg model =
                         { model
                             | pace = Nothing
                             , distance = Nothing
-                            , duration = Just mins
+                            , duration = Just (String.fromInt mins)
                             , emoji = Nothing
                         }
                     , Cmd.none
@@ -156,7 +156,7 @@ update msg model =
             )
 
         EditedDuration str ->
-            ( updateResult { model | duration = String.toInt str }
+            ( updateResult { model | duration = Just str }
             , Cmd.none
             )
 
@@ -315,7 +315,7 @@ toActivityType : String -> Model -> ActivityType
 toActivityType typeStr model =
     let
         mins =
-            Maybe.withDefault 30 model.duration
+            Maybe.andThen String.toInt model.duration |> Maybe.withDefault 30
 
         pace_ =
             Maybe.withDefault Activity.Easy model.pace
@@ -381,7 +381,7 @@ emojiSelect msg emoji =
         ]
 
 
-durationInput : (String -> Msg) -> Activity.Minutes -> Html Msg
+durationInput : (String -> Msg) -> String -> Html Msg
 durationInput msg duration =
     input
         [ type_ "number"
@@ -390,7 +390,7 @@ durationInput msg duration =
         , name "duration"
         , style "width" "3rem"
         , class "input-small"
-        , value (duration |> String.fromInt)
+        , value duration
         ]
         []
 
