@@ -8911,7 +8911,7 @@ var $author$project$ActivityForm$init = function (activity) {
 		activity.at,
 		activity.Z,
 		activity.ap,
-		activity.T,
+		A2($elm$core$Maybe$map, $elm$core$String$fromInt, activity.T),
 		activity.ae,
 		activity.S,
 		$elm$core$Result$Ok(activity));
@@ -9217,6 +9217,15 @@ var $author$project$ActivityForm$apply = F2(
 			return $author$project$Msg$NoOp;
 		}
 	});
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (!maybeValue.$) {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$Result$map2 = F3(
 	function (func, ra, rb) {
 		if (ra.$ === 1) {
@@ -9252,7 +9261,16 @@ var $author$project$ActivityForm$validate = function (model) {
 		$elm$core$Result$map2,
 		F2(
 			function (date, description) {
-				return A8($author$project$Activity$Activity, model.aE, date, description, model.Z, model.ap, model.T, model.ae, model.S);
+				return A8(
+					$author$project$Activity$Activity,
+					model.aE,
+					date,
+					description,
+					model.Z,
+					model.ap,
+					A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T),
+					model.ae,
+					model.S);
 			}),
 		A2($author$project$ActivityForm$validateFieldExists, model.aq, 'date'),
 		A2(
@@ -9453,7 +9471,8 @@ var $author$project$ActivityForm$update = F2(
 									model,
 									{
 										S: $elm$core$Maybe$Nothing,
-										T: $elm$core$Maybe$Just(mins),
+										T: $elm$core$Maybe$Just(
+											$elm$core$String$fromInt(mins)),
 										Z: $elm$core$Maybe$Nothing,
 										ae: $elm$core$Maybe$Just(pace_)
 									})),
@@ -9467,7 +9486,8 @@ var $author$project$ActivityForm$update = F2(
 									model,
 									{
 										S: $elm$core$Maybe$Just(dist),
-										T: $elm$core$Maybe$Just(mins),
+										T: $elm$core$Maybe$Just(
+											$elm$core$String$fromInt(mins)),
 										Z: $elm$core$Maybe$Nothing,
 										ae: $elm$core$Maybe$Nothing
 									})),
@@ -9480,7 +9500,8 @@ var $author$project$ActivityForm$update = F2(
 									model,
 									{
 										S: $elm$core$Maybe$Nothing,
-										T: $elm$core$Maybe$Just(mins),
+										T: $elm$core$Maybe$Just(
+											$elm$core$String$fromInt(mins)),
 										Z: $elm$core$Maybe$Nothing,
 										ae: $elm$core$Maybe$Nothing
 									})),
@@ -9532,7 +9553,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								T: $elm$core$String$toInt(str)
+								T: $elm$core$Maybe$Just(str)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 23:
@@ -10584,7 +10605,7 @@ var $author$project$Activity$Run = F2(
 var $author$project$Emoji$default = '💭';
 var $author$project$Activity$activityType = function (activity) {
 	var _v0 = _Utils_Tuple3(activity.ae, activity.S, activity.T);
-	_v0$4:
+	_v0$3:
 	while (true) {
 		if (!_v0.b.$) {
 			if (!_v0.c.$) {
@@ -10592,35 +10613,32 @@ var $author$project$Activity$activityType = function (activity) {
 				var mins = _v0.c.a;
 				return A2($author$project$Activity$Race, mins, dist);
 			} else {
-				break _v0$4;
+				break _v0$3;
 			}
 		} else {
 			if (_v0.a.$ === 1) {
-				if (_v0.c.$ === 1) {
+				if (!_v0.c.$) {
 					var _v1 = _v0.a;
 					var _v2 = _v0.b;
-					var _v3 = _v0.c;
-					return $author$project$Activity$Note(
-						A2($elm$core$Maybe$withDefault, $author$project$Emoji$default, activity.Z));
-				} else {
-					var _v4 = _v0.a;
-					var _v5 = _v0.b;
 					var mins = _v0.c.a;
 					return $author$project$Activity$Other(mins);
+				} else {
+					break _v0$3;
 				}
 			} else {
 				if (!_v0.c.$) {
 					var pace_ = _v0.a.a;
-					var _v6 = _v0.b;
+					var _v3 = _v0.b;
 					var mins = _v0.c.a;
 					return A2($author$project$Activity$Run, mins, pace_);
 				} else {
-					break _v0$4;
+					break _v0$3;
 				}
 			}
 		}
 	}
-	return $author$project$Activity$Note($author$project$Emoji$default);
+	return $author$project$Activity$Note(
+		A2($elm$core$Maybe$withDefault, $author$project$Emoji$default, activity.Z));
 };
 var $author$project$Calendar$daysOfWeek = function (start) {
 	return A4(
@@ -11138,15 +11156,6 @@ var $author$project$Msg$SelectedPace = function (a) {
 var $author$project$Msg$SelectedShape = function (a) {
 	return {$: 18, a: a};
 };
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (!maybeValue.$) {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $elm$html$Html$Attributes$autocomplete = function (bool) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -11244,8 +11253,7 @@ var $author$project$ActivityForm$durationInput = F2(
 					$elm$html$Html$Attributes$name('duration'),
 					A2($elm$html$Html$Attributes$style, 'width', '3rem'),
 					$elm$html$Html$Attributes$class('input-small'),
-					$elm$html$Html$Attributes$value(
-					$elm$core$String$fromInt(duration))
+					$elm$html$Html$Attributes$value(duration)
 				]),
 			_List_Nil);
 	});
@@ -11654,7 +11662,10 @@ var $author$project$Activity$activityTypeToString = function (aType) {
 var $author$project$ActivityForm$toActivityType = F2(
 	function (typeStr, model) {
 		var pace_ = A2($elm$core$Maybe$withDefault, 0, model.ae);
-		var mins = A2($elm$core$Maybe$withDefault, 30, model.T);
+		var mins = A2(
+			$elm$core$Maybe$withDefault,
+			30,
+			A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T));
 		var emoji = A2($elm$core$Maybe$withDefault, $author$project$Emoji$default, model.Z);
 		var dist = A2($elm$core$Maybe$withDefault, 0, model.S);
 		switch (typeStr) {
