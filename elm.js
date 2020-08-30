@@ -11251,56 +11251,83 @@ var $author$project$ActivityForm$durationInput = F2(
 	});
 var $elm$core$String$fromList = _String_fromList;
 var $author$project$Emoji$list = _List_fromArray(
-	['😀', '😅', '😌', '😬', '😪', '😓', '\uD83E\uDD75', '\uD83E\uDD12', '😷', '😴', '💆', '🚴', '🏋', '\uD83D\uDEF6', '⛰', '💭', '👟']);
+	['😀', '😅', '😌', '😬', '😪', '😓', '\uD83E\uDD75', '\uD83E\uDD12', '😷', '😴', '💆', '🚴', '🏋', '💭', '👟']);
 var $author$project$ActivityForm$emojiSelect = F2(
 	function (msg, emoji) {
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('dropdown emoji')
+					$elm$html$Html$Attributes$class('row')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$elm$core$String$fromList(
-								_List_fromArray(
-									[emoji])))
-						])),
-					A2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('dropdown-content emoji')
+							$elm$html$Html$Attributes$class('dropdown emoji')
 						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('button')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text(
+									$elm$core$String$fromList(
+										_List_fromArray(
+											[emoji])))
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('dropdown-content emoji')
+								]),
+							A2(
+								$elm$core$List$map,
+								function (emojiChar) {
+									return A2(
+										$elm$html$Html$a,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												msg(emojiChar)),
+												A2($elm$html$Html$Attributes$style, 'text-align', 'left')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
+												$elm$core$String$fromList(
+													_List_fromArray(
+														[emojiChar])))
+											]));
+								},
+								$author$project$Emoji$list))
+						])),
 					A2(
-						$elm$core$List$map,
-						function (emojiChar) {
-							return A2(
-								$elm$html$Html$a,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										msg(emojiChar)),
-										A2($elm$html$Html$Attributes$style, 'text-align', 'left')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										$elm$core$String$fromList(
-											_List_fromArray(
-												[emojiChar])))
-									]));
-						},
-						$author$project$Emoji$list))
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Events$onInput(
+							function (str) {
+								return msg(
+									A2(
+										$elm$core$Maybe$withDefault,
+										$author$project$Emoji$default,
+										$elm$core$List$head(
+											$elm$core$String$toList(str))));
+							}),
+							$elm$html$Html$Attributes$class('input-small'),
+							A2($elm$html$Html$Attributes$style, 'width', '1rem'),
+							$elm$html$Html$Attributes$value('')
+						]),
+					_List_Nil)
 				]));
 	});
 var $author$project$Msg$ClickedDelete = {$: 26};
