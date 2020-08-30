@@ -365,16 +365,19 @@ moreButtons =
 
 emojiSelect : (Char -> Msg) -> Char -> Html Msg
 emojiSelect msg emoji =
-    div [ class "dropdown emoji" ]
-        [ button [ class "button" ]
-            [ text ([ emoji ] |> String.fromList) ]
-        , div [ class "dropdown-content emoji" ]
-            (List.map
-                (\emojiChar ->
-                    a [ onClick (msg emojiChar), style "text-align" "left" ] [ Html.text (String.fromList [ emojiChar ]) ]
+    div [ class "row" ]
+        [ div [ class "dropdown emoji" ]
+            [ button [ class "button" ]
+                [ text ([ emoji ] |> String.fromList) ]
+            , div [ class "dropdown-content emoji" ]
+                (List.map
+                    (\emojiChar ->
+                        a [ onClick (msg emojiChar), style "text-align" "left" ] [ Html.text (String.fromList [ emojiChar ]) ]
+                    )
+                    Emoji.list
                 )
-                Emoji.list
-            )
+            ]
+        , input [ onInput (\str -> str |> String.toList |> List.head |> Maybe.withDefault Emoji.default |> msg), class "input-small", style "width" "1rem", value "" ] []
         ]
 
 
