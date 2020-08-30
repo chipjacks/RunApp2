@@ -1,6 +1,7 @@
 module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
+import Emoji
 import Enum exposing (Enum)
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -13,43 +14,54 @@ type alias Activity =
     { id : Id
     , date : Date
     , description : String
+    , emoji : Maybe Char
     , completed : Bool
-    , duration : Minutes
+    , duration : Maybe Minutes
     , pace : Maybe Pace
     , distance : Maybe Distance
     }
 
 
 type ActivityType
-    = Run
-    | Race
-    | Other
+    = Run Minutes Pace
+    | Race Minutes Distance
+    | Other Minutes
+    | Note Char
 
 
 activityType : Activity -> ActivityType
 activityType activity =
-    case ( activity.pace, activity.distance ) of
-        ( Nothing, Nothing ) ->
-            Other
+    case ( activity.pace, activity.distance, activity.duration ) of
+        ( Nothing, Nothing, Nothing ) ->
+            Note (activity.emoji |> Maybe.withDefault Emoji.default)
 
-        ( _, Just _ ) ->
-            Race
+        ( Nothing, Nothing, Just mins ) ->
+            Other mins
 
-        ( Just _, _ ) ->
-            Run
+        ( _, Just dist, Just mins ) ->
+            Race mins dist
+
+        ( Just pace_, Nothing, Just mins ) ->
+            Run mins pace_
+
+        _ ->
+            Note Emoji.default
 
 
 activityTypeToString : ActivityType -> String
 activityTypeToString aType =
     case aType of
-        Run ->
+        Run _ _ ->
             "Run"
 
-        Race ->
+        Race _ _ ->
             "Race"
 
-        Other ->
+        Other _ ->
             "Other"
+
+        Note _ ->
+            "Note"
 
 
 newId : Random.Generator String
@@ -65,15 +77,17 @@ newId =
 
 mprLevel : Activity -> Maybe Int
 mprLevel activity =
-    activity.distance
-        |> Maybe.andThen
-            (\dist ->
-                MPRLevel.lookup MPRLevel.Neutral
-                    (distance.toString dist)
-                    (activity.duration * 60)
-                    |> Result.map (\( rt, level ) -> level)
-                    |> Result.toMaybe
-            )
+    Maybe.map2
+        (\dist duration ->
+            MPRLevel.lookup MPRLevel.Neutral
+                (distance.toString dist)
+                (duration * 60)
+                |> Result.map (\( rt, level ) -> level)
+                |> Result.toMaybe
+        )
+        activity.distance
+        activity.duration
+        |> Maybe.withDefault Nothing
 
 
 type alias Id =
@@ -212,12 +226,13 @@ distance =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map7 Activity
+    Decode.map8 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
+        (Decode.maybe (Decode.field "emoji" (Decode.int |> Decode.map Char.fromCode)))
         (Decode.field "completed" Decode.bool)
-        (Decode.field "duration" Decode.int)
+        (Decode.maybe (Decode.field "duration" Decode.int))
         (Decode.field "pace" (Decode.nullable pace.decoder))
         (Decode.maybe (Decode.field "distance" distance.decoder))
 
@@ -245,8 +260,9 @@ encoder activity =
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
+        , ( "emoji", activity.emoji |> Maybe.map Char.toCode |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "completed", Encode.bool activity.completed )
-        , ( "duration", Encode.int activity.duration )
+        , ( "duration", activity.duration |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "pace", paceEncoder )
         ]
             ++ distanceEncoder
