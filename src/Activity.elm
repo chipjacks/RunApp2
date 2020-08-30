@@ -32,9 +32,6 @@ type ActivityType
 activityType : Activity -> ActivityType
 activityType activity =
     case ( activity.pace, activity.distance, activity.duration ) of
-        ( Nothing, Nothing, Nothing ) ->
-            Note (activity.emoji |> Maybe.withDefault Emoji.default)
-
         ( Nothing, Nothing, Just mins ) ->
             Other mins
 
@@ -45,7 +42,7 @@ activityType activity =
             Run mins pace_
 
         _ ->
-            Note Emoji.default
+            Note (activity.emoji |> Maybe.withDefault Emoji.default)
 
 
 activityTypeToString : ActivityType -> String
