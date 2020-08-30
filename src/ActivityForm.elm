@@ -42,7 +42,7 @@ type Error
 
 init : Activity -> Model
 init activity =
-    Model activity.id (Just activity.date) activity.description activity.completed (Just activity.duration) activity.pace activity.distance (Ok activity)
+    Model activity.id (Just activity.date) activity.description activity.completed activity.duration activity.pace activity.distance (Ok activity)
 
 
 apply : (Activity -> Msg) -> Model -> Msg
@@ -81,13 +81,12 @@ validateFieldExists fieldM fieldName =
 
 validate : Model -> Result Error Activity
 validate model =
-    Result.map3
-        (\date description duration ->
-            Activity model.id date description model.completed duration model.pace model.distance
+    Result.map2
+        (\date description ->
+            Activity model.id date description model.completed model.duration model.pace model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
-        (validateFieldExists model.duration "duration")
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,28 +94,33 @@ update msg model =
     case msg of
         SelectedShape activityType ->
             case activityType of
-                Activity.Run ->
+                Activity.Run mins pace_ ->
                     ( updateResult
                         { model
-                            | pace = model.pace |> Maybe.withDefault Activity.Easy |> Just
+                            | pace = Just pace_
                             , distance = Nothing
-                            , duration = model.duration |> Maybe.withDefault 30 |> Just
+                            , duration = Just mins
                         }
                     , Cmd.none
                     )
 
-                Activity.Race ->
+                Activity.Race mins dist ->
                     ( updateResult
                         { model
                             | pace = Nothing
-                            , distance = model.distance |> Maybe.withDefault Activity.FiveK |> Just
-                            , duration = model.duration |> Maybe.withDefault 20 |> Just
+                            , distance = Just dist
+                            , duration = Just mins
                         }
                     , Cmd.none
                     )
 
-                Activity.Other ->
-                    ( updateResult { model | pace = Nothing, distance = Nothing }
+                Activity.Other mins ->
+                    ( updateResult { model | pace = Nothing, distance = Nothing, duration = Just mins }
+                    , Cmd.none
+                    )
+
+                Activity.Note ->
+                    ( updateResult { model | pace = Nothing, distance = Nothing, duration = Nothing }
                     , Cmd.none
                     )
 
@@ -173,7 +177,7 @@ viewForm model levelM =
             validate model
                 |> Result.toMaybe
                 |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault (ActivityShape.viewDefault True Activity.Other)
+                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
     in
     row [ id "activity", style "margin-bottom" "1rem" ]
         [ compactColumn
@@ -204,7 +208,7 @@ viewForm model levelM =
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
                 [ compactColumn [] [ shapeSelect model SelectedShape ]
-                , compactColumn [] [ durationInput EditedDuration model.duration ]
+                , compactColumn [] [ viewMaybe model.duration (durationInput EditedDuration) ]
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
                 , compactColumn [] [ viewMaybe model.distance (distanceSelect SelectedDistance) ]
                 , compactColumn []
@@ -233,7 +237,12 @@ viewActivity activityFormM levelM activity =
                     , column [ style "justify-content" "center" ]
                         [ row [] [ text activity.description ]
                         , row [ style "font-size" "0.8rem" ]
-                            [ column [] [ text <| String.fromInt activity.duration ++ " min " ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower) ]
+                            [ column []
+                                [ text <|
+                                    ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
+                                        ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
+                                    )
+                                ]
                             , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                             ]
                         ]
@@ -255,20 +264,55 @@ viewActivity activityFormM levelM activity =
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg
 shapeSelect model selectedShape =
     let
-        aType =
+        types =
+            [ ( "Run", toActivityType "Run" model )
+            , ( "Race", toActivityType "Race" model )
+            , ( "Other", toActivityType "Other" model )
+            , ( "Note", toActivityType "Note" model )
+            ]
+
+        selected =
             Result.toMaybe model.result
                 |> Maybe.map Activity.activityType
-                |> Maybe.withDefault Activity.Run
+                |> Maybe.withDefault (Activity.Run 30 Activity.Easy)
     in
     div [ class "dropdown medium" ]
         [ button [ class "button medium" ]
-            [ text (Activity.activityTypeToString aType) ]
+            [ text (Activity.activityTypeToString selected) ]
         , div [ class "dropdown-content" ]
-            [ a [ onClick (SelectedShape Activity.Run) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Run, compactColumn [ style "margin-left" "0.5rem" ] [ text "Run" ] ] ]
-            , a [ onClick (SelectedShape Activity.Race) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Race, compactColumn [ style "margin-left" "0.5rem" ] [ text "Race" ] ] ]
-            , a [ onClick (SelectedShape Activity.Other) ] [ row [] [ ActivityShape.viewDefault model.completed Activity.Other, compactColumn [ style "margin-left" "0.5rem" ] [ text "Other" ] ] ]
-            ]
+            (List.map
+                (\( str, aType ) ->
+                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault model.completed aType, compactColumn [ style "margin-left" "0.5rem" ] [ text str ] ] ]
+                )
+                types
+            )
         ]
+
+
+toActivityType : String -> Model -> ActivityType
+toActivityType typeStr model =
+    let
+        mins =
+            Maybe.withDefault 30 model.duration
+
+        pace_ =
+            Maybe.withDefault Activity.Easy model.pace
+
+        dist =
+            Maybe.withDefault Activity.FiveK model.distance
+    in
+    case typeStr of
+        "Run" ->
+            Activity.Run mins pace_
+
+        "Race" ->
+            Activity.Race mins dist
+
+        "Other" ->
+            Activity.Other mins
+
+        _ ->
+            Activity.Note
 
 
 submitButton : Html Msg
@@ -294,7 +338,7 @@ moreButtons =
         ]
 
 
-durationInput : (String -> Msg) -> Maybe Activity.Minutes -> Html Msg
+durationInput : (String -> Msg) -> Activity.Minutes -> Html Msg
 durationInput msg duration =
     input
         [ type_ "number"
@@ -303,7 +347,7 @@ durationInput msg duration =
         , name "duration"
         , style "width" "3rem"
         , class "input-small"
-        , value (duration |> Maybe.map String.fromInt |> Maybe.withDefault "")
+        , value (duration |> String.fromInt)
         ]
         []
 

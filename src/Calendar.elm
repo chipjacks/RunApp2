@@ -255,8 +255,19 @@ viewWeek accessActivities today selected start =
 
         ( runDuration, otherDuration ) =
             activities
-                |> List.partition (\a -> activityType a == Activity.Run)
-                |> Tuple.mapBoth (List.map (\a -> a.duration)) (List.map (\a -> a.duration))
+                |> List.partition
+                    (\a ->
+                        case activityType a of
+                            Activity.Run _ _ ->
+                                True
+
+                            Activity.Race _ _ ->
+                                True
+
+                            _ ->
+                                False
+                    )
+                |> Tuple.mapBoth (List.filterMap .duration) (List.filterMap .duration)
                 |> Tuple.mapBoth List.sum List.sum
     in
     row [] <|

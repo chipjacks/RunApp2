@@ -14,42 +14,52 @@ type alias Activity =
     , date : Date
     , description : String
     , completed : Bool
-    , duration : Minutes
+    , duration : Maybe Minutes
     , pace : Maybe Pace
     , distance : Maybe Distance
     }
 
 
 type ActivityType
-    = Run
-    | Race
-    | Other
+    = Run Minutes Pace
+    | Race Minutes Distance
+    | Other Minutes
+    | Note
 
 
 activityType : Activity -> ActivityType
 activityType activity =
-    case ( activity.pace, activity.distance ) of
-        ( Nothing, Nothing ) ->
-            Other
+    case ( activity.pace, activity.distance, activity.duration ) of
+        ( Nothing, Nothing, Nothing ) ->
+            Note
 
-        ( _, Just _ ) ->
-            Race
+        ( Nothing, Nothing, Just mins ) ->
+            Other mins
 
-        ( Just _, _ ) ->
-            Run
+        ( _, Just dist, Just mins ) ->
+            Race mins dist
+
+        ( Just pace_, Nothing, Just mins ) ->
+            Run mins pace_
+
+        _ ->
+            Note
 
 
 activityTypeToString : ActivityType -> String
 activityTypeToString aType =
     case aType of
-        Run ->
+        Run _ _ ->
             "Run"
 
-        Race ->
+        Race _ _ ->
             "Race"
 
-        Other ->
+        Other _ ->
             "Other"
+
+        Note ->
+            "Note"
 
 
 newId : Random.Generator String
@@ -65,15 +75,17 @@ newId =
 
 mprLevel : Activity -> Maybe Int
 mprLevel activity =
-    activity.distance
-        |> Maybe.andThen
-            (\dist ->
-                MPRLevel.lookup MPRLevel.Neutral
-                    (distance.toString dist)
-                    (activity.duration * 60)
-                    |> Result.map (\( rt, level ) -> level)
-                    |> Result.toMaybe
-            )
+    Maybe.map2
+        (\dist duration ->
+            MPRLevel.lookup MPRLevel.Neutral
+                (distance.toString dist)
+                (duration * 60)
+                |> Result.map (\( rt, level ) -> level)
+                |> Result.toMaybe
+        )
+        activity.distance
+        activity.duration
+        |> Maybe.withDefault Nothing
 
 
 type alias Id =
@@ -217,7 +229,7 @@ decoder =
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
         (Decode.field "completed" Decode.bool)
-        (Decode.field "duration" Decode.int)
+        (Decode.maybe (Decode.field "duration" Decode.int))
         (Decode.field "pace" (Decode.nullable pace.decoder))
         (Decode.maybe (Decode.field "distance" distance.decoder))
 
@@ -246,7 +258,7 @@ encoder activity =
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
         , ( "completed", Encode.bool activity.completed )
-        , ( "duration", Encode.int activity.duration )
+        , ( "duration", activity.duration |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "pace", paceEncoder )
         ]
             ++ distanceEncoder
