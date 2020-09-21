@@ -10,7 +10,7 @@ import Skeleton exposing (column, row)
 type Shape
     = Block Color Bool { width : Float, height : Float }
     | Circle Color Bool (Maybe Char)
-    | Emoji Char
+    | Emoji String
 
 
 type Color
@@ -55,7 +55,7 @@ viewDefault completed activityType =
                 |> viewShape
 
         Activity.Note _ ->
-            Emoji Emoji.default
+            Emoji Emoji.default.name
                 |> viewShape
 
 
@@ -97,12 +97,12 @@ viewShape shape =
                 ]
                 [ Html.text (charM |> Maybe.map Char.toUpper |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
 
-        Emoji char ->
+        Emoji name ->
             div
                 [ style "margin-top" "-5px"
                 , style "font-size" "1rem"
                 ]
-                [ Html.text (String.fromChar char) ]
+                [ Html.text name ]
 
 
 colorString : Color -> String

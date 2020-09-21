@@ -67,12 +67,13 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
 .radio-buttons > button.selected { background-color: var(--highlight-gray); }
 
 
-/* DROPDOWN */
+/*
+ * DROPDOWN
+*/
 
 .dropdown { position: relative; display: inline-block; }
 .dropdown.medium { font-size: 0.8rem; }
 .dropdown.medium > .button { font-size: 0.8rem; }
-.emoji > .button { padding-top: 1px; padding-bottom: 2px; }
 
 .dropdown-content {
   display: none;
@@ -91,8 +92,21 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
   text-align: center;
   color: black;
 }
-.emoji > a { padding-top: 1px; padding-bottom: 2px; }
 
 .dropdown-content a:hover { background-color: var(--highlight-gray) }
 
 .dropdown:hover .dropdown-content { display: block; }
+
+
+/*
+ * EMOJI
+*/
+
+.emoji {
+    display: inline-block;
+    height: 22px;
+    width: 22px;
+    background-image: url(https://cdn.jsdelivr.net/npm/emoji-datasource-twitter@5.0.1/img/twitter/sheets/64.png);
+    background-repeat: no-repeat;
+    background-size: 1254px;
+}

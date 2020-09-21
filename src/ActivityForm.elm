@@ -28,7 +28,7 @@ type alias Model =
     { id : Activity.Id
     , date : Maybe Date
     , description : String
-    , emoji : Maybe Char
+    , emoji : Maybe String
     , completed : Bool
     , duration : Maybe String
     , pace : Maybe Activity.Pace
@@ -324,7 +324,7 @@ toActivityType typeStr model =
             Maybe.withDefault Activity.FiveK model.distance
 
         emoji =
-            Maybe.withDefault Emoji.default model.emoji
+            Maybe.withDefault Emoji.default.name model.emoji
     in
     case typeStr of
         "Run" ->
@@ -363,21 +363,25 @@ moreButtons =
         ]
 
 
-emojiSelect : (Char -> Msg) -> Char -> Html Msg
+emojiSelect : (String -> Msg) -> String -> Html Msg
 emojiSelect msg emoji =
+    let
+        emojiItem data =
+            a [ onClick (msg data.name), style "text-align" "left" ]
+                [ Emoji.view data
+                , Html.text data.name
+                ]
+    in
     div [ class "row" ]
-        [ div [ class "dropdown emoji" ]
+        [ div [ class "dropdown" ]
             [ button [ class "button" ]
-                [ text ([ emoji ] |> String.fromList) ]
-            , div [ class "dropdown-content emoji" ]
-                (List.map
-                    (\emojiChar ->
-                        a [ onClick (msg emojiChar), style "text-align" "left" ] [ Html.text (String.fromList [ emojiChar ]) ]
-                    )
-                    Emoji.list
+                [ text emoji ]
+            , div [ class "dropdown-content" ]
+                (Emoji.filter emoji
+                    |> List.map emojiItem
                 )
             ]
-        , input [ onInput (\str -> str |> String.toList |> List.head |> Maybe.withDefault Emoji.default |> msg), class "input-small", style "width" "1rem", value "" ] []
+        , input [ onInput (\str -> str |> msg), class "input-small", value emoji ] []
         ]
 
 
