@@ -1,4 +1,4 @@
-module Emoji exposing (default, filter, list, view)
+module Emoji exposing (default, filter, find, humanName, list, view)
 
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
@@ -16,9 +16,20 @@ default =
     EmojiData "thought_balloon" 26 3
 
 
+humanName : EmojiData -> String
+humanName data =
+    data.name |> String.replace "_" " " |> String.replace "-" " "
+
+
 filter : String -> List EmojiData
 filter name =
-    List.filter (\emojiData -> String.contains name emojiData.name) list
+    List.filter (\emojiData -> String.contains name (humanName emojiData)) list
+        |> List.sortBy (\e -> String.length (humanName e))
+
+
+find : String -> EmojiData
+find name =
+    filter name |> List.head |> Maybe.withDefault default
 
 
 view : EmojiData -> Html msg

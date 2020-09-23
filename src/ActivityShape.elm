@@ -98,11 +98,7 @@ viewShape shape =
                 [ Html.text (charM |> Maybe.map Char.toUpper |> Maybe.map String.fromChar |> Maybe.withDefault "") ]
 
         Emoji name ->
-            div
-                [ style "margin-top" "-5px"
-                , style "font-size" "1rem"
-                ]
-                [ Html.text name ]
+            Emoji.view (Emoji.find name)
 
 
 colorString : Color -> String

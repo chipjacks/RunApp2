@@ -228,7 +228,7 @@ viewForm model levelM =
                     []
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
-                [ compactColumn [] [ shapeSelect model SelectedShape ]
+                [ compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model SelectedShape ]
                 , compactColumn [] [ viewMaybe model.emoji (emojiSelect SelectedEmoji) ]
                 , compactColumn [] [ viewMaybe model.duration (durationInput EditedDuration) ]
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
@@ -366,22 +366,46 @@ moreButtons =
 emojiSelect : (String -> Msg) -> String -> Html Msg
 emojiSelect msg emoji =
     let
+        padding =
+            style "padding" "3.5px 0.5rem 0.5px 0.5rem"
+
         emojiItem data =
-            a [ onClick (msg data.name), style "text-align" "left" ]
+            a [ onClick (msg (Emoji.humanName data)), style "text-align" "left", padding, style "white-space" "nowrap" ]
                 [ Emoji.view data
-                , Html.text data.name
+                , div [ style "display" "inline-block", style "vertical-align" "top", style "margin-left" "0.5rem" ]
+                    [ Html.text (Emoji.humanName data) ]
                 ]
     in
     div [ class "row" ]
         [ div [ class "dropdown" ]
-            [ button [ class "button" ]
-                [ text emoji ]
+            [ div [ class "row" ]
+                [ button
+                    [ class "button"
+                    , padding
+                    , style "border-top-right-radius" "0"
+                    , style "border-bottom-right-radius" "0"
+                    ]
+                    [ Emoji.filter emoji
+                        |> List.head
+                        |> Maybe.withDefault Emoji.default
+                        |> Emoji.view
+                    ]
+                , input
+                    [ onInput msg
+                    , class "input-small"
+                    , style "border-top-left-radius" "0"
+                    , style "border-bottom-left-radius" "0"
+                    , style "border-left-color" "transparent"
+                    , value emoji
+                    ]
+                    []
+                ]
             , div [ class "dropdown-content" ]
                 (Emoji.filter emoji
+                    |> List.take 10
                     |> List.map emojiItem
                 )
             ]
-        , input [ onInput (\str -> str |> msg), class "input-small", value emoji ] []
         ]
 
 
