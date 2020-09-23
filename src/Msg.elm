@@ -30,7 +30,7 @@ type Msg
     | NewActivity Activity
     | SelectedShape Activity.ActivityType
     | EditedDescription String
-    | SelectedEmoji Char
+    | SelectedEmoji String
     | CheckedCompleted Bool
     | EditedDuration String
     | SelectedPace String

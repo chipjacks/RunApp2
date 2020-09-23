@@ -14,7 +14,7 @@ type alias Activity =
     { id : Id
     , date : Date
     , description : String
-    , emoji : Maybe Char
+    , emoji : Maybe String
     , completed : Bool
     , duration : Maybe Minutes
     , pace : Maybe Pace
@@ -26,7 +26,7 @@ type ActivityType
     = Run Minutes Pace
     | Race Minutes Distance
     | Other Minutes
-    | Note Char
+    | Note String
 
 
 activityType : Activity -> ActivityType
@@ -42,7 +42,7 @@ activityType activity =
             Run mins pace_
 
         _ ->
-            Note (activity.emoji |> Maybe.withDefault Emoji.default)
+            Note (activity.emoji |> Maybe.withDefault Emoji.default.name)
 
 
 activityTypeToString : ActivityType -> String
@@ -227,7 +227,7 @@ decoder =
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
-        (Decode.maybe (Decode.field "emoji" (Decode.int |> Decode.map Char.fromCode)))
+        (Decode.maybe (Decode.field "emoji" Decode.string))
         (Decode.field "completed" Decode.bool)
         (Decode.maybe (Decode.field "duration" Decode.int))
         (Decode.field "pace" (Decode.nullable pace.decoder))
@@ -257,7 +257,7 @@ encoder activity =
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "emoji", activity.emoji |> Maybe.map Char.toCode |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
+        , ( "emoji", activity.emoji |> Maybe.map Encode.string |> Maybe.withDefault Encode.null )
         , ( "completed", Encode.bool activity.completed )
         , ( "duration", activity.duration |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
         , ( "pace", paceEncoder )
