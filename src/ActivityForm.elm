@@ -366,14 +366,17 @@ moreButtons =
 emojiSelect : (String -> Msg) -> String -> Html Msg
 emojiSelect msg emoji =
     let
+        emojis =
+            Emoji.filter emoji |> List.take 10
+
         padding =
             style "padding" "3.5px 0.5rem 0.5px 0.5rem"
 
         emojiItem data =
-            a [ onClick (msg (Emoji.humanName data)), style "text-align" "left", padding, style "white-space" "nowrap" ]
+            a [ onClick (SelectedEmoji data.name), style "text-align" "left", padding, style "white-space" "nowrap" ]
                 [ Emoji.view data
                 , div [ style "display" "inline-block", style "vertical-align" "top", style "margin-left" "0.5rem" ]
-                    [ Html.text (Emoji.humanName data) ]
+                    [ Html.text data.name ]
                 ]
     in
     div [ class "row" ]
@@ -385,7 +388,7 @@ emojiSelect msg emoji =
                     , style "border-top-right-radius" "0"
                     , style "border-bottom-right-radius" "0"
                     ]
-                    [ Emoji.filter emoji
+                    [ emojis
                         |> List.head
                         |> Maybe.withDefault Emoji.default
                         |> Emoji.view
@@ -400,11 +403,7 @@ emojiSelect msg emoji =
                     ]
                     []
                 ]
-            , div [ class "dropdown-content" ]
-                (Emoji.filter emoji
-                    |> List.take 10
-                    |> List.map emojiItem
-                )
+            , div [ class "dropdown-content" ] (List.map emojiItem emojis)
             ]
         ]
 
