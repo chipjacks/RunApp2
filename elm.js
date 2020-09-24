@@ -2660,8 +2660,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		r: func(record.r),
-		ah: record.ah,
-		af: record.af
+		af: record.af,
+		ad: record.ad
 	}
 });
 
@@ -2930,10 +2930,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.r;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ah;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.af;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.af) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.ad) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3923,7 +3923,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.bJ,
 		impl.bG,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.ag && impl.ag(sendToApp)
+			var divertHrefToApp = impl.ae && impl.ae(sendToApp)
 			var view = impl.bK;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -3932,7 +3932,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.am);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ak);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
@@ -3998,7 +3998,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		ag: function(sendToApp)
+		ae: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4014,9 +4014,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.aS === next.aS
-							&& curr.aD === next.aD
-							&& curr.aO.a === next.aO.a
+							&& curr.aQ === next.aQ
+							&& curr.aB === next.aB
+							&& curr.aM.a === next.aM.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4187,10 +4187,10 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		a_: _Browser_getScene(),
-		a8: {
-			W: _Browser_window.pageXOffset,
-			X: _Browser_window.pageYOffset,
+		aY: _Browser_getScene(),
+		a6: {
+			a9: _Browser_window.pageXOffset,
+			ba: _Browser_window.pageYOffset,
 			P: _Browser_doc.documentElement.clientWidth,
 			H: _Browser_doc.documentElement.clientHeight
 		}
@@ -4226,13 +4226,13 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			a_: {
+			aY: {
 				P: node.scrollWidth,
 				H: node.scrollHeight
 			},
-			a8: {
-				W: node.scrollLeft,
-				X: node.scrollTop,
+			a6: {
+				a9: node.scrollLeft,
+				ba: node.scrollTop,
 				P: node.clientWidth,
 				H: node.clientHeight
 			}
@@ -4264,16 +4264,16 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			a_: _Browser_getScene(),
-			a8: {
-				W: x,
-				X: y,
+			aY: _Browser_getScene(),
+			a6: {
+				a9: x,
+				ba: y,
 				P: _Browser_doc.documentElement.clientWidth,
 				H: _Browser_doc.documentElement.clientHeight
 			},
 			bi: {
-				W: x + rect.left,
-				X: y + rect.top,
+				a9: x + rect.left,
+				ba: y + rect.top,
 				P: rect.width,
 				H: rect.height
 			}
@@ -4450,25 +4450,25 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request._.a(response)));
+			callback(toTask(request.Y.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request._.b, xhr)); });
-		$elm$core$Maybe$isJust(request.a5) && _Http_track(router, xhr, request.a5.a);
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.Y.b, xhr)); });
+		$elm$core$Maybe$isJust(request.a3) && _Http_track(router, xhr, request.a3.a);
 
 		try {
-			xhr.open(request.aJ, request.a7, true);
+			xhr.open(request.aH, request.a5, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.a7));
+			return done($elm$http$Http$BadUrl_(request.a5));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.am.a && xhr.setRequestHeader('Content-Type', request.am.a);
-		xhr.send(request.am.b);
+		request.ak.a && xhr.setRequestHeader('Content-Type', request.ak.a);
+		xhr.send(request.ak.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4479,12 +4479,12 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.aB; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.az; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.a4.a || 0;
-	xhr.responseType = request._.d;
+	xhr.timeout = request.a2.a || 0;
+	xhr.responseType = request.Y.d;
 	xhr.withCredentials = request.bd;
 }
 
@@ -4506,10 +4506,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		a7: xhr.responseURL,
+		a5: xhr.responseURL,
 		bD: xhr.status,
 		bE: xhr.statusText,
-		aB: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		az: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4605,14 +4605,14 @@ function _Http_track(router, xhr, tracker)
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
 			bC: event.loaded,
-			a0: event.total
+			a_: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
 			bA: event.loaded,
-			a0: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			a_: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5202,7 +5202,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {az: fragment, aD: host, aM: path, aO: port_, aS: protocol, aT: query};
+		return {ax: fragment, aB: host, aK: path, aM: port_, aQ: protocol, aR: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5517,7 +5517,7 @@ var $elm$core$Task$attempt = F2(
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Activity$Activity = F8(
 	function (id, date, description, emoji, completed, duration, pace, distance) {
-		return {ap: completed, aq: date, at: description, S: distance, T: duration, Z: emoji, aE: id, ae: pace};
+		return {an: completed, ao: date, ar: description, S: distance, T: duration, X: emoji, aC: id, ac: pace};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -5572,7 +5572,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {ao: col, bh: contextStack, aP: problem, aZ: row};
+		return {am: col, bh: contextStack, aN: problem, aX: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -5580,7 +5580,7 @@ var $elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.aZ, s.ao, x, s.c));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.aX, s.am, x, s.c));
 	});
 var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
 var $elm$core$Basics$negate = function (n) {
@@ -5597,11 +5597,11 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ao: 1, c: s.c, d: s.d, b: s.b + 1, aZ: s.aZ + 1, a: s.a}) : A3(
+				{am: 1, c: s.c, d: s.d, b: s.b + 1, aX: s.aX + 1, a: s.a}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ao: s.ao + 1, c: s.c, d: s.d, b: newOffset, aZ: s.aZ, a: s.a}));
+				{am: s.am + 1, c: s.c, d: s.d, b: newOffset, aX: s.aX, a: s.a}));
 		};
 	});
 var $elm$parser$Parser$chompIf = function (isGood) {
@@ -5613,7 +5613,7 @@ var $elm$core$Basics$composeR = F3(
 			f(x));
 	});
 var $justinmimbs$date$Date$deadEndToString = function (_v0) {
-	var problem = _v0.aP;
+	var problem = _v0.aN;
 	if (problem.$ === 12) {
 		var message = problem.a;
 		return message;
@@ -5887,7 +5887,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aZ, s.ao, s.a);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aX, s.am, s.a);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -5898,7 +5898,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{ao: newCol, c: s.c, d: s.d, b: newOffset, aZ: newRow, a: s.a});
+			{am: newCol, c: s.c, d: s.d, b: newOffset, aX: newRow, a: s.a});
 	};
 };
 var $elm$parser$Parser$token = function (str) {
@@ -6256,10 +6256,10 @@ var $justinmimbs$date$Date$parser = A2(
 		$justinmimbs$date$Date$dayOfYear));
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {ao: col, aP: problem, aZ: row};
+		return {am: col, aN: problem, aX: row};
 	});
 var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.aZ, p.ao, p.aP);
+	return A3($elm$parser$Parser$DeadEnd, p.aX, p.am, p.aN);
 };
 var $elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -6291,7 +6291,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{ao: 1, c: _List_Nil, d: 1, b: 0, aZ: 1, a: src});
+			{am: 1, c: _List_Nil, d: 1, b: 0, aX: 1, a: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -6534,7 +6534,7 @@ var $author$project$Enum$create = F2(
 			list);
 		var dict = $elm$core$Dict$fromList(list2);
 		return {
-			as: A2(
+			aq: A2(
 				$elm$json$Json$Decode$andThen,
 				function (string) {
 					var _v0 = A2($elm$core$Dict$get, string, dict);
@@ -6546,9 +6546,9 @@ var $author$project$Enum$create = F2(
 					}
 				},
 				$elm$json$Json$Decode$string),
-			au: dict,
-			av: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
-			aA: function (string) {
+			as: dict,
+			at: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
+			ay: function (string) {
 				return A2($elm$core$Dict$get, string, dict);
 			},
 			U: list2,
@@ -6586,7 +6586,6 @@ var $author$project$Activity$distance = A2(
 		}
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$core$Char$fromCode = _Char_fromCode;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$json$Json$Decode$map8 = _Json_map8;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -6649,19 +6648,16 @@ var $author$project$Activity$decoder = A9(
 	A2($elm$json$Json$Decode$field, 'date', $author$project$Activity$dateDecoder),
 	A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
 	$elm$json$Json$Decode$maybe(
-		A2(
-			$elm$json$Json$Decode$field,
-			'emoji',
-			A2($elm$json$Json$Decode$map, $elm$core$Char$fromCode, $elm$json$Json$Decode$int))),
+		A2($elm$json$Json$Decode$field, 'emoji', $elm$json$Json$Decode$string)),
 	A2($elm$json$Json$Decode$field, 'completed', $elm$json$Json$Decode$bool),
 	$elm$json$Json$Decode$maybe(
 		A2($elm$json$Json$Decode$field, 'duration', $elm$json$Json$Decode$int)),
 	A2(
 		$elm$json$Json$Decode$field,
 		'pace',
-		$elm$json$Json$Decode$nullable($author$project$Activity$pace.as)),
+		$elm$json$Json$Decode$nullable($author$project$Activity$pace.aq)),
 	$elm$json$Json$Decode$maybe(
-		A2($elm$json$Json$Decode$field, 'distance', $author$project$Activity$distance.as)));
+		A2($elm$json$Json$Decode$field, 'distance', $author$project$Activity$distance.aq)));
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 3, a: a, b: b};
@@ -7125,21 +7121,21 @@ var $elm$http$Http$task = function (r) {
 		_Http_toTask,
 		0,
 		$elm$http$Http$resultToTask,
-		{bd: false, am: r.am, _: r.aY, aB: r.aB, aJ: r.aJ, a4: r.a4, a5: $elm$core$Maybe$Nothing, a7: r.a7});
+		{bd: false, ak: r.ak, Y: r.aW, az: r.az, aH: r.aH, a2: r.a2, a3: $elm$core$Maybe$Nothing, a5: r.a5});
 };
 var $author$project$Api$getActivities = $elm$http$Http$task(
 	{
-		am: $elm$http$Http$emptyBody,
-		aB: _List_fromArray(
+		ak: $elm$http$Http$emptyBody,
+		az: _List_fromArray(
 			[
 				A2($elm$http$Http$header, 'Content-Type', 'application/json')
 			]),
-		aJ: 'GET',
-		aY: $elm$http$Http$stringResolver(
+		aH: 'GET',
+		aW: $elm$http$Http$stringResolver(
 			$author$project$Api$handleJsonResponse(
 				$elm$json$Json$Decode$list($author$project$Activity$decoder))),
-		a4: $elm$core$Maybe$Nothing,
-		a7: $author$project$Api$storeUrl + '/latest'
+		a2: $elm$core$Maybe$Nothing,
+		a5: $author$project$Api$storeUrl + '/latest'
 	});
 var $elm$core$Basics$clamp = F3(
 	function (low, high, number) {
@@ -7208,20 +7204,20 @@ var $elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		ar: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		aK: month,
+		ap: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		aI: month,
 		bb: year + ((month <= 2) ? 1 : 0)
 	};
 };
 var $elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).ar;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).ap;
 	});
 var $elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _v0 = $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aK;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aI;
 		switch (_v0) {
 			case 1:
 				return 0;
@@ -7454,7 +7450,7 @@ var $elm$time$Time$Every = F2(
 	});
 var $elm$time$Time$State = F2(
 	function (taggers, processes) {
-		return {aR: processes, a3: taggers};
+		return {aP: processes, a1: taggers};
 	});
 var $elm$time$Time$init = $elm$core$Task$succeed(
 	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
@@ -7592,7 +7588,7 @@ var $elm$time$Time$spawnHelp = F3(
 	});
 var $elm$time$Time$onEffects = F3(
 	function (router, subs, _v0) {
-		var processes = _v0.aR;
+		var processes = _v0.aP;
 		var rightStep = F3(
 			function (_v6, id, _v7) {
 				var spawns = _v7.a;
@@ -7658,7 +7654,7 @@ var $elm$time$Time$onEffects = F3(
 	});
 var $elm$time$Time$onSelfMsg = F3(
 	function (router, interval, state) {
-		var _v0 = A2($elm$core$Dict$get, interval, state.a3);
+		var _v0 = A2($elm$core$Dict$get, interval, state.a1);
 		if (_v0.$ === 1) {
 			return $elm$core$Task$succeed(state);
 		} else {
@@ -7725,7 +7721,7 @@ var $author$project$Msg$NewActivity = function (a) {
 };
 var $author$project$Main$State = F4(
 	function (calendar, store, activityForm, today) {
-		return {m: activityForm, R: calendar, f: store, ai: today};
+		return {m: activityForm, R: calendar, f: store, ag: today};
 	});
 var $author$project$Msg$Toggle = function (a) {
 	return {$: 13, a: a};
@@ -7815,7 +7811,7 @@ var $justinmimbs$date$Date$toCalendarDateHelp = F3(
 				d = $temp$d;
 				continue toCalendarDateHelp;
 			} else {
-				return {ar: d, aK: m, bb: y};
+				return {ap: d, aI: m, bb: y};
 			}
 		}
 	});
@@ -7846,33 +7842,33 @@ var $justinmimbs$date$Date$toOrdinalDate = function (_v0) {
 	var rd = _v0;
 	var y = $justinmimbs$date$Date$year(rd);
 	return {
-		ad: rd - $justinmimbs$date$Date$daysBeforeYear(y),
+		ab: rd - $justinmimbs$date$Date$daysBeforeYear(y),
 		bb: y
 	};
 };
 var $justinmimbs$date$Date$toCalendarDate = function (_v0) {
 	var rd = _v0;
 	var date = $justinmimbs$date$Date$toOrdinalDate(rd);
-	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.bb, 0, date.ad);
+	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.bb, 0, date.ab);
 };
 var $justinmimbs$date$Date$day = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toCalendarDate,
 	function ($) {
-		return $.ar;
+		return $.ap;
 	});
 var $justinmimbs$date$Date$month = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toCalendarDate,
 	function ($) {
-		return $.aK;
+		return $.aI;
 	});
 var $justinmimbs$date$Date$monthNumber = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$month, $justinmimbs$date$Date$monthToNumber);
 var $justinmimbs$date$Date$ordinalDay = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toOrdinalDate,
 	function ($) {
-		return $.ad;
+		return $.ab;
 	});
 var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function (_char) {
@@ -7959,8 +7955,8 @@ var $justinmimbs$date$Date$toWeekDate = function (_v0) {
 	var wy = $justinmimbs$date$Date$year(rd + (4 - wdn));
 	var week1Day1 = $justinmimbs$date$Date$daysBeforeWeekYear(wy) + 1;
 	return {
-		a9: 1 + (((rd - week1Day1) / 7) | 0),
-		ba: wy,
+		a7: 1 + (((rd - week1Day1) / 7) | 0),
+		a8: wy,
 		bL: $justinmimbs$date$Date$numberToWeekday(wdn)
 	};
 };
@@ -7968,13 +7964,13 @@ var $justinmimbs$date$Date$weekNumber = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.a9;
+		return $.a7;
 	});
 var $justinmimbs$date$Date$weekYear = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.ba;
+		return $.a8;
 	});
 var $justinmimbs$date$Date$weekday = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$weekdayNumber, $justinmimbs$date$Date$numberToWeekday);
 var $elm$core$Basics$min = F2(
@@ -8076,7 +8072,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.V(
 							$justinmimbs$date$Date$month(date));
 					case 4:
-						return language.ab(
+						return language._(
 							$justinmimbs$date$Date$month(date));
 					case 5:
 						return A2(
@@ -8115,7 +8111,7 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$day(date)));
 					case 3:
-						return language.Y(
+						return language.W(
 							$justinmimbs$date$Date$day(date));
 					default:
 						return '';
@@ -8154,7 +8150,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.z(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
-						return language.aj(
+						return language.ah(
 							$justinmimbs$date$Date$weekday(date));
 					case 5:
 						return A2(
@@ -8228,7 +8224,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.b, offset) < 0,
 					0,
-					{ao: col, c: s0.c, d: s0.d, b: offset, aZ: row, a: s0.a});
+					{am: col, c: s0.c, d: s0.d, b: offset, aX: row, a: s0.a});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -8260,7 +8256,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aZ, s.ao, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aX, s.am, s);
 	};
 };
 var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
@@ -8486,13 +8482,13 @@ var $justinmimbs$date$Date$weekdayToName = function (wd) {
 	}
 };
 var $justinmimbs$date$Date$language_en = {
-	Y: $justinmimbs$date$Date$withOrdinalSuffix,
-	ab: $justinmimbs$date$Date$monthToName,
+	W: $justinmimbs$date$Date$withOrdinalSuffix,
+	_: $justinmimbs$date$Date$monthToName,
 	V: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
-	aj: $justinmimbs$date$Date$weekdayToName,
+	ah: $justinmimbs$date$Date$weekdayToName,
 	z: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
@@ -8504,10 +8500,10 @@ var $justinmimbs$date$Date$format = function (pattern) {
 var $justinmimbs$date$Date$toIsoString = $justinmimbs$date$Date$format('yyyy-MM-dd');
 var $author$project$Activity$encoder = function (activity) {
 	var paceEncoder = function () {
-		var _v1 = activity.ae;
+		var _v1 = activity.ac;
 		if (!_v1.$) {
 			var pace_ = _v1.a;
-			return $author$project$Activity$pace.av(pace_);
+			return $author$project$Activity$pace.at(pace_);
 		} else {
 			return $elm$json$Json$Encode$null;
 		}
@@ -8520,7 +8516,7 @@ var $author$project$Activity$encoder = function (activity) {
 				[
 					_Utils_Tuple2(
 					'distance',
-					$author$project$Activity$distance.av(distance_))
+					$author$project$Activity$distance.at(distance_))
 				]);
 		} else {
 			return _List_Nil;
@@ -8532,26 +8528,23 @@ var $author$project$Activity$encoder = function (activity) {
 				[
 					_Utils_Tuple2(
 					'id',
-					$elm$json$Json$Encode$string(activity.aE)),
+					$elm$json$Json$Encode$string(activity.aC)),
 					_Utils_Tuple2(
 					'date',
 					$elm$json$Json$Encode$string(
-						$justinmimbs$date$Date$toIsoString(activity.aq))),
+						$justinmimbs$date$Date$toIsoString(activity.ao))),
 					_Utils_Tuple2(
 					'description',
-					$elm$json$Json$Encode$string(activity.at)),
+					$elm$json$Json$Encode$string(activity.ar)),
 					_Utils_Tuple2(
 					'emoji',
 					A2(
 						$elm$core$Maybe$withDefault,
 						$elm$json$Json$Encode$null,
-						A2(
-							$elm$core$Maybe$map,
-							$elm$json$Json$Encode$int,
-							A2($elm$core$Maybe$map, $elm$core$Char$toCode, activity.Z)))),
+						A2($elm$core$Maybe$map, $elm$json$Json$Encode$string, activity.X))),
 					_Utils_Tuple2(
 					'completed',
-					$elm$json$Json$Encode$bool(activity.ap)),
+					$elm$json$Json$Encode$bool(activity.an)),
 					_Utils_Tuple2(
 					'duration',
 					A2(
@@ -8580,18 +8573,18 @@ var $elm$json$Json$Encode$list = F2(
 var $author$project$Api$postActivities = function (activities) {
 	return $elm$http$Http$task(
 		{
-			am: $elm$http$Http$jsonBody(
+			ak: $elm$http$Http$jsonBody(
 				A2($elm$json$Json$Encode$list, $author$project$Activity$encoder, activities)),
-			aB: _List_Nil,
-			aJ: 'PUT',
-			aY: $elm$http$Http$stringResolver(
+			az: _List_Nil,
+			aH: 'PUT',
+			aW: $elm$http$Http$stringResolver(
 				$author$project$Api$handleJsonResponse(
 					A2(
 						$elm$json$Json$Decode$field,
 						'data',
 						$elm$json$Json$Decode$list($author$project$Activity$decoder)))),
-			a4: $elm$core$Maybe$Nothing,
-			a7: $author$project$Api$storeUrl
+			a2: $elm$core$Maybe$Nothing,
+			a5: $author$project$Api$storeUrl
 		});
 };
 var $elm$core$List$filter = F2(
@@ -8657,12 +8650,12 @@ var $author$project$Store$updateActivity = F3(
 			A2(
 				$elm$core$List$partition,
 				function (a) {
-					return A2($justinmimbs$date$Date$compare, a.aq, activity.aq) === 2;
+					return A2($justinmimbs$date$Date$compare, a.ao, activity.ao) === 2;
 				},
 				activities)) : A2(
 			$elm$core$List$map,
 			function (existing) {
-				return _Utils_eq(existing.aE, activity.aE) ? activity : existing;
+				return _Utils_eq(existing.aC, activity.aC) ? activity : existing;
 			},
 			activities);
 	});
@@ -8672,12 +8665,12 @@ var $author$project$Store$moveActivity = F3(
 			$author$project$Store$updateActivity,
 			_Utils_update(
 				activity,
-				{aq: toDate}),
+				{ao: toDate}),
 			true,
 			A2(
 				$elm$core$List$filter,
 				function (a) {
-					return !_Utils_eq(a.aE, activity.aE);
+					return !_Utils_eq(a.aC, activity.aC);
 				},
 				activities));
 	});
@@ -8688,7 +8681,7 @@ var $author$project$Store$shiftUp = F2(
 			var _v1 = activities.b;
 			var b = _v1.a;
 			var tail = _v1.b;
-			return _Utils_eq(a.aE, id) ? activities : (_Utils_eq(b.aE, id) ? A2(
+			return _Utils_eq(a.aC, id) ? activities : (_Utils_eq(b.aC, id) ? A2(
 				$elm$core$List$cons,
 				b,
 				A2($elm$core$List$cons, a, tail)) : A2(
@@ -8707,26 +8700,26 @@ var $author$project$Store$shiftActivity = F3(
 		var on = A2(
 			$elm$core$List$filter,
 			function (a) {
-				return _Utils_eq(a.aq, activity.aq);
+				return _Utils_eq(a.ao, activity.ao);
 			},
 			activities);
 		var before = A2(
 			$elm$core$List$filter,
 			function (a) {
-				return !A2($justinmimbs$date$Date$compare, a.aq, activity.aq);
+				return !A2($justinmimbs$date$Date$compare, a.ao, activity.ao);
 			},
 			activities);
 		var after = A2(
 			$elm$core$List$filter,
 			function (a) {
-				return A2($justinmimbs$date$Date$compare, a.aq, activity.aq) === 2;
+				return A2($justinmimbs$date$Date$compare, a.ao, activity.ao) === 2;
 			},
 			activities);
 		return moveUp ? $elm$core$List$concat(
 			_List_fromArray(
 				[
 					before,
-					A2($author$project$Store$shiftUp, activity.aE, on),
+					A2($author$project$Store$shiftUp, activity.aC, on),
 					after
 				])) : $elm$core$List$concat(
 			_List_fromArray(
@@ -8735,7 +8728,7 @@ var $author$project$Store$shiftActivity = F3(
 					$elm$core$List$reverse(
 					A2(
 						$author$project$Store$shiftUp,
-						activity.aE,
+						activity.aC,
 						$elm$core$List$reverse(on))),
 					after
 				]));
@@ -8781,7 +8774,7 @@ var $author$project$Store$updateState = F2(
 						bc: A2(
 							$elm$core$List$filter,
 							function (a) {
-								return !_Utils_eq(a.aE, activity.aE);
+								return !_Utils_eq(a.aC, activity.aC);
 							},
 							state.bc)
 					});
@@ -8901,18 +8894,18 @@ var $elm$random$Random$generate = F2(
 	});
 var $author$project$ActivityForm$Model = F9(
 	function (id, date, description, emoji, completed, duration, pace, distance, result) {
-		return {ap: completed, aq: date, at: description, S: distance, T: duration, Z: emoji, aE: id, ae: pace, x: result};
+		return {an: completed, ao: date, ar: description, S: distance, T: duration, X: emoji, aC: id, ac: pace, x: result};
 	});
 var $author$project$ActivityForm$init = function (activity) {
 	return A9(
 		$author$project$ActivityForm$Model,
-		activity.aE,
-		$elm$core$Maybe$Just(activity.aq),
-		activity.at,
-		activity.Z,
-		activity.ap,
+		activity.aC,
+		$elm$core$Maybe$Just(activity.ao),
+		activity.ar,
+		activity.X,
+		activity.an,
 		A2($elm$core$Maybe$map, $elm$core$String$fromInt, activity.T),
-		activity.ae,
+		activity.ac,
 		activity.S,
 		$elm$core$Result$Ok(activity));
 };
@@ -8930,13 +8923,13 @@ var $justinmimbs$date$Date$add = F3(
 				return A3($justinmimbs$date$Date$add, 1, 12 * n, rd);
 			case 1:
 				var date = $justinmimbs$date$Date$toCalendarDate(rd);
-				var wholeMonths = ((12 * (date.bb - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aK) - 1)) + n;
+				var wholeMonths = ((12 * (date.bb - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aI) - 1)) + n;
 				var m = $justinmimbs$date$Date$numberToMonth(
 					A2($elm$core$Basics$modBy, 12, wholeMonths) + 1);
 				var y = A2($justinmimbs$date$Date$floorDiv, wholeMonths, 12) + 1;
 				return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + A2(
 					$elm$core$Basics$min,
-					date.ar,
+					date.ap,
 					A2($justinmimbs$date$Date$daysInMonth, y, m));
 			case 2:
 				return rd + (7 * n);
@@ -9263,19 +9256,19 @@ var $author$project$ActivityForm$validate = function (model) {
 			function (date, description) {
 				return A8(
 					$author$project$Activity$Activity,
-					model.aE,
+					model.aC,
 					date,
 					description,
-					model.Z,
-					model.ap,
+					model.X,
+					model.an,
 					A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T),
-					model.ae,
+					model.ac,
 					model.S);
 			}),
-		A2($author$project$ActivityForm$validateFieldExists, model.aq, 'date'),
+		A2($author$project$ActivityForm$validateFieldExists, model.ao, 'date'),
 		A2(
 			$author$project$ActivityForm$validateFieldExists,
-			$elm$core$Maybe$Just(model.at),
+			$elm$core$Maybe$Just(model.ar),
 			'description'));
 };
 var $author$project$ActivityForm$updateResult = function (model) {
@@ -9287,14 +9280,14 @@ var $author$project$ActivityForm$updateResult = function (model) {
 };
 var $author$project$ActivityForm$selectDate = F2(
 	function (date, model) {
-		return _Utils_eq(model.aq, $elm$core$Maybe$Nothing) ? A2(
+		return _Utils_eq(model.ao, $elm$core$Maybe$Nothing) ? A2(
 			$author$project$ActivityForm$apply,
 			$author$project$Msg$Move(date),
 			$author$project$ActivityForm$updateResult(
 				_Utils_update(
 					model,
 					{
-						aq: $elm$core$Maybe$Just(date)
+						ao: $elm$core$Maybe$Just(date)
 					}))) : $author$project$Msg$NoOp;
 	});
 var $elm$core$List$takeReverse = F3(
@@ -9473,8 +9466,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										Z: $elm$core$Maybe$Nothing,
-										ae: $elm$core$Maybe$Just(pace_)
+										X: $elm$core$Maybe$Nothing,
+										ac: $elm$core$Maybe$Just(pace_)
 									})),
 							$elm$core$Platform$Cmd$none);
 					case 1:
@@ -9488,8 +9481,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Just(dist),
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										Z: $elm$core$Maybe$Nothing,
-										ae: $elm$core$Maybe$Nothing
+										X: $elm$core$Maybe$Nothing,
+										ac: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 					case 2:
@@ -9502,8 +9495,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										Z: $elm$core$Maybe$Nothing,
-										ae: $elm$core$Maybe$Nothing
+										X: $elm$core$Maybe$Nothing,
+										ac: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -9515,8 +9508,8 @@ var $author$project$ActivityForm$update = F2(
 									{
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Nothing,
-										Z: $elm$core$Maybe$Just(emoji),
-										ae: $elm$core$Maybe$Nothing
+										X: $elm$core$Maybe$Just(emoji),
+										ac: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 				}
@@ -9526,7 +9519,7 @@ var $author$project$ActivityForm$update = F2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
-							{at: desc})),
+							{ar: desc})),
 					$elm$core$Platform$Cmd$none);
 			case 20:
 				var _char = msg.a;
@@ -9535,7 +9528,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								Z: $elm$core$Maybe$Just(_char)
+								X: $elm$core$Maybe$Just(_char)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 21:
@@ -9544,7 +9537,7 @@ var $author$project$ActivityForm$update = F2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
-							{ap: bool})),
+							{an: bool})),
 					$elm$core$Platform$Cmd$none);
 			case 22:
 				var str = msg.a;
@@ -9563,7 +9556,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								ae: $author$project$Activity$pace.aA(str)
+								ac: $author$project$Activity$pace.ay(str)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 24:
@@ -9573,7 +9566,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								S: $author$project$Activity$distance.aA(str)
+								S: $author$project$Activity$distance.ay(str)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 25:
@@ -9590,7 +9583,7 @@ var $author$project$ActivityForm$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aq: $elm$core$Maybe$Nothing}),
+						{ao: $elm$core$Maybe$Nothing}),
 					$elm$core$Platform$Cmd$none);
 			case 29:
 				var up = msg.a;
@@ -9650,9 +9643,9 @@ var $author$project$Calendar$returnScroll = function (previousHeight) {
 					return $elm$core$Task$sequence(
 						_List_fromArray(
 							[
-								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.a_.H - previousHeight),
+								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aY.H - previousHeight),
 								$elm$core$Process$sleep(100),
-								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.a_.H - previousHeight)
+								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aY.H - previousHeight)
 							]));
 				},
 				$elm$browser$Browser$Dom$getViewportOf('calendar'))));
@@ -9790,7 +9783,7 @@ var $author$project$Main$update = F2(
 						model,
 						A2(
 							$author$project$Main$initActivity,
-							state.ai,
+							state.ag,
 							$elm$core$Maybe$Just(date)));
 				case 17:
 					var activity = msg.a;
@@ -9950,7 +9943,7 @@ var $author$project$Main$update = F2(
 								function (id) {
 									return _Utils_update(
 										activity,
-										{aE: id});
+										{aC: id});
 								},
 								$author$project$Activity$newId)));
 				case 28:
@@ -10602,9 +10595,13 @@ var $author$project$Activity$Run = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
-var $author$project$Emoji$default = '💭';
+var $author$project$Emoji$EmojiData = F3(
+	function (name, x, y) {
+		return {bv: name, a9: x, ba: y};
+	});
+var $author$project$Emoji$default = A3($author$project$Emoji$EmojiData, 'thought balloon', 26, 3);
 var $author$project$Activity$activityType = function (activity) {
-	var _v0 = _Utils_Tuple3(activity.ae, activity.S, activity.T);
+	var _v0 = _Utils_Tuple3(activity.ac, activity.S, activity.T);
 	_v0$3:
 	while (true) {
 		if (!_v0.b.$) {
@@ -10638,7 +10635,7 @@ var $author$project$Activity$activityType = function (activity) {
 		}
 	}
 	return $author$project$Activity$Note(
-		A2($elm$core$Maybe$withDefault, $author$project$Emoji$default, activity.Z));
+		A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, activity.X));
 };
 var $author$project$Calendar$daysOfWeek = function (start) {
 	return A4(
@@ -10802,8 +10799,1801 @@ var $author$project$ActivityShape$colorString = function (color) {
 			return 'var(--activity-gray)';
 	}
 };
+var $author$project$Emoji$list = _List_fromArray(
+	[
+		A3($author$project$Emoji$EmojiData, 'hash', 0, 0),
+		A3($author$project$Emoji$EmojiData, 'keycap star', 0, 1),
+		A3($author$project$Emoji$EmojiData, 'zero', 0, 2),
+		A3($author$project$Emoji$EmojiData, 'one', 0, 3),
+		A3($author$project$Emoji$EmojiData, 'two', 0, 4),
+		A3($author$project$Emoji$EmojiData, 'three', 0, 5),
+		A3($author$project$Emoji$EmojiData, 'four', 0, 6),
+		A3($author$project$Emoji$EmojiData, 'five', 0, 7),
+		A3($author$project$Emoji$EmojiData, 'six', 0, 8),
+		A3($author$project$Emoji$EmojiData, 'seven', 0, 9),
+		A3($author$project$Emoji$EmojiData, 'eight', 0, 10),
+		A3($author$project$Emoji$EmojiData, 'nine', 0, 11),
+		A3($author$project$Emoji$EmojiData, 'copyright', 0, 12),
+		A3($author$project$Emoji$EmojiData, 'registered', 0, 13),
+		A3($author$project$Emoji$EmojiData, 'mahjong', 0, 14),
+		A3($author$project$Emoji$EmojiData, 'black joker', 0, 15),
+		A3($author$project$Emoji$EmojiData, 'a', 0, 16),
+		A3($author$project$Emoji$EmojiData, 'b', 0, 17),
+		A3($author$project$Emoji$EmojiData, 'o2', 0, 18),
+		A3($author$project$Emoji$EmojiData, 'parking', 0, 19),
+		A3($author$project$Emoji$EmojiData, 'ab', 0, 20),
+		A3($author$project$Emoji$EmojiData, 'cl', 0, 21),
+		A3($author$project$Emoji$EmojiData, 'cool', 0, 22),
+		A3($author$project$Emoji$EmojiData, 'free', 0, 23),
+		A3($author$project$Emoji$EmojiData, 'id', 0, 24),
+		A3($author$project$Emoji$EmojiData, 'new', 0, 25),
+		A3($author$project$Emoji$EmojiData, 'ng', 0, 26),
+		A3($author$project$Emoji$EmojiData, 'ok', 0, 27),
+		A3($author$project$Emoji$EmojiData, 'sos', 0, 28),
+		A3($author$project$Emoji$EmojiData, 'up', 0, 29),
+		A3($author$project$Emoji$EmojiData, 'vs', 0, 30),
+		A3($author$project$Emoji$EmojiData, 'flag ac', 0, 31),
+		A3($author$project$Emoji$EmojiData, 'flag ad', 0, 32),
+		A3($author$project$Emoji$EmojiData, 'flag ae', 0, 33),
+		A3($author$project$Emoji$EmojiData, 'flag af', 0, 34),
+		A3($author$project$Emoji$EmojiData, 'flag ag', 0, 35),
+		A3($author$project$Emoji$EmojiData, 'flag ai', 0, 36),
+		A3($author$project$Emoji$EmojiData, 'flag al', 0, 37),
+		A3($author$project$Emoji$EmojiData, 'flag am', 0, 38),
+		A3($author$project$Emoji$EmojiData, 'flag ao', 0, 39),
+		A3($author$project$Emoji$EmojiData, 'flag aq', 0, 40),
+		A3($author$project$Emoji$EmojiData, 'flag ar', 0, 41),
+		A3($author$project$Emoji$EmojiData, 'flag as', 0, 42),
+		A3($author$project$Emoji$EmojiData, 'flag at', 0, 43),
+		A3($author$project$Emoji$EmojiData, 'flag au', 0, 44),
+		A3($author$project$Emoji$EmojiData, 'flag aw', 0, 45),
+		A3($author$project$Emoji$EmojiData, 'flag ax', 0, 46),
+		A3($author$project$Emoji$EmojiData, 'flag az', 0, 47),
+		A3($author$project$Emoji$EmojiData, 'flag ba', 0, 48),
+		A3($author$project$Emoji$EmojiData, 'flag bb', 0, 49),
+		A3($author$project$Emoji$EmojiData, 'flag bd', 0, 50),
+		A3($author$project$Emoji$EmojiData, 'flag be', 0, 51),
+		A3($author$project$Emoji$EmojiData, 'flag bf', 0, 52),
+		A3($author$project$Emoji$EmojiData, 'flag bg', 0, 53),
+		A3($author$project$Emoji$EmojiData, 'flag bh', 0, 54),
+		A3($author$project$Emoji$EmojiData, 'flag bi', 0, 55),
+		A3($author$project$Emoji$EmojiData, 'flag bj', 0, 56),
+		A3($author$project$Emoji$EmojiData, 'flag bl', 1, 0),
+		A3($author$project$Emoji$EmojiData, 'flag bm', 1, 1),
+		A3($author$project$Emoji$EmojiData, 'flag bn', 1, 2),
+		A3($author$project$Emoji$EmojiData, 'flag bo', 1, 3),
+		A3($author$project$Emoji$EmojiData, 'flag bq', 1, 4),
+		A3($author$project$Emoji$EmojiData, 'flag br', 1, 5),
+		A3($author$project$Emoji$EmojiData, 'flag bs', 1, 6),
+		A3($author$project$Emoji$EmojiData, 'flag bt', 1, 7),
+		A3($author$project$Emoji$EmojiData, 'flag bv', 1, 8),
+		A3($author$project$Emoji$EmojiData, 'flag bw', 1, 9),
+		A3($author$project$Emoji$EmojiData, 'flag by', 1, 10),
+		A3($author$project$Emoji$EmojiData, 'flag bz', 1, 11),
+		A3($author$project$Emoji$EmojiData, 'flag ca', 1, 12),
+		A3($author$project$Emoji$EmojiData, 'flag cc', 1, 13),
+		A3($author$project$Emoji$EmojiData, 'flag cd', 1, 14),
+		A3($author$project$Emoji$EmojiData, 'flag cf', 1, 15),
+		A3($author$project$Emoji$EmojiData, 'flag cg', 1, 16),
+		A3($author$project$Emoji$EmojiData, 'flag ch', 1, 17),
+		A3($author$project$Emoji$EmojiData, 'flag ci', 1, 18),
+		A3($author$project$Emoji$EmojiData, 'flag ck', 1, 19),
+		A3($author$project$Emoji$EmojiData, 'flag cl', 1, 20),
+		A3($author$project$Emoji$EmojiData, 'flag cm', 1, 21),
+		A3($author$project$Emoji$EmojiData, 'cn', 1, 22),
+		A3($author$project$Emoji$EmojiData, 'flag co', 1, 23),
+		A3($author$project$Emoji$EmojiData, 'flag cp', 1, 24),
+		A3($author$project$Emoji$EmojiData, 'flag cr', 1, 25),
+		A3($author$project$Emoji$EmojiData, 'flag cu', 1, 26),
+		A3($author$project$Emoji$EmojiData, 'flag cv', 1, 27),
+		A3($author$project$Emoji$EmojiData, 'flag cw', 1, 28),
+		A3($author$project$Emoji$EmojiData, 'flag cx', 1, 29),
+		A3($author$project$Emoji$EmojiData, 'flag cy', 1, 30),
+		A3($author$project$Emoji$EmojiData, 'flag cz', 1, 31),
+		A3($author$project$Emoji$EmojiData, 'de', 1, 32),
+		A3($author$project$Emoji$EmojiData, 'flag dg', 1, 33),
+		A3($author$project$Emoji$EmojiData, 'flag dj', 1, 34),
+		A3($author$project$Emoji$EmojiData, 'flag dk', 1, 35),
+		A3($author$project$Emoji$EmojiData, 'flag dm', 1, 36),
+		A3($author$project$Emoji$EmojiData, 'flag do', 1, 37),
+		A3($author$project$Emoji$EmojiData, 'flag dz', 1, 38),
+		A3($author$project$Emoji$EmojiData, 'flag ea', 1, 39),
+		A3($author$project$Emoji$EmojiData, 'flag ec', 1, 40),
+		A3($author$project$Emoji$EmojiData, 'flag ee', 1, 41),
+		A3($author$project$Emoji$EmojiData, 'flag eg', 1, 42),
+		A3($author$project$Emoji$EmojiData, 'flag eh', 1, 43),
+		A3($author$project$Emoji$EmojiData, 'flag er', 1, 44),
+		A3($author$project$Emoji$EmojiData, 'es', 1, 45),
+		A3($author$project$Emoji$EmojiData, 'flag et', 1, 46),
+		A3($author$project$Emoji$EmojiData, 'flag eu', 1, 47),
+		A3($author$project$Emoji$EmojiData, 'flag fi', 1, 48),
+		A3($author$project$Emoji$EmojiData, 'flag fj', 1, 49),
+		A3($author$project$Emoji$EmojiData, 'flag fk', 1, 50),
+		A3($author$project$Emoji$EmojiData, 'flag fm', 1, 51),
+		A3($author$project$Emoji$EmojiData, 'flag fo', 1, 52),
+		A3($author$project$Emoji$EmojiData, 'fr', 1, 53),
+		A3($author$project$Emoji$EmojiData, 'flag ga', 1, 54),
+		A3($author$project$Emoji$EmojiData, 'gb', 1, 55),
+		A3($author$project$Emoji$EmojiData, 'flag gd', 1, 56),
+		A3($author$project$Emoji$EmojiData, 'flag ge', 2, 0),
+		A3($author$project$Emoji$EmojiData, 'flag gf', 2, 1),
+		A3($author$project$Emoji$EmojiData, 'flag gg', 2, 2),
+		A3($author$project$Emoji$EmojiData, 'flag gh', 2, 3),
+		A3($author$project$Emoji$EmojiData, 'flag gi', 2, 4),
+		A3($author$project$Emoji$EmojiData, 'flag gl', 2, 5),
+		A3($author$project$Emoji$EmojiData, 'flag gm', 2, 6),
+		A3($author$project$Emoji$EmojiData, 'flag gn', 2, 7),
+		A3($author$project$Emoji$EmojiData, 'flag gp', 2, 8),
+		A3($author$project$Emoji$EmojiData, 'flag gq', 2, 9),
+		A3($author$project$Emoji$EmojiData, 'flag gr', 2, 10),
+		A3($author$project$Emoji$EmojiData, 'flag gs', 2, 11),
+		A3($author$project$Emoji$EmojiData, 'flag gt', 2, 12),
+		A3($author$project$Emoji$EmojiData, 'flag gu', 2, 13),
+		A3($author$project$Emoji$EmojiData, 'flag gw', 2, 14),
+		A3($author$project$Emoji$EmojiData, 'flag gy', 2, 15),
+		A3($author$project$Emoji$EmojiData, 'flag hk', 2, 16),
+		A3($author$project$Emoji$EmojiData, 'flag hm', 2, 17),
+		A3($author$project$Emoji$EmojiData, 'flag hn', 2, 18),
+		A3($author$project$Emoji$EmojiData, 'flag hr', 2, 19),
+		A3($author$project$Emoji$EmojiData, 'flag ht', 2, 20),
+		A3($author$project$Emoji$EmojiData, 'flag hu', 2, 21),
+		A3($author$project$Emoji$EmojiData, 'flag ic', 2, 22),
+		A3($author$project$Emoji$EmojiData, 'flag id', 2, 23),
+		A3($author$project$Emoji$EmojiData, 'flag ie', 2, 24),
+		A3($author$project$Emoji$EmojiData, 'flag il', 2, 25),
+		A3($author$project$Emoji$EmojiData, 'flag im', 2, 26),
+		A3($author$project$Emoji$EmojiData, 'flag in', 2, 27),
+		A3($author$project$Emoji$EmojiData, 'flag io', 2, 28),
+		A3($author$project$Emoji$EmojiData, 'flag iq', 2, 29),
+		A3($author$project$Emoji$EmojiData, 'flag ir', 2, 30),
+		A3($author$project$Emoji$EmojiData, 'flag is', 2, 31),
+		A3($author$project$Emoji$EmojiData, 'it', 2, 32),
+		A3($author$project$Emoji$EmojiData, 'flag je', 2, 33),
+		A3($author$project$Emoji$EmojiData, 'flag jm', 2, 34),
+		A3($author$project$Emoji$EmojiData, 'flag jo', 2, 35),
+		A3($author$project$Emoji$EmojiData, 'jp', 2, 36),
+		A3($author$project$Emoji$EmojiData, 'flag ke', 2, 37),
+		A3($author$project$Emoji$EmojiData, 'flag kg', 2, 38),
+		A3($author$project$Emoji$EmojiData, 'flag kh', 2, 39),
+		A3($author$project$Emoji$EmojiData, 'flag ki', 2, 40),
+		A3($author$project$Emoji$EmojiData, 'flag km', 2, 41),
+		A3($author$project$Emoji$EmojiData, 'flag kn', 2, 42),
+		A3($author$project$Emoji$EmojiData, 'flag kp', 2, 43),
+		A3($author$project$Emoji$EmojiData, 'kr', 2, 44),
+		A3($author$project$Emoji$EmojiData, 'flag kw', 2, 45),
+		A3($author$project$Emoji$EmojiData, 'flag ky', 2, 46),
+		A3($author$project$Emoji$EmojiData, 'flag kz', 2, 47),
+		A3($author$project$Emoji$EmojiData, 'flag la', 2, 48),
+		A3($author$project$Emoji$EmojiData, 'flag lb', 2, 49),
+		A3($author$project$Emoji$EmojiData, 'flag lc', 2, 50),
+		A3($author$project$Emoji$EmojiData, 'flag li', 2, 51),
+		A3($author$project$Emoji$EmojiData, 'flag lk', 2, 52),
+		A3($author$project$Emoji$EmojiData, 'flag lr', 2, 53),
+		A3($author$project$Emoji$EmojiData, 'flag ls', 2, 54),
+		A3($author$project$Emoji$EmojiData, 'flag lt', 2, 55),
+		A3($author$project$Emoji$EmojiData, 'flag lu', 2, 56),
+		A3($author$project$Emoji$EmojiData, 'flag lv', 3, 0),
+		A3($author$project$Emoji$EmojiData, 'flag ly', 3, 1),
+		A3($author$project$Emoji$EmojiData, 'flag ma', 3, 2),
+		A3($author$project$Emoji$EmojiData, 'flag mc', 3, 3),
+		A3($author$project$Emoji$EmojiData, 'flag md', 3, 4),
+		A3($author$project$Emoji$EmojiData, 'flag me', 3, 5),
+		A3($author$project$Emoji$EmojiData, 'flag mf', 3, 6),
+		A3($author$project$Emoji$EmojiData, 'flag mg', 3, 7),
+		A3($author$project$Emoji$EmojiData, 'flag mh', 3, 8),
+		A3($author$project$Emoji$EmojiData, 'flag mk', 3, 9),
+		A3($author$project$Emoji$EmojiData, 'flag ml', 3, 10),
+		A3($author$project$Emoji$EmojiData, 'flag mm', 3, 11),
+		A3($author$project$Emoji$EmojiData, 'flag mn', 3, 12),
+		A3($author$project$Emoji$EmojiData, 'flag mo', 3, 13),
+		A3($author$project$Emoji$EmojiData, 'flag mp', 3, 14),
+		A3($author$project$Emoji$EmojiData, 'flag mq', 3, 15),
+		A3($author$project$Emoji$EmojiData, 'flag mr', 3, 16),
+		A3($author$project$Emoji$EmojiData, 'flag ms', 3, 17),
+		A3($author$project$Emoji$EmojiData, 'flag mt', 3, 18),
+		A3($author$project$Emoji$EmojiData, 'flag mu', 3, 19),
+		A3($author$project$Emoji$EmojiData, 'flag mv', 3, 20),
+		A3($author$project$Emoji$EmojiData, 'flag mw', 3, 21),
+		A3($author$project$Emoji$EmojiData, 'flag mx', 3, 22),
+		A3($author$project$Emoji$EmojiData, 'flag my', 3, 23),
+		A3($author$project$Emoji$EmojiData, 'flag mz', 3, 24),
+		A3($author$project$Emoji$EmojiData, 'flag na', 3, 25),
+		A3($author$project$Emoji$EmojiData, 'flag nc', 3, 26),
+		A3($author$project$Emoji$EmojiData, 'flag ne', 3, 27),
+		A3($author$project$Emoji$EmojiData, 'flag nf', 3, 28),
+		A3($author$project$Emoji$EmojiData, 'flag ng', 3, 29),
+		A3($author$project$Emoji$EmojiData, 'flag ni', 3, 30),
+		A3($author$project$Emoji$EmojiData, 'flag nl', 3, 31),
+		A3($author$project$Emoji$EmojiData, 'flag no', 3, 32),
+		A3($author$project$Emoji$EmojiData, 'flag np', 3, 33),
+		A3($author$project$Emoji$EmojiData, 'flag nr', 3, 34),
+		A3($author$project$Emoji$EmojiData, 'flag nu', 3, 35),
+		A3($author$project$Emoji$EmojiData, 'flag nz', 3, 36),
+		A3($author$project$Emoji$EmojiData, 'flag om', 3, 37),
+		A3($author$project$Emoji$EmojiData, 'flag pa', 3, 38),
+		A3($author$project$Emoji$EmojiData, 'flag pe', 3, 39),
+		A3($author$project$Emoji$EmojiData, 'flag pf', 3, 40),
+		A3($author$project$Emoji$EmojiData, 'flag pg', 3, 41),
+		A3($author$project$Emoji$EmojiData, 'flag ph', 3, 42),
+		A3($author$project$Emoji$EmojiData, 'flag pk', 3, 43),
+		A3($author$project$Emoji$EmojiData, 'flag pl', 3, 44),
+		A3($author$project$Emoji$EmojiData, 'flag pm', 3, 45),
+		A3($author$project$Emoji$EmojiData, 'flag pn', 3, 46),
+		A3($author$project$Emoji$EmojiData, 'flag pr', 3, 47),
+		A3($author$project$Emoji$EmojiData, 'flag ps', 3, 48),
+		A3($author$project$Emoji$EmojiData, 'flag pt', 3, 49),
+		A3($author$project$Emoji$EmojiData, 'flag pw', 3, 50),
+		A3($author$project$Emoji$EmojiData, 'flag py', 3, 51),
+		A3($author$project$Emoji$EmojiData, 'flag qa', 3, 52),
+		A3($author$project$Emoji$EmojiData, 'flag re', 3, 53),
+		A3($author$project$Emoji$EmojiData, 'flag ro', 3, 54),
+		A3($author$project$Emoji$EmojiData, 'flag rs', 3, 55),
+		A3($author$project$Emoji$EmojiData, 'ru', 3, 56),
+		A3($author$project$Emoji$EmojiData, 'flag rw', 4, 0),
+		A3($author$project$Emoji$EmojiData, 'flag sa', 4, 1),
+		A3($author$project$Emoji$EmojiData, 'flag sb', 4, 2),
+		A3($author$project$Emoji$EmojiData, 'flag sc', 4, 3),
+		A3($author$project$Emoji$EmojiData, 'flag sd', 4, 4),
+		A3($author$project$Emoji$EmojiData, 'flag se', 4, 5),
+		A3($author$project$Emoji$EmojiData, 'flag sg', 4, 6),
+		A3($author$project$Emoji$EmojiData, 'flag sh', 4, 7),
+		A3($author$project$Emoji$EmojiData, 'flag si', 4, 8),
+		A3($author$project$Emoji$EmojiData, 'flag sj', 4, 9),
+		A3($author$project$Emoji$EmojiData, 'flag sk', 4, 10),
+		A3($author$project$Emoji$EmojiData, 'flag sl', 4, 11),
+		A3($author$project$Emoji$EmojiData, 'flag sm', 4, 12),
+		A3($author$project$Emoji$EmojiData, 'flag sn', 4, 13),
+		A3($author$project$Emoji$EmojiData, 'flag so', 4, 14),
+		A3($author$project$Emoji$EmojiData, 'flag sr', 4, 15),
+		A3($author$project$Emoji$EmojiData, 'flag ss', 4, 16),
+		A3($author$project$Emoji$EmojiData, 'flag st', 4, 17),
+		A3($author$project$Emoji$EmojiData, 'flag sv', 4, 18),
+		A3($author$project$Emoji$EmojiData, 'flag sx', 4, 19),
+		A3($author$project$Emoji$EmojiData, 'flag sy', 4, 20),
+		A3($author$project$Emoji$EmojiData, 'flag sz', 4, 21),
+		A3($author$project$Emoji$EmojiData, 'flag ta', 4, 22),
+		A3($author$project$Emoji$EmojiData, 'flag tc', 4, 23),
+		A3($author$project$Emoji$EmojiData, 'flag td', 4, 24),
+		A3($author$project$Emoji$EmojiData, 'flag tf', 4, 25),
+		A3($author$project$Emoji$EmojiData, 'flag tg', 4, 26),
+		A3($author$project$Emoji$EmojiData, 'flag th', 4, 27),
+		A3($author$project$Emoji$EmojiData, 'flag tj', 4, 28),
+		A3($author$project$Emoji$EmojiData, 'flag tk', 4, 29),
+		A3($author$project$Emoji$EmojiData, 'flag tl', 4, 30),
+		A3($author$project$Emoji$EmojiData, 'flag tm', 4, 31),
+		A3($author$project$Emoji$EmojiData, 'flag tn', 4, 32),
+		A3($author$project$Emoji$EmojiData, 'flag to', 4, 33),
+		A3($author$project$Emoji$EmojiData, 'flag tr', 4, 34),
+		A3($author$project$Emoji$EmojiData, 'flag tt', 4, 35),
+		A3($author$project$Emoji$EmojiData, 'flag tv', 4, 36),
+		A3($author$project$Emoji$EmojiData, 'flag tw', 4, 37),
+		A3($author$project$Emoji$EmojiData, 'flag tz', 4, 38),
+		A3($author$project$Emoji$EmojiData, 'flag ua', 4, 39),
+		A3($author$project$Emoji$EmojiData, 'flag ug', 4, 40),
+		A3($author$project$Emoji$EmojiData, 'flag um', 4, 41),
+		A3($author$project$Emoji$EmojiData, 'flag un', 4, 42),
+		A3($author$project$Emoji$EmojiData, 'us', 4, 43),
+		A3($author$project$Emoji$EmojiData, 'flag uy', 4, 44),
+		A3($author$project$Emoji$EmojiData, 'flag uz', 4, 45),
+		A3($author$project$Emoji$EmojiData, 'flag va', 4, 46),
+		A3($author$project$Emoji$EmojiData, 'flag vc', 4, 47),
+		A3($author$project$Emoji$EmojiData, 'flag ve', 4, 48),
+		A3($author$project$Emoji$EmojiData, 'flag vg', 4, 49),
+		A3($author$project$Emoji$EmojiData, 'flag vi', 4, 50),
+		A3($author$project$Emoji$EmojiData, 'flag vn', 4, 51),
+		A3($author$project$Emoji$EmojiData, 'flag vu', 4, 52),
+		A3($author$project$Emoji$EmojiData, 'flag wf', 4, 53),
+		A3($author$project$Emoji$EmojiData, 'flag ws', 4, 54),
+		A3($author$project$Emoji$EmojiData, 'flag xk', 4, 55),
+		A3($author$project$Emoji$EmojiData, 'flag ye', 4, 56),
+		A3($author$project$Emoji$EmojiData, 'flag yt', 5, 0),
+		A3($author$project$Emoji$EmojiData, 'flag za', 5, 1),
+		A3($author$project$Emoji$EmojiData, 'flag zm', 5, 2),
+		A3($author$project$Emoji$EmojiData, 'flag zw', 5, 3),
+		A3($author$project$Emoji$EmojiData, 'koko', 5, 4),
+		A3($author$project$Emoji$EmojiData, 'sa', 5, 5),
+		A3($author$project$Emoji$EmojiData, 'u7121', 5, 6),
+		A3($author$project$Emoji$EmojiData, 'u6307', 5, 7),
+		A3($author$project$Emoji$EmojiData, 'u7981', 5, 8),
+		A3($author$project$Emoji$EmojiData, 'u7a7a', 5, 9),
+		A3($author$project$Emoji$EmojiData, 'u5408', 5, 10),
+		A3($author$project$Emoji$EmojiData, 'u6e80', 5, 11),
+		A3($author$project$Emoji$EmojiData, 'u6709', 5, 12),
+		A3($author$project$Emoji$EmojiData, 'u6708', 5, 13),
+		A3($author$project$Emoji$EmojiData, 'u7533', 5, 14),
+		A3($author$project$Emoji$EmojiData, 'u5272', 5, 15),
+		A3($author$project$Emoji$EmojiData, 'u55b6', 5, 16),
+		A3($author$project$Emoji$EmojiData, 'ideograph advantage', 5, 17),
+		A3($author$project$Emoji$EmojiData, 'accept', 5, 18),
+		A3($author$project$Emoji$EmojiData, 'cyclone', 5, 19),
+		A3($author$project$Emoji$EmojiData, 'foggy', 5, 20),
+		A3($author$project$Emoji$EmojiData, 'closed umbrella', 5, 21),
+		A3($author$project$Emoji$EmojiData, 'night with stars', 5, 22),
+		A3($author$project$Emoji$EmojiData, 'sunrise over mountains', 5, 23),
+		A3($author$project$Emoji$EmojiData, 'sunrise', 5, 24),
+		A3($author$project$Emoji$EmojiData, 'city sunset', 5, 25),
+		A3($author$project$Emoji$EmojiData, 'city sunrise', 5, 26),
+		A3($author$project$Emoji$EmojiData, 'rainbow', 5, 27),
+		A3($author$project$Emoji$EmojiData, 'bridge at night', 5, 28),
+		A3($author$project$Emoji$EmojiData, 'ocean', 5, 29),
+		A3($author$project$Emoji$EmojiData, 'volcano', 5, 30),
+		A3($author$project$Emoji$EmojiData, 'milky way', 5, 31),
+		A3($author$project$Emoji$EmojiData, 'earth africa', 5, 32),
+		A3($author$project$Emoji$EmojiData, 'earth americas', 5, 33),
+		A3($author$project$Emoji$EmojiData, 'earth asia', 5, 34),
+		A3($author$project$Emoji$EmojiData, 'globe with meridians', 5, 35),
+		A3($author$project$Emoji$EmojiData, 'new moon', 5, 36),
+		A3($author$project$Emoji$EmojiData, 'waxing crescent moon', 5, 37),
+		A3($author$project$Emoji$EmojiData, 'first quarter moon', 5, 38),
+		A3($author$project$Emoji$EmojiData, 'moon', 5, 39),
+		A3($author$project$Emoji$EmojiData, 'full moon', 5, 40),
+		A3($author$project$Emoji$EmojiData, 'waning gibbous moon', 5, 41),
+		A3($author$project$Emoji$EmojiData, 'last quarter moon', 5, 42),
+		A3($author$project$Emoji$EmojiData, 'waning crescent moon', 5, 43),
+		A3($author$project$Emoji$EmojiData, 'crescent moon', 5, 44),
+		A3($author$project$Emoji$EmojiData, 'new moon with face', 5, 45),
+		A3($author$project$Emoji$EmojiData, 'first quarter moon with face', 5, 46),
+		A3($author$project$Emoji$EmojiData, 'last quarter moon with face', 5, 47),
+		A3($author$project$Emoji$EmojiData, 'full moon with face', 5, 48),
+		A3($author$project$Emoji$EmojiData, 'sun with face', 5, 49),
+		A3($author$project$Emoji$EmojiData, 'star2', 5, 50),
+		A3($author$project$Emoji$EmojiData, 'stars', 5, 51),
+		A3($author$project$Emoji$EmojiData, 'thermometer', 5, 52),
+		A3($author$project$Emoji$EmojiData, 'mostly sunny', 5, 53),
+		A3($author$project$Emoji$EmojiData, 'barely sunny', 5, 54),
+		A3($author$project$Emoji$EmojiData, 'partly sunny rain', 5, 55),
+		A3($author$project$Emoji$EmojiData, 'rain cloud', 5, 56),
+		A3($author$project$Emoji$EmojiData, 'snow cloud', 6, 0),
+		A3($author$project$Emoji$EmojiData, 'lightning', 6, 1),
+		A3($author$project$Emoji$EmojiData, 'tornado', 6, 2),
+		A3($author$project$Emoji$EmojiData, 'fog', 6, 3),
+		A3($author$project$Emoji$EmojiData, 'wind blowing face', 6, 4),
+		A3($author$project$Emoji$EmojiData, 'hotdog', 6, 5),
+		A3($author$project$Emoji$EmojiData, 'taco', 6, 6),
+		A3($author$project$Emoji$EmojiData, 'burrito', 6, 7),
+		A3($author$project$Emoji$EmojiData, 'chestnut', 6, 8),
+		A3($author$project$Emoji$EmojiData, 'seedling', 6, 9),
+		A3($author$project$Emoji$EmojiData, 'evergreen tree', 6, 10),
+		A3($author$project$Emoji$EmojiData, 'deciduous tree', 6, 11),
+		A3($author$project$Emoji$EmojiData, 'palm tree', 6, 12),
+		A3($author$project$Emoji$EmojiData, 'cactus', 6, 13),
+		A3($author$project$Emoji$EmojiData, 'hot pepper', 6, 14),
+		A3($author$project$Emoji$EmojiData, 'tulip', 6, 15),
+		A3($author$project$Emoji$EmojiData, 'cherry blossom', 6, 16),
+		A3($author$project$Emoji$EmojiData, 'rose', 6, 17),
+		A3($author$project$Emoji$EmojiData, 'hibiscus', 6, 18),
+		A3($author$project$Emoji$EmojiData, 'sunflower', 6, 19),
+		A3($author$project$Emoji$EmojiData, 'blossom', 6, 20),
+		A3($author$project$Emoji$EmojiData, 'corn', 6, 21),
+		A3($author$project$Emoji$EmojiData, 'ear of rice', 6, 22),
+		A3($author$project$Emoji$EmojiData, 'herb', 6, 23),
+		A3($author$project$Emoji$EmojiData, 'four leaf clover', 6, 24),
+		A3($author$project$Emoji$EmojiData, 'maple leaf', 6, 25),
+		A3($author$project$Emoji$EmojiData, 'fallen leaf', 6, 26),
+		A3($author$project$Emoji$EmojiData, 'leaves', 6, 27),
+		A3($author$project$Emoji$EmojiData, 'mushroom', 6, 28),
+		A3($author$project$Emoji$EmojiData, 'tomato', 6, 29),
+		A3($author$project$Emoji$EmojiData, 'eggplant', 6, 30),
+		A3($author$project$Emoji$EmojiData, 'grapes', 6, 31),
+		A3($author$project$Emoji$EmojiData, 'melon', 6, 32),
+		A3($author$project$Emoji$EmojiData, 'watermelon', 6, 33),
+		A3($author$project$Emoji$EmojiData, 'tangerine', 6, 34),
+		A3($author$project$Emoji$EmojiData, 'lemon', 6, 35),
+		A3($author$project$Emoji$EmojiData, 'banana', 6, 36),
+		A3($author$project$Emoji$EmojiData, 'pineapple', 6, 37),
+		A3($author$project$Emoji$EmojiData, 'apple', 6, 38),
+		A3($author$project$Emoji$EmojiData, 'green apple', 6, 39),
+		A3($author$project$Emoji$EmojiData, 'pear', 6, 40),
+		A3($author$project$Emoji$EmojiData, 'peach', 6, 41),
+		A3($author$project$Emoji$EmojiData, 'cherries', 6, 42),
+		A3($author$project$Emoji$EmojiData, 'strawberry', 6, 43),
+		A3($author$project$Emoji$EmojiData, 'hamburger', 6, 44),
+		A3($author$project$Emoji$EmojiData, 'pizza', 6, 45),
+		A3($author$project$Emoji$EmojiData, 'meat on bone', 6, 46),
+		A3($author$project$Emoji$EmojiData, 'poultry leg', 6, 47),
+		A3($author$project$Emoji$EmojiData, 'rice cracker', 6, 48),
+		A3($author$project$Emoji$EmojiData, 'rice ball', 6, 49),
+		A3($author$project$Emoji$EmojiData, 'rice', 6, 50),
+		A3($author$project$Emoji$EmojiData, 'curry', 6, 51),
+		A3($author$project$Emoji$EmojiData, 'ramen', 6, 52),
+		A3($author$project$Emoji$EmojiData, 'spaghetti', 6, 53),
+		A3($author$project$Emoji$EmojiData, 'bread', 6, 54),
+		A3($author$project$Emoji$EmojiData, 'fries', 6, 55),
+		A3($author$project$Emoji$EmojiData, 'sweet potato', 6, 56),
+		A3($author$project$Emoji$EmojiData, 'dango', 7, 0),
+		A3($author$project$Emoji$EmojiData, 'oden', 7, 1),
+		A3($author$project$Emoji$EmojiData, 'sushi', 7, 2),
+		A3($author$project$Emoji$EmojiData, 'fried shrimp', 7, 3),
+		A3($author$project$Emoji$EmojiData, 'fish cake', 7, 4),
+		A3($author$project$Emoji$EmojiData, 'icecream', 7, 5),
+		A3($author$project$Emoji$EmojiData, 'shaved ice', 7, 6),
+		A3($author$project$Emoji$EmojiData, 'ice cream', 7, 7),
+		A3($author$project$Emoji$EmojiData, 'doughnut', 7, 8),
+		A3($author$project$Emoji$EmojiData, 'cookie', 7, 9),
+		A3($author$project$Emoji$EmojiData, 'chocolate bar', 7, 10),
+		A3($author$project$Emoji$EmojiData, 'candy', 7, 11),
+		A3($author$project$Emoji$EmojiData, 'lollipop', 7, 12),
+		A3($author$project$Emoji$EmojiData, 'custard', 7, 13),
+		A3($author$project$Emoji$EmojiData, 'honey pot', 7, 14),
+		A3($author$project$Emoji$EmojiData, 'cake', 7, 15),
+		A3($author$project$Emoji$EmojiData, 'bento', 7, 16),
+		A3($author$project$Emoji$EmojiData, 'stew', 7, 17),
+		A3($author$project$Emoji$EmojiData, 'fried egg', 7, 18),
+		A3($author$project$Emoji$EmojiData, 'fork and knife', 7, 19),
+		A3($author$project$Emoji$EmojiData, 'tea', 7, 20),
+		A3($author$project$Emoji$EmojiData, 'sake', 7, 21),
+		A3($author$project$Emoji$EmojiData, 'wine glass', 7, 22),
+		A3($author$project$Emoji$EmojiData, 'cocktail', 7, 23),
+		A3($author$project$Emoji$EmojiData, 'tropical drink', 7, 24),
+		A3($author$project$Emoji$EmojiData, 'beer', 7, 25),
+		A3($author$project$Emoji$EmojiData, 'beers', 7, 26),
+		A3($author$project$Emoji$EmojiData, 'baby bottle', 7, 27),
+		A3($author$project$Emoji$EmojiData, 'knife fork plate', 7, 28),
+		A3($author$project$Emoji$EmojiData, 'champagne', 7, 29),
+		A3($author$project$Emoji$EmojiData, 'popcorn', 7, 30),
+		A3($author$project$Emoji$EmojiData, 'ribbon', 7, 31),
+		A3($author$project$Emoji$EmojiData, 'gift', 7, 32),
+		A3($author$project$Emoji$EmojiData, 'birthday', 7, 33),
+		A3($author$project$Emoji$EmojiData, 'jack o lantern', 7, 34),
+		A3($author$project$Emoji$EmojiData, 'christmas tree', 7, 35),
+		A3($author$project$Emoji$EmojiData, 'santa', 7, 36),
+		A3($author$project$Emoji$EmojiData, 'fireworks', 7, 42),
+		A3($author$project$Emoji$EmojiData, 'sparkler', 7, 43),
+		A3($author$project$Emoji$EmojiData, 'balloon', 7, 44),
+		A3($author$project$Emoji$EmojiData, 'tada', 7, 45),
+		A3($author$project$Emoji$EmojiData, 'confetti ball', 7, 46),
+		A3($author$project$Emoji$EmojiData, 'tanabata tree', 7, 47),
+		A3($author$project$Emoji$EmojiData, 'crossed flags', 7, 48),
+		A3($author$project$Emoji$EmojiData, 'bamboo', 7, 49),
+		A3($author$project$Emoji$EmojiData, 'dolls', 7, 50),
+		A3($author$project$Emoji$EmojiData, 'flags', 7, 51),
+		A3($author$project$Emoji$EmojiData, 'wind chime', 7, 52),
+		A3($author$project$Emoji$EmojiData, 'rice scene', 7, 53),
+		A3($author$project$Emoji$EmojiData, 'school satchel', 7, 54),
+		A3($author$project$Emoji$EmojiData, 'mortar board', 7, 55),
+		A3($author$project$Emoji$EmojiData, 'medal', 7, 56),
+		A3($author$project$Emoji$EmojiData, 'reminder ribbon', 8, 0),
+		A3($author$project$Emoji$EmojiData, 'studio microphone', 8, 1),
+		A3($author$project$Emoji$EmojiData, 'level slider', 8, 2),
+		A3($author$project$Emoji$EmojiData, 'control knobs', 8, 3),
+		A3($author$project$Emoji$EmojiData, 'film frames', 8, 4),
+		A3($author$project$Emoji$EmojiData, 'admission tickets', 8, 5),
+		A3($author$project$Emoji$EmojiData, 'carousel horse', 8, 6),
+		A3($author$project$Emoji$EmojiData, 'ferris wheel', 8, 7),
+		A3($author$project$Emoji$EmojiData, 'roller coaster', 8, 8),
+		A3($author$project$Emoji$EmojiData, 'fishing pole and fish', 8, 9),
+		A3($author$project$Emoji$EmojiData, 'microphone', 8, 10),
+		A3($author$project$Emoji$EmojiData, 'movie camera', 8, 11),
+		A3($author$project$Emoji$EmojiData, 'cinema', 8, 12),
+		A3($author$project$Emoji$EmojiData, 'headphones', 8, 13),
+		A3($author$project$Emoji$EmojiData, 'art', 8, 14),
+		A3($author$project$Emoji$EmojiData, 'tophat', 8, 15),
+		A3($author$project$Emoji$EmojiData, 'circus tent', 8, 16),
+		A3($author$project$Emoji$EmojiData, 'ticket', 8, 17),
+		A3($author$project$Emoji$EmojiData, 'clapper', 8, 18),
+		A3($author$project$Emoji$EmojiData, 'performing arts', 8, 19),
+		A3($author$project$Emoji$EmojiData, 'video game', 8, 20),
+		A3($author$project$Emoji$EmojiData, 'dart', 8, 21),
+		A3($author$project$Emoji$EmojiData, 'slot machine', 8, 22),
+		A3($author$project$Emoji$EmojiData, '8ball', 8, 23),
+		A3($author$project$Emoji$EmojiData, 'game die', 8, 24),
+		A3($author$project$Emoji$EmojiData, 'bowling', 8, 25),
+		A3($author$project$Emoji$EmojiData, 'flower playing cards', 8, 26),
+		A3($author$project$Emoji$EmojiData, 'musical note', 8, 27),
+		A3($author$project$Emoji$EmojiData, 'notes', 8, 28),
+		A3($author$project$Emoji$EmojiData, 'saxophone', 8, 29),
+		A3($author$project$Emoji$EmojiData, 'guitar', 8, 30),
+		A3($author$project$Emoji$EmojiData, 'musical keyboard', 8, 31),
+		A3($author$project$Emoji$EmojiData, 'trumpet', 8, 32),
+		A3($author$project$Emoji$EmojiData, 'violin', 8, 33),
+		A3($author$project$Emoji$EmojiData, 'musical score', 8, 34),
+		A3($author$project$Emoji$EmojiData, 'running shirt with sash', 8, 35),
+		A3($author$project$Emoji$EmojiData, 'tennis', 8, 36),
+		A3($author$project$Emoji$EmojiData, 'ski', 8, 37),
+		A3($author$project$Emoji$EmojiData, 'basketball', 8, 38),
+		A3($author$project$Emoji$EmojiData, 'checkered flag', 8, 39),
+		A3($author$project$Emoji$EmojiData, 'snowboarder', 8, 40),
+		A3($author$project$Emoji$EmojiData, 'woman running', 8, 46),
+		A3($author$project$Emoji$EmojiData, 'man running', 8, 52),
+		A3($author$project$Emoji$EmojiData, 'runner', 9, 1),
+		A3($author$project$Emoji$EmojiData, 'woman surfing', 9, 7),
+		A3($author$project$Emoji$EmojiData, 'man surfing', 9, 13),
+		A3($author$project$Emoji$EmojiData, 'surfer', 9, 19),
+		A3($author$project$Emoji$EmojiData, 'sports medal', 9, 25),
+		A3($author$project$Emoji$EmojiData, 'trophy', 9, 26),
+		A3($author$project$Emoji$EmojiData, 'horse racing', 9, 27),
+		A3($author$project$Emoji$EmojiData, 'football', 9, 33),
+		A3($author$project$Emoji$EmojiData, 'rugby football', 9, 34),
+		A3($author$project$Emoji$EmojiData, 'woman swimming', 9, 35),
+		A3($author$project$Emoji$EmojiData, 'man swimming', 9, 41),
+		A3($author$project$Emoji$EmojiData, 'swimmer', 9, 47),
+		A3($author$project$Emoji$EmojiData, 'woman lifting weights', 9, 53),
+		A3($author$project$Emoji$EmojiData, 'man lifting weights', 10, 2),
+		A3($author$project$Emoji$EmojiData, 'weight lifter', 10, 8),
+		A3($author$project$Emoji$EmojiData, 'woman golfing', 10, 14),
+		A3($author$project$Emoji$EmojiData, 'man golfing', 10, 20),
+		A3($author$project$Emoji$EmojiData, 'golfer', 10, 26),
+		A3($author$project$Emoji$EmojiData, 'racing motorcycle', 10, 32),
+		A3($author$project$Emoji$EmojiData, 'racing car', 10, 33),
+		A3($author$project$Emoji$EmojiData, 'cricket bat and ball', 10, 34),
+		A3($author$project$Emoji$EmojiData, 'volleyball', 10, 35),
+		A3($author$project$Emoji$EmojiData, 'field hockey stick and ball', 10, 36),
+		A3($author$project$Emoji$EmojiData, 'ice hockey stick and puck', 10, 37),
+		A3($author$project$Emoji$EmojiData, 'table tennis paddle and ball', 10, 38),
+		A3($author$project$Emoji$EmojiData, 'snow capped mountain', 10, 39),
+		A3($author$project$Emoji$EmojiData, 'camping', 10, 40),
+		A3($author$project$Emoji$EmojiData, 'beach with umbrella', 10, 41),
+		A3($author$project$Emoji$EmojiData, 'building construction', 10, 42),
+		A3($author$project$Emoji$EmojiData, 'house buildings', 10, 43),
+		A3($author$project$Emoji$EmojiData, 'cityscape', 10, 44),
+		A3($author$project$Emoji$EmojiData, 'derelict house building', 10, 45),
+		A3($author$project$Emoji$EmojiData, 'classical building', 10, 46),
+		A3($author$project$Emoji$EmojiData, 'desert', 10, 47),
+		A3($author$project$Emoji$EmojiData, 'desert island', 10, 48),
+		A3($author$project$Emoji$EmojiData, 'national park', 10, 49),
+		A3($author$project$Emoji$EmojiData, 'stadium', 10, 50),
+		A3($author$project$Emoji$EmojiData, 'house', 10, 51),
+		A3($author$project$Emoji$EmojiData, 'house with garden', 10, 52),
+		A3($author$project$Emoji$EmojiData, 'office', 10, 53),
+		A3($author$project$Emoji$EmojiData, 'post office', 10, 54),
+		A3($author$project$Emoji$EmojiData, 'european post office', 10, 55),
+		A3($author$project$Emoji$EmojiData, 'hospital', 10, 56),
+		A3($author$project$Emoji$EmojiData, 'bank', 11, 0),
+		A3($author$project$Emoji$EmojiData, 'atm', 11, 1),
+		A3($author$project$Emoji$EmojiData, 'hotel', 11, 2),
+		A3($author$project$Emoji$EmojiData, 'love hotel', 11, 3),
+		A3($author$project$Emoji$EmojiData, 'convenience store', 11, 4),
+		A3($author$project$Emoji$EmojiData, 'school', 11, 5),
+		A3($author$project$Emoji$EmojiData, 'department store', 11, 6),
+		A3($author$project$Emoji$EmojiData, 'factory', 11, 7),
+		A3($author$project$Emoji$EmojiData, 'izakaya lantern', 11, 8),
+		A3($author$project$Emoji$EmojiData, 'japanese castle', 11, 9),
+		A3($author$project$Emoji$EmojiData, 'european castle', 11, 10),
+		A3($author$project$Emoji$EmojiData, 'rainbow flag', 11, 11),
+		A3($author$project$Emoji$EmojiData, 'waving white flag', 11, 12),
+		A3($author$project$Emoji$EmojiData, 'pirate flag', 11, 13),
+		A3($author$project$Emoji$EmojiData, 'flag england', 11, 14),
+		A3($author$project$Emoji$EmojiData, 'flag scotland', 11, 15),
+		A3($author$project$Emoji$EmojiData, 'flag wales', 11, 16),
+		A3($author$project$Emoji$EmojiData, 'waving black flag', 11, 17),
+		A3($author$project$Emoji$EmojiData, 'rosette', 11, 18),
+		A3($author$project$Emoji$EmojiData, 'label', 11, 19),
+		A3($author$project$Emoji$EmojiData, 'badminton racquet and shuttlecock', 11, 20),
+		A3($author$project$Emoji$EmojiData, 'bow and arrow', 11, 21),
+		A3($author$project$Emoji$EmojiData, 'amphora', 11, 22),
+		A3($author$project$Emoji$EmojiData, 'skin tone 2', 11, 23),
+		A3($author$project$Emoji$EmojiData, 'skin tone 3', 11, 24),
+		A3($author$project$Emoji$EmojiData, 'skin tone 4', 11, 25),
+		A3($author$project$Emoji$EmojiData, 'skin tone 5', 11, 26),
+		A3($author$project$Emoji$EmojiData, 'skin tone 6', 11, 27),
+		A3($author$project$Emoji$EmojiData, 'rat', 11, 28),
+		A3($author$project$Emoji$EmojiData, 'mouse2', 11, 29),
+		A3($author$project$Emoji$EmojiData, 'ox', 11, 30),
+		A3($author$project$Emoji$EmojiData, 'water buffalo', 11, 31),
+		A3($author$project$Emoji$EmojiData, 'cow2', 11, 32),
+		A3($author$project$Emoji$EmojiData, 'tiger2', 11, 33),
+		A3($author$project$Emoji$EmojiData, 'leopard', 11, 34),
+		A3($author$project$Emoji$EmojiData, 'rabbit2', 11, 35),
+		A3($author$project$Emoji$EmojiData, 'cat2', 11, 36),
+		A3($author$project$Emoji$EmojiData, 'dragon', 11, 37),
+		A3($author$project$Emoji$EmojiData, 'crocodile', 11, 38),
+		A3($author$project$Emoji$EmojiData, 'whale2', 11, 39),
+		A3($author$project$Emoji$EmojiData, 'snail', 11, 40),
+		A3($author$project$Emoji$EmojiData, 'snake', 11, 41),
+		A3($author$project$Emoji$EmojiData, 'racehorse', 11, 42),
+		A3($author$project$Emoji$EmojiData, 'ram', 11, 43),
+		A3($author$project$Emoji$EmojiData, 'goat', 11, 44),
+		A3($author$project$Emoji$EmojiData, 'sheep', 11, 45),
+		A3($author$project$Emoji$EmojiData, 'monkey', 11, 46),
+		A3($author$project$Emoji$EmojiData, 'rooster', 11, 47),
+		A3($author$project$Emoji$EmojiData, 'chicken', 11, 48),
+		A3($author$project$Emoji$EmojiData, 'service dog', 11, 49),
+		A3($author$project$Emoji$EmojiData, 'dog2', 11, 50),
+		A3($author$project$Emoji$EmojiData, 'pig2', 11, 51),
+		A3($author$project$Emoji$EmojiData, 'boar', 11, 52),
+		A3($author$project$Emoji$EmojiData, 'elephant', 11, 53),
+		A3($author$project$Emoji$EmojiData, 'octopus', 11, 54),
+		A3($author$project$Emoji$EmojiData, 'shell', 11, 55),
+		A3($author$project$Emoji$EmojiData, 'bug', 11, 56),
+		A3($author$project$Emoji$EmojiData, 'ant', 12, 0),
+		A3($author$project$Emoji$EmojiData, 'bee', 12, 1),
+		A3($author$project$Emoji$EmojiData, 'beetle', 12, 2),
+		A3($author$project$Emoji$EmojiData, 'fish', 12, 3),
+		A3($author$project$Emoji$EmojiData, 'tropical fish', 12, 4),
+		A3($author$project$Emoji$EmojiData, 'blowfish', 12, 5),
+		A3($author$project$Emoji$EmojiData, 'turtle', 12, 6),
+		A3($author$project$Emoji$EmojiData, 'hatching chick', 12, 7),
+		A3($author$project$Emoji$EmojiData, 'baby chick', 12, 8),
+		A3($author$project$Emoji$EmojiData, 'hatched chick', 12, 9),
+		A3($author$project$Emoji$EmojiData, 'bird', 12, 10),
+		A3($author$project$Emoji$EmojiData, 'penguin', 12, 11),
+		A3($author$project$Emoji$EmojiData, 'koala', 12, 12),
+		A3($author$project$Emoji$EmojiData, 'poodle', 12, 13),
+		A3($author$project$Emoji$EmojiData, 'dromedary camel', 12, 14),
+		A3($author$project$Emoji$EmojiData, 'camel', 12, 15),
+		A3($author$project$Emoji$EmojiData, 'dolphin', 12, 16),
+		A3($author$project$Emoji$EmojiData, 'mouse', 12, 17),
+		A3($author$project$Emoji$EmojiData, 'cow', 12, 18),
+		A3($author$project$Emoji$EmojiData, 'tiger', 12, 19),
+		A3($author$project$Emoji$EmojiData, 'rabbit', 12, 20),
+		A3($author$project$Emoji$EmojiData, 'cat', 12, 21),
+		A3($author$project$Emoji$EmojiData, 'dragon face', 12, 22),
+		A3($author$project$Emoji$EmojiData, 'whale', 12, 23),
+		A3($author$project$Emoji$EmojiData, 'horse', 12, 24),
+		A3($author$project$Emoji$EmojiData, 'monkey face', 12, 25),
+		A3($author$project$Emoji$EmojiData, 'dog', 12, 26),
+		A3($author$project$Emoji$EmojiData, 'pig', 12, 27),
+		A3($author$project$Emoji$EmojiData, 'frog', 12, 28),
+		A3($author$project$Emoji$EmojiData, 'hamster', 12, 29),
+		A3($author$project$Emoji$EmojiData, 'wolf', 12, 30),
+		A3($author$project$Emoji$EmojiData, 'bear', 12, 31),
+		A3($author$project$Emoji$EmojiData, 'panda face', 12, 32),
+		A3($author$project$Emoji$EmojiData, 'pig nose', 12, 33),
+		A3($author$project$Emoji$EmojiData, 'feet', 12, 34),
+		A3($author$project$Emoji$EmojiData, 'chipmunk', 12, 35),
+		A3($author$project$Emoji$EmojiData, 'eyes', 12, 36),
+		A3($author$project$Emoji$EmojiData, 'eye in speech bubble', 12, 37),
+		A3($author$project$Emoji$EmojiData, 'eye', 12, 38),
+		A3($author$project$Emoji$EmojiData, 'ear', 12, 39),
+		A3($author$project$Emoji$EmojiData, 'nose', 12, 45),
+		A3($author$project$Emoji$EmojiData, 'lips', 12, 51),
+		A3($author$project$Emoji$EmojiData, 'tongue', 12, 52),
+		A3($author$project$Emoji$EmojiData, 'point up 2', 12, 53),
+		A3($author$project$Emoji$EmojiData, 'point down', 13, 2),
+		A3($author$project$Emoji$EmojiData, 'point left', 13, 8),
+		A3($author$project$Emoji$EmojiData, 'point right', 13, 14),
+		A3($author$project$Emoji$EmojiData, 'facepunch', 13, 20),
+		A3($author$project$Emoji$EmojiData, 'wave', 13, 26),
+		A3($author$project$Emoji$EmojiData, 'ok hand', 13, 32),
+		A3($author$project$Emoji$EmojiData, '+1', 13, 38),
+		A3($author$project$Emoji$EmojiData, ' 1', 13, 44),
+		A3($author$project$Emoji$EmojiData, 'clap', 13, 50),
+		A3($author$project$Emoji$EmojiData, 'open hands', 13, 56),
+		A3($author$project$Emoji$EmojiData, 'crown', 14, 5),
+		A3($author$project$Emoji$EmojiData, 'womans hat', 14, 6),
+		A3($author$project$Emoji$EmojiData, 'eyeglasses', 14, 7),
+		A3($author$project$Emoji$EmojiData, 'necktie', 14, 8),
+		A3($author$project$Emoji$EmojiData, 'shirt', 14, 9),
+		A3($author$project$Emoji$EmojiData, 'jeans', 14, 10),
+		A3($author$project$Emoji$EmojiData, 'dress', 14, 11),
+		A3($author$project$Emoji$EmojiData, 'kimono', 14, 12),
+		A3($author$project$Emoji$EmojiData, 'bikini', 14, 13),
+		A3($author$project$Emoji$EmojiData, 'womans clothes', 14, 14),
+		A3($author$project$Emoji$EmojiData, 'purse', 14, 15),
+		A3($author$project$Emoji$EmojiData, 'handbag', 14, 16),
+		A3($author$project$Emoji$EmojiData, 'pouch', 14, 17),
+		A3($author$project$Emoji$EmojiData, 'mans shoe', 14, 18),
+		A3($author$project$Emoji$EmojiData, 'athletic shoe', 14, 19),
+		A3($author$project$Emoji$EmojiData, 'high heel', 14, 20),
+		A3($author$project$Emoji$EmojiData, 'sandal', 14, 21),
+		A3($author$project$Emoji$EmojiData, 'boot', 14, 22),
+		A3($author$project$Emoji$EmojiData, 'footprints', 14, 23),
+		A3($author$project$Emoji$EmojiData, 'bust in silhouette', 14, 24),
+		A3($author$project$Emoji$EmojiData, 'busts in silhouette', 14, 25),
+		A3($author$project$Emoji$EmojiData, 'boy', 14, 26),
+		A3($author$project$Emoji$EmojiData, 'girl', 14, 32),
+		A3($author$project$Emoji$EmojiData, 'male farmer', 14, 38),
+		A3($author$project$Emoji$EmojiData, 'male cook', 14, 44),
+		A3($author$project$Emoji$EmojiData, 'male student', 14, 50),
+		A3($author$project$Emoji$EmojiData, 'male singer', 14, 56),
+		A3($author$project$Emoji$EmojiData, 'male artist', 15, 5),
+		A3($author$project$Emoji$EmojiData, 'male teacher', 15, 11),
+		A3($author$project$Emoji$EmojiData, 'male factory worker', 15, 17),
+		A3($author$project$Emoji$EmojiData, 'man boy boy', 15, 23),
+		A3($author$project$Emoji$EmojiData, 'man boy', 15, 24),
+		A3($author$project$Emoji$EmojiData, 'man girl boy', 15, 25),
+		A3($author$project$Emoji$EmojiData, 'man girl girl', 15, 26),
+		A3($author$project$Emoji$EmojiData, 'man girl', 15, 27),
+		A3($author$project$Emoji$EmojiData, 'man man boy', 15, 28),
+		A3($author$project$Emoji$EmojiData, 'man man boy boy', 15, 29),
+		A3($author$project$Emoji$EmojiData, 'man man girl', 15, 30),
+		A3($author$project$Emoji$EmojiData, 'man man girl boy', 15, 31),
+		A3($author$project$Emoji$EmojiData, 'man man girl girl', 15, 32),
+		A3($author$project$Emoji$EmojiData, 'man woman boy', 15, 33),
+		A3($author$project$Emoji$EmojiData, 'man woman boy boy', 15, 34),
+		A3($author$project$Emoji$EmojiData, 'man woman girl', 15, 35),
+		A3($author$project$Emoji$EmojiData, 'man woman girl boy', 15, 36),
+		A3($author$project$Emoji$EmojiData, 'man woman girl girl', 15, 37),
+		A3($author$project$Emoji$EmojiData, 'male technologist', 15, 38),
+		A3($author$project$Emoji$EmojiData, 'male office worker', 15, 44),
+		A3($author$project$Emoji$EmojiData, 'male mechanic', 15, 50),
+		A3($author$project$Emoji$EmojiData, 'male scientist', 15, 56),
+		A3($author$project$Emoji$EmojiData, 'male astronaut', 16, 5),
+		A3($author$project$Emoji$EmojiData, 'male firefighter', 16, 11),
+		A3($author$project$Emoji$EmojiData, 'man with probing cane', 16, 17),
+		A3($author$project$Emoji$EmojiData, 'red haired man', 16, 23),
+		A3($author$project$Emoji$EmojiData, 'curly haired man', 16, 29),
+		A3($author$project$Emoji$EmojiData, 'bald man', 16, 35),
+		A3($author$project$Emoji$EmojiData, 'white haired man', 16, 41),
+		A3($author$project$Emoji$EmojiData, 'man in motorized wheelchair', 16, 47),
+		A3($author$project$Emoji$EmojiData, 'man in manual wheelchair', 16, 53),
+		A3($author$project$Emoji$EmojiData, 'male doctor', 17, 2),
+		A3($author$project$Emoji$EmojiData, 'male judge', 17, 8),
+		A3($author$project$Emoji$EmojiData, 'male pilot', 17, 14),
+		A3($author$project$Emoji$EmojiData, 'man heart man', 17, 20),
+		A3($author$project$Emoji$EmojiData, 'man kiss man', 17, 21),
+		A3($author$project$Emoji$EmojiData, 'man', 17, 22),
+		A3($author$project$Emoji$EmojiData, 'female farmer', 17, 28),
+		A3($author$project$Emoji$EmojiData, 'female cook', 17, 34),
+		A3($author$project$Emoji$EmojiData, 'female student', 17, 40),
+		A3($author$project$Emoji$EmojiData, 'female singer', 17, 46),
+		A3($author$project$Emoji$EmojiData, 'female artist', 17, 52),
+		A3($author$project$Emoji$EmojiData, 'female teacher', 18, 1),
+		A3($author$project$Emoji$EmojiData, 'female factory worker', 18, 7),
+		A3($author$project$Emoji$EmojiData, 'woman boy boy', 18, 13),
+		A3($author$project$Emoji$EmojiData, 'woman boy', 18, 14),
+		A3($author$project$Emoji$EmojiData, 'woman girl boy', 18, 15),
+		A3($author$project$Emoji$EmojiData, 'woman girl girl', 18, 16),
+		A3($author$project$Emoji$EmojiData, 'woman girl', 18, 17),
+		A3($author$project$Emoji$EmojiData, 'woman woman boy', 18, 18),
+		A3($author$project$Emoji$EmojiData, 'woman woman boy boy', 18, 19),
+		A3($author$project$Emoji$EmojiData, 'woman woman girl', 18, 20),
+		A3($author$project$Emoji$EmojiData, 'woman woman girl boy', 18, 21),
+		A3($author$project$Emoji$EmojiData, 'woman woman girl girl', 18, 22),
+		A3($author$project$Emoji$EmojiData, 'female technologist', 18, 23),
+		A3($author$project$Emoji$EmojiData, 'female office worker', 18, 29),
+		A3($author$project$Emoji$EmojiData, 'female mechanic', 18, 35),
+		A3($author$project$Emoji$EmojiData, 'female scientist', 18, 41),
+		A3($author$project$Emoji$EmojiData, 'female astronaut', 18, 47),
+		A3($author$project$Emoji$EmojiData, 'female firefighter', 18, 53),
+		A3($author$project$Emoji$EmojiData, 'woman with probing cane', 19, 2),
+		A3($author$project$Emoji$EmojiData, 'red haired woman', 19, 8),
+		A3($author$project$Emoji$EmojiData, 'curly haired woman', 19, 14),
+		A3($author$project$Emoji$EmojiData, 'bald woman', 19, 20),
+		A3($author$project$Emoji$EmojiData, 'white haired woman', 19, 26),
+		A3($author$project$Emoji$EmojiData, 'woman in motorized wheelchair', 19, 32),
+		A3($author$project$Emoji$EmojiData, 'woman in manual wheelchair', 19, 38),
+		A3($author$project$Emoji$EmojiData, 'female doctor', 19, 44),
+		A3($author$project$Emoji$EmojiData, 'female judge', 19, 50),
+		A3($author$project$Emoji$EmojiData, 'female pilot', 19, 56),
+		A3($author$project$Emoji$EmojiData, 'woman heart man', 20, 5),
+		A3($author$project$Emoji$EmojiData, 'woman heart woman', 20, 6),
+		A3($author$project$Emoji$EmojiData, 'woman kiss man', 20, 7),
+		A3($author$project$Emoji$EmojiData, 'woman kiss woman', 20, 8),
+		A3($author$project$Emoji$EmojiData, 'woman', 20, 9),
+		A3($author$project$Emoji$EmojiData, 'family', 20, 15),
+		A3($author$project$Emoji$EmojiData, 'couple', 20, 16),
+		A3($author$project$Emoji$EmojiData, 'two men holding hands', 20, 42),
+		A3($author$project$Emoji$EmojiData, 'two women holding hands', 21, 11),
+		A3($author$project$Emoji$EmojiData, 'female police officer', 21, 37),
+		A3($author$project$Emoji$EmojiData, 'male police officer', 21, 43),
+		A3($author$project$Emoji$EmojiData, 'cop', 21, 49),
+		A3($author$project$Emoji$EmojiData, 'woman with bunny ears partying', 21, 55),
+		A3($author$project$Emoji$EmojiData, 'man with bunny ears partying', 21, 56),
+		A3($author$project$Emoji$EmojiData, 'dancers', 22, 0),
+		A3($author$project$Emoji$EmojiData, 'bride with veil', 22, 1),
+		A3($author$project$Emoji$EmojiData, 'blond haired woman', 22, 7),
+		A3($author$project$Emoji$EmojiData, 'blond haired man', 22, 13),
+		A3($author$project$Emoji$EmojiData, 'person with blond hair', 22, 19),
+		A3($author$project$Emoji$EmojiData, 'man with gua pi mao', 22, 25),
+		A3($author$project$Emoji$EmojiData, 'woman wearing turban', 22, 31),
+		A3($author$project$Emoji$EmojiData, 'man wearing turban', 22, 37),
+		A3($author$project$Emoji$EmojiData, 'man with turban', 22, 43),
+		A3($author$project$Emoji$EmojiData, 'older man', 22, 49),
+		A3($author$project$Emoji$EmojiData, 'older woman', 22, 55),
+		A3($author$project$Emoji$EmojiData, 'baby', 23, 4),
+		A3($author$project$Emoji$EmojiData, 'female construction worker', 23, 10),
+		A3($author$project$Emoji$EmojiData, 'male construction worker', 23, 16),
+		A3($author$project$Emoji$EmojiData, 'construction worker', 23, 22),
+		A3($author$project$Emoji$EmojiData, 'princess', 23, 28),
+		A3($author$project$Emoji$EmojiData, 'japanese ogre', 23, 34),
+		A3($author$project$Emoji$EmojiData, 'japanese goblin', 23, 35),
+		A3($author$project$Emoji$EmojiData, 'ghost', 23, 36),
+		A3($author$project$Emoji$EmojiData, 'angel', 23, 37),
+		A3($author$project$Emoji$EmojiData, 'alien', 23, 43),
+		A3($author$project$Emoji$EmojiData, 'space invader', 23, 44),
+		A3($author$project$Emoji$EmojiData, 'imp', 23, 45),
+		A3($author$project$Emoji$EmojiData, 'skull', 23, 46),
+		A3($author$project$Emoji$EmojiData, 'woman tipping hand', 23, 47),
+		A3($author$project$Emoji$EmojiData, 'man tipping hand', 23, 53),
+		A3($author$project$Emoji$EmojiData, 'information desk person', 24, 2),
+		A3($author$project$Emoji$EmojiData, 'female guard', 24, 8),
+		A3($author$project$Emoji$EmojiData, 'male guard', 24, 14),
+		A3($author$project$Emoji$EmojiData, 'guardsman', 24, 20),
+		A3($author$project$Emoji$EmojiData, 'dancer', 24, 26),
+		A3($author$project$Emoji$EmojiData, 'lipstick', 24, 32),
+		A3($author$project$Emoji$EmojiData, 'nail care', 24, 33),
+		A3($author$project$Emoji$EmojiData, 'woman getting massage', 24, 39),
+		A3($author$project$Emoji$EmojiData, 'man getting massage', 24, 45),
+		A3($author$project$Emoji$EmojiData, 'massage', 24, 51),
+		A3($author$project$Emoji$EmojiData, 'woman getting haircut', 25, 0),
+		A3($author$project$Emoji$EmojiData, 'man getting haircut', 25, 6),
+		A3($author$project$Emoji$EmojiData, 'haircut', 25, 12),
+		A3($author$project$Emoji$EmojiData, 'barber', 25, 18),
+		A3($author$project$Emoji$EmojiData, 'syringe', 25, 19),
+		A3($author$project$Emoji$EmojiData, 'pill', 25, 20),
+		A3($author$project$Emoji$EmojiData, 'kiss', 25, 21),
+		A3($author$project$Emoji$EmojiData, 'love letter', 25, 22),
+		A3($author$project$Emoji$EmojiData, 'ring', 25, 23),
+		A3($author$project$Emoji$EmojiData, 'gem', 25, 24),
+		A3($author$project$Emoji$EmojiData, 'couplekiss', 25, 25),
+		A3($author$project$Emoji$EmojiData, 'bouquet', 25, 26),
+		A3($author$project$Emoji$EmojiData, 'couple with heart', 25, 27),
+		A3($author$project$Emoji$EmojiData, 'wedding', 25, 28),
+		A3($author$project$Emoji$EmojiData, 'heartbeat', 25, 29),
+		A3($author$project$Emoji$EmojiData, 'broken heart', 25, 30),
+		A3($author$project$Emoji$EmojiData, 'two hearts', 25, 31),
+		A3($author$project$Emoji$EmojiData, 'sparkling heart', 25, 32),
+		A3($author$project$Emoji$EmojiData, 'heartpulse', 25, 33),
+		A3($author$project$Emoji$EmojiData, 'cupid', 25, 34),
+		A3($author$project$Emoji$EmojiData, 'blue heart', 25, 35),
+		A3($author$project$Emoji$EmojiData, 'green heart', 25, 36),
+		A3($author$project$Emoji$EmojiData, 'yellow heart', 25, 37),
+		A3($author$project$Emoji$EmojiData, 'purple heart', 25, 38),
+		A3($author$project$Emoji$EmojiData, 'gift heart', 25, 39),
+		A3($author$project$Emoji$EmojiData, 'revolving hearts', 25, 40),
+		A3($author$project$Emoji$EmojiData, 'heart decoration', 25, 41),
+		A3($author$project$Emoji$EmojiData, 'diamond shape with a dot inside', 25, 42),
+		A3($author$project$Emoji$EmojiData, 'bulb', 25, 43),
+		A3($author$project$Emoji$EmojiData, 'anger', 25, 44),
+		A3($author$project$Emoji$EmojiData, 'bomb', 25, 45),
+		A3($author$project$Emoji$EmojiData, 'zzz', 25, 46),
+		A3($author$project$Emoji$EmojiData, 'boom', 25, 47),
+		A3($author$project$Emoji$EmojiData, 'sweat drops', 25, 48),
+		A3($author$project$Emoji$EmojiData, 'droplet', 25, 49),
+		A3($author$project$Emoji$EmojiData, 'dash', 25, 50),
+		A3($author$project$Emoji$EmojiData, 'hankey', 25, 51),
+		A3($author$project$Emoji$EmojiData, 'muscle', 25, 52),
+		A3($author$project$Emoji$EmojiData, 'dizzy', 26, 1),
+		A3($author$project$Emoji$EmojiData, 'speech balloon', 26, 2),
+		A3($author$project$Emoji$EmojiData, 'thought balloon', 26, 3),
+		A3($author$project$Emoji$EmojiData, 'white flower', 26, 4),
+		A3($author$project$Emoji$EmojiData, '100', 26, 5),
+		A3($author$project$Emoji$EmojiData, 'moneybag', 26, 6),
+		A3($author$project$Emoji$EmojiData, 'currency exchange', 26, 7),
+		A3($author$project$Emoji$EmojiData, 'heavy dollar sign', 26, 8),
+		A3($author$project$Emoji$EmojiData, 'credit card', 26, 9),
+		A3($author$project$Emoji$EmojiData, 'yen', 26, 10),
+		A3($author$project$Emoji$EmojiData, 'dollar', 26, 11),
+		A3($author$project$Emoji$EmojiData, 'euro', 26, 12),
+		A3($author$project$Emoji$EmojiData, 'pound', 26, 13),
+		A3($author$project$Emoji$EmojiData, 'money with wings', 26, 14),
+		A3($author$project$Emoji$EmojiData, 'chart', 26, 15),
+		A3($author$project$Emoji$EmojiData, 'seat', 26, 16),
+		A3($author$project$Emoji$EmojiData, 'computer', 26, 17),
+		A3($author$project$Emoji$EmojiData, 'briefcase', 26, 18),
+		A3($author$project$Emoji$EmojiData, 'minidisc', 26, 19),
+		A3($author$project$Emoji$EmojiData, 'floppy disk', 26, 20),
+		A3($author$project$Emoji$EmojiData, 'cd', 26, 21),
+		A3($author$project$Emoji$EmojiData, 'dvd', 26, 22),
+		A3($author$project$Emoji$EmojiData, 'file folder', 26, 23),
+		A3($author$project$Emoji$EmojiData, 'open file folder', 26, 24),
+		A3($author$project$Emoji$EmojiData, 'page with curl', 26, 25),
+		A3($author$project$Emoji$EmojiData, 'page facing up', 26, 26),
+		A3($author$project$Emoji$EmojiData, 'date', 26, 27),
+		A3($author$project$Emoji$EmojiData, 'calendar', 26, 28),
+		A3($author$project$Emoji$EmojiData, 'card index', 26, 29),
+		A3($author$project$Emoji$EmojiData, 'chart with upwards trend', 26, 30),
+		A3($author$project$Emoji$EmojiData, 'chart with downwards trend', 26, 31),
+		A3($author$project$Emoji$EmojiData, 'bar chart', 26, 32),
+		A3($author$project$Emoji$EmojiData, 'clipboard', 26, 33),
+		A3($author$project$Emoji$EmojiData, 'pushpin', 26, 34),
+		A3($author$project$Emoji$EmojiData, 'round pushpin', 26, 35),
+		A3($author$project$Emoji$EmojiData, 'paperclip', 26, 36),
+		A3($author$project$Emoji$EmojiData, 'straight ruler', 26, 37),
+		A3($author$project$Emoji$EmojiData, 'triangular ruler', 26, 38),
+		A3($author$project$Emoji$EmojiData, 'bookmark tabs', 26, 39),
+		A3($author$project$Emoji$EmojiData, 'ledger', 26, 40),
+		A3($author$project$Emoji$EmojiData, 'notebook', 26, 41),
+		A3($author$project$Emoji$EmojiData, 'notebook with decorative cover', 26, 42),
+		A3($author$project$Emoji$EmojiData, 'closed book', 26, 43),
+		A3($author$project$Emoji$EmojiData, 'book', 26, 44),
+		A3($author$project$Emoji$EmojiData, 'green book', 26, 45),
+		A3($author$project$Emoji$EmojiData, 'blue book', 26, 46),
+		A3($author$project$Emoji$EmojiData, 'orange book', 26, 47),
+		A3($author$project$Emoji$EmojiData, 'books', 26, 48),
+		A3($author$project$Emoji$EmojiData, 'name badge', 26, 49),
+		A3($author$project$Emoji$EmojiData, 'scroll', 26, 50),
+		A3($author$project$Emoji$EmojiData, 'memo', 26, 51),
+		A3($author$project$Emoji$EmojiData, 'telephone receiver', 26, 52),
+		A3($author$project$Emoji$EmojiData, 'pager', 26, 53),
+		A3($author$project$Emoji$EmojiData, 'fax', 26, 54),
+		A3($author$project$Emoji$EmojiData, 'satellite antenna', 26, 55),
+		A3($author$project$Emoji$EmojiData, 'loudspeaker', 26, 56),
+		A3($author$project$Emoji$EmojiData, 'mega', 27, 0),
+		A3($author$project$Emoji$EmojiData, 'outbox tray', 27, 1),
+		A3($author$project$Emoji$EmojiData, 'inbox tray', 27, 2),
+		A3($author$project$Emoji$EmojiData, 'package', 27, 3),
+		A3($author$project$Emoji$EmojiData, 'e mail', 27, 4),
+		A3($author$project$Emoji$EmojiData, 'incoming envelope', 27, 5),
+		A3($author$project$Emoji$EmojiData, 'envelope with arrow', 27, 6),
+		A3($author$project$Emoji$EmojiData, 'mailbox closed', 27, 7),
+		A3($author$project$Emoji$EmojiData, 'mailbox', 27, 8),
+		A3($author$project$Emoji$EmojiData, 'mailbox with mail', 27, 9),
+		A3($author$project$Emoji$EmojiData, 'mailbox with no mail', 27, 10),
+		A3($author$project$Emoji$EmojiData, 'postbox', 27, 11),
+		A3($author$project$Emoji$EmojiData, 'postal horn', 27, 12),
+		A3($author$project$Emoji$EmojiData, 'newspaper', 27, 13),
+		A3($author$project$Emoji$EmojiData, 'iphone', 27, 14),
+		A3($author$project$Emoji$EmojiData, 'calling', 27, 15),
+		A3($author$project$Emoji$EmojiData, 'vibration mode', 27, 16),
+		A3($author$project$Emoji$EmojiData, 'mobile phone off', 27, 17),
+		A3($author$project$Emoji$EmojiData, 'no mobile phones', 27, 18),
+		A3($author$project$Emoji$EmojiData, 'signal strength', 27, 19),
+		A3($author$project$Emoji$EmojiData, 'camera', 27, 20),
+		A3($author$project$Emoji$EmojiData, 'camera with flash', 27, 21),
+		A3($author$project$Emoji$EmojiData, 'video camera', 27, 22),
+		A3($author$project$Emoji$EmojiData, 'tv', 27, 23),
+		A3($author$project$Emoji$EmojiData, 'radio', 27, 24),
+		A3($author$project$Emoji$EmojiData, 'vhs', 27, 25),
+		A3($author$project$Emoji$EmojiData, 'film projector', 27, 26),
+		A3($author$project$Emoji$EmojiData, 'prayer beads', 27, 27),
+		A3($author$project$Emoji$EmojiData, 'twisted rightwards arrows', 27, 28),
+		A3($author$project$Emoji$EmojiData, 'repeat', 27, 29),
+		A3($author$project$Emoji$EmojiData, 'repeat one', 27, 30),
+		A3($author$project$Emoji$EmojiData, 'arrows clockwise', 27, 31),
+		A3($author$project$Emoji$EmojiData, 'arrows counterclockwise', 27, 32),
+		A3($author$project$Emoji$EmojiData, 'low brightness', 27, 33),
+		A3($author$project$Emoji$EmojiData, 'high brightness', 27, 34),
+		A3($author$project$Emoji$EmojiData, 'mute', 27, 35),
+		A3($author$project$Emoji$EmojiData, 'speaker', 27, 36),
+		A3($author$project$Emoji$EmojiData, 'sound', 27, 37),
+		A3($author$project$Emoji$EmojiData, 'loud sound', 27, 38),
+		A3($author$project$Emoji$EmojiData, 'battery', 27, 39),
+		A3($author$project$Emoji$EmojiData, 'electric plug', 27, 40),
+		A3($author$project$Emoji$EmojiData, 'mag', 27, 41),
+		A3($author$project$Emoji$EmojiData, 'mag right', 27, 42),
+		A3($author$project$Emoji$EmojiData, 'lock with ink pen', 27, 43),
+		A3($author$project$Emoji$EmojiData, 'closed lock with key', 27, 44),
+		A3($author$project$Emoji$EmojiData, 'key', 27, 45),
+		A3($author$project$Emoji$EmojiData, 'lock', 27, 46),
+		A3($author$project$Emoji$EmojiData, 'unlock', 27, 47),
+		A3($author$project$Emoji$EmojiData, 'bell', 27, 48),
+		A3($author$project$Emoji$EmojiData, 'no bell', 27, 49),
+		A3($author$project$Emoji$EmojiData, 'bookmark', 27, 50),
+		A3($author$project$Emoji$EmojiData, 'link', 27, 51),
+		A3($author$project$Emoji$EmojiData, 'radio button', 27, 52),
+		A3($author$project$Emoji$EmojiData, 'back', 27, 53),
+		A3($author$project$Emoji$EmojiData, 'end', 27, 54),
+		A3($author$project$Emoji$EmojiData, 'on', 27, 55),
+		A3($author$project$Emoji$EmojiData, 'soon', 27, 56),
+		A3($author$project$Emoji$EmojiData, 'top', 28, 0),
+		A3($author$project$Emoji$EmojiData, 'underage', 28, 1),
+		A3($author$project$Emoji$EmojiData, 'keycap ten', 28, 2),
+		A3($author$project$Emoji$EmojiData, 'capital abcd', 28, 3),
+		A3($author$project$Emoji$EmojiData, 'abcd', 28, 4),
+		A3($author$project$Emoji$EmojiData, '1234', 28, 5),
+		A3($author$project$Emoji$EmojiData, 'symbols', 28, 6),
+		A3($author$project$Emoji$EmojiData, 'abc', 28, 7),
+		A3($author$project$Emoji$EmojiData, 'fire', 28, 8),
+		A3($author$project$Emoji$EmojiData, 'flashlight', 28, 9),
+		A3($author$project$Emoji$EmojiData, 'wrench', 28, 10),
+		A3($author$project$Emoji$EmojiData, 'hammer', 28, 11),
+		A3($author$project$Emoji$EmojiData, 'nut and bolt', 28, 12),
+		A3($author$project$Emoji$EmojiData, 'hocho', 28, 13),
+		A3($author$project$Emoji$EmojiData, 'gun', 28, 14),
+		A3($author$project$Emoji$EmojiData, 'microscope', 28, 15),
+		A3($author$project$Emoji$EmojiData, 'telescope', 28, 16),
+		A3($author$project$Emoji$EmojiData, 'crystal ball', 28, 17),
+		A3($author$project$Emoji$EmojiData, 'six pointed star', 28, 18),
+		A3($author$project$Emoji$EmojiData, 'beginner', 28, 19),
+		A3($author$project$Emoji$EmojiData, 'trident', 28, 20),
+		A3($author$project$Emoji$EmojiData, 'black square button', 28, 21),
+		A3($author$project$Emoji$EmojiData, 'white square button', 28, 22),
+		A3($author$project$Emoji$EmojiData, 'red circle', 28, 23),
+		A3($author$project$Emoji$EmojiData, 'large blue circle', 28, 24),
+		A3($author$project$Emoji$EmojiData, 'large orange diamond', 28, 25),
+		A3($author$project$Emoji$EmojiData, 'large blue diamond', 28, 26),
+		A3($author$project$Emoji$EmojiData, 'small orange diamond', 28, 27),
+		A3($author$project$Emoji$EmojiData, 'small blue diamond', 28, 28),
+		A3($author$project$Emoji$EmojiData, 'small red triangle', 28, 29),
+		A3($author$project$Emoji$EmojiData, 'small red triangle down', 28, 30),
+		A3($author$project$Emoji$EmojiData, 'arrow up small', 28, 31),
+		A3($author$project$Emoji$EmojiData, 'arrow down small', 28, 32),
+		A3($author$project$Emoji$EmojiData, 'om symbol', 28, 33),
+		A3($author$project$Emoji$EmojiData, 'dove of peace', 28, 34),
+		A3($author$project$Emoji$EmojiData, 'kaaba', 28, 35),
+		A3($author$project$Emoji$EmojiData, 'mosque', 28, 36),
+		A3($author$project$Emoji$EmojiData, 'synagogue', 28, 37),
+		A3($author$project$Emoji$EmojiData, 'menorah with nine branches', 28, 38),
+		A3($author$project$Emoji$EmojiData, 'clock1', 28, 39),
+		A3($author$project$Emoji$EmojiData, 'clock2', 28, 40),
+		A3($author$project$Emoji$EmojiData, 'clock3', 28, 41),
+		A3($author$project$Emoji$EmojiData, 'clock4', 28, 42),
+		A3($author$project$Emoji$EmojiData, 'clock5', 28, 43),
+		A3($author$project$Emoji$EmojiData, 'clock6', 28, 44),
+		A3($author$project$Emoji$EmojiData, 'clock7', 28, 45),
+		A3($author$project$Emoji$EmojiData, 'clock8', 28, 46),
+		A3($author$project$Emoji$EmojiData, 'clock9', 28, 47),
+		A3($author$project$Emoji$EmojiData, 'clock10', 28, 48),
+		A3($author$project$Emoji$EmojiData, 'clock11', 28, 49),
+		A3($author$project$Emoji$EmojiData, 'clock12', 28, 50),
+		A3($author$project$Emoji$EmojiData, 'clock130', 28, 51),
+		A3($author$project$Emoji$EmojiData, 'clock230', 28, 52),
+		A3($author$project$Emoji$EmojiData, 'clock330', 28, 53),
+		A3($author$project$Emoji$EmojiData, 'clock430', 28, 54),
+		A3($author$project$Emoji$EmojiData, 'clock530', 28, 55),
+		A3($author$project$Emoji$EmojiData, 'clock630', 28, 56),
+		A3($author$project$Emoji$EmojiData, 'clock730', 29, 0),
+		A3($author$project$Emoji$EmojiData, 'clock830', 29, 1),
+		A3($author$project$Emoji$EmojiData, 'clock930', 29, 2),
+		A3($author$project$Emoji$EmojiData, 'clock1030', 29, 3),
+		A3($author$project$Emoji$EmojiData, 'clock1130', 29, 4),
+		A3($author$project$Emoji$EmojiData, 'clock1230', 29, 5),
+		A3($author$project$Emoji$EmojiData, 'candle', 29, 6),
+		A3($author$project$Emoji$EmojiData, 'mantelpiece clock', 29, 7),
+		A3($author$project$Emoji$EmojiData, 'hole', 29, 8),
+		A3($author$project$Emoji$EmojiData, 'man in business suit levitating', 29, 9),
+		A3($author$project$Emoji$EmojiData, 'female detective', 29, 15),
+		A3($author$project$Emoji$EmojiData, 'male detective', 29, 21),
+		A3($author$project$Emoji$EmojiData, 'sleuth or spy', 29, 27),
+		A3($author$project$Emoji$EmojiData, 'dark sunglasses', 29, 33),
+		A3($author$project$Emoji$EmojiData, 'spider', 29, 34),
+		A3($author$project$Emoji$EmojiData, 'spider web', 29, 35),
+		A3($author$project$Emoji$EmojiData, 'joystick', 29, 36),
+		A3($author$project$Emoji$EmojiData, 'man dancing', 29, 37),
+		A3($author$project$Emoji$EmojiData, 'linked paperclips', 29, 43),
+		A3($author$project$Emoji$EmojiData, 'lower left ballpoint pen', 29, 44),
+		A3($author$project$Emoji$EmojiData, 'lower left fountain pen', 29, 45),
+		A3($author$project$Emoji$EmojiData, 'lower left paintbrush', 29, 46),
+		A3($author$project$Emoji$EmojiData, 'lower left crayon', 29, 47),
+		A3($author$project$Emoji$EmojiData, 'raised hand with fingers splayed', 29, 48),
+		A3($author$project$Emoji$EmojiData, 'middle finger', 29, 54),
+		A3($author$project$Emoji$EmojiData, 'spock hand', 30, 3),
+		A3($author$project$Emoji$EmojiData, 'black heart', 30, 9),
+		A3($author$project$Emoji$EmojiData, 'desktop computer', 30, 10),
+		A3($author$project$Emoji$EmojiData, 'printer', 30, 11),
+		A3($author$project$Emoji$EmojiData, 'three button mouse', 30, 12),
+		A3($author$project$Emoji$EmojiData, 'trackball', 30, 13),
+		A3($author$project$Emoji$EmojiData, 'frame with picture', 30, 14),
+		A3($author$project$Emoji$EmojiData, 'card index dividers', 30, 15),
+		A3($author$project$Emoji$EmojiData, 'card file box', 30, 16),
+		A3($author$project$Emoji$EmojiData, 'file cabinet', 30, 17),
+		A3($author$project$Emoji$EmojiData, 'wastebasket', 30, 18),
+		A3($author$project$Emoji$EmojiData, 'spiral note pad', 30, 19),
+		A3($author$project$Emoji$EmojiData, 'spiral calendar pad', 30, 20),
+		A3($author$project$Emoji$EmojiData, 'compression', 30, 21),
+		A3($author$project$Emoji$EmojiData, 'old key', 30, 22),
+		A3($author$project$Emoji$EmojiData, 'rolled up newspaper', 30, 23),
+		A3($author$project$Emoji$EmojiData, 'dagger knife', 30, 24),
+		A3($author$project$Emoji$EmojiData, 'speaking head in silhouette', 30, 25),
+		A3($author$project$Emoji$EmojiData, 'left speech bubble', 30, 26),
+		A3($author$project$Emoji$EmojiData, 'right anger bubble', 30, 27),
+		A3($author$project$Emoji$EmojiData, 'ballot box with ballot', 30, 28),
+		A3($author$project$Emoji$EmojiData, 'world map', 30, 29),
+		A3($author$project$Emoji$EmojiData, 'mount fuji', 30, 30),
+		A3($author$project$Emoji$EmojiData, 'tokyo tower', 30, 31),
+		A3($author$project$Emoji$EmojiData, 'statue of liberty', 30, 32),
+		A3($author$project$Emoji$EmojiData, 'japan', 30, 33),
+		A3($author$project$Emoji$EmojiData, 'moyai', 30, 34),
+		A3($author$project$Emoji$EmojiData, 'grinning', 30, 35),
+		A3($author$project$Emoji$EmojiData, 'grin', 30, 36),
+		A3($author$project$Emoji$EmojiData, 'joy', 30, 37),
+		A3($author$project$Emoji$EmojiData, 'smiley', 30, 38),
+		A3($author$project$Emoji$EmojiData, 'smile', 30, 39),
+		A3($author$project$Emoji$EmojiData, 'sweat smile', 30, 40),
+		A3($author$project$Emoji$EmojiData, 'laughing', 30, 41),
+		A3($author$project$Emoji$EmojiData, 'innocent', 30, 42),
+		A3($author$project$Emoji$EmojiData, 'smiling imp', 30, 43),
+		A3($author$project$Emoji$EmojiData, 'wink', 30, 44),
+		A3($author$project$Emoji$EmojiData, 'blush', 30, 45),
+		A3($author$project$Emoji$EmojiData, 'yum', 30, 46),
+		A3($author$project$Emoji$EmojiData, 'relieved', 30, 47),
+		A3($author$project$Emoji$EmojiData, 'heart eyes', 30, 48),
+		A3($author$project$Emoji$EmojiData, 'sunglasses', 30, 49),
+		A3($author$project$Emoji$EmojiData, 'smirk', 30, 50),
+		A3($author$project$Emoji$EmojiData, 'neutral face', 30, 51),
+		A3($author$project$Emoji$EmojiData, 'expressionless', 30, 52),
+		A3($author$project$Emoji$EmojiData, 'unamused', 30, 53),
+		A3($author$project$Emoji$EmojiData, 'sweat', 30, 54),
+		A3($author$project$Emoji$EmojiData, 'pensive', 30, 55),
+		A3($author$project$Emoji$EmojiData, 'confused', 30, 56),
+		A3($author$project$Emoji$EmojiData, 'confounded', 31, 0),
+		A3($author$project$Emoji$EmojiData, 'kissing', 31, 1),
+		A3($author$project$Emoji$EmojiData, 'kissing heart', 31, 2),
+		A3($author$project$Emoji$EmojiData, 'kissing smiling eyes', 31, 3),
+		A3($author$project$Emoji$EmojiData, 'kissing closed eyes', 31, 4),
+		A3($author$project$Emoji$EmojiData, 'stuck out tongue', 31, 5),
+		A3($author$project$Emoji$EmojiData, 'stuck out tongue winking eye', 31, 6),
+		A3($author$project$Emoji$EmojiData, 'stuck out tongue closed eyes', 31, 7),
+		A3($author$project$Emoji$EmojiData, 'disappointed', 31, 8),
+		A3($author$project$Emoji$EmojiData, 'worried', 31, 9),
+		A3($author$project$Emoji$EmojiData, 'angry', 31, 10),
+		A3($author$project$Emoji$EmojiData, 'rage', 31, 11),
+		A3($author$project$Emoji$EmojiData, 'cry', 31, 12),
+		A3($author$project$Emoji$EmojiData, 'persevere', 31, 13),
+		A3($author$project$Emoji$EmojiData, 'triumph', 31, 14),
+		A3($author$project$Emoji$EmojiData, 'disappointed relieved', 31, 15),
+		A3($author$project$Emoji$EmojiData, 'frowning', 31, 16),
+		A3($author$project$Emoji$EmojiData, 'anguished', 31, 17),
+		A3($author$project$Emoji$EmojiData, 'fearful', 31, 18),
+		A3($author$project$Emoji$EmojiData, 'weary', 31, 19),
+		A3($author$project$Emoji$EmojiData, 'sleepy', 31, 20),
+		A3($author$project$Emoji$EmojiData, 'tired face', 31, 21),
+		A3($author$project$Emoji$EmojiData, 'grimacing', 31, 22),
+		A3($author$project$Emoji$EmojiData, 'sob', 31, 23),
+		A3($author$project$Emoji$EmojiData, 'open mouth', 31, 24),
+		A3($author$project$Emoji$EmojiData, 'hushed', 31, 25),
+		A3($author$project$Emoji$EmojiData, 'cold sweat', 31, 26),
+		A3($author$project$Emoji$EmojiData, 'scream', 31, 27),
+		A3($author$project$Emoji$EmojiData, 'astonished', 31, 28),
+		A3($author$project$Emoji$EmojiData, 'flushed', 31, 29),
+		A3($author$project$Emoji$EmojiData, 'sleeping', 31, 30),
+		A3($author$project$Emoji$EmojiData, 'dizzy face', 31, 31),
+		A3($author$project$Emoji$EmojiData, 'no mouth', 31, 32),
+		A3($author$project$Emoji$EmojiData, 'mask', 31, 33),
+		A3($author$project$Emoji$EmojiData, 'smile cat', 31, 34),
+		A3($author$project$Emoji$EmojiData, 'joy cat', 31, 35),
+		A3($author$project$Emoji$EmojiData, 'smiley cat', 31, 36),
+		A3($author$project$Emoji$EmojiData, 'heart eyes cat', 31, 37),
+		A3($author$project$Emoji$EmojiData, 'smirk cat', 31, 38),
+		A3($author$project$Emoji$EmojiData, 'kissing cat', 31, 39),
+		A3($author$project$Emoji$EmojiData, 'pouting cat', 31, 40),
+		A3($author$project$Emoji$EmojiData, 'crying cat face', 31, 41),
+		A3($author$project$Emoji$EmojiData, 'scream cat', 31, 42),
+		A3($author$project$Emoji$EmojiData, 'slightly frowning face', 31, 43),
+		A3($author$project$Emoji$EmojiData, 'slightly smiling face', 31, 44),
+		A3($author$project$Emoji$EmojiData, 'upside down face', 31, 45),
+		A3($author$project$Emoji$EmojiData, 'face with rolling eyes', 31, 46),
+		A3($author$project$Emoji$EmojiData, 'woman gesturing no', 31, 47),
+		A3($author$project$Emoji$EmojiData, 'man gesturing no', 31, 53),
+		A3($author$project$Emoji$EmojiData, 'no good', 32, 2),
+		A3($author$project$Emoji$EmojiData, 'woman gesturing ok', 32, 8),
+		A3($author$project$Emoji$EmojiData, 'man gesturing ok', 32, 14),
+		A3($author$project$Emoji$EmojiData, 'ok woman', 32, 20),
+		A3($author$project$Emoji$EmojiData, 'woman bowing', 32, 26),
+		A3($author$project$Emoji$EmojiData, 'man bowing', 32, 32),
+		A3($author$project$Emoji$EmojiData, 'bow', 32, 38),
+		A3($author$project$Emoji$EmojiData, 'see no evil', 32, 44),
+		A3($author$project$Emoji$EmojiData, 'hear no evil', 32, 45),
+		A3($author$project$Emoji$EmojiData, 'speak no evil', 32, 46),
+		A3($author$project$Emoji$EmojiData, 'woman raising hand', 32, 47),
+		A3($author$project$Emoji$EmojiData, 'man raising hand', 32, 53),
+		A3($author$project$Emoji$EmojiData, 'raising hand', 33, 2),
+		A3($author$project$Emoji$EmojiData, 'raised hands', 33, 8),
+		A3($author$project$Emoji$EmojiData, 'woman frowning', 33, 14),
+		A3($author$project$Emoji$EmojiData, 'man frowning', 33, 20),
+		A3($author$project$Emoji$EmojiData, 'person frowning', 33, 26),
+		A3($author$project$Emoji$EmojiData, 'woman pouting', 33, 32),
+		A3($author$project$Emoji$EmojiData, 'man pouting', 33, 38),
+		A3($author$project$Emoji$EmojiData, 'person with pouting face', 33, 44),
+		A3($author$project$Emoji$EmojiData, 'pray', 33, 50),
+		A3($author$project$Emoji$EmojiData, 'rocket', 33, 56),
+		A3($author$project$Emoji$EmojiData, 'helicopter', 34, 0),
+		A3($author$project$Emoji$EmojiData, 'steam locomotive', 34, 1),
+		A3($author$project$Emoji$EmojiData, 'railway car', 34, 2),
+		A3($author$project$Emoji$EmojiData, 'bullettrain side', 34, 3),
+		A3($author$project$Emoji$EmojiData, 'bullettrain front', 34, 4),
+		A3($author$project$Emoji$EmojiData, 'train2', 34, 5),
+		A3($author$project$Emoji$EmojiData, 'metro', 34, 6),
+		A3($author$project$Emoji$EmojiData, 'light rail', 34, 7),
+		A3($author$project$Emoji$EmojiData, 'station', 34, 8),
+		A3($author$project$Emoji$EmojiData, 'tram', 34, 9),
+		A3($author$project$Emoji$EmojiData, 'train', 34, 10),
+		A3($author$project$Emoji$EmojiData, 'bus', 34, 11),
+		A3($author$project$Emoji$EmojiData, 'oncoming bus', 34, 12),
+		A3($author$project$Emoji$EmojiData, 'trolleybus', 34, 13),
+		A3($author$project$Emoji$EmojiData, 'busstop', 34, 14),
+		A3($author$project$Emoji$EmojiData, 'minibus', 34, 15),
+		A3($author$project$Emoji$EmojiData, 'ambulance', 34, 16),
+		A3($author$project$Emoji$EmojiData, 'fire engine', 34, 17),
+		A3($author$project$Emoji$EmojiData, 'police car', 34, 18),
+		A3($author$project$Emoji$EmojiData, 'oncoming police car', 34, 19),
+		A3($author$project$Emoji$EmojiData, 'taxi', 34, 20),
+		A3($author$project$Emoji$EmojiData, 'oncoming taxi', 34, 21),
+		A3($author$project$Emoji$EmojiData, 'car', 34, 22),
+		A3($author$project$Emoji$EmojiData, 'oncoming automobile', 34, 23),
+		A3($author$project$Emoji$EmojiData, 'blue car', 34, 24),
+		A3($author$project$Emoji$EmojiData, 'truck', 34, 25),
+		A3($author$project$Emoji$EmojiData, 'articulated lorry', 34, 26),
+		A3($author$project$Emoji$EmojiData, 'tractor', 34, 27),
+		A3($author$project$Emoji$EmojiData, 'monorail', 34, 28),
+		A3($author$project$Emoji$EmojiData, 'mountain railway', 34, 29),
+		A3($author$project$Emoji$EmojiData, 'suspension railway', 34, 30),
+		A3($author$project$Emoji$EmojiData, 'mountain cableway', 34, 31),
+		A3($author$project$Emoji$EmojiData, 'aerial tramway', 34, 32),
+		A3($author$project$Emoji$EmojiData, 'ship', 34, 33),
+		A3($author$project$Emoji$EmojiData, 'woman rowing boat', 34, 34),
+		A3($author$project$Emoji$EmojiData, 'man rowing boat', 34, 40),
+		A3($author$project$Emoji$EmojiData, 'rowboat', 34, 46),
+		A3($author$project$Emoji$EmojiData, 'speedboat', 34, 52),
+		A3($author$project$Emoji$EmojiData, 'traffic light', 34, 53),
+		A3($author$project$Emoji$EmojiData, 'vertical traffic light', 34, 54),
+		A3($author$project$Emoji$EmojiData, 'construction', 34, 55),
+		A3($author$project$Emoji$EmojiData, 'rotating light', 34, 56),
+		A3($author$project$Emoji$EmojiData, 'triangular flag on post', 35, 0),
+		A3($author$project$Emoji$EmojiData, 'door', 35, 1),
+		A3($author$project$Emoji$EmojiData, 'no entry sign', 35, 2),
+		A3($author$project$Emoji$EmojiData, 'smoking', 35, 3),
+		A3($author$project$Emoji$EmojiData, 'no smoking', 35, 4),
+		A3($author$project$Emoji$EmojiData, 'put litter in its place', 35, 5),
+		A3($author$project$Emoji$EmojiData, 'do not litter', 35, 6),
+		A3($author$project$Emoji$EmojiData, 'potable water', 35, 7),
+		A3($author$project$Emoji$EmojiData, 'non potable water', 35, 8),
+		A3($author$project$Emoji$EmojiData, 'bike', 35, 9),
+		A3($author$project$Emoji$EmojiData, 'no bicycles', 35, 10),
+		A3($author$project$Emoji$EmojiData, 'woman biking', 35, 11),
+		A3($author$project$Emoji$EmojiData, 'man biking', 35, 17),
+		A3($author$project$Emoji$EmojiData, 'bicyclist', 35, 23),
+		A3($author$project$Emoji$EmojiData, 'woman mountain biking', 35, 29),
+		A3($author$project$Emoji$EmojiData, 'man mountain biking', 35, 35),
+		A3($author$project$Emoji$EmojiData, 'mountain bicyclist', 35, 41),
+		A3($author$project$Emoji$EmojiData, 'woman walking', 35, 47),
+		A3($author$project$Emoji$EmojiData, 'man walking', 35, 53),
+		A3($author$project$Emoji$EmojiData, 'walking', 36, 2),
+		A3($author$project$Emoji$EmojiData, 'no pedestrians', 36, 8),
+		A3($author$project$Emoji$EmojiData, 'children crossing', 36, 9),
+		A3($author$project$Emoji$EmojiData, 'mens', 36, 10),
+		A3($author$project$Emoji$EmojiData, 'womens', 36, 11),
+		A3($author$project$Emoji$EmojiData, 'restroom', 36, 12),
+		A3($author$project$Emoji$EmojiData, 'baby symbol', 36, 13),
+		A3($author$project$Emoji$EmojiData, 'toilet', 36, 14),
+		A3($author$project$Emoji$EmojiData, 'wc', 36, 15),
+		A3($author$project$Emoji$EmojiData, 'shower', 36, 16),
+		A3($author$project$Emoji$EmojiData, 'bath', 36, 17),
+		A3($author$project$Emoji$EmojiData, 'bathtub', 36, 23),
+		A3($author$project$Emoji$EmojiData, 'passport control', 36, 24),
+		A3($author$project$Emoji$EmojiData, 'customs', 36, 25),
+		A3($author$project$Emoji$EmojiData, 'baggage claim', 36, 26),
+		A3($author$project$Emoji$EmojiData, 'left luggage', 36, 27),
+		A3($author$project$Emoji$EmojiData, 'couch and lamp', 36, 28),
+		A3($author$project$Emoji$EmojiData, 'sleeping accommodation', 36, 29),
+		A3($author$project$Emoji$EmojiData, 'shopping bags', 36, 35),
+		A3($author$project$Emoji$EmojiData, 'bellhop bell', 36, 36),
+		A3($author$project$Emoji$EmojiData, 'bed', 36, 37),
+		A3($author$project$Emoji$EmojiData, 'place of worship', 36, 38),
+		A3($author$project$Emoji$EmojiData, 'octagonal sign', 36, 39),
+		A3($author$project$Emoji$EmojiData, 'shopping trolley', 36, 40),
+		A3($author$project$Emoji$EmojiData, 'hindu temple', 36, 41),
+		A3($author$project$Emoji$EmojiData, 'hammer and wrench', 36, 42),
+		A3($author$project$Emoji$EmojiData, 'shield', 36, 43),
+		A3($author$project$Emoji$EmojiData, 'oil drum', 36, 44),
+		A3($author$project$Emoji$EmojiData, 'motorway', 36, 45),
+		A3($author$project$Emoji$EmojiData, 'railway track', 36, 46),
+		A3($author$project$Emoji$EmojiData, 'motor boat', 36, 47),
+		A3($author$project$Emoji$EmojiData, 'small airplane', 36, 48),
+		A3($author$project$Emoji$EmojiData, 'airplane departure', 36, 49),
+		A3($author$project$Emoji$EmojiData, 'airplane arriving', 36, 50),
+		A3($author$project$Emoji$EmojiData, 'satellite', 36, 51),
+		A3($author$project$Emoji$EmojiData, 'passenger ship', 36, 52),
+		A3($author$project$Emoji$EmojiData, 'scooter', 36, 53),
+		A3($author$project$Emoji$EmojiData, 'motor scooter', 36, 54),
+		A3($author$project$Emoji$EmojiData, 'canoe', 36, 55),
+		A3($author$project$Emoji$EmojiData, 'sled', 36, 56),
+		A3($author$project$Emoji$EmojiData, 'flying saucer', 37, 0),
+		A3($author$project$Emoji$EmojiData, 'skateboard', 37, 1),
+		A3($author$project$Emoji$EmojiData, 'auto rickshaw', 37, 2),
+		A3($author$project$Emoji$EmojiData, 'large orange circle', 37, 3),
+		A3($author$project$Emoji$EmojiData, 'large yellow circle', 37, 4),
+		A3($author$project$Emoji$EmojiData, 'large green circle', 37, 5),
+		A3($author$project$Emoji$EmojiData, 'large purple circle', 37, 6),
+		A3($author$project$Emoji$EmojiData, 'large brown circle', 37, 7),
+		A3($author$project$Emoji$EmojiData, 'large red square', 37, 8),
+		A3($author$project$Emoji$EmojiData, 'large blue square', 37, 9),
+		A3($author$project$Emoji$EmojiData, 'large orange square', 37, 10),
+		A3($author$project$Emoji$EmojiData, 'large yellow square', 37, 11),
+		A3($author$project$Emoji$EmojiData, 'large green square', 37, 12),
+		A3($author$project$Emoji$EmojiData, 'large purple square', 37, 13),
+		A3($author$project$Emoji$EmojiData, 'large brown square', 37, 14),
+		A3($author$project$Emoji$EmojiData, 'white heart', 37, 15),
+		A3($author$project$Emoji$EmojiData, 'brown heart', 37, 16),
+		A3($author$project$Emoji$EmojiData, 'pinching hand', 37, 17),
+		A3($author$project$Emoji$EmojiData, 'zipper mouth face', 37, 23),
+		A3($author$project$Emoji$EmojiData, 'money mouth face', 37, 24),
+		A3($author$project$Emoji$EmojiData, 'face with thermometer', 37, 25),
+		A3($author$project$Emoji$EmojiData, 'nerd face', 37, 26),
+		A3($author$project$Emoji$EmojiData, 'thinking face', 37, 27),
+		A3($author$project$Emoji$EmojiData, 'face with head bandage', 37, 28),
+		A3($author$project$Emoji$EmojiData, 'robot face', 37, 29),
+		A3($author$project$Emoji$EmojiData, 'hugging face', 37, 30),
+		A3($author$project$Emoji$EmojiData, 'the horns', 37, 31),
+		A3($author$project$Emoji$EmojiData, 'call me hand', 37, 37),
+		A3($author$project$Emoji$EmojiData, 'raised back of hand', 37, 43),
+		A3($author$project$Emoji$EmojiData, 'left facing fist', 37, 49),
+		A3($author$project$Emoji$EmojiData, 'right facing fist', 37, 55),
+		A3($author$project$Emoji$EmojiData, 'handshake', 38, 4),
+		A3($author$project$Emoji$EmojiData, 'crossed fingers', 38, 5),
+		A3($author$project$Emoji$EmojiData, 'i love you hand sign', 38, 11),
+		A3($author$project$Emoji$EmojiData, 'face with cowboy hat', 38, 17),
+		A3($author$project$Emoji$EmojiData, 'clown face', 38, 18),
+		A3($author$project$Emoji$EmojiData, 'nauseated face', 38, 19),
+		A3($author$project$Emoji$EmojiData, 'rolling on the floor laughing', 38, 20),
+		A3($author$project$Emoji$EmojiData, 'drooling face', 38, 21),
+		A3($author$project$Emoji$EmojiData, 'lying face', 38, 22),
+		A3($author$project$Emoji$EmojiData, 'woman facepalming', 38, 23),
+		A3($author$project$Emoji$EmojiData, 'man facepalming', 38, 29),
+		A3($author$project$Emoji$EmojiData, 'face palm', 38, 35),
+		A3($author$project$Emoji$EmojiData, 'sneezing face', 38, 41),
+		A3($author$project$Emoji$EmojiData, 'face with raised eyebrow', 38, 42),
+		A3($author$project$Emoji$EmojiData, 'star struck', 38, 43),
+		A3($author$project$Emoji$EmojiData, 'zany face', 38, 44),
+		A3($author$project$Emoji$EmojiData, 'shushing face', 38, 45),
+		A3($author$project$Emoji$EmojiData, 'face with symbols on mouth', 38, 46),
+		A3($author$project$Emoji$EmojiData, 'face with hand over mouth', 38, 47),
+		A3($author$project$Emoji$EmojiData, 'face vomiting', 38, 48),
+		A3($author$project$Emoji$EmojiData, 'exploding head', 38, 49),
+		A3($author$project$Emoji$EmojiData, 'pregnant woman', 38, 50),
+		A3($author$project$Emoji$EmojiData, 'breast feeding', 38, 56),
+		A3($author$project$Emoji$EmojiData, 'palms up together', 39, 5),
+		A3($author$project$Emoji$EmojiData, 'selfie', 39, 11),
+		A3($author$project$Emoji$EmojiData, 'prince', 39, 17),
+		A3($author$project$Emoji$EmojiData, 'man in tuxedo', 39, 23),
+		A3($author$project$Emoji$EmojiData, 'mrs claus', 39, 29),
+		A3($author$project$Emoji$EmojiData, 'woman shrugging', 39, 35),
+		A3($author$project$Emoji$EmojiData, 'man shrugging', 39, 41),
+		A3($author$project$Emoji$EmojiData, 'shrug', 39, 47),
+		A3($author$project$Emoji$EmojiData, 'woman cartwheeling', 39, 53),
+		A3($author$project$Emoji$EmojiData, 'man cartwheeling', 40, 2),
+		A3($author$project$Emoji$EmojiData, 'person doing cartwheel', 40, 8),
+		A3($author$project$Emoji$EmojiData, 'woman juggling', 40, 14),
+		A3($author$project$Emoji$EmojiData, 'man juggling', 40, 20),
+		A3($author$project$Emoji$EmojiData, 'juggling', 40, 26),
+		A3($author$project$Emoji$EmojiData, 'fencer', 40, 32),
+		A3($author$project$Emoji$EmojiData, 'woman wrestling', 40, 33),
+		A3($author$project$Emoji$EmojiData, 'man wrestling', 40, 34),
+		A3($author$project$Emoji$EmojiData, 'wrestlers', 40, 35),
+		A3($author$project$Emoji$EmojiData, 'woman playing water polo', 40, 36),
+		A3($author$project$Emoji$EmojiData, 'man playing water polo', 40, 42),
+		A3($author$project$Emoji$EmojiData, 'water polo', 40, 48),
+		A3($author$project$Emoji$EmojiData, 'woman playing handball', 40, 54),
+		A3($author$project$Emoji$EmojiData, 'man playing handball', 41, 3),
+		A3($author$project$Emoji$EmojiData, 'handball', 41, 9),
+		A3($author$project$Emoji$EmojiData, 'diving mask', 41, 15),
+		A3($author$project$Emoji$EmojiData, 'wilted flower', 41, 16),
+		A3($author$project$Emoji$EmojiData, 'drum with drumsticks', 41, 17),
+		A3($author$project$Emoji$EmojiData, 'clinking glasses', 41, 18),
+		A3($author$project$Emoji$EmojiData, 'tumbler glass', 41, 19),
+		A3($author$project$Emoji$EmojiData, 'spoon', 41, 20),
+		A3($author$project$Emoji$EmojiData, 'goal net', 41, 21),
+		A3($author$project$Emoji$EmojiData, 'first place medal', 41, 22),
+		A3($author$project$Emoji$EmojiData, 'second place medal', 41, 23),
+		A3($author$project$Emoji$EmojiData, 'third place medal', 41, 24),
+		A3($author$project$Emoji$EmojiData, 'boxing glove', 41, 25),
+		A3($author$project$Emoji$EmojiData, 'martial arts uniform', 41, 26),
+		A3($author$project$Emoji$EmojiData, 'curling stone', 41, 27),
+		A3($author$project$Emoji$EmojiData, 'lacrosse', 41, 28),
+		A3($author$project$Emoji$EmojiData, 'softball', 41, 29),
+		A3($author$project$Emoji$EmojiData, 'flying disc', 41, 30),
+		A3($author$project$Emoji$EmojiData, 'croissant', 41, 31),
+		A3($author$project$Emoji$EmojiData, 'avocado', 41, 32),
+		A3($author$project$Emoji$EmojiData, 'cucumber', 41, 33),
+		A3($author$project$Emoji$EmojiData, 'bacon', 41, 34),
+		A3($author$project$Emoji$EmojiData, 'potato', 41, 35),
+		A3($author$project$Emoji$EmojiData, 'carrot', 41, 36),
+		A3($author$project$Emoji$EmojiData, 'baguette bread', 41, 37),
+		A3($author$project$Emoji$EmojiData, 'green salad', 41, 38),
+		A3($author$project$Emoji$EmojiData, 'shallow pan of food', 41, 39),
+		A3($author$project$Emoji$EmojiData, 'stuffed flatbread', 41, 40),
+		A3($author$project$Emoji$EmojiData, 'egg', 41, 41),
+		A3($author$project$Emoji$EmojiData, 'glass of milk', 41, 42),
+		A3($author$project$Emoji$EmojiData, 'peanuts', 41, 43),
+		A3($author$project$Emoji$EmojiData, 'kiwifruit', 41, 44),
+		A3($author$project$Emoji$EmojiData, 'pancakes', 41, 45),
+		A3($author$project$Emoji$EmojiData, 'dumpling', 41, 46),
+		A3($author$project$Emoji$EmojiData, 'fortune cookie', 41, 47),
+		A3($author$project$Emoji$EmojiData, 'takeout box', 41, 48),
+		A3($author$project$Emoji$EmojiData, 'chopsticks', 41, 49),
+		A3($author$project$Emoji$EmojiData, 'bowl with spoon', 41, 50),
+		A3($author$project$Emoji$EmojiData, 'cup with straw', 41, 51),
+		A3($author$project$Emoji$EmojiData, 'coconut', 41, 52),
+		A3($author$project$Emoji$EmojiData, 'broccoli', 41, 53),
+		A3($author$project$Emoji$EmojiData, 'pie', 41, 54),
+		A3($author$project$Emoji$EmojiData, 'pretzel', 41, 55),
+		A3($author$project$Emoji$EmojiData, 'cut of meat', 41, 56),
+		A3($author$project$Emoji$EmojiData, 'sandwich', 42, 0),
+		A3($author$project$Emoji$EmojiData, 'canned food', 42, 1),
+		A3($author$project$Emoji$EmojiData, 'leafy green', 42, 2),
+		A3($author$project$Emoji$EmojiData, 'mango', 42, 3),
+		A3($author$project$Emoji$EmojiData, 'moon cake', 42, 4),
+		A3($author$project$Emoji$EmojiData, 'bagel', 42, 5),
+		A3($author$project$Emoji$EmojiData, 'smiling face with 3 hearts', 42, 6),
+		A3($author$project$Emoji$EmojiData, 'yawning face', 42, 7),
+		A3($author$project$Emoji$EmojiData, 'partying face', 42, 8),
+		A3($author$project$Emoji$EmojiData, 'woozy face', 42, 9),
+		A3($author$project$Emoji$EmojiData, 'hot face', 42, 10),
+		A3($author$project$Emoji$EmojiData, 'cold face', 42, 11),
+		A3($author$project$Emoji$EmojiData, 'pleading face', 42, 12),
+		A3($author$project$Emoji$EmojiData, 'sari', 42, 13),
+		A3($author$project$Emoji$EmojiData, 'lab coat', 42, 14),
+		A3($author$project$Emoji$EmojiData, 'goggles', 42, 15),
+		A3($author$project$Emoji$EmojiData, 'hiking boot', 42, 16),
+		A3($author$project$Emoji$EmojiData, 'womans flat shoe', 42, 17),
+		A3($author$project$Emoji$EmojiData, 'crab', 42, 18),
+		A3($author$project$Emoji$EmojiData, 'lion face', 42, 19),
+		A3($author$project$Emoji$EmojiData, 'scorpion', 42, 20),
+		A3($author$project$Emoji$EmojiData, 'turkey', 42, 21),
+		A3($author$project$Emoji$EmojiData, 'unicorn face', 42, 22),
+		A3($author$project$Emoji$EmojiData, 'eagle', 42, 23),
+		A3($author$project$Emoji$EmojiData, 'duck', 42, 24),
+		A3($author$project$Emoji$EmojiData, 'bat', 42, 25),
+		A3($author$project$Emoji$EmojiData, 'shark', 42, 26),
+		A3($author$project$Emoji$EmojiData, 'owl', 42, 27),
+		A3($author$project$Emoji$EmojiData, 'fox face', 42, 28),
+		A3($author$project$Emoji$EmojiData, 'butterfly', 42, 29),
+		A3($author$project$Emoji$EmojiData, 'deer', 42, 30),
+		A3($author$project$Emoji$EmojiData, 'gorilla', 42, 31),
+		A3($author$project$Emoji$EmojiData, 'lizard', 42, 32),
+		A3($author$project$Emoji$EmojiData, 'rhinoceros', 42, 33),
+		A3($author$project$Emoji$EmojiData, 'shrimp', 42, 34),
+		A3($author$project$Emoji$EmojiData, 'squid', 42, 35),
+		A3($author$project$Emoji$EmojiData, 'giraffe face', 42, 36),
+		A3($author$project$Emoji$EmojiData, 'zebra face', 42, 37),
+		A3($author$project$Emoji$EmojiData, 'hedgehog', 42, 38),
+		A3($author$project$Emoji$EmojiData, 'sauropod', 42, 39),
+		A3($author$project$Emoji$EmojiData, 't rex', 42, 40),
+		A3($author$project$Emoji$EmojiData, 'cricket', 42, 41),
+		A3($author$project$Emoji$EmojiData, 'kangaroo', 42, 42),
+		A3($author$project$Emoji$EmojiData, 'llama', 42, 43),
+		A3($author$project$Emoji$EmojiData, 'peacock', 42, 44),
+		A3($author$project$Emoji$EmojiData, 'hippopotamus', 42, 45),
+		A3($author$project$Emoji$EmojiData, 'parrot', 42, 46),
+		A3($author$project$Emoji$EmojiData, 'raccoon', 42, 47),
+		A3($author$project$Emoji$EmojiData, 'lobster', 42, 48),
+		A3($author$project$Emoji$EmojiData, 'mosquito', 42, 49),
+		A3($author$project$Emoji$EmojiData, 'microbe', 42, 50),
+		A3($author$project$Emoji$EmojiData, 'badger', 42, 51),
+		A3($author$project$Emoji$EmojiData, 'swan', 42, 52),
+		A3($author$project$Emoji$EmojiData, 'sloth', 42, 53),
+		A3($author$project$Emoji$EmojiData, 'otter', 42, 54),
+		A3($author$project$Emoji$EmojiData, 'orangutan', 42, 55),
+		A3($author$project$Emoji$EmojiData, 'skunk', 42, 56),
+		A3($author$project$Emoji$EmojiData, 'flamingo', 43, 0),
+		A3($author$project$Emoji$EmojiData, 'oyster', 43, 1),
+		A3($author$project$Emoji$EmojiData, 'guide dog', 43, 2),
+		A3($author$project$Emoji$EmojiData, 'probing cane', 43, 3),
+		A3($author$project$Emoji$EmojiData, 'bone', 43, 4),
+		A3($author$project$Emoji$EmojiData, 'leg', 43, 5),
+		A3($author$project$Emoji$EmojiData, 'foot', 43, 11),
+		A3($author$project$Emoji$EmojiData, 'tooth', 43, 17),
+		A3($author$project$Emoji$EmojiData, 'female superhero', 43, 18),
+		A3($author$project$Emoji$EmojiData, 'male superhero', 43, 24),
+		A3($author$project$Emoji$EmojiData, 'superhero', 43, 30),
+		A3($author$project$Emoji$EmojiData, 'female supervillain', 43, 36),
+		A3($author$project$Emoji$EmojiData, 'male supervillain', 43, 42),
+		A3($author$project$Emoji$EmojiData, 'supervillain', 43, 48),
+		A3($author$project$Emoji$EmojiData, 'safety vest', 43, 54),
+		A3($author$project$Emoji$EmojiData, 'ear with hearing aid', 43, 55),
+		A3($author$project$Emoji$EmojiData, 'motorized wheelchair', 44, 4),
+		A3($author$project$Emoji$EmojiData, 'manual wheelchair', 44, 5),
+		A3($author$project$Emoji$EmojiData, 'mechanical arm', 44, 6),
+		A3($author$project$Emoji$EmojiData, 'mechanical leg', 44, 7),
+		A3($author$project$Emoji$EmojiData, 'cheese wedge', 44, 8),
+		A3($author$project$Emoji$EmojiData, 'cupcake', 44, 9),
+		A3($author$project$Emoji$EmojiData, 'salt', 44, 10),
+		A3($author$project$Emoji$EmojiData, 'beverage box', 44, 11),
+		A3($author$project$Emoji$EmojiData, 'garlic', 44, 12),
+		A3($author$project$Emoji$EmojiData, 'onion', 44, 13),
+		A3($author$project$Emoji$EmojiData, 'falafel', 44, 14),
+		A3($author$project$Emoji$EmojiData, 'waffle', 44, 15),
+		A3($author$project$Emoji$EmojiData, 'butter', 44, 16),
+		A3($author$project$Emoji$EmojiData, 'mate drink', 44, 17),
+		A3($author$project$Emoji$EmojiData, 'ice cube', 44, 18),
+		A3($author$project$Emoji$EmojiData, 'woman standing', 44, 19),
+		A3($author$project$Emoji$EmojiData, 'man standing', 44, 25),
+		A3($author$project$Emoji$EmojiData, 'standing person', 44, 31),
+		A3($author$project$Emoji$EmojiData, 'woman kneeling', 44, 37),
+		A3($author$project$Emoji$EmojiData, 'man kneeling', 44, 43),
+		A3($author$project$Emoji$EmojiData, 'kneeling person', 44, 49),
+		A3($author$project$Emoji$EmojiData, 'deaf woman', 44, 55),
+		A3($author$project$Emoji$EmojiData, 'deaf man', 45, 4),
+		A3($author$project$Emoji$EmojiData, 'deaf person', 45, 10),
+		A3($author$project$Emoji$EmojiData, 'face with monocle', 45, 16),
+		A3($author$project$Emoji$EmojiData, 'farmer', 45, 17),
+		A3($author$project$Emoji$EmojiData, 'cook', 45, 23),
+		A3($author$project$Emoji$EmojiData, 'student', 45, 29),
+		A3($author$project$Emoji$EmojiData, 'singer', 45, 35),
+		A3($author$project$Emoji$EmojiData, 'artist', 45, 41),
+		A3($author$project$Emoji$EmojiData, 'teacher', 45, 47),
+		A3($author$project$Emoji$EmojiData, 'factory worker', 45, 53),
+		A3($author$project$Emoji$EmojiData, 'technologist', 46, 2),
+		A3($author$project$Emoji$EmojiData, 'office worker', 46, 8),
+		A3($author$project$Emoji$EmojiData, 'mechanic', 46, 14),
+		A3($author$project$Emoji$EmojiData, 'scientist', 46, 20),
+		A3($author$project$Emoji$EmojiData, 'astronaut', 46, 26),
+		A3($author$project$Emoji$EmojiData, 'firefighter', 46, 32),
+		A3($author$project$Emoji$EmojiData, 'people holding hands', 46, 38),
+		A3($author$project$Emoji$EmojiData, 'person with probing cane', 47, 7),
+		A3($author$project$Emoji$EmojiData, 'red haired person', 47, 13),
+		A3($author$project$Emoji$EmojiData, 'curly haired person', 47, 19),
+		A3($author$project$Emoji$EmojiData, 'bald person', 47, 25),
+		A3($author$project$Emoji$EmojiData, 'white haired person', 47, 31),
+		A3($author$project$Emoji$EmojiData, 'person in motorized wheelchair', 47, 37),
+		A3($author$project$Emoji$EmojiData, 'person in manual wheelchair', 47, 43),
+		A3($author$project$Emoji$EmojiData, 'health worker', 47, 49),
+		A3($author$project$Emoji$EmojiData, 'judge', 47, 55),
+		A3($author$project$Emoji$EmojiData, 'pilot', 48, 4),
+		A3($author$project$Emoji$EmojiData, 'adult', 48, 10),
+		A3($author$project$Emoji$EmojiData, 'child', 48, 16),
+		A3($author$project$Emoji$EmojiData, 'older adult', 48, 22),
+		A3($author$project$Emoji$EmojiData, 'bearded person', 48, 28),
+		A3($author$project$Emoji$EmojiData, 'person with headscarf', 48, 34),
+		A3($author$project$Emoji$EmojiData, 'woman in steamy room', 48, 40),
+		A3($author$project$Emoji$EmojiData, 'man in steamy room', 48, 46),
+		A3($author$project$Emoji$EmojiData, 'person in steamy room', 48, 52),
+		A3($author$project$Emoji$EmojiData, 'woman climbing', 49, 1),
+		A3($author$project$Emoji$EmojiData, 'man climbing', 49, 7),
+		A3($author$project$Emoji$EmojiData, 'person climbing', 49, 13),
+		A3($author$project$Emoji$EmojiData, 'woman in lotus position', 49, 19),
+		A3($author$project$Emoji$EmojiData, 'man in lotus position', 49, 25),
+		A3($author$project$Emoji$EmojiData, 'person in lotus position', 49, 31),
+		A3($author$project$Emoji$EmojiData, 'female mage', 49, 37),
+		A3($author$project$Emoji$EmojiData, 'male mage', 49, 43),
+		A3($author$project$Emoji$EmojiData, 'mage', 49, 49),
+		A3($author$project$Emoji$EmojiData, 'female fairy', 49, 55),
+		A3($author$project$Emoji$EmojiData, 'male fairy', 50, 4),
+		A3($author$project$Emoji$EmojiData, 'fairy', 50, 10),
+		A3($author$project$Emoji$EmojiData, 'female vampire', 50, 16),
+		A3($author$project$Emoji$EmojiData, 'male vampire', 50, 22),
+		A3($author$project$Emoji$EmojiData, 'vampire', 50, 28),
+		A3($author$project$Emoji$EmojiData, 'mermaid', 50, 34),
+		A3($author$project$Emoji$EmojiData, 'merman', 50, 40),
+		A3($author$project$Emoji$EmojiData, 'merperson', 50, 46),
+		A3($author$project$Emoji$EmojiData, 'female elf', 50, 52),
+		A3($author$project$Emoji$EmojiData, 'male elf', 51, 1),
+		A3($author$project$Emoji$EmojiData, 'elf', 51, 7),
+		A3($author$project$Emoji$EmojiData, 'female genie', 51, 13),
+		A3($author$project$Emoji$EmojiData, 'male genie', 51, 14),
+		A3($author$project$Emoji$EmojiData, 'genie', 51, 15),
+		A3($author$project$Emoji$EmojiData, 'female zombie', 51, 16),
+		A3($author$project$Emoji$EmojiData, 'male zombie', 51, 17),
+		A3($author$project$Emoji$EmojiData, 'zombie', 51, 18),
+		A3($author$project$Emoji$EmojiData, 'brain', 51, 19),
+		A3($author$project$Emoji$EmojiData, 'orange heart', 51, 20),
+		A3($author$project$Emoji$EmojiData, 'billed cap', 51, 21),
+		A3($author$project$Emoji$EmojiData, 'scarf', 51, 22),
+		A3($author$project$Emoji$EmojiData, 'gloves', 51, 23),
+		A3($author$project$Emoji$EmojiData, 'coat', 51, 24),
+		A3($author$project$Emoji$EmojiData, 'socks', 51, 25),
+		A3($author$project$Emoji$EmojiData, 'red envelope', 51, 26),
+		A3($author$project$Emoji$EmojiData, 'firecracker', 51, 27),
+		A3($author$project$Emoji$EmojiData, 'jigsaw', 51, 28),
+		A3($author$project$Emoji$EmojiData, 'test tube', 51, 29),
+		A3($author$project$Emoji$EmojiData, 'petri dish', 51, 30),
+		A3($author$project$Emoji$EmojiData, 'dna', 51, 31),
+		A3($author$project$Emoji$EmojiData, 'compass', 51, 32),
+		A3($author$project$Emoji$EmojiData, 'abacus', 51, 33),
+		A3($author$project$Emoji$EmojiData, 'fire extinguisher', 51, 34),
+		A3($author$project$Emoji$EmojiData, 'toolbox', 51, 35),
+		A3($author$project$Emoji$EmojiData, 'bricks', 51, 36),
+		A3($author$project$Emoji$EmojiData, 'magnet', 51, 37),
+		A3($author$project$Emoji$EmojiData, 'luggage', 51, 38),
+		A3($author$project$Emoji$EmojiData, 'lotion bottle', 51, 39),
+		A3($author$project$Emoji$EmojiData, 'thread', 51, 40),
+		A3($author$project$Emoji$EmojiData, 'yarn', 51, 41),
+		A3($author$project$Emoji$EmojiData, 'safety pin', 51, 42),
+		A3($author$project$Emoji$EmojiData, 'teddy bear', 51, 43),
+		A3($author$project$Emoji$EmojiData, 'broom', 51, 44),
+		A3($author$project$Emoji$EmojiData, 'basket', 51, 45),
+		A3($author$project$Emoji$EmojiData, 'roll of paper', 51, 46),
+		A3($author$project$Emoji$EmojiData, 'soap', 51, 47),
+		A3($author$project$Emoji$EmojiData, 'sponge', 51, 48),
+		A3($author$project$Emoji$EmojiData, 'receipt', 51, 49),
+		A3($author$project$Emoji$EmojiData, 'nazar amulet', 51, 50),
+		A3($author$project$Emoji$EmojiData, 'ballet shoes', 51, 51),
+		A3($author$project$Emoji$EmojiData, 'one piece swimsuit', 51, 52),
+		A3($author$project$Emoji$EmojiData, 'briefs', 51, 53),
+		A3($author$project$Emoji$EmojiData, 'shorts', 51, 54),
+		A3($author$project$Emoji$EmojiData, 'drop of blood', 51, 55),
+		A3($author$project$Emoji$EmojiData, 'adhesive bandage', 51, 56),
+		A3($author$project$Emoji$EmojiData, 'stethoscope', 52, 0),
+		A3($author$project$Emoji$EmojiData, 'yo yo', 52, 1),
+		A3($author$project$Emoji$EmojiData, 'kite', 52, 2),
+		A3($author$project$Emoji$EmojiData, 'parachute', 52, 3),
+		A3($author$project$Emoji$EmojiData, 'ringed planet', 52, 4),
+		A3($author$project$Emoji$EmojiData, 'chair', 52, 5),
+		A3($author$project$Emoji$EmojiData, 'razor', 52, 6),
+		A3($author$project$Emoji$EmojiData, 'axe', 52, 7),
+		A3($author$project$Emoji$EmojiData, 'diya lamp', 52, 8),
+		A3($author$project$Emoji$EmojiData, 'banjo', 52, 9),
+		A3($author$project$Emoji$EmojiData, 'bangbang', 52, 10),
+		A3($author$project$Emoji$EmojiData, 'interrobang', 52, 11),
+		A3($author$project$Emoji$EmojiData, 'tm', 52, 12),
+		A3($author$project$Emoji$EmojiData, 'information source', 52, 13),
+		A3($author$project$Emoji$EmojiData, 'left right arrow', 52, 14),
+		A3($author$project$Emoji$EmojiData, 'arrow up down', 52, 15),
+		A3($author$project$Emoji$EmojiData, 'arrow upper left', 52, 16),
+		A3($author$project$Emoji$EmojiData, 'arrow upper right', 52, 17),
+		A3($author$project$Emoji$EmojiData, 'arrow lower right', 52, 18),
+		A3($author$project$Emoji$EmojiData, 'arrow lower left', 52, 19),
+		A3($author$project$Emoji$EmojiData, 'leftwards arrow with hook', 52, 20),
+		A3($author$project$Emoji$EmojiData, 'arrow right hook', 52, 21),
+		A3($author$project$Emoji$EmojiData, 'watch', 52, 22),
+		A3($author$project$Emoji$EmojiData, 'hourglass', 52, 23),
+		A3($author$project$Emoji$EmojiData, 'keyboard', 52, 24),
+		A3($author$project$Emoji$EmojiData, 'eject', 52, 25),
+		A3($author$project$Emoji$EmojiData, 'fast forward', 52, 26),
+		A3($author$project$Emoji$EmojiData, 'rewind', 52, 27),
+		A3($author$project$Emoji$EmojiData, 'arrow double up', 52, 28),
+		A3($author$project$Emoji$EmojiData, 'arrow double down', 52, 29),
+		A3($author$project$Emoji$EmojiData, 'black right pointing double triangle with vertical bar', 52, 30),
+		A3($author$project$Emoji$EmojiData, 'black left pointing double triangle with vertical bar', 52, 31),
+		A3($author$project$Emoji$EmojiData, 'black right pointing triangle with double vertical bar', 52, 32),
+		A3($author$project$Emoji$EmojiData, 'alarm clock', 52, 33),
+		A3($author$project$Emoji$EmojiData, 'stopwatch', 52, 34),
+		A3($author$project$Emoji$EmojiData, 'timer clock', 52, 35),
+		A3($author$project$Emoji$EmojiData, 'hourglass flowing sand', 52, 36),
+		A3($author$project$Emoji$EmojiData, 'double vertical bar', 52, 37),
+		A3($author$project$Emoji$EmojiData, 'black square for stop', 52, 38),
+		A3($author$project$Emoji$EmojiData, 'black circle for record', 52, 39),
+		A3($author$project$Emoji$EmojiData, 'm', 52, 40),
+		A3($author$project$Emoji$EmojiData, 'black small square', 52, 41),
+		A3($author$project$Emoji$EmojiData, 'white small square', 52, 42),
+		A3($author$project$Emoji$EmojiData, 'arrow forward', 52, 43),
+		A3($author$project$Emoji$EmojiData, 'arrow backward', 52, 44),
+		A3($author$project$Emoji$EmojiData, 'white medium square', 52, 45),
+		A3($author$project$Emoji$EmojiData, 'black medium square', 52, 46),
+		A3($author$project$Emoji$EmojiData, 'white medium small square', 52, 47),
+		A3($author$project$Emoji$EmojiData, 'black medium small square', 52, 48),
+		A3($author$project$Emoji$EmojiData, 'sunny', 52, 49),
+		A3($author$project$Emoji$EmojiData, 'cloud', 52, 50),
+		A3($author$project$Emoji$EmojiData, 'umbrella', 52, 51),
+		A3($author$project$Emoji$EmojiData, 'snowman', 52, 52),
+		A3($author$project$Emoji$EmojiData, 'comet', 52, 53),
+		A3($author$project$Emoji$EmojiData, 'phone', 52, 54),
+		A3($author$project$Emoji$EmojiData, 'ballot box with check', 52, 55),
+		A3($author$project$Emoji$EmojiData, 'umbrella with rain drops', 52, 56),
+		A3($author$project$Emoji$EmojiData, 'coffee', 53, 0),
+		A3($author$project$Emoji$EmojiData, 'shamrock', 53, 1),
+		A3($author$project$Emoji$EmojiData, 'point up', 53, 2),
+		A3($author$project$Emoji$EmojiData, 'skull and crossbones', 53, 8),
+		A3($author$project$Emoji$EmojiData, 'radioactive sign', 53, 9),
+		A3($author$project$Emoji$EmojiData, 'biohazard sign', 53, 10),
+		A3($author$project$Emoji$EmojiData, 'orthodox cross', 53, 11),
+		A3($author$project$Emoji$EmojiData, 'star and crescent', 53, 12),
+		A3($author$project$Emoji$EmojiData, 'peace symbol', 53, 13),
+		A3($author$project$Emoji$EmojiData, 'yin yang', 53, 14),
+		A3($author$project$Emoji$EmojiData, 'wheel of dharma', 53, 15),
+		A3($author$project$Emoji$EmojiData, 'white frowning face', 53, 16),
+		A3($author$project$Emoji$EmojiData, 'relaxed', 53, 17),
+		A3($author$project$Emoji$EmojiData, 'female sign', 53, 18),
+		A3($author$project$Emoji$EmojiData, 'male sign', 53, 19),
+		A3($author$project$Emoji$EmojiData, 'aries', 53, 20),
+		A3($author$project$Emoji$EmojiData, 'taurus', 53, 21),
+		A3($author$project$Emoji$EmojiData, 'gemini', 53, 22),
+		A3($author$project$Emoji$EmojiData, 'cancer', 53, 23),
+		A3($author$project$Emoji$EmojiData, 'leo', 53, 24),
+		A3($author$project$Emoji$EmojiData, 'virgo', 53, 25),
+		A3($author$project$Emoji$EmojiData, 'libra', 53, 26),
+		A3($author$project$Emoji$EmojiData, 'scorpius', 53, 27),
+		A3($author$project$Emoji$EmojiData, 'sagittarius', 53, 28),
+		A3($author$project$Emoji$EmojiData, 'capricorn', 53, 29),
+		A3($author$project$Emoji$EmojiData, 'aquarius', 53, 30),
+		A3($author$project$Emoji$EmojiData, 'pisces', 53, 31),
+		A3($author$project$Emoji$EmojiData, 'chess pawn', 53, 32),
+		A3($author$project$Emoji$EmojiData, 'spades', 53, 33),
+		A3($author$project$Emoji$EmojiData, 'clubs', 53, 34),
+		A3($author$project$Emoji$EmojiData, 'hearts', 53, 35),
+		A3($author$project$Emoji$EmojiData, 'diamonds', 53, 36),
+		A3($author$project$Emoji$EmojiData, 'hotsprings', 53, 37),
+		A3($author$project$Emoji$EmojiData, 'recycle', 53, 38),
+		A3($author$project$Emoji$EmojiData, 'infinity', 53, 39),
+		A3($author$project$Emoji$EmojiData, 'wheelchair', 53, 40),
+		A3($author$project$Emoji$EmojiData, 'hammer and pick', 53, 41),
+		A3($author$project$Emoji$EmojiData, 'anchor', 53, 42),
+		A3($author$project$Emoji$EmojiData, 'crossed swords', 53, 43),
+		A3($author$project$Emoji$EmojiData, 'medical symbol', 53, 44),
+		A3($author$project$Emoji$EmojiData, 'scales', 53, 45),
+		A3($author$project$Emoji$EmojiData, 'alembic', 53, 46),
+		A3($author$project$Emoji$EmojiData, 'gear', 53, 47),
+		A3($author$project$Emoji$EmojiData, 'atom symbol', 53, 48),
+		A3($author$project$Emoji$EmojiData, 'fleur de lis', 53, 49),
+		A3($author$project$Emoji$EmojiData, 'warning', 53, 50),
+		A3($author$project$Emoji$EmojiData, 'zap', 53, 51),
+		A3($author$project$Emoji$EmojiData, 'white circle', 53, 52),
+		A3($author$project$Emoji$EmojiData, 'black circle', 53, 53),
+		A3($author$project$Emoji$EmojiData, 'coffin', 53, 54),
+		A3($author$project$Emoji$EmojiData, 'funeral urn', 53, 55),
+		A3($author$project$Emoji$EmojiData, 'soccer', 53, 56),
+		A3($author$project$Emoji$EmojiData, 'baseball', 54, 0),
+		A3($author$project$Emoji$EmojiData, 'snowman without snow', 54, 1),
+		A3($author$project$Emoji$EmojiData, 'partly sunny', 54, 2),
+		A3($author$project$Emoji$EmojiData, 'thunder cloud and rain', 54, 3),
+		A3($author$project$Emoji$EmojiData, 'ophiuchus', 54, 4),
+		A3($author$project$Emoji$EmojiData, 'pick', 54, 5),
+		A3($author$project$Emoji$EmojiData, 'helmet with white cross', 54, 6),
+		A3($author$project$Emoji$EmojiData, 'chains', 54, 7),
+		A3($author$project$Emoji$EmojiData, 'no entry', 54, 8),
+		A3($author$project$Emoji$EmojiData, 'shinto shrine', 54, 9),
+		A3($author$project$Emoji$EmojiData, 'church', 54, 10),
+		A3($author$project$Emoji$EmojiData, 'mountain', 54, 11),
+		A3($author$project$Emoji$EmojiData, 'umbrella on ground', 54, 12),
+		A3($author$project$Emoji$EmojiData, 'fountain', 54, 13),
+		A3($author$project$Emoji$EmojiData, 'golf', 54, 14),
+		A3($author$project$Emoji$EmojiData, 'ferry', 54, 15),
+		A3($author$project$Emoji$EmojiData, 'boat', 54, 16),
+		A3($author$project$Emoji$EmojiData, 'skier', 54, 17),
+		A3($author$project$Emoji$EmojiData, 'ice skate', 54, 18),
+		A3($author$project$Emoji$EmojiData, 'woman bouncing ball', 54, 19),
+		A3($author$project$Emoji$EmojiData, 'man bouncing ball', 54, 25),
+		A3($author$project$Emoji$EmojiData, 'person with ball', 54, 31),
+		A3($author$project$Emoji$EmojiData, 'tent', 54, 37),
+		A3($author$project$Emoji$EmojiData, 'fuelpump', 54, 38),
+		A3($author$project$Emoji$EmojiData, 'scissors', 54, 39),
+		A3($author$project$Emoji$EmojiData, 'white check mark', 54, 40),
+		A3($author$project$Emoji$EmojiData, 'airplane', 54, 41),
+		A3($author$project$Emoji$EmojiData, 'email', 54, 42),
+		A3($author$project$Emoji$EmojiData, 'fist', 54, 43),
+		A3($author$project$Emoji$EmojiData, 'hand', 54, 49),
+		A3($author$project$Emoji$EmojiData, 'v', 54, 55),
+		A3($author$project$Emoji$EmojiData, 'writing hand', 55, 4),
+		A3($author$project$Emoji$EmojiData, 'pencil2', 55, 10),
+		A3($author$project$Emoji$EmojiData, 'black nib', 55, 11),
+		A3($author$project$Emoji$EmojiData, 'heavy check mark', 55, 12),
+		A3($author$project$Emoji$EmojiData, 'heavy multiplication x', 55, 13),
+		A3($author$project$Emoji$EmojiData, 'latin cross', 55, 14),
+		A3($author$project$Emoji$EmojiData, 'star of david', 55, 15),
+		A3($author$project$Emoji$EmojiData, 'sparkles', 55, 16),
+		A3($author$project$Emoji$EmojiData, 'eight spoked asterisk', 55, 17),
+		A3($author$project$Emoji$EmojiData, 'eight pointed black star', 55, 18),
+		A3($author$project$Emoji$EmojiData, 'snowflake', 55, 19),
+		A3($author$project$Emoji$EmojiData, 'sparkle', 55, 20),
+		A3($author$project$Emoji$EmojiData, 'x', 55, 21),
+		A3($author$project$Emoji$EmojiData, 'negative squared cross mark', 55, 22),
+		A3($author$project$Emoji$EmojiData, 'question', 55, 23),
+		A3($author$project$Emoji$EmojiData, 'grey question', 55, 24),
+		A3($author$project$Emoji$EmojiData, 'grey exclamation', 55, 25),
+		A3($author$project$Emoji$EmojiData, 'exclamation', 55, 26),
+		A3($author$project$Emoji$EmojiData, 'heavy heart exclamation mark ornament', 55, 27),
+		A3($author$project$Emoji$EmojiData, 'heart', 55, 28),
+		A3($author$project$Emoji$EmojiData, 'heavy plus sign', 55, 29),
+		A3($author$project$Emoji$EmojiData, 'heavy minus sign', 55, 30),
+		A3($author$project$Emoji$EmojiData, 'heavy division sign', 55, 31),
+		A3($author$project$Emoji$EmojiData, 'arrow right', 55, 32),
+		A3($author$project$Emoji$EmojiData, 'curly loop', 55, 33),
+		A3($author$project$Emoji$EmojiData, 'loop', 55, 34),
+		A3($author$project$Emoji$EmojiData, 'arrow heading up', 55, 35),
+		A3($author$project$Emoji$EmojiData, 'arrow heading down', 55, 36),
+		A3($author$project$Emoji$EmojiData, 'arrow left', 55, 37),
+		A3($author$project$Emoji$EmojiData, 'arrow up', 55, 38),
+		A3($author$project$Emoji$EmojiData, 'arrow down', 55, 39),
+		A3($author$project$Emoji$EmojiData, 'black large square', 55, 40),
+		A3($author$project$Emoji$EmojiData, 'white large square', 55, 41),
+		A3($author$project$Emoji$EmojiData, 'star', 55, 42),
+		A3($author$project$Emoji$EmojiData, 'o', 55, 43),
+		A3($author$project$Emoji$EmojiData, 'wavy dash', 55, 44),
+		A3($author$project$Emoji$EmojiData, 'part alternation mark', 55, 45),
+		A3($author$project$Emoji$EmojiData, 'congratulations', 55, 46),
+		A3($author$project$Emoji$EmojiData, 'secret', 55, 47)
+	]);
+var $elm$core$List$sortBy = _List_sortBy;
+var $author$project$Emoji$filter = function (name) {
+	return A2(
+		$elm$core$List$sortBy,
+		function (e) {
+			return $elm$core$String$length(e.bv);
+		},
+		A2(
+			$elm$core$List$filter,
+			function (emojiData) {
+				return A2($elm$core$String$contains, name, emojiData.bv);
+			},
+			$author$project$Emoji$list));
+};
+var $author$project$Emoji$find = function (name) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		$author$project$Emoji$default,
+		$elm$core$List$head(
+			$author$project$Emoji$filter(name)));
+};
 var $elm$core$String$fromFloat = _String_fromNumber;
 var $elm$core$Char$toUpper = _Char_toUpper;
+var $elm$core$String$concat = function (strings) {
+	return A2($elm$core$String$join, '', strings);
+};
+var $author$project$Emoji$view = function (_v0) {
+	var name = _v0.bv;
+	var x = _v0.a9;
+	var y = _v0.ba;
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('emoji'),
+				A2(
+				$elm$html$Html$Attributes$style,
+				'background-position',
+				$elm$core$String$concat(
+					_List_fromArray(
+						[
+							$elm$core$String$fromInt(x * (-22)),
+							'px ',
+							$elm$core$String$fromInt(y * (-22)),
+							'px'
+						])))
+			]),
+		_List_Nil);
+};
 var $author$project$ActivityShape$viewShape = function (shape) {
 	switch (shape.$) {
 		case 0:
@@ -10873,19 +12663,9 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 								A2($elm$core$Maybe$map, $elm$core$Char$toUpper, charM))))
 					]));
 		default:
-			var _char = shape.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'margin-top', '-5px'),
-						A2($elm$html$Html$Attributes$style, 'font-size', '1rem')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromChar(_char))
-					]));
+			var name = shape.a;
+			return $author$project$Emoji$view(
+				$author$project$Emoji$find(name));
 	}
 };
 var $author$project$ActivityShape$view = function (activity) {
@@ -10898,7 +12678,7 @@ var $author$project$ActivityShape$view = function (activity) {
 				A3(
 					$author$project$ActivityShape$Block,
 					0,
-					activity.ap,
+					activity.an,
 					{
 						H: $author$project$ActivityShape$toHeight(mins),
 						P: $author$project$ActivityShape$toWidth(pace)
@@ -10910,11 +12690,11 @@ var $author$project$ActivityShape$view = function (activity) {
 				A3(
 					$author$project$ActivityShape$Block,
 					1,
-					activity.ap,
+					activity.an,
 					{
 						H: $author$project$ActivityShape$toHeight(mins),
 						P: $author$project$ActivityShape$toWidth(
-							A2($elm$core$Maybe$withDefault, 5, activity.ae))
+							A2($elm$core$Maybe$withDefault, 5, activity.ac))
 					}));
 		case 2:
 			var mins = _v0.a;
@@ -10922,9 +12702,9 @@ var $author$project$ActivityShape$view = function (activity) {
 				A3(
 					$author$project$ActivityShape$Circle,
 					2,
-					activity.ap,
+					activity.an,
 					$elm$core$List$head(
-						$elm$core$String$toList(activity.at))));
+						$elm$core$String$toList(activity.ar))));
 		default:
 			var emoji = _v0.a;
 			return $author$project$ActivityShape$viewShape(
@@ -11065,7 +12845,7 @@ var $author$project$Calendar$view = F5(
 	function (calendar, viewActivity, newActivity, today, activities) {
 		var filterActivities = F2(
 			function (date_, activity) {
-				return _Utils_eq(activity.aq, date_);
+				return _Utils_eq(activity.ao, date_);
 			});
 		var accessActivities = function (date_) {
 			return A2(
@@ -11125,8 +12905,8 @@ var $author$project$Msg$EditActivity = function (a) {
 };
 var $author$project$ActivityForm$isEditing = F2(
 	function (activity, _v0) {
-		var id = _v0.aE;
-		return _Utils_eq(activity.aE, id);
+		var id = _v0.aC;
+		return _Utils_eq(activity.aC, id);
 	});
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Msg$CheckedCompleted = function (a) {
@@ -11257,11 +13037,41 @@ var $author$project$ActivityForm$durationInput = F2(
 				]),
 			_List_Nil);
 	});
-var $elm$core$String$fromList = _String_fromList;
-var $author$project$Emoji$list = _List_fromArray(
-	['😀', '😅', '😌', '😬', '😪', '😓', '\uD83E\uDD75', '\uD83E\uDD12', '😷', '😴', '💆', '🚴', '🏋', '💭', '👟']);
 var $author$project$ActivityForm$emojiSelect = F2(
 	function (msg, emoji) {
+		var padding = A2($elm$html$Html$Attributes$style, 'padding', '3.5px 0.5rem 0.5px 0.5rem');
+		var emojis = A2(
+			$elm$core$List$take,
+			10,
+			$author$project$Emoji$filter(emoji));
+		var emojiItem = function (data) {
+			return A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Msg$SelectedEmoji(data.bv)),
+						A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
+						padding,
+						A2($elm$html$Html$Attributes$style, 'white-space', 'nowrap')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Emoji$view(data),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'display', 'inline-block'),
+								A2($elm$html$Html$Attributes$style, 'vertical-align', 'top'),
+								A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(data.bv)
+							]))
+					]));
+		};
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -11274,68 +13084,56 @@ var $author$project$ActivityForm$emojiSelect = F2(
 					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('dropdown emoji')
+							$elm$html$Html$Attributes$class('dropdown')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							$elm$html$Html$button,
+							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('button')
+									$elm$html$Html$Attributes$class('row')
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text(
-									$elm$core$String$fromList(
-										_List_fromArray(
-											[emoji])))
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button'),
+											padding,
+											A2($elm$html$Html$Attributes$style, 'border-top-right-radius', '0'),
+											A2($elm$html$Html$Attributes$style, 'border-bottom-right-radius', '0')
+										]),
+									_List_fromArray(
+										[
+											$author$project$Emoji$view(
+											A2(
+												$elm$core$Maybe$withDefault,
+												$author$project$Emoji$default,
+												$elm$core$List$head(emojis)))
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onInput(msg),
+											$elm$html$Html$Attributes$class('input-small'),
+											A2($elm$html$Html$Attributes$style, 'border-top-left-radius', '0'),
+											A2($elm$html$Html$Attributes$style, 'border-bottom-left-radius', '0'),
+											A2($elm$html$Html$Attributes$style, 'border-left-color', 'transparent'),
+											$elm$html$Html$Attributes$value(emoji)
+										]),
+									_List_Nil)
 								])),
 							A2(
 							$elm$html$Html$div,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$class('dropdown-content emoji')
+									$elm$html$Html$Attributes$class('dropdown-content')
 								]),
-							A2(
-								$elm$core$List$map,
-								function (emojiChar) {
-									return A2(
-										$elm$html$Html$a,
-										_List_fromArray(
-											[
-												$elm$html$Html$Events$onClick(
-												msg(emojiChar)),
-												A2($elm$html$Html$Attributes$style, 'text-align', 'left')
-											]),
-										_List_fromArray(
-											[
-												$elm$html$Html$text(
-												$elm$core$String$fromList(
-													_List_fromArray(
-														[emojiChar])))
-											]));
-								},
-								$author$project$Emoji$list))
-						])),
-					A2(
-					$elm$html$Html$input,
-					_List_fromArray(
-						[
-							$elm$html$Html$Events$onInput(
-							function (str) {
-								return msg(
-									A2(
-										$elm$core$Maybe$withDefault,
-										$author$project$Emoji$default,
-										$elm$core$List$head(
-											$elm$core$String$toList(str))));
-							}),
-							$elm$html$Html$Attributes$class('input-small'),
-							A2($elm$html$Html$Attributes$style, 'width', '1rem'),
-							$elm$html$Html$Attributes$value('')
-						]),
-					_List_Nil)
+							A2($elm$core$List$map, emojiItem, emojis))
+						]))
 				]));
 	});
 var $author$project$Msg$ClickedDelete = {$: 26};
@@ -11661,12 +13459,12 @@ var $author$project$Activity$activityTypeToString = function (aType) {
 };
 var $author$project$ActivityForm$toActivityType = F2(
 	function (typeStr, model) {
-		var pace_ = A2($elm$core$Maybe$withDefault, 0, model.ae);
+		var pace_ = A2($elm$core$Maybe$withDefault, 0, model.ac);
 		var mins = A2(
 			$elm$core$Maybe$withDefault,
 			30,
 			A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T));
-		var emoji = A2($elm$core$Maybe$withDefault, $author$project$Emoji$default, model.Z);
+		var emoji = A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, model.X);
 		var dist = A2($elm$core$Maybe$withDefault, 0, model.S);
 		switch (typeStr) {
 			case 'Run':
@@ -11701,7 +13499,7 @@ var $author$project$ActivityShape$viewDefault = F2(
 					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
 			default:
 				return $author$project$ActivityShape$viewShape(
-					$author$project$ActivityShape$Emoji($author$project$Emoji$default));
+					$author$project$ActivityShape$Emoji($author$project$Emoji$default.bv));
 		}
 	});
 var $author$project$ActivityForm$shapeSelect = F2(
@@ -11772,7 +13570,7 @@ var $author$project$ActivityForm$shapeSelect = F2(
 										_List_Nil,
 										_List_fromArray(
 											[
-												A2($author$project$ActivityShape$viewDefault, model.ap, aType),
+												A2($author$project$ActivityShape$viewDefault, model.an, aType),
 												A2(
 												$author$project$Skeleton$compactColumn,
 												_List_fromArray(
@@ -11879,7 +13677,7 @@ var $author$project$ActivityForm$viewForm = F2(
 							A2($elm$html$Html$Attributes$style, 'flex-basis', '3.3rem'),
 							A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
 							$elm$html$Html$Events$onClick(
-							$author$project$Msg$CheckedCompleted(!model.ap))
+							$author$project$Msg$CheckedCompleted(!model.an))
 						]),
 					_List_fromArray(
 						[activityShape])),
@@ -11982,7 +13780,7 @@ var $author$project$ActivityForm$viewForm = F2(
 											$elm$html$Html$Attributes$placeholder('Description'),
 											$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
 											$elm$html$Html$Attributes$name('description'),
-											$elm$html$Html$Attributes$value(model.at),
+											$elm$html$Html$Attributes$value(model.ar),
 											A2($elm$html$Html$Attributes$style, 'width', '100%')
 										]),
 									_List_Nil)
@@ -11998,7 +13796,10 @@ var $author$project$ActivityForm$viewForm = F2(
 								[
 									A2(
 									$author$project$Skeleton$compactColumn,
-									_List_Nil,
+									_List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
+										]),
 									_List_fromArray(
 										[
 											A2($author$project$ActivityForm$shapeSelect, model, $author$project$Msg$SelectedShape)
@@ -12010,7 +13811,7 @@ var $author$project$ActivityForm$viewForm = F2(
 										[
 											A2(
 											$author$project$Skeleton$viewMaybe,
-											model.Z,
+											model.X,
 											$author$project$ActivityForm$emojiSelect($author$project$Msg$SelectedEmoji))
 										])),
 									A2(
@@ -12030,7 +13831,7 @@ var $author$project$ActivityForm$viewForm = F2(
 										[
 											A2(
 											$author$project$Skeleton$viewMaybe,
-											model.ae,
+											model.ac,
 											A2($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace))
 										])),
 									A2(
@@ -12121,7 +13922,7 @@ var $author$project$ActivityForm$viewActivity = F3(
 									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$html$Html$text(activity.at)
+											$elm$html$Html$text(activity.ar)
 										])),
 									A2(
 									$author$project$Skeleton$row,
@@ -12151,7 +13952,7 @@ var $author$project$ActivityForm$viewActivity = F3(
 															A2(
 																$elm$core$Maybe$withDefault,
 																'',
-																A2($elm$core$Maybe$map, $author$project$Activity$pace.bI, activity.ae)))))
+																A2($elm$core$Maybe$map, $author$project$Activity$pace.bI, activity.ac)))))
 												])),
 											A2(
 											$author$project$Skeleton$compactColumn,
@@ -12206,7 +14007,7 @@ var $author$project$Main$view = function (model) {
 							state.m,
 							$author$project$Main$calculateLevel(activities)),
 						$author$project$Msg$ClickedNewActivity,
-						state.ai,
+						state.ag,
 						activities)
 					]);
 			}
@@ -12219,7 +14020,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 		bJ: $author$project$Main$update,
 		bK: function (model) {
 			return {
-				am: $elm$core$List$singleton(
+				ak: $elm$core$List$singleton(
 					A2(
 						$author$project$Skeleton$layout,
 						$author$project$Main$navbarItems(model),
