@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Zoom(..), getDate, init, update, view)
+module Calendar exposing (Model, Zoom(..), getDate, init, update, view, viewDatePicker, viewToggleButton)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -12,7 +12,7 @@ import Json.Decode as Decode
 import Msg exposing (Msg(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
-import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf)
+import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf)
 import Task
 import Time exposing (Month(..))
 
@@ -88,8 +88,8 @@ update msg model =
 -- VIEW
 
 
-viewMenu : Model -> Msg -> Html Msg
-viewMenu model loadToday =
+viewToggleButton : Model -> Html Msg
+viewToggleButton model =
     let
         calendarIcon =
             case model.zoom of
@@ -100,8 +100,13 @@ viewMenu model loadToday =
                     [ i [ class "far fa-calendar-alt" ] [] ]
     in
     row []
-        [ a [ class "button", onClick (Toggle Nothing) ] calendarIcon
-        , div [ class "dropdown", style "margin-left" "0.5rem" ]
+        [ a [ class "button", onClick (Toggle Nothing) ] calendarIcon ]
+
+
+viewDatePicker : Model -> Msg -> Html Msg
+viewDatePicker model loadToday =
+    row [ style "justify-content" "center" ]
+        [ div [ class "dropdown", style "margin-left" "0.5rem" ]
             [ button []
                 [ text (Date.format "MMMM" model.selected)
                 ]
@@ -177,7 +182,7 @@ view calendar viewActivity newActivity today activities =
                         |> List.map (\d -> viewDay d (accessActivities d) (d == today) (d == calendar.selected) viewActivity newActivity)
     in
     column []
-        [ viewMenu calendar (Jump today)
+        [ viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
         , column
             [ id "calendar"
             , style "overflow" "scroll"
@@ -239,6 +244,14 @@ scrollHandler model =
 
 
 -- WEEKLY VIEW
+
+
+viewWeekDaysHeader : Html msg
+viewWeekDaysHeader =
+    row [ style "opacity" "0.3" ]
+        (column [ style "min-width" "4rem" ] []
+            :: ([ "M", "T", "W", "R", "F", "S", "S" ] |> List.map (\d -> column [] [ text d ]))
+        )
 
 
 viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg

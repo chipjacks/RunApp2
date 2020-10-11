@@ -4,16 +4,12 @@ import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
 
 
-layout : List (Html msg) -> Html msg -> Html msg
+layout : Html msg -> Html msg -> Html msg
 layout navbarItems page =
     column [ class "container-y" ]
         [ row [ class "navbar" ]
             [ column [ class "container-x" ]
-                [ row [ style "font-size" "1.5rem" ]
-                    (compactColumn [ style "font-style" "italic" ] [ text "RunApp2" ]
-                        :: navbarItems
-                    )
-                ]
+                [ navbarItems ]
             ]
         , expandingRow []
             [ column [ class "container-x" ]
