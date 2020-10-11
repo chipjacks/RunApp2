@@ -16,7 +16,7 @@ import Html.Events exposing (on, onClick)
 import Http
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
-import Ports exposing (selectDateFromScroll)
+import Ports
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Store
@@ -101,9 +101,9 @@ update msg model =
 
         Loaded state ->
             case msg of
-                LoadToday ->
-                    ( model
-                    , Task.perform Jump Date.today
+                LoadToday date ->
+                    ( Loaded { state | today = date }
+                    , Cmd.none
                     )
 
                 GotActivities result ->
@@ -128,6 +128,17 @@ update msg model =
 
                 EditActivity activity ->
                     ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
+
+                VisibilityChange visibility ->
+                    case visibility of
+                        "visible" ->
+                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities Api.getActivities ] )
+
+                        "hidden" ->
+                            ( model, Store.flush state.store )
+
+                        _ ->
+                            ( model, Cmd.none )
 
                 NoOp ->
                     ( model, Cmd.none )
@@ -332,5 +343,6 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Time.every 10000 (\_ -> FlushStore)
-        , selectDateFromScroll ReceiveSelectDate
+        , Ports.selectDateFromScroll ReceiveSelectDate
+        , Ports.visibilityChange VisibilityChange
         ]

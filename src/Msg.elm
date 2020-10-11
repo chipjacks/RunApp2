@@ -7,10 +7,11 @@ import Http
 
 
 type Msg
-    = LoadToday
+    = LoadToday Date
     | GotActivities (Result Http.Error (List Activity))
     | EditActivity Activity
     | ReceiveSelectDate String
+    | VisibilityChange String
     | NoOp
       -- STORE
     | Create Activity
