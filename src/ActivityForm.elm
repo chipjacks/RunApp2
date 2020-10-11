@@ -367,7 +367,7 @@ emojiSelect : (String -> Msg) -> String -> Html Msg
 emojiSelect msg emoji =
     let
         emojis =
-            Emoji.filter emoji |> List.take 10
+            Emoji.filter (String.toLower emoji) |> List.take 10
 
         padding =
             style "padding" "3.5px 0.5rem 0.5px 0.5rem"
@@ -395,10 +395,8 @@ emojiSelect msg emoji =
                     ]
                 , input
                     [ onInput msg
-                    , class "input-small"
-                    , style "border-top-left-radius" "0"
-                    , style "border-bottom-left-radius" "0"
-                    , style "border-left-color" "transparent"
+                    , class "input small icon"
+                    , style "width" "6rem"
                     , value emoji
                     ]
                     []
@@ -416,7 +414,7 @@ durationInput msg duration =
         , onInput msg
         , name "duration"
         , style "width" "3rem"
-        , class "input-small"
+        , class "input small"
         , value duration
         ]
         []

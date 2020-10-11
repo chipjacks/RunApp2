@@ -13063,7 +13063,7 @@ var $author$project$ActivityForm$durationInput = F2(
 					$elm$html$Html$Events$onInput(msg),
 					$elm$html$Html$Attributes$name('duration'),
 					A2($elm$html$Html$Attributes$style, 'width', '3rem'),
-					$elm$html$Html$Attributes$class('input-small'),
+					$elm$html$Html$Attributes$class('input small'),
 					$elm$html$Html$Attributes$value(duration)
 				]),
 			_List_Nil);
@@ -13074,7 +13074,8 @@ var $author$project$ActivityForm$emojiSelect = F2(
 		var emojis = A2(
 			$elm$core$List$take,
 			10,
-			$author$project$Emoji$filter(emoji));
+			$author$project$Emoji$filter(
+				$elm$core$String$toLower(emoji)));
 		var emojiItem = function (data) {
 			return A2(
 				$elm$html$Html$a,
@@ -13149,10 +13150,8 @@ var $author$project$ActivityForm$emojiSelect = F2(
 									_List_fromArray(
 										[
 											$elm$html$Html$Events$onInput(msg),
-											$elm$html$Html$Attributes$class('input-small'),
-											A2($elm$html$Html$Attributes$style, 'border-top-left-radius', '0'),
-											A2($elm$html$Html$Attributes$style, 'border-bottom-left-radius', '0'),
-											A2($elm$html$Html$Attributes$style, 'border-left-color', 'transparent'),
+											$elm$html$Html$Attributes$class('input small icon'),
+											A2($elm$html$Html$Attributes$style, 'width', '6rem'),
 											$elm$html$Html$Attributes$value(emoji)
 										]),
 									_List_Nil)
