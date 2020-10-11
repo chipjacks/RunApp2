@@ -61,6 +61,10 @@
           }, 500);
         }, 100);
       });
+
+      document.addEventListener('visibilitychange', function() {
+        app.ports.visibilityChange.send(document.visibilityState);
+      });
     </script>
   </body>
 </html>
