@@ -63,15 +63,43 @@ init _ =
     )
 
 
-navbarItems : Model -> List (Html msg)
+navbarItems : Model -> Html Msg
 navbarItems model =
+    let
+        header =
+            compactColumn
+                [ style "font-size" "1.5rem"
+                , style "font-style" "italic"
+                , style "color" "var(--header-blue)"
+                , style "padding-top" "0.1rem"
+                , style "padding-left" "1rem"
+                ]
+                [ text "RunApp2" ]
+
+        spinner =
+            i
+                [ class "fas fa-spinner"
+                , style "font-size" "2rem"
+                , style "color" "lightgray"
+                , style "animation" "rotation 2s infinite linear"
+                ]
+                []
+    in
     case model of
-        Loaded { store } ->
-            [ viewIf (Store.needsFlush store) (compactColumn [] [ text "..." ])
-            ]
+        Loaded { store, calendar, today } ->
+            row []
+                [ compactColumn [ style "margin-left" "-1rem" ] [ Calendar.viewToggleButton calendar ]
+                , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
+                , compactColumn [ style "min-width" "2rem" ]
+                    [ viewIf (Store.needsFlush store) spinner
+                    ]
+                ]
 
         _ ->
-            []
+            row []
+                [ column [] []
+                , compactColumn [] [ spinner ]
+                ]
 
 
 
