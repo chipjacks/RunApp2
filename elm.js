@@ -2660,8 +2660,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		r: func(record.r),
-		af: record.af,
-		ad: record.ad
+		ag: record.ag,
+		ae: record.ae
 	}
 });
 
@@ -2930,10 +2930,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.r;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.af;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ag;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.ad) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.ae) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3923,7 +3923,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.bJ,
 		impl.bG,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.ae && impl.ae(sendToApp)
+			var divertHrefToApp = impl.af && impl.af(sendToApp)
 			var view = impl.bK;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -3998,7 +3998,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		ae: function(sendToApp)
+		af: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4450,13 +4450,13 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.Y.a(response)));
+			callback(toTask(request.Z.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.Y.b, xhr)); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.Z.b, xhr)); });
 		$elm$core$Maybe$isJust(request.a3) && _Http_track(router, xhr, request.a3.a);
 
 		try {
@@ -4484,7 +4484,7 @@ function _Http_configureRequest(xhr, request)
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 	xhr.timeout = request.a2.a || 0;
-	xhr.responseType = request.Y.d;
+	xhr.responseType = request.Z.d;
 	xhr.withCredentials = request.bd;
 }
 
@@ -5104,7 +5104,7 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.e) {
+		if (!builder.f) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
 				$elm$core$Elm$JsArray$length(builder.h),
@@ -5112,11 +5112,11 @@ var $elm$core$Array$builderToArray = F2(
 				$elm$core$Elm$JsArray$empty,
 				builder.h);
 		} else {
-			var treeLen = builder.e * $elm$core$Array$branchFactor;
+			var treeLen = builder.f * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
 			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.i) : builder.i;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.e);
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.f);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
 				$elm$core$Elm$JsArray$length(builder.h) + treeLen,
@@ -5135,7 +5135,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{i: nodeList, e: (len / $elm$core$Array$branchFactor) | 0, h: tail});
+					{i: nodeList, f: (len / $elm$core$Array$branchFactor) | 0, h: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5485,7 +5485,7 @@ var $author$project$Msg$GotActivities = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$Msg$Jump = function (a) {
-	return {$: 12, a: a};
+	return {$: 13, a: a};
 };
 var $author$project$Main$Loading = F2(
 	function (a, b) {
@@ -5517,7 +5517,7 @@ var $elm$core$Task$attempt = F2(
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Activity$Activity = F8(
 	function (id, date, description, emoji, completed, duration, pace, distance) {
-		return {an: completed, ao: date, ar: description, S: distance, T: duration, X: emoji, aC: id, ac: pace};
+		return {an: completed, ao: date, ar: description, S: distance, T: duration, Y: emoji, aC: id, ad: pace};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$andThen = _Json_andThen;
@@ -7121,7 +7121,7 @@ var $elm$http$Http$task = function (r) {
 		_Http_toTask,
 		0,
 		$elm$http$Http$resultToTask,
-		{bd: false, ak: r.ak, Y: r.aW, az: r.az, aH: r.aH, a2: r.a2, a3: $elm$core$Maybe$Nothing, a5: r.a5});
+		{bd: false, ak: r.ak, Z: r.aW, az: r.az, aH: r.aH, a2: r.a2, a3: $elm$core$Maybe$Nothing, a5: r.a5});
 };
 var $author$project$Api$getActivities = $elm$http$Http$task(
 	{
@@ -7417,7 +7417,7 @@ var $author$project$Skeleton$viewIf = F2(
 	});
 var $author$project$Main$navbarItems = function (model) {
 	if (model.$ === 1) {
-		var store = model.a.f;
+		var store = model.a.e;
 		return _List_fromArray(
 			[
 				A2(
@@ -7439,9 +7439,12 @@ var $elm$core$List$singleton = function (value) {
 	return _List_fromArray(
 		[value]);
 };
-var $author$project$Msg$FlushStore = {$: 11};
+var $author$project$Msg$FlushStore = {$: 12};
 var $author$project$Msg$ReceiveSelectDate = function (a) {
 	return {$: 3, a: a};
+};
+var $author$project$Msg$VisibilityChange = function (a) {
+	return {$: 4, a: a};
 };
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$time$Time$Every = F2(
@@ -7696,6 +7699,7 @@ var $elm$time$Time$every = F2(
 			A2($elm$time$Time$Every, interval, tagger));
 	});
 var $author$project$Ports$selectDateFromScroll = _Platform_incomingPort('selectDateFromScroll', $elm$json$Json$Decode$string);
+var $author$project$Ports$visibilityChange = _Platform_incomingPort('visibilityChange', $elm$json$Json$Decode$string);
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
@@ -7706,25 +7710,29 @@ var $author$project$Main$subscriptions = function (model) {
 				function (_v0) {
 					return $author$project$Msg$FlushStore;
 				}),
-				$author$project$Ports$selectDateFromScroll($author$project$Msg$ReceiveSelectDate)
+				$author$project$Ports$selectDateFromScroll($author$project$Msg$ReceiveSelectDate),
+				$author$project$Ports$visibilityChange($author$project$Msg$VisibilityChange)
 			]));
 };
 var $author$project$Msg$Create = function (a) {
-	return {$: 5, a: a};
+	return {$: 6, a: a};
 };
 var $author$project$Calendar$Daily = 1;
+var $author$project$Msg$LoadToday = function (a) {
+	return {$: 0, a: a};
+};
 var $author$project$Main$Loaded = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$Msg$NewActivity = function (a) {
-	return {$: 17, a: a};
+	return {$: 18, a: a};
 };
 var $author$project$Main$State = F4(
 	function (calendar, store, activityForm, today) {
-		return {m: activityForm, R: calendar, f: store, ag: today};
+		return {m: activityForm, R: calendar, e: store, W: today};
 	});
 var $author$project$Msg$Toggle = function (a) {
-	return {$: 13, a: a};
+	return {$: 14, a: a};
 };
 var $author$project$Store$cmd = function (msg) {
 	return A2(
@@ -7736,7 +7744,7 @@ var $author$project$Store$cmd = function (msg) {
 };
 var $author$project$Msg$Posted = F2(
 	function (a, b) {
-		return {$: 10, a: a, b: b};
+		return {$: 11, a: a, b: b};
 	});
 var $author$project$Store$State = function (activities) {
 	return {bc: activities};
@@ -7842,14 +7850,14 @@ var $justinmimbs$date$Date$toOrdinalDate = function (_v0) {
 	var rd = _v0;
 	var y = $justinmimbs$date$Date$year(rd);
 	return {
-		ab: rd - $justinmimbs$date$Date$daysBeforeYear(y),
+		ac: rd - $justinmimbs$date$Date$daysBeforeYear(y),
 		bb: y
 	};
 };
 var $justinmimbs$date$Date$toCalendarDate = function (_v0) {
 	var rd = _v0;
 	var date = $justinmimbs$date$Date$toOrdinalDate(rd);
-	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.bb, 0, date.ab);
+	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.bb, 0, date.ac);
 };
 var $justinmimbs$date$Date$day = A2(
 	$elm$core$Basics$composeR,
@@ -7868,7 +7876,7 @@ var $justinmimbs$date$Date$ordinalDay = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toOrdinalDate,
 	function ($) {
-		return $.ab;
+		return $.ac;
 	});
 var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function (_char) {
@@ -8072,7 +8080,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.V(
 							$justinmimbs$date$Date$month(date));
 					case 4:
-						return language._(
+						return language.aa(
 							$justinmimbs$date$Date$month(date));
 					case 5:
 						return A2(
@@ -8111,7 +8119,7 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$day(date)));
 					case 3:
-						return language.W(
+						return language.X(
 							$justinmimbs$date$Date$day(date));
 					default:
 						return '';
@@ -8482,8 +8490,8 @@ var $justinmimbs$date$Date$weekdayToName = function (wd) {
 	}
 };
 var $justinmimbs$date$Date$language_en = {
-	W: $justinmimbs$date$Date$withOrdinalSuffix,
-	_: $justinmimbs$date$Date$monthToName,
+	X: $justinmimbs$date$Date$withOrdinalSuffix,
+	aa: $justinmimbs$date$Date$monthToName,
 	V: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$monthToName,
@@ -8500,7 +8508,7 @@ var $justinmimbs$date$Date$format = function (pattern) {
 var $justinmimbs$date$Date$toIsoString = $justinmimbs$date$Date$format('yyyy-MM-dd');
 var $author$project$Activity$encoder = function (activity) {
 	var paceEncoder = function () {
-		var _v1 = activity.ac;
+		var _v1 = activity.ad;
 		if (!_v1.$) {
 			var pace_ = _v1.a;
 			return $author$project$Activity$pace.at(pace_);
@@ -8541,7 +8549,7 @@ var $author$project$Activity$encoder = function (activity) {
 					A2(
 						$elm$core$Maybe$withDefault,
 						$elm$json$Json$Encode$null,
-						A2($elm$core$Maybe$map, $elm$json$Json$Encode$string, activity.X))),
+						A2($elm$core$Maybe$map, $elm$json$Json$Encode$string, activity.Y))),
 					_Utils_Tuple2(
 					'completed',
 					$elm$json$Json$Encode$bool(activity.an)),
@@ -8736,21 +8744,21 @@ var $author$project$Store$shiftActivity = F3(
 var $author$project$Store$updateState = F2(
 	function (msg, state) {
 		switch (msg.$) {
-			case 5:
+			case 6:
 				var activity = msg.a;
 				return _Utils_update(
 					state,
 					{
 						bc: A3($author$project$Store$updateActivity, activity, true, state.bc)
 					});
-			case 6:
+			case 7:
 				var activity = msg.a;
 				return _Utils_update(
 					state,
 					{
 						bc: A3($author$project$Store$updateActivity, activity, false, state.bc)
 					});
-			case 7:
+			case 8:
 				var date = msg.a;
 				var activity = msg.b;
 				return _Utils_update(
@@ -8758,7 +8766,7 @@ var $author$project$Store$updateState = F2(
 					{
 						bc: A3($author$project$Store$moveActivity, activity, date, state.bc)
 					});
-			case 8:
+			case 9:
 				var up = msg.a;
 				var activity = msg.b;
 				return _Utils_update(
@@ -8766,7 +8774,7 @@ var $author$project$Store$updateState = F2(
 					{
 						bc: A3($author$project$Store$shiftActivity, activity, up, state.bc)
 					});
-			case 9:
+			case 10:
 				var activity = msg.a;
 				return _Utils_update(
 					state,
@@ -8894,7 +8902,7 @@ var $elm$random$Random$generate = F2(
 	});
 var $author$project$ActivityForm$Model = F9(
 	function (id, date, description, emoji, completed, duration, pace, distance, result) {
-		return {an: completed, ao: date, ar: description, S: distance, T: duration, X: emoji, aC: id, ac: pace, x: result};
+		return {an: completed, ao: date, ar: description, S: distance, T: duration, Y: emoji, aC: id, ad: pace, x: result};
 	});
 var $author$project$ActivityForm$init = function (activity) {
 	return A9(
@@ -8902,10 +8910,10 @@ var $author$project$ActivityForm$init = function (activity) {
 		activity.aC,
 		$elm$core$Maybe$Just(activity.ao),
 		activity.ar,
-		activity.X,
+		activity.Y,
 		activity.an,
 		A2($elm$core$Maybe$map, $elm$core$String$fromInt, activity.T),
-		activity.ac,
+		activity.ad,
 		activity.S,
 		$elm$core$Result$Ok(activity));
 };
@@ -9197,9 +9205,9 @@ var $elm$core$Tuple$mapSecond = F2(
 	});
 var $author$project$Msg$Move = F2(
 	function (a, b) {
-		return {$: 7, a: a, b: b};
+		return {$: 8, a: a, b: b};
 	});
-var $author$project$Msg$NoOp = {$: 4};
+var $author$project$Msg$NoOp = {$: 5};
 var $author$project$ActivityForm$apply = F2(
 	function (toMsg, _v0) {
 		var result = _v0.x;
@@ -9259,10 +9267,10 @@ var $author$project$ActivityForm$validate = function (model) {
 					model.aC,
 					date,
 					description,
-					model.X,
+					model.Y,
 					model.an,
 					A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T),
-					model.ac,
+					model.ad,
 					model.S);
 			}),
 		A2($author$project$ActivityForm$validateFieldExists, model.ao, 'date'),
@@ -9418,7 +9426,7 @@ var $elm$core$List$take = F2(
 	});
 var $author$project$Store$update = F2(
 	function (msg, model) {
-		if (msg.$ === 10) {
+		if (msg.$ === 11) {
 			var sentMsgs = msg.a;
 			var result = msg.b;
 			var state = model.a;
@@ -9440,19 +9448,19 @@ var $author$project$Store$update = F2(
 		}
 	});
 var $author$project$Msg$Delete = function (a) {
-	return {$: 9, a: a};
+	return {$: 10, a: a};
 };
 var $author$project$Msg$Shift = F2(
 	function (a, b) {
-		return {$: 8, a: a, b: b};
+		return {$: 9, a: a, b: b};
 	});
 var $author$project$Msg$Update = function (a) {
-	return {$: 6, a: a};
+	return {$: 7, a: a};
 };
 var $author$project$ActivityForm$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 18:
+			case 19:
 				var activityType = msg.a;
 				switch (activityType.$) {
 					case 0:
@@ -9466,8 +9474,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										X: $elm$core$Maybe$Nothing,
-										ac: $elm$core$Maybe$Just(pace_)
+										Y: $elm$core$Maybe$Nothing,
+										ad: $elm$core$Maybe$Just(pace_)
 									})),
 							$elm$core$Platform$Cmd$none);
 					case 1:
@@ -9481,8 +9489,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Just(dist),
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										X: $elm$core$Maybe$Nothing,
-										ac: $elm$core$Maybe$Nothing
+										Y: $elm$core$Maybe$Nothing,
+										ad: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 					case 2:
@@ -9495,8 +9503,8 @@ var $author$project$ActivityForm$update = F2(
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Just(
 											$elm$core$String$fromInt(mins)),
-										X: $elm$core$Maybe$Nothing,
-										ac: $elm$core$Maybe$Nothing
+										Y: $elm$core$Maybe$Nothing,
+										ad: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -9508,12 +9516,12 @@ var $author$project$ActivityForm$update = F2(
 									{
 										S: $elm$core$Maybe$Nothing,
 										T: $elm$core$Maybe$Nothing,
-										X: $elm$core$Maybe$Just(emoji),
-										ac: $elm$core$Maybe$Nothing
+										Y: $elm$core$Maybe$Just(emoji),
+										ad: $elm$core$Maybe$Nothing
 									})),
 							$elm$core$Platform$Cmd$none);
 				}
-			case 19:
+			case 20:
 				var desc = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
@@ -9521,17 +9529,17 @@ var $author$project$ActivityForm$update = F2(
 							model,
 							{ar: desc})),
 					$elm$core$Platform$Cmd$none);
-			case 20:
+			case 21:
 				var _char = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
 							{
-								X: $elm$core$Maybe$Just(_char)
+								Y: $elm$core$Maybe$Just(_char)
 							})),
 					$elm$core$Platform$Cmd$none);
-			case 21:
+			case 22:
 				var bool = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
@@ -9539,7 +9547,7 @@ var $author$project$ActivityForm$update = F2(
 							model,
 							{an: bool})),
 					$elm$core$Platform$Cmd$none);
-			case 22:
+			case 23:
 				var str = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
@@ -9549,17 +9557,17 @@ var $author$project$ActivityForm$update = F2(
 								T: $elm$core$Maybe$Just(str)
 							})),
 					$elm$core$Platform$Cmd$none);
-			case 23:
+			case 24:
 				var str = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
 							{
-								ac: $author$project$Activity$pace.ay(str)
+								ad: $author$project$Activity$pace.ay(str)
 							})),
 					$elm$core$Platform$Cmd$none);
-			case 24:
+			case 25:
 				var str = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
@@ -9569,23 +9577,23 @@ var $author$project$ActivityForm$update = F2(
 								S: $author$project$Activity$distance.ay(str)
 							})),
 					$elm$core$Platform$Cmd$none);
-			case 25:
-				return _Utils_Tuple2(
-					model,
-					$author$project$Store$cmd(
-						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
 			case 26:
 				return _Utils_Tuple2(
 					model,
 					$author$project$Store$cmd(
+						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
+			case 27:
+				return _Utils_Tuple2(
+					model,
+					$author$project$Store$cmd(
 						A2($author$project$ActivityForm$apply, $author$project$Msg$Delete, model)));
-			case 28:
+			case 29:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{ao: $elm$core$Maybe$Nothing}),
 					$elm$core$Platform$Cmd$none);
-			case 29:
+			case 30:
 				var up = msg.a;
 				return _Utils_Tuple2(
 					model,
@@ -9620,7 +9628,7 @@ var $author$project$Main$updateActivityForm = F2(
 	});
 var $author$project$Calendar$Weekly = 0;
 var $author$project$Msg$ScrollCompleted = function (a) {
-	return {$: 15, a: a};
+	return {$: 16, a: a};
 };
 var $elm$browser$Browser$Dom$getElement = _Browser_getElement;
 var $elm$browser$Browser$Dom$getViewportOf = _Browser_getViewportOf;
@@ -9658,12 +9666,12 @@ var $author$project$Ports$scrollToSelectedDate = _Platform_outgoingPort(
 var $author$project$Calendar$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 12:
+			case 13:
 				var date = msg.a;
 				return _Utils_Tuple2(
 					A2($author$project$Calendar$init, model.Q, date),
 					$author$project$Ports$scrollToSelectedDate(0));
-			case 13:
+			case 14:
 				var dateM = msg.a;
 				var _v1 = model.Q;
 				if (!_v1) {
@@ -9681,7 +9689,7 @@ var $author$project$Calendar$update = F2(
 							A2($elm$core$Maybe$withDefault, model.l, dateM)),
 						$author$project$Ports$scrollToSelectedDate(0));
 				}
-			case 14:
+			case 15:
 				var up = msg.a;
 				var date = msg.b;
 				var currentHeight = msg.c;
@@ -9694,7 +9702,7 @@ var $author$project$Calendar$update = F2(
 						model,
 						{G: date}),
 					$elm$core$Platform$Cmd$none));
-			case 15:
+			case 16:
 				var result = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
@@ -9733,7 +9741,7 @@ var $author$project$Main$update = F2(
 			var dateM = model.a;
 			var activitiesM = model.b;
 			switch (msg.$) {
-				case 12:
+				case 13:
 					var date = msg.a;
 					return $author$project$Main$updateLoading(
 						A2(
@@ -9759,9 +9767,13 @@ var $author$project$Main$update = F2(
 			var state = model.a;
 			switch (msg.$) {
 				case 0:
+					var date = msg.a;
 					return _Utils_Tuple2(
-						model,
-						A2($elm$core$Task$perform, $author$project$Msg$Jump, $justinmimbs$date$Date$today));
+						$author$project$Main$Loaded(
+							_Utils_update(
+								state,
+								{W: date})),
+						$elm$core$Platform$Cmd$none);
 				case 1:
 					var result = msg.a;
 					if (!result.$) {
@@ -9771,21 +9783,21 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									state,
 									{
-										f: $author$project$Store$init(activities)
+										e: $author$project$Store$init(activities)
 									})),
 							$elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					}
-				case 16:
+				case 17:
 					var date = msg.a;
 					return _Utils_Tuple2(
 						model,
 						A2(
 							$author$project$Main$initActivity,
-							state.ag,
+							state.W,
 							$elm$core$Maybe$Just(date)));
-				case 17:
+				case 18:
 					var activity = msg.a;
 					return _Utils_Tuple2(
 						$author$project$Main$Loaded(
@@ -9794,10 +9806,10 @@ var $author$project$Main$update = F2(
 								{
 									m: $elm$core$Maybe$Just(
 										$author$project$ActivityForm$init(activity)),
-									f: A2(
+									e: A2(
 										$author$project$Store$update,
 										$author$project$Msg$Create(activity),
-										state.f)
+										state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 2:
@@ -9812,17 +9824,26 @@ var $author$project$Main$update = F2(
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 4:
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					var visibility = msg.a;
+					switch (visibility) {
+						case 'visible':
+							return _Utils_Tuple2(
+								model,
+								$elm$core$Platform$Cmd$batch(
+									_List_fromArray(
+										[
+											A2($elm$core$Task$perform, $author$project$Msg$LoadToday, $justinmimbs$date$Date$today),
+											A2($elm$core$Task$attempt, $author$project$Msg$GotActivities, $author$project$Api$getActivities)
+										])));
+						case 'hidden':
+							return _Utils_Tuple2(
+								model,
+								$author$project$Store$flush(state.e));
+						default:
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					}
 				case 5:
-					return _Utils_Tuple2(
-						$author$project$Main$Loaded(
-							_Utils_update(
-								state,
-								{
-									m: $elm$core$Maybe$Nothing,
-									f: A2($author$project$Store$update, msg, state.f)
-								})),
-						$elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				case 6:
 					return _Utils_Tuple2(
 						$author$project$Main$Loaded(
@@ -9830,7 +9851,7 @@ var $author$project$Main$update = F2(
 								state,
 								{
 									m: $elm$core$Maybe$Nothing,
-									f: A2($author$project$Store$update, msg, state.f)
+									e: A2($author$project$Store$update, msg, state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 7:
@@ -9840,7 +9861,7 @@ var $author$project$Main$update = F2(
 								state,
 								{
 									m: $elm$core$Maybe$Nothing,
-									f: A2($author$project$Store$update, msg, state.f)
+									e: A2($author$project$Store$update, msg, state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 8:
@@ -9849,7 +9870,8 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								state,
 								{
-									f: A2($author$project$Store$update, msg, state.f)
+									m: $elm$core$Maybe$Nothing,
+									e: A2($author$project$Store$update, msg, state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 9:
@@ -9858,7 +9880,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								state,
 								{
-									f: A2($author$project$Store$update, msg, state.f)
+									e: A2($author$project$Store$update, msg, state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 10:
@@ -9867,17 +9889,26 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								state,
 								{
-									f: A2($author$project$Store$update, msg, state.f)
+									e: A2($author$project$Store$update, msg, state.e)
 								})),
 						$elm$core$Platform$Cmd$none);
 				case 11:
 					return _Utils_Tuple2(
-						model,
-						$author$project$Store$flush(state.f));
+						$author$project$Main$Loaded(
+							_Utils_update(
+								state,
+								{
+									e: A2($author$project$Store$update, msg, state.e)
+								})),
+						$elm$core$Platform$Cmd$none);
 				case 12:
+					return _Utils_Tuple2(
+						model,
+						$author$project$Store$flush(state.e));
+				case 13:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateCalendar, msg, state));
-				case 13:
+				case 14:
 					var dateM = msg.a;
 					var activityFormCmd = A2(
 						$elm$core$Maybe$withDefault,
@@ -9895,18 +9926,15 @@ var $author$project$Main$update = F2(
 						},
 						$author$project$Main$loaded(
 							A2($author$project$Main$updateCalendar, msg, state)));
-				case 14:
+				case 15:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateCalendar, msg, state));
-				case 15:
+				case 16:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateCalendar, msg, state));
 				case 3:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateCalendar, msg, state));
-				case 18:
-					return $author$project$Main$loaded(
-						A2($author$project$Main$updateActivityForm, msg, state));
 				case 19:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateActivityForm, msg, state));
@@ -9932,6 +9960,9 @@ var $author$project$Main$update = F2(
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateActivityForm, msg, state));
 				case 27:
+					return $author$project$Main$loaded(
+						A2($author$project$Main$updateActivityForm, msg, state));
+				case 28:
 					var activity = msg.a;
 					return _Utils_Tuple2(
 						model,
@@ -9946,23 +9977,23 @@ var $author$project$Main$update = F2(
 										{aC: id});
 								},
 								$author$project$Activity$newId)));
-				case 28:
-					var _v6 = A2(
+				case 29:
+					var _v7 = A2(
 						$author$project$Main$updateCalendar,
 						$author$project$Msg$Toggle($elm$core$Maybe$Nothing),
 						state);
-					var calendarState = _v6.a;
-					var calendarCmd = _v6.b;
-					var _v7 = A2($author$project$Main$updateActivityForm, msg, calendarState);
-					var activityFormState = _v7.a;
-					var activityFormCmd = _v7.b;
+					var calendarState = _v7.a;
+					var calendarCmd = _v7.b;
+					var _v8 = A2($author$project$Main$updateActivityForm, msg, calendarState);
+					var activityFormState = _v8.a;
+					var activityFormCmd = _v8.b;
 					return $author$project$Main$loaded(
 						_Utils_Tuple2(
 							activityFormState,
 							$elm$core$Platform$Cmd$batch(
 								_List_fromArray(
 									[calendarCmd, activityFormCmd]))));
-				case 29:
+				case 30:
 					return $author$project$Main$loaded(
 						A2($author$project$Main$updateActivityForm, msg, state));
 				default:
@@ -9990,7 +10021,7 @@ var $author$project$Main$updateLoading = function (model) {
 	}
 };
 var $author$project$Msg$ClickedNewActivity = function (a) {
-	return {$: 16, a: a};
+	return {$: 17, a: a};
 };
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -10323,7 +10354,7 @@ var $author$project$Calendar$onScroll = function (_v0) {
 };
 var $author$project$Msg$Scroll = F3(
 	function (a, b, c) {
-		return {$: 14, a: a, b: b, c: c};
+		return {$: 15, a: a, b: b, c: c};
 	});
 var $elm$core$Tuple$mapBoth = F3(
 	function (funcA, funcB, _v0) {
@@ -10601,7 +10632,7 @@ var $author$project$Emoji$EmojiData = F3(
 	});
 var $author$project$Emoji$default = A3($author$project$Emoji$EmojiData, 'thought balloon', 26, 3);
 var $author$project$Activity$activityType = function (activity) {
-	var _v0 = _Utils_Tuple3(activity.ac, activity.S, activity.T);
+	var _v0 = _Utils_Tuple3(activity.ad, activity.S, activity.T);
 	_v0$3:
 	while (true) {
 		if (!_v0.b.$) {
@@ -10635,7 +10666,7 @@ var $author$project$Activity$activityType = function (activity) {
 		}
 	}
 	return $author$project$Activity$Note(
-		A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, activity.X));
+		A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, activity.Y));
 };
 var $author$project$Calendar$daysOfWeek = function (start) {
 	return A4(
@@ -12694,7 +12725,7 @@ var $author$project$ActivityShape$view = function (activity) {
 					{
 						H: $author$project$ActivityShape$toHeight(mins),
 						P: $author$project$ActivityShape$toWidth(
-							A2($elm$core$Maybe$withDefault, 5, activity.ac))
+							A2($elm$core$Maybe$withDefault, 5, activity.ad))
 					}));
 		case 2:
 			var mins = _v0.a;
@@ -12910,31 +12941,31 @@ var $author$project$ActivityForm$isEditing = F2(
 	});
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Msg$CheckedCompleted = function (a) {
-	return {$: 21, a: a};
-};
-var $author$project$Msg$ClickedCopy = function (a) {
-	return {$: 27, a: a};
-};
-var $author$project$Msg$ClickedShift = function (a) {
-	return {$: 29, a: a};
-};
-var $author$project$Msg$EditedDescription = function (a) {
-	return {$: 19, a: a};
-};
-var $author$project$Msg$EditedDuration = function (a) {
 	return {$: 22, a: a};
 };
-var $author$project$Msg$SelectedDistance = function (a) {
-	return {$: 24, a: a};
+var $author$project$Msg$ClickedCopy = function (a) {
+	return {$: 28, a: a};
 };
-var $author$project$Msg$SelectedEmoji = function (a) {
+var $author$project$Msg$ClickedShift = function (a) {
+	return {$: 30, a: a};
+};
+var $author$project$Msg$EditedDescription = function (a) {
 	return {$: 20, a: a};
 };
-var $author$project$Msg$SelectedPace = function (a) {
+var $author$project$Msg$EditedDuration = function (a) {
 	return {$: 23, a: a};
 };
+var $author$project$Msg$SelectedDistance = function (a) {
+	return {$: 25, a: a};
+};
+var $author$project$Msg$SelectedEmoji = function (a) {
+	return {$: 21, a: a};
+};
+var $author$project$Msg$SelectedPace = function (a) {
+	return {$: 24, a: a};
+};
 var $author$project$Msg$SelectedShape = function (a) {
-	return {$: 18, a: a};
+	return {$: 19, a: a};
 };
 var $elm$html$Html$Attributes$autocomplete = function (bool) {
 	return A2(
@@ -13136,8 +13167,8 @@ var $author$project$ActivityForm$emojiSelect = F2(
 						]))
 				]));
 	});
-var $author$project$Msg$ClickedDelete = {$: 26};
-var $author$project$Msg$ClickedMove = {$: 28};
+var $author$project$Msg$ClickedDelete = {$: 27};
+var $author$project$Msg$ClickedMove = {$: 29};
 var $author$project$ActivityForm$moreButtons = A2(
 	$elm$html$Html$div,
 	_List_fromArray(
@@ -13459,12 +13490,12 @@ var $author$project$Activity$activityTypeToString = function (aType) {
 };
 var $author$project$ActivityForm$toActivityType = F2(
 	function (typeStr, model) {
-		var pace_ = A2($elm$core$Maybe$withDefault, 0, model.ac);
+		var pace_ = A2($elm$core$Maybe$withDefault, 0, model.ad);
 		var mins = A2(
 			$elm$core$Maybe$withDefault,
 			30,
 			A2($elm$core$Maybe$andThen, $elm$core$String$toInt, model.T));
-		var emoji = A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, model.X);
+		var emoji = A2($elm$core$Maybe$withDefault, $author$project$Emoji$default.bv, model.Y);
 		var dist = A2($elm$core$Maybe$withDefault, 0, model.S);
 		switch (typeStr) {
 			case 'Run':
@@ -13587,7 +13618,7 @@ var $author$project$ActivityForm$shapeSelect = F2(
 						types))
 				]));
 	});
-var $author$project$Msg$ClickedSubmit = {$: 25};
+var $author$project$Msg$ClickedSubmit = {$: 26};
 var $author$project$ActivityForm$submitButton = A2(
 	$elm$html$Html$a,
 	_List_fromArray(
@@ -13811,7 +13842,7 @@ var $author$project$ActivityForm$viewForm = F2(
 										[
 											A2(
 											$author$project$Skeleton$viewMaybe,
-											model.X,
+											model.Y,
 											$author$project$ActivityForm$emojiSelect($author$project$Msg$SelectedEmoji))
 										])),
 									A2(
@@ -13831,7 +13862,7 @@ var $author$project$ActivityForm$viewForm = F2(
 										[
 											A2(
 											$author$project$Skeleton$viewMaybe,
-											model.ac,
+											model.ad,
 											A2($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace))
 										])),
 									A2(
@@ -13952,7 +13983,7 @@ var $author$project$ActivityForm$viewActivity = F3(
 															A2(
 																$elm$core$Maybe$withDefault,
 																'',
-																A2($elm$core$Maybe$map, $author$project$Activity$pace.bI, activity.ac)))))
+																A2($elm$core$Maybe$map, $author$project$Activity$pace.bI, activity.ad)))))
 												])),
 											A2(
 											$author$project$Skeleton$compactColumn,
@@ -13993,7 +14024,7 @@ var $author$project$Main$view = function (model) {
 				var state = model.a;
 				var activities = A2(
 					$author$project$Store$get,
-					state.f,
+					state.e,
 					function ($) {
 						return $.bc;
 					});
@@ -14007,7 +14038,7 @@ var $author$project$Main$view = function (model) {
 							state.m,
 							$author$project$Main$calculateLevel(activities)),
 						$author$project$Msg$ClickedNewActivity,
-						state.ag,
+						state.W,
 						activities)
 					]);
 			}
