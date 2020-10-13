@@ -106,14 +106,14 @@ viewToggleButton model =
 viewDatePicker : Model -> Msg -> Html Msg
 viewDatePicker model loadToday =
     row [ style "justify-content" "center" ]
-        [ div [ class "dropdown", style "margin-left" "0.5rem" ]
+        [ div [ class "dropdown", style "margin-left" "0.2rem" ]
             [ button []
                 [ text (Date.format "MMMM" model.selected)
                 ]
             , div [ class "dropdown-content" ]
                 (listMonths model.selected Jump)
             ]
-        , div [ class "dropdown", style "margin-left" "0.5rem" ]
+        , div [ class "dropdown", style "margin-left" "0.2rem" ]
             [ button []
                 [ text (Date.format "yyyy" model.selected)
                 ]
@@ -121,7 +121,7 @@ viewDatePicker model loadToday =
                 (listYears model.selected Jump)
             ]
         , button
-            [ style "margin-left" "0.5rem"
+            [ style "margin-left" "0.2rem"
             , onClick loadToday
             ]
             [ text "Today" ]

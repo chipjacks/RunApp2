@@ -79,7 +79,7 @@ navbarItems model =
         spinner =
             i
                 [ class "fas fa-spinner"
-                , style "font-size" "2rem"
+                , style "font-size" "1.5rem"
                 , style "color" "var(--icon-gray)"
                 , style "animation" "rotation 2s infinite linear"
                 ]
@@ -90,7 +90,7 @@ navbarItems model =
             row []
                 [ compactColumn [ style "margin-left" "-1rem" ] [ Calendar.viewToggleButton calendar ]
                 , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
-                , compactColumn [ style "min-width" "2rem" ]
+                , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
                     [ viewIf (Store.needsFlush store) spinner
                     ]
                 ]
@@ -99,7 +99,7 @@ navbarItems model =
             row []
                 [ header
                 , column [] []
-                , compactColumn [] [ spinner ]
+                , compactColumn [ style "justify-content" "center" ] [ spinner ]
                 ]
 
 
