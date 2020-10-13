@@ -8366,7 +8366,7 @@ var $author$project$Calendar$viewDatePicker = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('dropdown'),
-							A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+							A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem')
 						]),
 					_List_fromArray(
 						[
@@ -8391,7 +8391,7 @@ var $author$project$Calendar$viewDatePicker = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$Attributes$class('dropdown'),
-							A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+							A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem')
 						]),
 					_List_fromArray(
 						[
@@ -8415,7 +8415,7 @@ var $author$project$Calendar$viewDatePicker = F2(
 					$elm$html$Html$button,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
+							A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem'),
 							$elm$html$Html$Events$onClick(loadToday)
 						]),
 					_List_fromArray(
@@ -8480,7 +8480,7 @@ var $author$project$Main$navbarItems = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$class('fas fa-spinner'),
-				A2($elm$html$Html$Attributes$style, 'font-size', '2rem'),
+				A2($elm$html$Html$Attributes$style, 'font-size', '1.5rem'),
 				A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)'),
 				A2($elm$html$Html$Attributes$style, 'animation', 'rotation 2s infinite linear')
 			]),
@@ -8532,7 +8532,8 @@ var $author$project$Main$navbarItems = function (model) {
 					$author$project$Skeleton$compactColumn,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'min-width', '2rem')
+							A2($elm$html$Html$Attributes$style, 'min-width', '1.5rem'),
+							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 						]),
 					_List_fromArray(
 						[
@@ -8552,7 +8553,10 @@ var $author$project$Main$navbarItems = function (model) {
 					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
 					A2(
 					$author$project$Skeleton$compactColumn,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
+						]),
 					_List_fromArray(
 						[spinner]))
 				]));
