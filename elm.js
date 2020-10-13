@@ -8481,7 +8481,7 @@ var $author$project$Main$navbarItems = function (model) {
 			[
 				$elm$html$Html$Attributes$class('fas fa-spinner'),
 				A2($elm$html$Html$Attributes$style, 'font-size', '2rem'),
-				A2($elm$html$Html$Attributes$style, 'color', 'lightgray'),
+				A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)'),
 				A2($elm$html$Html$Attributes$style, 'animation', 'rotation 2s infinite linear')
 			]),
 		_List_Nil);
@@ -8548,6 +8548,7 @@ var $author$project$Main$navbarItems = function (model) {
 			_List_Nil,
 			_List_fromArray(
 				[
+					header,
 					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
 					A2(
 					$author$project$Skeleton$compactColumn,
@@ -10636,25 +10637,13 @@ var $author$project$Calendar$viewDay = F6(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									A2($justinmimbs$date$Date$format, 'E MMM d', date)),
-									A2(
-									$elm$html$Html$a,
-									_List_fromArray(
-										[
-											$elm$html$Html$Events$onClick(
-											newActivity(date)),
-											A2($elm$html$Html$Attributes$style, 'margin-left', '0.2rem')
-										]),
-									_List_fromArray(
-										[
-											$elm$html$Html$text('+')
-										]))
+									A2($justinmimbs$date$Date$format, 'E MMM d', date))
 								])),
 							A2(
 							$author$project$Skeleton$row,
 							_List_fromArray(
 								[
-									A2($elm$html$Html$Attributes$style, 'margin', '1rem')
+									A2($elm$html$Html$Attributes$style, 'margin-top', '1rem')
 								]),
 							_List_fromArray(
 								[
@@ -10662,6 +10651,33 @@ var $author$project$Calendar$viewDay = F6(
 									$author$project$Skeleton$column,
 									_List_Nil,
 									A2($elm$core$List$map, viewActivity, activities))
+								])),
+							A2(
+							$author$project$Skeleton$row,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'margin-bottom', '1rem')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Skeleton$compactColumn,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$a,
+											_List_fromArray(
+												[
+													$elm$html$Html$Events$onClick(
+													newActivity(date)),
+													$elm$html$Html$Attributes$class('button tiny fas fa-plus'),
+													A2($elm$html$Html$Attributes$style, 'font-size', '0.6rem'),
+													A2($elm$html$Html$Attributes$style, 'padding', '0.3rem'),
+													A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)')
+												]),
+											_List_Nil)
+										]))
 								]))
 						]))
 				]));
@@ -10791,7 +10807,7 @@ var $author$project$Calendar$titleWeek = F2(
 					$author$project$Skeleton$row,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'color', 'limegreen')
+							A2($elm$html$Html$Attributes$style, 'color', 'var(--activity-green)')
 						]),
 					_List_fromArray(
 						[
@@ -10814,7 +10830,7 @@ var $author$project$Calendar$titleWeek = F2(
 					$author$project$Skeleton$row,
 					_List_fromArray(
 						[
-							A2($elm$html$Html$Attributes$style, 'color', 'grey')
+							A2($elm$html$Html$Attributes$style, 'color', 'var(--activity-gray)')
 						]),
 					_List_fromArray(
 						[
