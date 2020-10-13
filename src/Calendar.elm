@@ -331,7 +331,7 @@ titleWeek start ( runDuration, otherDuration ) =
             [ text
                 (monthStart |> Maybe.map (Date.format "MMM") |> Maybe.withDefault "")
             ]
-        , row [ style "color" "limegreen" ]
+        , row [ style "color" "var(--activity-green)" ]
             [ text <|
                 if runDuration /= 0 then
                     List.foldr (++) "" [ String.fromInt (hours runDuration), "h ", String.fromInt (minutes runDuration), "m" ]
@@ -339,7 +339,7 @@ titleWeek start ( runDuration, otherDuration ) =
                 else
                     ""
             ]
-        , row [ style "color" "grey" ]
+        , row [ style "color" "var(--activity-gray)" ]
             [ text <|
                 if otherDuration /= 0 then
                     List.foldr (++) "" [ String.fromInt (hours otherDuration), "h ", String.fromInt (minutes otherDuration), "m" ]
@@ -374,10 +374,21 @@ viewDay date activities isToday isSelected viewActivity newActivity =
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
-                , a [ onClick (newActivity date), style "margin-left" "0.2rem" ] [ text "+" ]
                 ]
-            , row [ style "margin" "1rem" ]
+            , row [ style "margin-top" "1rem" ]
                 [ column [] (List.map viewActivity activities) ]
+            , row [ style "margin-bottom" "1rem" ]
+                [ compactColumn []
+                    [ a
+                        [ onClick (newActivity date)
+                        , class "button tiny fas fa-plus"
+                        , style "font-size" "0.6rem"
+                        , style "padding" "0.3rem"
+                        , style "color" "var(--icon-gray)"
+                        ]
+                        []
+                    ]
+                ]
             ]
         ]
 
