@@ -80,7 +80,7 @@ navbarItems model =
             i
                 [ class "fas fa-spinner"
                 , style "font-size" "2rem"
-                , style "color" "lightgray"
+                , style "color" "var(--icon-gray)"
                 , style "animation" "rotation 2s infinite linear"
                 ]
                 []
@@ -97,7 +97,8 @@ navbarItems model =
 
         _ ->
             row []
-                [ column [] []
+                [ header
+                , column [] []
                 , compactColumn [] [ spinner ]
                 ]
 
