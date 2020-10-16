@@ -34,7 +34,7 @@ import Url.Parser.Query as Query
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (navbarItems model) |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (viewNavbar model) |> List.singleton }
         , update = update
         , subscriptions = subscriptions
         }
@@ -63,8 +63,8 @@ init _ =
     )
 
 
-navbarItems : Model -> Html Msg
-navbarItems model =
+viewNavbar : Model -> Html Msg
+viewNavbar model =
     let
         header =
             compactColumn
@@ -72,7 +72,6 @@ navbarItems model =
                 , style "font-style" "italic"
                 , style "color" "var(--header-blue)"
                 , style "padding-top" "0.1rem"
-                , style "padding-left" "1rem"
                 ]
                 [ text "RunApp2" ]
 
@@ -87,8 +86,8 @@ navbarItems model =
     in
     case model of
         Loaded { store, calendar, today } ->
-            row []
-                [ compactColumn [ style "margin-left" "-1rem" ] [ Calendar.viewToggleButton calendar ]
+            row [ class "navbar" ]
+                [ compactColumn [] [ Calendar.viewToggleButton calendar ]
                 , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
                     [ viewIf (Store.needsFlush store) spinner
@@ -96,7 +95,7 @@ navbarItems model =
                 ]
 
         _ ->
-            row []
+            row [ class "navbar" ]
                 [ header
                 , column [] []
                 , compactColumn [ style "justify-content" "center" ] [ spinner ]

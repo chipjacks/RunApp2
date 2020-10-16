@@ -20,7 +20,7 @@
 html, body { height: 100%; margin: 0; }
 @media screen and (max-width: 340px) { html { font-size: 14px; } }
 @media screen and (max-width: 390px) { html { font-size: 15px; } }
-.container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto; padding-left: 1rem;}
+.container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto;}
 .container-y {  min-height: 450px; height: 100%; overflow: hidden; }
 .navbar { padding: 0.5rem; border-bottom: 2px solid var(--interact-gray) }
 

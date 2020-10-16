@@ -5,11 +5,11 @@ import Html.Attributes exposing (class, src, style)
 
 
 layout : Html msg -> Html msg -> Html msg
-layout navbarItems page =
+layout navbar page =
     column [ class "container-y" ]
-        [ row [ class "navbar" ]
+        [ row []
             [ column [ class "container-x" ]
-                [ navbarItems ]
+                [ navbar ]
             ]
         , expandingRow []
             [ column [ class "container-x" ]
