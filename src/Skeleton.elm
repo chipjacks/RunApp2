@@ -7,7 +7,7 @@ import Html.Attributes exposing (class, src, style)
 layout : Html msg -> Html msg -> Html msg
 layout navbar page =
     column [ class "container-y" ]
-        [ row []
+        [ row [ class "navbar" ]
             [ column [ class "container-x" ]
                 [ navbar ]
             ]

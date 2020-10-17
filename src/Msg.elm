@@ -12,6 +12,7 @@ type Msg
     | EditActivity Activity
     | ReceiveSelectDate String
     | VisibilityChange String
+    | KeyPressed String
     | NoOp
       -- STORE
     | Create Activity
@@ -20,7 +21,7 @@ type Msg
     | Shift Bool Activity
     | Delete Activity
     | Posted (List Msg) (Result Http.Error (List Activity))
-    | FlushStore
+    | DebounceFlush Int
       -- CALENDAR
     | Jump Date
     | Toggle (Maybe Date)

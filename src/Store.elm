@@ -5,6 +5,7 @@ import Api
 import Date exposing (Date)
 import Http
 import Msg exposing (Msg(..))
+import Process
 import Task exposing (Task)
 
 
@@ -58,18 +59,43 @@ updateState msg state =
             state
 
 
-update : Msg -> Model -> Model
-update msg model =
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg (Model state msgs) =
+    let
+        model =
+            Model state msgs
+    in
     case msg of
         Posted sentMsgs result ->
-            case model of
-                Model state msgs ->
-                    Model state (List.take (List.length msgs - List.length sentMsgs) msgs)
+            case result of
+                Ok activities ->
+                    ( Model state msgs
+                    , Cmd.none
+                    )
+
+                Err _ ->
+                    ( Model state (msgs ++ sentMsgs)
+                    , Cmd.none
+                    )
+
+        DebounceFlush length ->
+            if length == List.length msgs then
+                ( Model state []
+                , flush model
+                )
+
+            else
+                ( model, Cmd.none )
 
         _ ->
-            case model of
-                Model state msgs ->
-                    Model (updateState msg state) (msg :: msgs)
+            ( Model (updateState msg state) (msg :: msgs)
+            , debounceFlush (List.length msgs + 1)
+            )
+
+
+debounceFlush : Int -> Cmd Msg
+debounceFlush length =
+    Task.perform (\_ -> DebounceFlush length) (Process.sleep 5000)
 
 
 flush : Model -> Cmd Msg

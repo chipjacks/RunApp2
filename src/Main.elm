@@ -7,6 +7,7 @@ import Api
 import Array
 import Browser
 import Browser.Dom as Dom
+import Browser.Events as Events
 import Calendar
 import Config exposing (config)
 import Date exposing (Date, Interval(..), Unit(..))
@@ -86,7 +87,7 @@ viewNavbar model =
     in
     case model of
         Loaded { store, calendar, today } ->
-            row [ class "navbar" ]
+            row [ style "padding" "0.5rem" ]
                 [ compactColumn [] [ Calendar.viewToggleButton calendar ]
                 , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
@@ -95,7 +96,7 @@ viewNavbar model =
                 ]
 
         _ ->
-            row [ class "navbar" ]
+            row [ style "padding" "0.5rem" ]
                 [ header
                 , column [] []
                 , compactColumn [ style "justify-content" "center" ] [ spinner ]
@@ -146,13 +147,7 @@ update msg model =
                     ( model, initActivity state.today (Just date) )
 
                 NewActivity activity ->
-                    ( Loaded
-                        { state
-                            | store = Store.update (Create activity) state.store
-                            , activityForm = Just <| ActivityForm.init activity
-                        }
-                    , Cmd.none
-                    )
+                    updateStore (Create activity) { state | activityForm = Just <| ActivityForm.init activity } |> loaded
 
                 EditActivity activity ->
                     ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
@@ -168,29 +163,42 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
+                KeyPressed key ->
+                    if state.activityForm /= Nothing then
+                        case key of
+                            "Enter" ->
+                                updateActivityForm ClickedSubmit state
+                                    |> loaded
+
+                            _ ->
+                                ( model, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
+
                 NoOp ->
                     ( model, Cmd.none )
 
                 Create _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Update _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Move _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Shift _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
                 Delete _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
                 Posted _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
-                FlushStore ->
-                    ( model, Store.flush state.store )
+                DebounceFlush _ ->
+                    updateStore msg state |> loaded
 
                 Jump _ ->
                     updateCalendar msg state
@@ -312,6 +320,12 @@ updateCalendar msg state =
         |> Tuple.mapFirst (\calendar -> { state | calendar = calendar })
 
 
+updateStore : Msg -> State -> ( State, Cmd Msg )
+updateStore msg state =
+    Store.update msg state.store
+        |> Tuple.mapFirst (\store -> { state | store = store })
+
+
 loaded : ( State, Cmd Msg ) -> ( Model, Cmd Msg )
 loaded stateTuple =
     Tuple.mapFirst Loaded stateTuple
@@ -367,10 +381,15 @@ view model =
 -- SUBSCRIPTIONS
 
 
+keyPressDecoder =
+    Decode.field "key" Decode.string
+        |> Decode.map KeyPressed
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every 10000 (\_ -> FlushStore)
-        , Ports.selectDateFromScroll ReceiveSelectDate
+        [ Ports.selectDateFromScroll ReceiveSelectDate
         , Ports.visibilityChange VisibilityChange
+        , Events.onKeyPress keyPressDecoder
         ]
