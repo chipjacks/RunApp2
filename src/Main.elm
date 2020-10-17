@@ -86,7 +86,7 @@ viewNavbar model =
     in
     case model of
         Loaded { store, calendar, today } ->
-            row [ class "navbar" ]
+            row [ style "padding" "0.5rem" ]
                 [ compactColumn [] [ Calendar.viewToggleButton calendar ]
                 , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
@@ -95,7 +95,7 @@ viewNavbar model =
                 ]
 
         _ ->
-            row [ class "navbar" ]
+            row [ style "padding" "0.5rem" ]
                 [ header
                 , column [] []
                 , compactColumn [ style "justify-content" "center" ] [ spinner ]
