@@ -12,6 +12,7 @@ type Msg
     | EditActivity Activity
     | ReceiveSelectDate String
     | VisibilityChange String
+    | KeyPressed String
     | NoOp
       -- STORE
     | Create Activity

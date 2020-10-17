@@ -7,6 +7,7 @@ import Api
 import Array
 import Browser
 import Browser.Dom as Dom
+import Browser.Events as Events
 import Calendar
 import Config exposing (config)
 import Date exposing (Date, Interval(..), Unit(..))
@@ -161,6 +162,19 @@ update msg model =
 
                         _ ->
                             ( model, Cmd.none )
+
+                KeyPressed key ->
+                    if state.activityForm /= Nothing then
+                        case key of
+                            "Enter" ->
+                                updateActivityForm ClickedSubmit state
+                                    |> loaded
+
+                            _ ->
+                                ( model, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
 
                 NoOp ->
                     ( model, Cmd.none )
@@ -367,9 +381,15 @@ view model =
 -- SUBSCRIPTIONS
 
 
+keyPressDecoder =
+    Decode.field "key" Decode.string
+        |> Decode.map KeyPressed
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Ports.selectDateFromScroll ReceiveSelectDate
         , Ports.visibilityChange VisibilityChange
+        , Events.onKeyPress keyPressDecoder
         ]
