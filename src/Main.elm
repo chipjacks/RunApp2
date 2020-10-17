@@ -370,7 +370,6 @@ view model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every 10000 (\_ -> FlushStore)
-        , Ports.selectDateFromScroll ReceiveSelectDate
+        [ Ports.selectDateFromScroll ReceiveSelectDate
         , Ports.visibilityChange VisibilityChange
         ]

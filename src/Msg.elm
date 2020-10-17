@@ -20,7 +20,7 @@ type Msg
     | Shift Bool Activity
     | Delete Activity
     | Posted (List Msg) (Result Http.Error (List Activity))
-    | FlushStore
+    | DebounceFlush Int
       -- CALENDAR
     | Jump Date
     | Toggle (Maybe Date)
