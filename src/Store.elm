@@ -58,18 +58,22 @@ updateState msg state =
             state
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Posted sentMsgs result ->
             case model of
                 Model state msgs ->
-                    Model state (List.take (List.length msgs - List.length sentMsgs) msgs)
+                    ( Model state (List.take (List.length msgs - List.length sentMsgs) msgs)
+                    , Cmd.none
+                    )
 
         _ ->
             case model of
                 Model state msgs ->
-                    Model (updateState msg state) (msg :: msgs)
+                    ( Model (updateState msg state) (msg :: msgs)
+                    , Cmd.none
+                    )
 
 
 flush : Model -> Cmd Msg

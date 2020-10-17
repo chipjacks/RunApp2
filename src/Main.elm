@@ -146,13 +146,7 @@ update msg model =
                     ( model, initActivity state.today (Just date) )
 
                 NewActivity activity ->
-                    ( Loaded
-                        { state
-                            | store = Store.update (Create activity) state.store
-                            , activityForm = Just <| ActivityForm.init activity
-                        }
-                    , Cmd.none
-                    )
+                    updateStore (Create activity) { state | activityForm = Just <| ActivityForm.init activity } |> loaded
 
                 EditActivity activity ->
                     ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
@@ -172,25 +166,25 @@ update msg model =
                     ( model, Cmd.none )
 
                 Create _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Update _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Move _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store, activityForm = Nothing }, Cmd.none )
+                    updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Shift _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
                 Delete _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
                 Posted _ _ ->
-                    ( Loaded { state | store = Store.update msg state.store }, Cmd.none )
+                    updateStore msg state |> loaded
 
-                FlushStore ->
-                    ( model, Store.flush state.store )
+                DebounceFlush _ ->
+                    updateStore msg state |> loaded
 
                 Jump _ ->
                     updateCalendar msg state
@@ -310,6 +304,12 @@ updateCalendar : Msg -> State -> ( State, Cmd Msg )
 updateCalendar msg state =
     Calendar.update msg state.calendar
         |> Tuple.mapFirst (\calendar -> { state | calendar = calendar })
+
+
+updateStore : Msg -> State -> ( State, Cmd Msg )
+updateStore msg state =
+    Store.update msg state.store
+        |> Tuple.mapFirst (\store -> { state | store = store })
 
 
 loaded : ( State, Cmd Msg ) -> ( Model, Cmd Msg )
