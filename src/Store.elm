@@ -87,6 +87,18 @@ update msg (Model state msgs) =
             else
                 ( model, Cmd.none )
 
+        GotActivities result ->
+            case result of
+                Ok activities ->
+                    let
+                        newState =
+                            List.foldr (\rmsg rs -> updateState rmsg rs) (State activities) msgs
+                    in
+                    ( Model newState msgs, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
+
         _ ->
             ( Model (updateState msg state) (msg :: msgs)
             , debounceFlush (List.length msgs + 1)
