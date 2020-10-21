@@ -7688,7 +7688,7 @@ var $author$project$Msg$NewActivity = function (a) {
 };
 var $author$project$Main$State = F4(
 	function (calendar, store, activityForm, today) {
-		return {l: activityForm, H: calendar, x: store, P: today};
+		return {l: activityForm, H: calendar, D: store, P: today};
 	});
 var $author$project$Msg$Toggle = function (a) {
 	return {$: 15, a: a};
@@ -8108,13 +8108,13 @@ var $justinmimbs$date$Date$formatField = F4(
 			case 'E':
 				switch (length) {
 					case 1:
-						return language.z(
+						return language.y(
 							$justinmimbs$date$Date$weekday(date));
 					case 2:
-						return language.z(
+						return language.y(
 							$justinmimbs$date$Date$weekday(date));
 					case 3:
-						return language.z(
+						return language.y(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
 						return language.ah(
@@ -8123,13 +8123,13 @@ var $justinmimbs$date$Date$formatField = F4(
 						return A2(
 							$elm$core$String$left,
 							1,
-							language.z(
+							language.y(
 								$justinmimbs$date$Date$weekday(date)));
 					case 6:
 						return A2(
 							$elm$core$String$left,
 							2,
-							language.z(
+							language.y(
 								$justinmimbs$date$Date$weekday(date)));
 					default:
 						return '';
@@ -8456,7 +8456,7 @@ var $justinmimbs$date$Date$language_en = {
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
 	ah: $justinmimbs$date$Date$weekdayToName,
-	z: A2(
+	y: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
 		$elm$core$String$left(3))
@@ -9585,6 +9585,24 @@ var $author$project$Store$update = F2(
 					$elm$core$List$length(msgs)) ? _Utils_Tuple2(
 					A2($author$project$Store$Model, state, _List_Nil),
 					$author$project$Store$flush(model)) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 1:
+				var result = msg.a;
+				if (!result.$) {
+					var activities = result.a;
+					var newState = A3(
+						$elm$core$List$foldr,
+						F2(
+							function (rmsg, rs) {
+								return A2($author$project$Store$updateState, rmsg, rs);
+							}),
+						$author$project$Store$State(activities),
+						msgs);
+					return _Utils_Tuple2(
+						A2($author$project$Store$Model, newState, msgs),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
 			default:
 				return _Utils_Tuple2(
 					A2(
@@ -9602,9 +9620,9 @@ var $author$project$Main$updateStore = F2(
 			function (store) {
 				return _Utils_update(
 					state,
-					{x: store});
+					{D: store});
 			},
-			A2($author$project$Store$update, msg, state.x));
+			A2($author$project$Store$update, msg, state.D));
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -9646,20 +9664,8 @@ var $author$project$Main$update = F2(
 								{P: date})),
 						$elm$core$Platform$Cmd$none);
 				case 1:
-					var result = msg.a;
-					if (!result.$) {
-						var activities = result.a;
-						return _Utils_Tuple2(
-							$author$project$Main$Loaded(
-								_Utils_update(
-									state,
-									{
-										x: $author$project$Store$init(activities)
-									})),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-					}
+					return $author$project$Main$loaded(
+						A2($author$project$Main$updateStore, msg, state));
 				case 18:
 					var date = msg.a;
 					return _Utils_Tuple2(
@@ -9706,7 +9712,7 @@ var $author$project$Main$update = F2(
 						case 'hidden':
 							return _Utils_Tuple2(
 								model,
-								$author$project$Store$flush(state.x));
+								$author$project$Store$flush(state.D));
 						default:
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					}
@@ -9833,15 +9839,15 @@ var $author$project$Main$update = F2(
 								},
 								$author$project$Activity$newId)));
 				case 30:
-					var _v8 = A2(
+					var _v7 = A2(
 						$author$project$Main$updateCalendar,
 						$author$project$Msg$Toggle($elm$core$Maybe$Nothing),
 						state);
-					var calendarState = _v8.a;
-					var calendarCmd = _v8.b;
-					var _v9 = A2($author$project$Main$updateActivityForm, msg, calendarState);
-					var activityFormState = _v9.a;
-					var activityFormCmd = _v9.b;
+					var calendarState = _v7.a;
+					var calendarCmd = _v7.b;
+					var _v8 = A2($author$project$Main$updateActivityForm, msg, calendarState);
+					var activityFormState = _v8.a;
+					var activityFormCmd = _v8.b;
 					return $author$project$Main$loaded(
 						_Utils_Tuple2(
 							activityFormState,
@@ -13893,7 +13899,7 @@ var $author$project$Main$view = function (model) {
 				var state = model.a;
 				var activities = A2(
 					$author$project$Store$get,
-					state.x,
+					state.D,
 					function ($) {
 						return $.bc;
 					});
@@ -14112,7 +14118,7 @@ var $author$project$Main$viewNavbar = function (model) {
 				$elm$html$Html$text('RunApp2')
 			]));
 	if (model.$ === 1) {
-		var store = model.a.x;
+		var store = model.a.D;
 		var calendar = model.a.H;
 		var today = model.a.P;
 		return A2(
