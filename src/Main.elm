@@ -135,13 +135,8 @@ update msg model =
                     , Cmd.none
                     )
 
-                GotActivities result ->
-                    case result of
-                        Ok activities ->
-                            ( Loaded { state | store = Store.init activities }, Cmd.none )
-
-                        _ ->
-                            ( model, Cmd.none )
+                GotActivities _ ->
+                    updateStore msg state |> loaded
 
                 ClickedNewActivity date ->
                     ( model, initActivity state.today (Just date) )
