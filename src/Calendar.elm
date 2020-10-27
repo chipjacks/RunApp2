@@ -162,7 +162,7 @@ listYears date changeDate =
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
-view : Model -> (Activity -> Html Msg) -> (Date -> Msg) -> Date -> List Activity -> Html Msg
+view : Model -> (Activity -> Html Msg) -> (Date -> Msg) -> Date -> List Activity -> List (Html Msg)
 view calendar viewActivity newActivity today activities =
     let
         accessActivities =
@@ -181,15 +181,14 @@ view calendar viewActivity newActivity today activities =
                     listDays calendar.start calendar.end
                         |> List.map (\d -> viewDay d (accessActivities d) (d == today) (d == calendar.selected) viewActivity newActivity)
     in
-    column [ style "margin-left" "1rem" ]
-        [ viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
-        , column
-            [ id "calendar"
-            , style "overflow" "scroll"
-            , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
-            ]
-            body
+    [ viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
+    , column
+        [ id "calendar"
+        , style "overflow" "scroll"
+        , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
         ]
+        body
+    ]
 
 
 

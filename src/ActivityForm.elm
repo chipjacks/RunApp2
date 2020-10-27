@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity)
+module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity, viewForm)
 
 import Activity exposing (Activity, ActivityType, Minutes)
 import ActivityShape
@@ -191,7 +191,7 @@ updateResult model =
     { model | result = validate model }
 
 
-viewForm : Model -> Maybe Int -> Html Msg
+viewForm : Model -> Maybe Int -> List (Html Msg)
 viewForm model levelM =
     let
         activityShape =
@@ -200,7 +200,7 @@ viewForm model levelM =
                 |> Maybe.map ActivityShape.view
                 |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
     in
-    row [ id "activity", style "margin-bottom" "1rem" ]
+    [ row []
         [ compactColumn
             [ style "flex-basis" "3.3rem"
             , style "justify-content" "center"
@@ -242,45 +242,34 @@ viewForm model levelM =
                 [ viewError model.result ]
             ]
         ]
+    ]
 
 
-viewActivity : Maybe Model -> Maybe Int -> Activity -> Html Msg
-viewActivity activityFormM levelM activity =
+viewActivity : Activity -> Html Msg
+viewActivity activity =
     let
         level =
             Activity.mprLevel activity
                 |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
-
-        activityView =
-            a [ onClick (EditActivity activity) ]
-                [ row [ style "margin-bottom" "1rem" ]
-                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-                    , column [ style "justify-content" "center" ]
-                        [ row [] [ text activity.description ]
-                        , row [ style "font-size" "0.8rem" ]
-                            [ column []
-                                [ text <|
-                                    ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
-                                        ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
-                                    )
-                                ]
-                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
-                            ]
+    in
+    a [ onClick (EditActivity activity) ]
+        [ row [ style "margin-bottom" "1rem" ]
+            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
+            , column [ style "justify-content" "center" ]
+                [ row [] [ text activity.description ]
+                , row [ style "font-size" "0.8rem" ]
+                    [ column []
+                        [ text <|
+                            ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
+                                ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
+                            )
                         ]
+                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                     ]
                 ]
-    in
-    case activityFormM of
-        Just af ->
-            if isEditing activity af then
-                viewForm af levelM
-
-            else
-                activityView
-
-        Nothing ->
-            activityView
+            ]
+        ]
 
 
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg

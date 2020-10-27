@@ -354,9 +354,22 @@ calculateLevel activities =
 
 view : Model -> Html Msg
 view model =
+    let
+        layeredColumn =
+            column
+                [ style "justify-content" "center"
+                , style "position" "absolute"
+                , style "height" "100%"
+                , style "width" "100%"
+                , style "background" "white"
+                ]
+    in
     expandingRow
         [ id "home"
         , style "overflow" "hidden"
+        , style "position" "relative"
+        , style "margin-left" "1rem"
+        , style "margin-right" "1rem"
         ]
     <|
         case model of
@@ -368,7 +381,8 @@ view model =
                     activities =
                         Store.get state.store .activities
                 in
-                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm (calculateLevel activities)) ClickedNewActivity state.today activities
+                [ layeredColumn <| Calendar.view state.calendar ActivityForm.viewActivity ClickedNewActivity state.today activities
+                , viewMaybe state.activityForm (\form -> layeredColumn <| ActivityForm.viewForm form (calculateLevel activities))
                 ]
 
 
