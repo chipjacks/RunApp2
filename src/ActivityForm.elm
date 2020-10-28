@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity, viewForm)
+module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewForm)
 
 import Activity exposing (Activity, ActivityType, Minutes)
 import ActivityShape
@@ -243,33 +243,6 @@ viewForm model levelM =
             ]
         ]
     ]
-
-
-viewActivity : Activity -> Html Msg
-viewActivity activity =
-    let
-        level =
-            Activity.mprLevel activity
-                |> Maybe.map (\l -> "level " ++ String.fromInt l)
-                |> Maybe.withDefault ""
-    in
-    a [ onClick (EditActivity activity) ]
-        [ row [ style "margin-bottom" "1rem" ]
-            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-            , column [ style "justify-content" "center" ]
-                [ row [] [ text activity.description ]
-                , row [ style "font-size" "0.8rem" ]
-                    [ column []
-                        [ text <|
-                            ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
-                                ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
-                            )
-                        ]
-                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
-                    ]
-                ]
-            ]
-        ]
 
 
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg

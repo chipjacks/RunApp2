@@ -162,8 +162,8 @@ listYears date changeDate =
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
-view : Model -> (Activity -> Html Msg) -> (Date -> Msg) -> Date -> List Activity -> List (Html Msg)
-view calendar viewActivity newActivity today activities =
+view : Model -> Date -> List Activity -> List (Html Msg)
+view calendar today activities =
     let
         accessActivities =
             \date_ ->
@@ -379,13 +379,40 @@ viewDay date activities isToday isSelected viewActivity newActivity =
             , row [ style "margin-bottom" "1rem" ]
                 [ compactColumn []
                     [ a
-                        [ onClick (newActivity date)
+                        [ onClick (ClickedNewActivity date)
                         , class "button tiny fas fa-plus"
                         , style "font-size" "0.6rem"
                         , style "padding" "0.3rem"
                         , style "color" "var(--icon-gray)"
                         ]
                         []
+                    ]
+                ]
+            ]
+        ]
+
+
+viewActivity : Activity -> Html Msg
+viewActivity activity =
+    let
+        level =
+            Activity.mprLevel activity
+                |> Maybe.map (\l -> "level " ++ String.fromInt l)
+                |> Maybe.withDefault ""
+    in
+    a [ onClick (EditActivity activity) ]
+        [ row [ style "margin-bottom" "1rem" ]
+            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
+            , column [ style "justify-content" "center" ]
+                [ row [] [ text activity.description ]
+                , row [ style "font-size" "0.8rem" ]
+                    [ column []
+                        [ text <|
+                            ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
+                                ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
+                            )
+                        ]
+                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                     ]
                 ]
             ]
