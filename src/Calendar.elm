@@ -175,11 +175,18 @@ view calendar today activities =
         body =
             case calendar.zoom of
                 Weekly ->
-                    weekList calendar.start calendar.end |> List.map (viewWeek accessActivities today calendar.selected)
+                    weekList calendar.start calendar.end
+                        |> List.map
+                            (\d ->
+                                viewWeek accessActivities today calendar.selected d
+                            )
 
                 Daily ->
                     listDays calendar.start calendar.end
-                        |> List.map (\d -> viewDay d (accessActivities d) (d == today) (d == calendar.selected) viewActivity newActivity)
+                        |> List.map
+                            (\d ->
+                                viewDay d (accessActivities d) (d == today) (d == calendar.selected)
+                            )
     in
     [ viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
     , column
@@ -363,8 +370,8 @@ daysOfWeek start =
 -- DAILY VIEW
 
 
-viewDay : Date -> List Activity -> Bool -> Bool -> (Activity -> Html Msg) -> (Date -> Msg) -> Html Msg
-viewDay date activities isToday isSelected viewActivity newActivity =
+viewDay : Date -> List Activity -> Bool -> Bool -> Html Msg
+viewDay date activities isToday isSelected =
     row
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")

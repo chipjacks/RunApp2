@@ -35,7 +35,7 @@ import Url.Parser.Query as Query
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (viewNavbar model) |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
         , update = update
         , subscriptions = subscriptions
         }
@@ -354,16 +354,6 @@ calculateLevel activities =
 
 view : Model -> Html Msg
 view model =
-    let
-        layeredColumn =
-            column
-                [ style "justify-content" "center"
-                , style "position" "absolute"
-                , style "height" "100%"
-                , style "width" "100%"
-                , style "background" "white"
-                ]
-    in
     expandingRow
         [ id "home"
         , style "overflow" "hidden"
@@ -377,13 +367,16 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                let
-                    activities =
-                        Store.get state.store .activities
-                in
-                [ layeredColumn <| Calendar.view state.calendar ActivityForm.viewActivity ClickedNewActivity state.today activities
-                , viewMaybe state.activityForm (\form -> layeredColumn <| ActivityForm.viewForm form (calculateLevel activities))
-                ]
+                if state.activityForm == Nothing then
+                    Calendar.view
+                        state.calendar
+                        state.today
+                        (Store.get state.store .activities)
+
+                else
+                    [ viewMaybe state.activityForm
+                        (\form -> column [ style "justify-content" "center" ] <| ActivityForm.viewForm form Nothing)
+                    ]
 
 
 
