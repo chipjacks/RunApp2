@@ -188,13 +188,15 @@ view calendar today activities =
                                 viewDay d (accessActivities d) (d == today) (d == calendar.selected)
                             )
     in
-    [ viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
-    , column
+    [ column
         [ id "calendar"
-        , style "overflow" "scroll"
+        , style "overflow-y" "scroll"
+        , style "overflow-x" "hidden"
         , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
         ]
-        body
+        (viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
+            :: body
+        )
     ]
 
 
@@ -254,9 +256,15 @@ scrollHandler model =
 
 viewWeekDaysHeader : Html msg
 viewWeekDaysHeader =
-    row [ style "opacity" "0.3" ]
+    row [ style "position" "sticky", style "top" "0" ]
         (column [ style "min-width" "4rem" ] []
-            :: ([ "M", "T", "W", "R", "F", "S", "S" ] |> List.map (\d -> column [] [ text d ]))
+            :: ([ "M", "T", "W", "T", "F", "S", "S" ]
+                    |> List.map
+                        (\d ->
+                            column [ style "background" "white", style "color" "var(--icon-gray)" ]
+                                [ text d ]
+                        )
+               )
         )
 
 
