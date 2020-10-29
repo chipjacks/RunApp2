@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Zoom(..), getDate, init, update, view, viewDatePicker, viewToggleButton)
+module Calendar exposing (Model, Zoom(..), getDate, init, update, view, viewMenu)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -85,47 +85,63 @@ update msg model =
 
 
 
--- VIEW
+-- NAVBAR MENU VIEW
 
 
-viewToggleButton : Model -> Html Msg
-viewToggleButton model =
-    let
-        calendarIcon =
-            case model.zoom of
-                Weekly ->
-                    [ i [ class "far fa-calendar-minus" ] [] ]
-
-                _ ->
-                    [ i [ class "far fa-calendar-alt" ] [] ]
-    in
-    row []
-        [ a [ class "button", onClick (Toggle Nothing) ] calendarIcon ]
-
-
-viewDatePicker : Model -> Msg -> Html Msg
-viewDatePicker model loadToday =
-    row [ style "justify-content" "center" ]
-        [ div [ class "dropdown" ]
-            [ button []
-                [ text (Date.format "MMMM" model.selected)
+viewMenu : Model -> Msg -> Html Msg
+viewMenu model loadToday =
+    expandingRow []
+        [ compactColumn [] [ viewBackButton model ]
+        , column []
+            [ row [ style "justify-content" "center" ]
+                [ viewDatePicker model
+                , button
+                    [ style "margin-left" "0.2rem"
+                    , onClick loadToday
+                    ]
+                    [ text "Today" ]
                 ]
-            , div [ class "dropdown-content" ]
-                (listMonths model.selected Jump)
             ]
-        , div [ class "dropdown", style "margin-left" "0.2rem" ]
-            [ button []
-                [ text (Date.format "yyyy" model.selected)
-                ]
-            , div [ class "dropdown-content" ]
-                (listYears model.selected Jump)
-            ]
-        , button
-            [ style "margin-left" "0.2rem"
-            , onClick loadToday
-            ]
-            [ text "Today" ]
         ]
+
+
+viewBackButton : Model -> Html Msg
+viewBackButton model =
+    case model.zoom of
+        Weekly ->
+            text ""
+
+        Daily ->
+            a [ class "button", style "margin-right" "0.2rem", onClick (Toggle Nothing) ]
+                [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
+                , text (Date.format "yyyy" model.selected)
+                ]
+
+
+viewDatePicker : Model -> Html Msg
+viewDatePicker model =
+    case model.zoom of
+        Weekly ->
+            div [ class "dropdown" ]
+                [ button []
+                    [ text (Date.format "yyyy" model.selected)
+                    ]
+                , div [ class "dropdown-content" ]
+                    (listYears model.selected Jump)
+                ]
+
+        Daily ->
+            div [ class "dropdown" ]
+                [ button []
+                    [ text (Date.format "MMMM" model.selected)
+                    ]
+                , div [ class "dropdown-content" ]
+                    (listMonths model.selected Jump)
+                ]
+
+
+
+-- VIEW
 
 
 listMonths : Date -> (Date -> Msg) -> List (Html Msg)
