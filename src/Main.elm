@@ -290,7 +290,7 @@ updateLoading model =
         Loading (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    (Calendar.init Calendar.Daily date)
+                    (Calendar.init Calendar.Month date)
                     (Store.init activities)
                     Nothing
                     date

@@ -4,7 +4,7 @@ import Activity exposing (Activity, activityType)
 import ActivityForm
 import ActivityShape
 import Browser.Dom as Dom
-import Date exposing (Date, Interval(..), Unit(..))
+import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
@@ -22,13 +22,13 @@ type alias Model =
 
 
 type Zoom
-    = Weekly
-    | Daily
+    = Year
+    | Month
 
 
 init : Zoom -> Date -> Model
 init zoom date =
-    Model zoom (Date.floor Year date) date (Date.ceiling Year date) True
+    Model zoom (Date.floor Date.Year date) date (Date.ceiling Date.Year date) True
 
 
 getDate : Model -> Date
@@ -44,13 +44,13 @@ update msg model =
 
         Toggle dateM ->
             case model.zoom of
-                Weekly ->
-                    ( init Daily (Maybe.withDefault model.selected dateM)
+                Year ->
+                    ( init Month (Maybe.withDefault model.selected dateM)
                     , scrollToSelectedDate ()
                     )
 
-                Daily ->
-                    ( init Weekly (Maybe.withDefault model.selected dateM)
+                Month ->
+                    ( init Year (Maybe.withDefault model.selected dateM)
                     , scrollToSelectedDate ()
                     )
 
@@ -108,10 +108,10 @@ viewMenu model loadToday =
 viewBackButton : Model -> Html Msg
 viewBackButton model =
     case model.zoom of
-        Weekly ->
+        Year ->
             text ""
 
-        Daily ->
+        Month ->
             a [ class "button", style "margin-right" "0.2rem", onClick (Toggle Nothing) ]
                 [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
                 , text (Date.format "yyyy" model.selected)
@@ -121,7 +121,7 @@ viewBackButton model =
 viewDatePicker : Model -> Html Msg
 viewDatePicker model =
     case model.zoom of
-        Weekly ->
+        Year ->
             div [ class "dropdown" ]
                 [ button []
                     [ text (Date.format "yyyy" model.selected)
@@ -130,7 +130,7 @@ viewDatePicker model =
                     (listYears model.selected Jump)
                 ]
 
-        Daily ->
+        Month ->
             div [ class "dropdown" ]
                 [ button []
                     [ text (Date.format "MMMM" model.selected)
@@ -151,9 +151,9 @@ listMonths date changeDate =
             Date.fromCalendarDate (Date.year date) Jan 1
 
         end =
-            Date.fromCalendarDate (Date.add Years 1 date |> Date.year) Jan 1
+            Date.fromCalendarDate (Date.add Date.Years 1 date |> Date.year) Jan 1
     in
-    Date.range Month 1 start end
+    Date.range Date.Month 1 start end
         |> List.map (viewDropdownItem changeDate "MMMM")
 
 
@@ -169,12 +169,12 @@ listYears date changeDate =
             Date.fromCalendarDate 2019 (Date.month date) 1
 
         start =
-            Date.add Years -3 middle
+            Date.add Date.Years -3 middle
 
         end =
-            Date.add Years 3 middle
+            Date.add Date.Years 3 middle
     in
-    Date.range Month 12 start end
+    Date.range Date.Month 12 start end
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
@@ -190,14 +190,14 @@ view calendar today activities =
 
         body =
             case calendar.zoom of
-                Weekly ->
+                Year ->
                     weekList calendar.start calendar.end
                         |> List.map
                             (\d ->
                                 viewWeek accessActivities today calendar.selected d
                             )
 
-                Daily ->
+                Month ->
                     listDays calendar.start calendar.end
                         |> List.map
                             (\d ->
@@ -210,7 +210,7 @@ view calendar today activities =
         , style "overflow-x" "hidden"
         , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
         ]
-        (viewIf (calendar.zoom == Weekly) viewWeekDaysHeader
+        (viewIf (calendar.zoom == Year) viewWeekDaysHeader
             :: body
         )
     ]
@@ -262,7 +262,7 @@ returnScroll previousHeight =
 
 scrollHandler : Model -> ( Int -> Msg, Int -> Msg )
 scrollHandler model =
-    ( Date.add Months -2 model.start, Date.add Months 2 model.end )
+    ( Date.add Date.Months -2 model.start, Date.add Date.Months 2 model.end )
         |> Tuple.mapBoth (Scroll True) (Scroll False)
 
 
@@ -382,12 +382,12 @@ titleWeek start ( runDuration, otherDuration ) =
 
 weekList : Date -> Date -> List Date
 weekList start end =
-    Date.range Week 1 (Date.floor Week start) end
+    Date.range Date.Week 1 (Date.floor Date.Week start) end
 
 
 daysOfWeek : Date -> List Date
 daysOfWeek start =
-    Date.range Day 1 start (Date.add Weeks 1 start)
+    Date.range Date.Day 1 start (Date.add Date.Weeks 1 start)
 
 
 
@@ -452,4 +452,4 @@ viewActivity activity =
 
 listDays : Date -> Date -> List Date
 listDays start end =
-    Date.range Day 1 start end
+    Date.range Date.Day 1 start end
