@@ -12,7 +12,7 @@ import Json.Decode as Decode
 import Msg exposing (Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
-import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf)
+import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Task
 import Time exposing (Month(..))
 
@@ -185,6 +185,13 @@ view calendar today activities formM =
         filterActivities date_ activity =
             activity.date == date_
 
+        header =
+            if calendar.zoom == Year then
+                [ viewHeader (Maybe.map viewChooseDay formM) ]
+
+            else
+                []
+
         body =
             case calendar.zoom of
                 Year ->
@@ -210,9 +217,7 @@ view calendar today activities formM =
         , style "overflow-x" "hidden"
         , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
         ]
-        (viewIf (calendar.zoom == Year) viewWeekDaysHeader
-            :: body
-        )
+        (header ++ body)
     ]
 
 
@@ -270,10 +275,10 @@ scrollHandler model =
 -- WEEKLY VIEW
 
 
-viewWeekDaysHeader : Html msg
-viewWeekDaysHeader =
+viewHeader : Maybe (List (Html Msg)) -> Html Msg
+viewHeader sidebarM =
     row [ style "position" "sticky", style "top" "0" ]
-        (column [ style "min-width" "4rem" ] []
+        (column [ style "min-width" "4rem" ] (sidebarM |> Maybe.withDefault [])
             :: ([ "M", "T", "W", "T", "F", "S", "S" ]
                     |> List.map
                         (\d ->
@@ -282,6 +287,12 @@ viewWeekDaysHeader =
                         )
                )
         )
+
+
+viewChooseDay : ActivityForm.Model -> List (Html Msg)
+viewChooseDay form =
+    [ row [ style "background" "white" ] [ text "Select Date" ]
+    ]
 
 
 viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
@@ -464,7 +475,7 @@ viewEditDay calendar activities formM =
         [ row [] [ text (Date.format "E MMM d" calendar.selected) ]
         , row [ style "margin-top" "1rem" ]
             [ column [] (List.map viewFormM activities) ]
-        , row [ style "margin-bottom" "1rem" ]
+        , row []
             [ compactColumn []
                 [ a
                     [ onClick (ClickedNewActivity calendar.selected)

@@ -193,20 +193,8 @@ updateResult model =
 
 viewForm : Model -> Maybe Int -> Html Msg
 viewForm model levelM =
-    let
-        activityShape =
-            validate model
-                |> Result.toMaybe
-                |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
-    in
     row []
-        [ compactColumn
-            [ style "flex-basis" "3.3rem"
-            , style "justify-content" "center"
-            , Html.Events.onClick (CheckedCompleted (not model.completed))
-            ]
-            [ activityShape ]
+        [ viewShape model
         , column []
             [ row [ style "flex-wrap" "wrap" ]
                 [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
@@ -242,6 +230,23 @@ viewForm model levelM =
                 [ viewError model.result ]
             ]
         ]
+
+
+viewShape : Model -> Html Msg
+viewShape model =
+    let
+        activityShape =
+            validate model
+                |> Result.toMaybe
+                |> Maybe.map ActivityShape.view
+                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
+    in
+    compactColumn
+        [ style "flex-basis" "3.3rem"
+        , style "justify-content" "center"
+        , Html.Events.onClick (CheckedCompleted (not model.completed))
+        ]
+        [ activityShape ]
 
 
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg
