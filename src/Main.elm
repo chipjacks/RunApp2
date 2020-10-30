@@ -144,7 +144,9 @@ update msg model =
                     updateStore (Create activity) { state | activityForm = Just <| ActivityForm.init activity } |> loaded
 
                 EditActivity activity ->
-                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
+                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }
+                    , Cmd.none
+                    )
 
                 VisibilityChange visibility ->
                     case visibility of
@@ -198,7 +200,7 @@ update msg model =
                     updateCalendar msg state
                         |> loaded
 
-                Toggle dateM ->
+                ChangeZoom zoom dateM ->
                     let
                         activityFormCmd =
                             Maybe.map2 ActivityForm.selectDate dateM state.activityForm
@@ -267,7 +269,7 @@ update msg model =
                 ClickedMove ->
                     let
                         ( calendarState, calendarCmd ) =
-                            updateCalendar (Toggle Nothing) state
+                            updateCalendar (ChangeZoom Msg.Year Nothing) state
 
                         ( activityFormState, activityFormCmd ) =
                             updateActivityForm msg calendarState
@@ -290,7 +292,7 @@ updateLoading model =
         Loading (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    (Calendar.init Calendar.Month date)
+                    (Calendar.init Msg.Month date)
                     (Store.init activities)
                     Nothing
                     date
@@ -359,16 +361,11 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
-                if state.activityForm == Nothing then
-                    Calendar.view
-                        state.calendar
-                        state.today
-                        (Store.get state.store .activities)
-
-                else
-                    [ viewMaybe state.activityForm
-                        (\form -> column [ style "justify-content" "center" ] <| ActivityForm.viewForm form Nothing)
-                    ]
+                Calendar.view
+                    state.calendar
+                    state.today
+                    (Store.get state.store .activities)
+                    state.activityForm
 
 
 

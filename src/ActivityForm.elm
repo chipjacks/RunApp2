@@ -191,7 +191,7 @@ updateResult model =
     { model | result = validate model }
 
 
-viewForm : Model -> Maybe Int -> List (Html Msg)
+viewForm : Model -> Maybe Int -> Html Msg
 viewForm model levelM =
     let
         activityShape =
@@ -200,7 +200,7 @@ viewForm model levelM =
                 |> Maybe.map ActivityShape.view
                 |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
     in
-    [ row []
+    row []
         [ compactColumn
             [ style "flex-basis" "3.3rem"
             , style "justify-content" "center"
@@ -242,7 +242,6 @@ viewForm model levelM =
                 [ viewError model.result ]
             ]
         ]
-    ]
 
 
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg

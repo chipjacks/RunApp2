@@ -1,4 +1,4 @@
-module Calendar exposing (Model, Zoom(..), getDate, init, update, view, viewMenu)
+module Calendar exposing (Model, getDate, init, update, view, viewEditDay, viewMenu)
 
 import Activity exposing (Activity, activityType)
 import ActivityForm
@@ -9,7 +9,7 @@ import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
-import Msg exposing (Msg(..))
+import Msg exposing (Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
 import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf)
@@ -19,11 +19,6 @@ import Time exposing (Month(..))
 
 type alias Model =
     { zoom : Zoom, start : Date, selected : Date, end : Date, scrollCompleted : Bool }
-
-
-type Zoom
-    = Year
-    | Month
 
 
 init : Zoom -> Date -> Model
@@ -42,17 +37,10 @@ update msg model =
         Jump date ->
             ( init model.zoom date, scrollToSelectedDate () )
 
-        Toggle dateM ->
-            case model.zoom of
-                Year ->
-                    ( init Month (Maybe.withDefault model.selected dateM)
-                    , scrollToSelectedDate ()
-                    )
-
-                Month ->
-                    ( init Year (Maybe.withDefault model.selected dateM)
-                    , scrollToSelectedDate ()
-                    )
+        ChangeZoom zoom dateM ->
+            ( init zoom (Maybe.withDefault model.selected dateM)
+            , scrollToSelectedDate ()
+            )
 
         Scroll up date currentHeight ->
             if not model.scrollCompleted then
@@ -112,9 +100,15 @@ viewBackButton model =
             text ""
 
         Month ->
-            a [ class "button", style "margin-right" "0.2rem", onClick (Toggle Nothing) ]
+            a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Year Nothing) ]
                 [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
                 , text (Date.format "yyyy" model.selected)
+                ]
+
+        Day ->
+            a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Month Nothing) ]
+                [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
+                , text (Date.format "MMMM yyyy" model.selected)
                 ]
 
 
@@ -138,6 +132,9 @@ viewDatePicker model =
                 , div [ class "dropdown-content" ]
                     (listMonths model.selected Jump)
                 ]
+
+        Day ->
+            text ""
 
 
 
@@ -178,8 +175,8 @@ listYears date changeDate =
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
-view : Model -> Date -> List Activity -> List (Html Msg)
-view calendar today activities =
+view : Model -> Date -> List Activity -> Maybe ActivityForm.Model -> List (Html Msg)
+view calendar today activities formM =
     let
         accessActivities =
             \date_ ->
@@ -203,6 +200,9 @@ view calendar today activities =
                             (\d ->
                                 viewDay d (accessActivities d) (d == today) (d == calendar.selected)
                             )
+
+                Day ->
+                    viewEditDay calendar (accessActivities calendar.selected) formM
     in
     [ column
         [ id "calendar"
@@ -321,7 +321,7 @@ viewWeek accessActivities today selected start =
 viewWeekDay : ( Date, List Activity ) -> Bool -> Bool -> Html Msg
 viewWeekDay ( date, activities ) isToday isSelected =
     column
-        [ onClick (Toggle (Just date))
+        [ onClick (ChangeZoom Month (Just date))
         , attributeIf isSelected (id "selected-date")
         , style "min-height" "4rem"
         , style "padding-bottom" "1rem"
@@ -400,6 +400,8 @@ viewDay date activities isToday isSelected =
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")
         , attribute "data-date" (Date.toIsoString date)
+        , onClick (ChangeZoom Day (Just date))
+        , style "min-height" "3rem"
         ]
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
@@ -407,18 +409,6 @@ viewDay date activities isToday isSelected =
                 ]
             , row [ style "margin-top" "1rem" ]
                 [ column [] (List.map viewActivity activities) ]
-            , row [ style "margin-bottom" "1rem" ]
-                [ compactColumn []
-                    [ a
-                        [ onClick (ClickedNewActivity date)
-                        , class "button tiny fas fa-plus"
-                        , style "font-size" "0.6rem"
-                        , style "padding" "0.3rem"
-                        , style "color" "var(--icon-gray)"
-                        ]
-                        []
-                    ]
-                ]
             ]
         ]
 
@@ -453,3 +443,38 @@ viewActivity activity =
 listDays : Date -> Date -> List Date
 listDays start end =
     Date.range Date.Day 1 start end
+
+
+viewEditDay : Model -> List Activity -> Maybe ActivityForm.Model -> List (Html Msg)
+viewEditDay calendar activities formM =
+    let
+        viewFormM activity =
+            case formM of
+                Just form ->
+                    if ActivityForm.isEditing activity form then
+                        ActivityForm.viewForm form Nothing
+
+                    else
+                        viewActivity activity
+
+                Nothing ->
+                    viewActivity activity
+    in
+    [ column []
+        [ row [] [ text (Date.format "E MMM d" calendar.selected) ]
+        , row [ style "margin-top" "1rem" ]
+            [ column [] (List.map viewFormM activities) ]
+        , row [ style "margin-bottom" "1rem" ]
+            [ compactColumn []
+                [ a
+                    [ onClick (ClickedNewActivity calendar.selected)
+                    , class "button tiny fas fa-plus"
+                    , style "font-size" "0.6rem"
+                    , style "padding" "0.3rem"
+                    , style "color" "var(--icon-gray)"
+                    ]
+                    []
+                ]
+            ]
+        ]
+    ]
