@@ -73,7 +73,7 @@ update msg model =
 
 
 
--- NAVBAR MENU VIEW
+-- VIEW MENU
 
 
 viewMenu : Model -> Msg -> Html Msg
@@ -137,10 +137,6 @@ viewDatePicker model =
             text ""
 
 
-
--- VIEW
-
-
 listMonths : Date -> (Date -> Msg) -> List (Html Msg)
 listMonths date changeDate =
     let
@@ -152,11 +148,6 @@ listMonths date changeDate =
     in
     Date.range Date.Month 1 start end
         |> List.map (viewDropdownItem changeDate "MMMM")
-
-
-viewDropdownItem : (Date -> Msg) -> String -> Date -> Html Msg
-viewDropdownItem changeDate formatDate date =
-    a [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
 
 
 listYears : Date -> (Date -> Msg) -> List (Html Msg)
@@ -173,6 +164,15 @@ listYears date changeDate =
     in
     Date.range Date.Month 12 start end
         |> List.map (viewDropdownItem changeDate "yyyy")
+
+
+viewDropdownItem : (Date -> Msg) -> String -> Date -> Html Msg
+viewDropdownItem changeDate formatDate date =
+    a [ onClick (changeDate date) ] [ text <| Date.format formatDate date ]
+
+
+
+-- VIEW
 
 
 view : Model -> Date -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)
@@ -211,6 +211,7 @@ view calendar today activities formM levelM =
         [ id "calendar"
         , style "overflow-y" "scroll"
         , style "overflow-x" "hidden"
+        , style "padding-right" "0.5rem"
         , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
         ]
         (header ++ body)
@@ -268,7 +269,7 @@ scrollHandler model =
 
 
 
--- WEEKLY VIEW
+-- YEAR VIEW
 
 
 viewHeader : Maybe (List (Html Msg)) -> Html Msg
@@ -398,7 +399,7 @@ daysOfWeek start =
 
 
 
--- DAILY VIEW
+-- MONTH VIEW
 
 
 viewDay : Date -> List Activity -> Bool -> Bool -> Html Msg
@@ -451,6 +452,10 @@ viewActivity activity =
 listDays : Date -> Date -> List Date
 listDays start end =
     Date.range Date.Day 1 start end
+
+
+
+-- DAY VIEW
 
 
 viewEditDay : Model -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)

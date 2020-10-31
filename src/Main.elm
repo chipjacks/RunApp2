@@ -355,7 +355,12 @@ calculateLevel activities =
 
 view : Model -> Html Msg
 view model =
-    expandingRow [ id "home", style "overflow" "hidden" ] <|
+    expandingRow
+        [ id "home"
+        , style "overflow" "hidden"
+        , style "margin-left" "1rem"
+        ]
+    <|
         case model of
             Loading _ _ ->
                 [ text "Loading" ]
