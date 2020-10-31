@@ -357,7 +357,6 @@ view : Model -> Html Msg
 view model =
     expandingRow
         [ id "home"
-        , style "overflow" "hidden"
         , style "margin-left" "1rem"
         ]
     <|

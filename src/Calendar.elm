@@ -78,7 +78,7 @@ update msg model =
 
 viewMenu : Model -> Msg -> Html Msg
 viewMenu model loadToday =
-    expandingRow []
+    row []
         [ compactColumn [] [ viewBackButton model ]
         , column []
             [ row [ style "justify-content" "center" ]
@@ -181,13 +181,6 @@ view calendar today activities formM levelM =
         filterActivities =
             \date -> List.filter (\a -> a.date == date) activities
 
-        header =
-            if calendar.zoom == Year then
-                [ viewHeader (Maybe.map viewChooseDay formM) ]
-
-            else
-                []
-
         body =
             case calendar.zoom of
                 Year ->
@@ -207,14 +200,19 @@ view calendar today activities formM levelM =
                 Day ->
                     viewEditDay calendar (filterActivities calendar.selected) formM levelM
     in
-    [ column
-        [ id "calendar"
-        , style "overflow-y" "scroll"
-        , style "overflow-x" "hidden"
-        , style "padding-right" "0.5rem"
-        , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
+    [ column []
+        [ viewIf (calendar.zoom == Year) (viewHeader (Maybe.map viewChooseDay formM))
+        , expandingRow [ style "overflow" "hidden" ]
+            [ column
+                [ id "calendar"
+                , style "overflow-y" "scroll"
+                , style "overflow-x" "hidden"
+                , style "padding-right" "0.5rem"
+                , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
+                ]
+                body
+            ]
         ]
-        (header ++ body)
     ]
 
 
@@ -274,7 +272,7 @@ scrollHandler model =
 
 viewHeader : Maybe (List (Html Msg)) -> Html Msg
 viewHeader sidebarM =
-    row [ style "position" "sticky", style "top" "0" ]
+    row []
         (column [ style "min-width" "4rem" ] (sidebarM |> Maybe.withDefault [])
             :: ([ "M", "T", "W", "T", "F", "S", "S" ]
                     |> List.map
