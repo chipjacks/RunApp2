@@ -13592,11 +13592,7 @@ var $author$project$Calendar$viewEditDay = F4(
 var $author$project$Calendar$viewHeader = function (sidebarM) {
 	return A2(
 		$author$project$Skeleton$row,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'position', 'sticky'),
-				A2($elm$html$Html$Attributes$style, 'top', '0')
-			]),
+		_List_Nil,
 		A2(
 			$elm$core$List$cons,
 			A2(
@@ -13624,6 +13620,10 @@ var $author$project$Calendar$viewHeader = function (sidebarM) {
 				_List_fromArray(
 					['M', 'T', 'W', 'T', 'F', 'S', 'S']))));
 };
+var $author$project$Skeleton$viewIf = F2(
+	function (bool, html) {
+		return bool ? html : $elm$html$Html$text('');
+	});
 var $author$project$Calendar$daysOfWeek = function (start) {
 	return A4(
 		$justinmimbs$date$Date$range,
@@ -13871,11 +13871,6 @@ var $author$project$Calendar$weekList = F2(
 	});
 var $author$project$Calendar$view = F5(
 	function (calendar, today, activities, formM, levelM) {
-		var header = (!calendar.F) ? _List_fromArray(
-			[
-				$author$project$Calendar$viewHeader(
-				A2($elm$core$Maybe$map, $author$project$Calendar$viewChooseDay, formM))
-			]) : _List_Nil;
 		var filterActivities = function (date) {
 			return A2(
 				$elm$core$List$filter,
@@ -13919,19 +13914,39 @@ var $author$project$Calendar$view = F5(
 			[
 				A2(
 				$author$project$Skeleton$column,
+				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('calendar'),
-						A2($elm$html$Html$Attributes$style, 'overflow-y', 'scroll'),
-						A2($elm$html$Html$Attributes$style, 'overflow-x', 'hidden'),
-						A2($elm$html$Html$Attributes$style, 'padding-right', '0.5rem'),
 						A2(
-						$author$project$Skeleton$attributeIf,
-						calendar.L,
-						$author$project$Calendar$onScroll(
-							$author$project$Calendar$scrollHandler(calendar)))
-					]),
-				_Utils_ap(header, body))
+						$author$project$Skeleton$viewIf,
+						!calendar.F,
+						$author$project$Calendar$viewHeader(
+							A2($elm$core$Maybe$map, $author$project$Calendar$viewChooseDay, formM))),
+						A2(
+						$author$project$Skeleton$expandingRow,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'overflow', 'hidden')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$column,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('calendar'),
+										A2($elm$html$Html$Attributes$style, 'overflow-y', 'scroll'),
+										A2($elm$html$Html$Attributes$style, 'overflow-x', 'hidden'),
+										A2($elm$html$Html$Attributes$style, 'padding-right', '0.5rem'),
+										A2(
+										$author$project$Skeleton$attributeIf,
+										calendar.L,
+										$author$project$Calendar$onScroll(
+											$author$project$Calendar$scrollHandler(calendar)))
+									]),
+								body)
+							]))
+					]))
 			]);
 	});
 var $author$project$Main$view = function (model) {
@@ -13940,7 +13955,6 @@ var $author$project$Main$view = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$id('home'),
-				A2($elm$html$Html$Attributes$style, 'overflow', 'hidden'),
 				A2($elm$html$Html$Attributes$style, 'margin-left', '1rem')
 			]),
 		function () {
@@ -13984,10 +13998,6 @@ var $author$project$Store$needsFlush = function (_v0) {
 	var msgs = _v0.b;
 	return !$elm$core$List$isEmpty(msgs);
 };
-var $author$project$Skeleton$viewIf = F2(
-	function (bool, html) {
-		return bool ? html : $elm$html$Html$text('');
-	});
 var $author$project$Calendar$viewBackButton = function (model) {
 	var _v0 = model.F;
 	switch (_v0) {
@@ -14149,7 +14159,7 @@ var $author$project$Calendar$viewDatePicker = function (model) {
 var $author$project$Calendar$viewMenu = F2(
 	function (model, loadToday) {
 		return A2(
-			$author$project$Skeleton$expandingRow,
+			$author$project$Skeleton$row,
 			_List_Nil,
 			_List_fromArray(
 				[
