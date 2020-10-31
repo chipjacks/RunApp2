@@ -35,7 +35,7 @@ import Url.Parser.Query as Query
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = view model |> Skeleton.layout (viewNavbar model) |> List.singleton }
+        , view = \model -> { title = "RunApp2", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
         , update = update
         , subscriptions = subscriptions
         }
@@ -88,8 +88,7 @@ viewNavbar model =
     case model of
         Loaded { store, calendar, today } ->
             row [ style "padding" "0.5rem" ]
-                [ compactColumn [] [ Calendar.viewToggleButton calendar ]
-                , column [] [ Calendar.viewDatePicker calendar (Jump today) ]
+                [ column [] [ Calendar.viewMenu calendar (Jump today) ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
                     [ viewIf (Store.needsFlush store) spinner
                     ]
@@ -145,7 +144,9 @@ update msg model =
                     updateStore (Create activity) { state | activityForm = Just <| ActivityForm.init activity } |> loaded
 
                 EditActivity activity ->
-                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }, Cmd.none )
+                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }
+                    , Cmd.none
+                    )
 
                 VisibilityChange visibility ->
                     case visibility of
@@ -199,7 +200,7 @@ update msg model =
                     updateCalendar msg state
                         |> loaded
 
-                Toggle dateM ->
+                ChangeZoom zoom dateM ->
                     let
                         activityFormCmd =
                             Maybe.map2 ActivityForm.selectDate dateM state.activityForm
@@ -268,7 +269,7 @@ update msg model =
                 ClickedMove ->
                     let
                         ( calendarState, calendarCmd ) =
-                            updateCalendar (Toggle Nothing) state
+                            updateCalendar (ChangeZoom Msg.Year Nothing) state
 
                         ( activityFormState, activityFormCmd ) =
                             updateActivityForm msg calendarState
@@ -291,7 +292,7 @@ updateLoading model =
         Loading (Just date) (Just activities) ->
             (Loaded <|
                 State
-                    (Calendar.init Calendar.Daily date)
+                    (Calendar.init Msg.Month date)
                     (Store.init activities)
                     Nothing
                     date
@@ -357,6 +358,7 @@ view model =
     expandingRow
         [ id "home"
         , style "overflow" "hidden"
+        , style "margin-left" "1rem"
         ]
     <|
         case model of
@@ -367,9 +369,16 @@ view model =
                 let
                     activities =
                         Store.get state.store .activities
+
+                    levelM =
+                        calculateLevel activities
                 in
-                [ Calendar.view state.calendar (ActivityForm.viewActivity state.activityForm (calculateLevel activities)) ClickedNewActivity state.today activities
-                ]
+                Calendar.view
+                    state.calendar
+                    state.today
+                    (Store.get state.store .activities)
+                    state.activityForm
+                    levelM
 
 
 

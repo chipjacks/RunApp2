@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewActivity)
+module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewForm)
 
 import Activity exposing (Activity, ActivityType, Minutes)
 import ActivityShape
@@ -193,20 +193,8 @@ updateResult model =
 
 viewForm : Model -> Maybe Int -> Html Msg
 viewForm model levelM =
-    let
-        activityShape =
-            validate model
-                |> Result.toMaybe
-                |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
-    in
-    row [ id "activity", style "margin-bottom" "1rem" ]
-        [ compactColumn
-            [ style "flex-basis" "3.3rem"
-            , style "justify-content" "center"
-            , Html.Events.onClick (CheckedCompleted (not model.completed))
-            ]
-            [ activityShape ]
+    row [ style "margin-top" "1rem" ]
+        [ viewShape model
         , column []
             [ row [ style "flex-wrap" "wrap" ]
                 [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
@@ -244,43 +232,21 @@ viewForm model levelM =
         ]
 
 
-viewActivity : Maybe Model -> Maybe Int -> Activity -> Html Msg
-viewActivity activityFormM levelM activity =
+viewShape : Model -> Html Msg
+viewShape model =
     let
-        level =
-            Activity.mprLevel activity
-                |> Maybe.map (\l -> "level " ++ String.fromInt l)
-                |> Maybe.withDefault ""
-
-        activityView =
-            a [ onClick (EditActivity activity) ]
-                [ row [ style "margin-bottom" "1rem" ]
-                    [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-                    , column [ style "justify-content" "center" ]
-                        [ row [] [ text activity.description ]
-                        , row [ style "font-size" "0.8rem" ]
-                            [ column []
-                                [ text <|
-                                    ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
-                                        ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
-                                    )
-                                ]
-                            , compactColumn [ style "align-items" "flex-end" ] [ text level ]
-                            ]
-                        ]
-                    ]
-                ]
+        activityShape =
+            validate model
+                |> Result.toMaybe
+                |> Maybe.map ActivityShape.view
+                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
     in
-    case activityFormM of
-        Just af ->
-            if isEditing activity af then
-                viewForm af levelM
-
-            else
-                activityView
-
-        Nothing ->
-            activityView
+    compactColumn
+        [ style "flex-basis" "3.3rem"
+        , style "justify-content" "center"
+        , Html.Events.onClick (CheckedCompleted (not model.completed))
+        ]
+        [ activityShape ]
 
 
 shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg

@@ -1,8 +1,5 @@
 port module Ports exposing (scrollToSelectedDate, selectDateFromScroll, visibilityChange)
 
-import Msg exposing (Msg(..))
-
-
 port scrollToSelectedDate : () -> Cmd msg
 
 

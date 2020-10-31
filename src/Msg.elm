@@ -1,9 +1,15 @@
-module Msg exposing (Msg(..))
+module Msg exposing (Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
 import Browser.Dom as Dom
 import Date exposing (Date)
 import Http
+
+
+type Zoom
+    = Year
+    | Month
+    | Day
 
 
 type Msg
@@ -24,7 +30,7 @@ type Msg
     | DebounceFlush Int
       -- CALENDAR
     | Jump Date
-    | Toggle (Maybe Date)
+    | ChangeZoom Zoom (Maybe Date)
     | Scroll Bool Date Int
     | ScrollCompleted (Result Dom.Error Dom.Element)
       -- ACTIVITY FORM
