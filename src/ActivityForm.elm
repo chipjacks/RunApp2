@@ -193,7 +193,7 @@ updateResult model =
 
 viewForm : Model -> Maybe Int -> Html Msg
 viewForm model levelM =
-    row []
+    row [ style "margin-top" "1rem" ]
         [ viewShape model
         , column []
             [ row [ style "flex-wrap" "wrap" ]

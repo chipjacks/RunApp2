@@ -413,12 +413,13 @@ viewDay date activities isToday isSelected =
         , attribute "data-date" (Date.toIsoString date)
         , onClick (ChangeZoom Day (Just date))
         , style "min-height" "3rem"
+        , style "margin-bottom" "1rem"
         ]
         [ column []
             [ row [ styleIf isToday "font-weight" "bold" ]
                 [ text (Date.format "E MMM d" date)
                 ]
-            , row [ style "margin-top" "1rem" ]
+            , row []
                 [ column [] (List.map viewActivity activities) ]
             ]
         ]
@@ -433,7 +434,7 @@ viewActivity activity =
                 |> Maybe.withDefault ""
     in
     a [ onClick (EditActivity activity) ]
-        [ row [ style "margin-bottom" "1rem" ]
+        [ row [ style "margin-top" "1rem" ]
             [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
             , column [ style "justify-content" "center" ]
                 [ row [] [ text activity.description ]
@@ -473,9 +474,9 @@ viewEditDay calendar activities formM =
     in
     [ column []
         [ row [] [ text (Date.format "E MMM d" calendar.selected) ]
-        , row [ style "margin-top" "1rem" ]
-            [ column [] (List.map viewFormM activities) ]
         , row []
+            [ column [] (List.map viewFormM activities) ]
+        , row [ style "margin-top" "1rem" ]
             [ compactColumn []
                 [ a
                     [ onClick (ClickedNewActivity calendar.selected)
