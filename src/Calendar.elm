@@ -200,11 +200,12 @@ view calendar today activities formM levelM =
                 Day ->
                     viewEditDay calendar (filterActivities calendar.selected) formM levelM
     in
-    [ column [ id "calendar" ]
+    [ column []
         [ viewIf (calendar.zoom == Year) (viewHeader (Maybe.map viewChooseDay formM))
         , expandingRow [ style "overflow" "hidden" ]
             [ column
-                [ style "overflow-y" "scroll"
+                [ id "calendar"
+                , style "overflow-y" "scroll"
                 , style "overflow-x" "hidden"
                 , style "padding-right" "0.5rem"
                 , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
