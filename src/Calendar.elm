@@ -175,15 +175,11 @@ listYears date changeDate =
         |> List.map (viewDropdownItem changeDate "yyyy")
 
 
-view : Model -> Date -> List Activity -> Maybe ActivityForm.Model -> List (Html Msg)
-view calendar today activities formM =
+view : Model -> Date -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)
+view calendar today activities formM levelM =
     let
-        accessActivities =
-            \date_ ->
-                List.filter (filterActivities date_) activities
-
-        filterActivities date_ activity =
-            activity.date == date_
+        filterActivities =
+            \date -> List.filter (\a -> a.date == date) activities
 
         header =
             if calendar.zoom == Year then
@@ -198,18 +194,18 @@ view calendar today activities formM =
                     weekList calendar.start calendar.end
                         |> List.map
                             (\d ->
-                                viewWeek accessActivities today calendar.selected d
+                                viewWeek filterActivities today calendar.selected d
                             )
 
                 Month ->
                     listDays calendar.start calendar.end
                         |> List.map
                             (\d ->
-                                viewDay d (accessActivities d) (d == today) (d == calendar.selected)
+                                viewDay d (filterActivities d) (d == today) (d == calendar.selected)
                             )
 
                 Day ->
-                    viewEditDay calendar (accessActivities calendar.selected) formM
+                    viewEditDay calendar (filterActivities calendar.selected) formM levelM
     in
     [ column
         [ id "calendar"
@@ -296,15 +292,15 @@ viewChooseDay form =
 
 
 viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
-viewWeek accessActivities today selected start =
+viewWeek filterActivities today selected start =
     let
         dayViews =
             daysOfWeek start
-                |> List.map (\d -> viewWeekDay ( d, accessActivities d ) (d == today) (d == selected))
+                |> List.map (\d -> viewWeekDay ( d, filterActivities d ) (d == today) (d == selected))
 
         activities =
             daysOfWeek start
-                |> List.map (\d -> accessActivities d)
+                |> List.map (\d -> filterActivities d)
                 |> List.concat
 
         ( runDuration, otherDuration ) =
@@ -457,14 +453,14 @@ listDays start end =
     Date.range Date.Day 1 start end
 
 
-viewEditDay : Model -> List Activity -> Maybe ActivityForm.Model -> List (Html Msg)
-viewEditDay calendar activities formM =
+viewEditDay : Model -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)
+viewEditDay calendar activities formM levelM =
     let
         viewFormM activity =
             case formM of
                 Just form ->
                     if ActivityForm.isEditing activity form then
-                        ActivityForm.viewForm form Nothing
+                        ActivityForm.viewForm form levelM
 
                     else
                         viewActivity activity

@@ -361,11 +361,19 @@ view model =
                 [ text "Loading" ]
 
             Loaded state ->
+                let
+                    activities =
+                        Store.get state.store .activities
+
+                    levelM =
+                        calculateLevel activities
+                in
                 Calendar.view
                     state.calendar
                     state.today
                     (Store.get state.store .activities)
                     state.activityForm
+                    levelM
 
 
 
