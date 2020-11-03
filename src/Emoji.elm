@@ -13,13 +13,32 @@ type alias EmojiData =
 
 default : EmojiData
 default =
-    EmojiData "thought balloon" 26 3
+    EmojiData "smiley" 30 38
+
+
+recommended : List EmojiData
+recommended =
+    [ EmojiData "smiley" 30 38
+    , EmojiData "sweat smile" 30 40
+    , EmojiData "relieved" 30 47
+    , EmojiData "disappointed" 31 8
+    , EmojiData "worried" 31 9
+    , EmojiData "tired face" 31 21
+    , EmojiData "grimacing" 31 22
+    , EmojiData "dizzy face" 31 31
+    , EmojiData "mask" 31 33
+    , EmojiData "face with head bandage" 37 28
+    ]
 
 
 filter : String -> List EmojiData
 filter name =
-    List.filter (\emojiData -> String.contains name emojiData.name) list
-        |> List.sortBy (\e -> String.length e.name)
+    if String.isEmpty name then
+        recommended
+
+    else
+        List.filter (\emojiData -> String.contains name emojiData.name) list
+            |> List.sortBy (\e -> String.length e.name)
 
 
 find : String -> EmojiData

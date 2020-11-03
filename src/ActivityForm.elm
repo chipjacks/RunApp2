@@ -8,7 +8,7 @@ import Date exposing (Date)
 import Emoji
 import Html exposing (Html, a, button, div, i, input, span, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
-import Html.Events exposing (on, onClick, onInput)
+import Html.Events exposing (on, onClick, onFocus, onInput)
 import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
@@ -83,9 +83,29 @@ validateFieldExists fieldM fieldName =
 
 validate : Model -> Result Error Activity
 validate model =
+    let
+        parsedDuration =
+            model.duration
+                |> Maybe.andThen
+                    (\str ->
+                        if String.isEmpty str then
+                            Just 0
+
+                        else
+                            String.toInt str
+                    )
+    in
     Result.map2
         (\date description ->
-            Activity model.id date description model.emoji model.completed (Maybe.andThen String.toInt model.duration) model.pace model.distance
+            Activity
+                model.id
+                date
+                description
+                model.emoji
+                model.completed
+                parsedDuration
+                model.pace
+                model.distance
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -270,7 +290,7 @@ shapeSelect model selectedShape =
         , div [ class "dropdown-content" ]
             (List.map
                 (\( str, aType ) ->
-                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault model.completed aType, compactColumn [ style "margin-left" "0.5rem" ] [ text str ] ] ]
+                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text str ] ] ]
                 )
                 types
             )
@@ -361,6 +381,7 @@ emojiSelect msg emoji =
                     ]
                 , input
                     [ onInput msg
+                    , onFocus (msg "")
                     , class "input small icon"
                     , style "width" "6rem"
                     , value emoji
@@ -378,6 +399,7 @@ durationInput msg duration =
         [ type_ "number"
         , placeholder "Mins"
         , onInput msg
+        , onFocus (msg "")
         , name "duration"
         , style "width" "3rem"
         , class "input small"
