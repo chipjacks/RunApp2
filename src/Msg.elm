@@ -14,7 +14,7 @@ type Zoom
 
 type Msg
     = LoadToday Date
-    | GotActivities (Result Http.Error (List Activity))
+    | GotActivities (Result String (List Activity))
     | EditActivity Activity
     | ReceiveSelectDate String
     | VisibilityChange String
@@ -26,7 +26,7 @@ type Msg
     | Move Date Activity
     | Shift Bool Activity
     | Delete Activity
-    | Posted (List Msg) (Result Http.Error (List Activity))
+    | Posted (List Msg) (Result String (List Activity))
     | DebounceFlush Int
       -- CALENDAR
     | Jump Date

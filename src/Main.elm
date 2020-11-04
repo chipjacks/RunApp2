@@ -44,6 +44,7 @@ main =
 type Model
     = Loading (Maybe Date) (Maybe (List Activity))
     | Loaded State
+    | Error String
 
 
 type alias State =
@@ -121,11 +122,14 @@ update msg model =
                             Loading dateM (Just activities)
                                 |> updateLoading
 
-                        _ ->
-                            ( model, Cmd.none )
+                        Err err ->
+                            ( Error err, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
+
+        Error _ ->
+            ( model, Cmd.none )
 
         Loaded state ->
             case msg of
@@ -363,6 +367,9 @@ view model =
         case model of
             Loading _ _ ->
                 [ text "Loading" ]
+
+            Error errorString ->
+                [ text errorString ]
 
             Loaded state ->
                 let
