@@ -1,6 +1,6 @@
 module Calendar exposing (Model, getDate, init, update, view, viewEditDay, viewMenu)
 
-import Activity exposing (Activity, activityType)
+import Activity exposing (Activity)
 import ActivityForm
 import ActivityShape
 import Browser.Dom as Dom
@@ -304,20 +304,22 @@ viewWeek filterActivities today selected start =
 
         ( runDuration, otherDuration ) =
             activities
-                |> List.partition
+                |> List.map
                     (\a ->
-                        case activityType a of
-                            Activity.Run _ _ ->
-                                True
+                        case a.data of
+                            Activity.Run mins _ _ ->
+                                ( mins, 0 )
 
-                            Activity.Race _ _ ->
-                                True
+                            Activity.Race mins _ _ ->
+                                ( mins, 0 )
+
+                            Activity.Other mins _ ->
+                                ( 0, mins )
 
                             _ ->
-                                False
+                                ( 0, 0 )
                     )
-                |> Tuple.mapBoth (List.filterMap .duration) (List.filterMap .duration)
-                |> Tuple.mapBoth List.sum List.sum
+                |> List.foldl (\( r, o ) ( sr, so ) -> ( sr + r, so + o )) ( 0, 0 )
     in
     row [] <|
         titleWeek start ( runDuration, otherDuration )
@@ -436,9 +438,18 @@ viewActivity activity =
                 , row [ style "font-size" "0.8rem" ]
                     [ column []
                         [ text <|
-                            ((Maybe.map (\mins -> String.fromInt mins ++ " min ") activity.duration |> Maybe.withDefault "")
-                                ++ (Maybe.map Activity.pace.toString activity.pace |> Maybe.withDefault "" |> String.toLower)
-                            )
+                            case activity.data of
+                                Activity.Run mins pace_ _ ->
+                                    String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
+
+                                Activity.Race mins _ _ ->
+                                    String.fromInt mins ++ " min "
+
+                                Activity.Other mins _ ->
+                                    String.fromInt mins ++ " min "
+
+                                _ ->
+                                    ""
                         ]
                     , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                     ]

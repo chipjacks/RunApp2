@@ -1,6 +1,6 @@
 module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewForm)
 
-import Activity exposing (Activity, ActivityType, Minutes)
+import Activity exposing (Activity, ActivityData, Minutes)
 import ActivityShape
 import Api
 import Array exposing (Array)
@@ -8,7 +8,7 @@ import Date exposing (Date)
 import Emoji
 import Html exposing (Html, a, button, div, i, input, span, text)
 import Html.Attributes exposing (class, href, id, name, placeholder, style, type_, value)
-import Html.Events exposing (on, onClick, onInput)
+import Html.Events exposing (on, onClick, onFocus, onInput)
 import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
@@ -28,11 +28,12 @@ type alias Model =
     { id : Activity.Id
     , date : Maybe Date
     , description : String
-    , emoji : Maybe String
-    , completed : Bool
+    , dataType : String
     , duration : Maybe String
     , pace : Maybe Activity.Pace
     , distance : Maybe Activity.Distance
+    , completed : Maybe Bool
+    , emoji : Maybe String
     , result : Result Error Activity
     }
 
@@ -44,7 +45,46 @@ type Error
 
 init : Activity -> Model
 init activity =
-    Model activity.id (Just activity.date) activity.description activity.emoji activity.completed (Maybe.map String.fromInt activity.duration) activity.pace activity.distance (Ok activity)
+    let
+        baseModel =
+            Model activity.id (Just activity.date) activity.description
+    in
+    case activity.data of
+        Activity.Run minutes pace_ completed ->
+            baseModel "Run"
+                (Just (String.fromInt minutes))
+                (Just pace_)
+                Nothing
+                (Just completed)
+                Nothing
+                (Ok activity)
+
+        Activity.Race minutes distance_ completed ->
+            baseModel "Race"
+                (Just (String.fromInt minutes))
+                Nothing
+                (Just distance_)
+                (Just completed)
+                Nothing
+                (Ok activity)
+
+        Activity.Other minutes completed ->
+            baseModel "Other"
+                (Just (String.fromInt minutes))
+                Nothing
+                Nothing
+                (Just completed)
+                Nothing
+                (Ok activity)
+
+        Activity.Note emoji_ ->
+            baseModel "Note"
+                Nothing
+                Nothing
+                Nothing
+                Nothing
+                (Just emoji_)
+                (Ok activity)
 
 
 apply : (Activity -> Msg) -> Model -> Msg
@@ -85,7 +125,11 @@ validate : Model -> Result Error Activity
 validate model =
     Result.map2
         (\date description ->
-            Activity model.id date description model.emoji model.completed (Maybe.andThen String.toInt model.duration) model.pace model.distance
+            Activity
+                model.id
+                date
+                description
+                (toActivityData model.dataType model)
         )
         (validateFieldExists model.date "date")
         (validateFieldExists (Just model.description) "description")
@@ -94,36 +138,46 @@ validate model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SelectedShape activityType ->
-            case activityType of
-                Activity.Run mins pace_ ->
+        SelectedShape activityData ->
+            let
+                dataType =
+                    Activity.activityTypeToString activityData
+            in
+            case activityData of
+                Activity.Run mins pace_ completed ->
                     ( updateResult
                         { model
-                            | pace = Just pace_
-                            , distance = Nothing
+                            | dataType = dataType
+                            , pace = Just pace_
                             , duration = Just (String.fromInt mins)
+                            , completed = Just completed
                             , emoji = Nothing
+                            , distance = Nothing
                         }
                     , Cmd.none
                     )
 
-                Activity.Race mins dist ->
+                Activity.Race mins dist completed ->
                     ( updateResult
                         { model
-                            | pace = Nothing
+                            | dataType = dataType
                             , distance = Just dist
                             , duration = Just (String.fromInt mins)
+                            , completed = Just completed
+                            , pace = Nothing
                             , emoji = Nothing
                         }
                     , Cmd.none
                     )
 
-                Activity.Other mins ->
+                Activity.Other mins completed ->
                     ( updateResult
                         { model
-                            | pace = Nothing
-                            , distance = Nothing
+                            | dataType = dataType
                             , duration = Just (String.fromInt mins)
+                            , completed = Just completed
+                            , distance = Nothing
+                            , pace = Nothing
                             , emoji = Nothing
                         }
                     , Cmd.none
@@ -132,9 +186,11 @@ update msg model =
                 Activity.Note emoji ->
                     ( updateResult
                         { model
-                            | emoji = Just emoji
-                            , pace = Nothing
+                            | dataType = dataType
+                            , emoji = Just emoji
+                            , completed = Nothing
                             , distance = Nothing
+                            , pace = Nothing
                             , duration = Nothing
                         }
                     , Cmd.none
@@ -151,7 +207,7 @@ update msg model =
             )
 
         CheckedCompleted bool ->
-            ( updateResult { model | completed = bool }
+            ( updateResult { model | completed = Just bool }
             , Cmd.none
             )
 
@@ -216,7 +272,7 @@ viewForm model levelM =
                     []
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ]
-                [ compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model SelectedShape ]
+                [ compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
                 , compactColumn [] [ viewMaybe model.emoji (emojiSelect SelectedEmoji) ]
                 , compactColumn [] [ viewMaybe model.duration (durationInput EditedDuration) ]
                 , compactColumn [] [ viewMaybe model.pace (paceSelect levelM SelectedPace) ]
@@ -239,49 +295,53 @@ viewShape model =
             validate model
                 |> Result.toMaybe
                 |> Maybe.map ActivityShape.view
-                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy))
+                |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy True))
     in
     compactColumn
         [ style "flex-basis" "3.3rem"
         , style "justify-content" "center"
-        , Html.Events.onClick (CheckedCompleted (not model.completed))
+        , Html.Events.onClick (CheckedCompleted (not (Maybe.withDefault True model.completed)))
         ]
         [ activityShape ]
 
 
-shapeSelect : Model -> (ActivityType -> Msg) -> Html Msg
-shapeSelect model selectedShape =
+shapeSelect : Model -> Html Msg
+shapeSelect model =
     let
         types =
-            [ ( "Run", toActivityType "Run" model )
-            , ( "Race", toActivityType "Race" model )
-            , ( "Other", toActivityType "Other" model )
-            , ( "Note", toActivityType "Note" model )
+            [ toActivityData "Run" model
+            , toActivityData "Race" model
+            , toActivityData "Other" model
+            , toActivityData "Note" model
             ]
-
-        selected =
-            Result.toMaybe model.result
-                |> Maybe.map Activity.activityType
-                |> Maybe.withDefault (Activity.Run 30 Activity.Easy)
     in
     div [ class "dropdown medium" ]
         [ button [ class "button medium" ]
-            [ text (Activity.activityTypeToString selected) ]
+            [ text model.dataType ]
         , div [ class "dropdown-content" ]
             (List.map
-                (\( str, aType ) ->
-                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault model.completed aType, compactColumn [ style "margin-left" "0.5rem" ] [ text str ] ] ]
+                (\aType ->
+                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text (Activity.activityTypeToString aType) ] ] ]
                 )
                 types
             )
         ]
 
 
-toActivityType : String -> Model -> ActivityType
-toActivityType typeStr model =
+toActivityData : String -> Model -> ActivityData
+toActivityData dataType model =
     let
         mins =
-            Maybe.andThen String.toInt model.duration |> Maybe.withDefault 30
+            model.duration
+                |> Maybe.andThen
+                    (\str ->
+                        if String.isEmpty str then
+                            Just 0
+
+                        else
+                            String.toInt str
+                    )
+                |> Maybe.withDefault 30
 
         pace_ =
             Maybe.withDefault Activity.Easy model.pace
@@ -289,18 +349,21 @@ toActivityType typeStr model =
         dist =
             Maybe.withDefault Activity.FiveK model.distance
 
+        completed =
+            Maybe.withDefault True model.completed
+
         emoji =
             Maybe.withDefault Emoji.default.name model.emoji
     in
-    case typeStr of
+    case dataType of
         "Run" ->
-            Activity.Run mins pace_
+            Activity.Run mins pace_ completed
 
         "Race" ->
-            Activity.Race mins dist
+            Activity.Race mins dist completed
 
         "Other" ->
-            Activity.Other mins
+            Activity.Other mins completed
 
         _ ->
             Activity.Note emoji
@@ -361,6 +424,7 @@ emojiSelect msg emoji =
                     ]
                 , input
                     [ onInput msg
+                    , onFocus (msg "")
                     , class "input small icon"
                     , style "width" "6rem"
                     , value emoji
@@ -378,6 +442,7 @@ durationInput msg duration =
         [ type_ "number"
         , placeholder "Mins"
         , onInput msg
+        , onFocus (msg "")
         , name "duration"
         , style "width" "3rem"
         , class "input small"

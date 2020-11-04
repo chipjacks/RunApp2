@@ -1,6 +1,6 @@
 module Main exposing (main)
 
-import Activity exposing (Activity, activityType)
+import Activity exposing (Activity)
 import ActivityForm
 import ActivityShape
 import Api
@@ -337,7 +337,7 @@ initActivity today dateM =
             Date.compare date today == LT || date == today
     in
     Activity.newId
-        |> Random.map (\id -> Activity id date "" Nothing completed (Just 30) (Just Activity.Easy) Nothing)
+        |> Random.map (\id -> Activity id date "" (Activity.Run 30 Activity.Easy completed))
         |> Random.generate NewActivity
 
 

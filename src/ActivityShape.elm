@@ -1,6 +1,6 @@
 module ActivityShape exposing (view, viewDefault)
 
-import Activity exposing (Activity, Pace(..), activityType)
+import Activity exposing (Activity, Pace(..))
 import Emoji
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
@@ -21,17 +21,17 @@ type Color
 
 view : Activity -> Html msg
 view activity =
-    case activityType activity of
-        Activity.Run mins pace ->
-            Block Green activity.completed { width = toWidth pace, height = toHeight mins }
+    case activity.data of
+        Activity.Run mins pace completed ->
+            Block Green completed { width = toWidth pace, height = toHeight mins }
                 |> viewShape
 
-        Activity.Race mins dist ->
-            Block Orange activity.completed { width = toWidth (Maybe.withDefault Activity.Lactate activity.pace), height = toHeight mins }
+        Activity.Race mins dist completed ->
+            Block Orange completed { width = toWidth (Maybe.withDefault Activity.Lactate Nothing), height = toHeight mins }
                 |> viewShape
 
-        Activity.Other mins ->
-            Circle Gray activity.completed (String.toList activity.description |> List.head)
+        Activity.Other mins completed ->
+            Circle Gray completed (String.toList activity.description |> List.head)
                 |> viewShape
 
         Activity.Note emoji ->
@@ -39,18 +39,18 @@ view activity =
                 |> viewShape
 
 
-viewDefault : Bool -> Activity.ActivityType -> Html msg
-viewDefault completed activityType =
-    case activityType of
-        Activity.Run _ _ ->
+viewDefault : Bool -> Activity.ActivityData -> Html msg
+viewDefault completed activityData =
+    case activityData of
+        Activity.Run _ _ _ ->
             Block Green completed { width = 3, height = 1 }
                 |> viewShape
 
-        Activity.Race _ _ ->
+        Activity.Race _ _ _ ->
             Block Orange completed { width = 3, height = 1 }
                 |> viewShape
 
-        Activity.Other _ ->
+        Activity.Other _ _ ->
             Circle Gray completed Nothing
                 |> viewShape
 
@@ -68,6 +68,7 @@ viewShape shape =
                 , style "height" <| String.fromFloat height ++ "rem"
                 , style "border" ("2px solid " ++ colorString color)
                 , style "border-radius" "2px"
+                , style "transition" "height 0.5s, width 0.5s, background-color 0.5s"
                 , if completed then
                     style "background-color" (colorString color)
 
