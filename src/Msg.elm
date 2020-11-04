@@ -36,7 +36,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
-    | SelectedShape Activity.ActivityType
+    | SelectedShape Activity.ActivityData
     | EditedDescription String
     | SelectedEmoji String
     | CheckedCompleted Bool

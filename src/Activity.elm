@@ -1,4 +1,4 @@
-module Activity exposing (Activity, ActivityType(..), Distance(..), Id, Minutes, Pace(..), activityType, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
+module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Emoji
@@ -14,47 +14,27 @@ type alias Activity =
     { id : Id
     , date : Date
     , description : String
-    , emoji : Maybe String
-    , completed : Bool
-    , duration : Maybe Minutes
-    , pace : Maybe Pace
-    , distance : Maybe Distance
+    , data : ActivityData
     }
 
 
-type ActivityType
-    = Run Minutes Pace
-    | Race Minutes Distance
-    | Other Minutes
+type ActivityData
+    = Run Minutes Pace Bool
+    | Race Minutes Distance Bool
+    | Other Minutes Bool
     | Note String
 
 
-activityType : Activity -> ActivityType
-activityType activity =
-    case ( activity.pace, activity.distance, activity.duration ) of
-        ( Nothing, Nothing, Just mins ) ->
-            Other mins
-
-        ( _, Just dist, Just mins ) ->
-            Race mins dist
-
-        ( Just pace_, Nothing, Just mins ) ->
-            Run mins pace_
-
-        _ ->
-            Note (activity.emoji |> Maybe.withDefault Emoji.default.name)
-
-
-activityTypeToString : ActivityType -> String
+activityTypeToString : ActivityData -> String
 activityTypeToString aType =
     case aType of
-        Run _ _ ->
+        Run _ _ _ ->
             "Run"
 
-        Race _ _ ->
+        Race _ _ _ ->
             "Race"
 
-        Other _ ->
+        Other _ _ ->
             "Other"
 
         Note _ ->
@@ -74,17 +54,16 @@ newId =
 
 mprLevel : Activity -> Maybe Int
 mprLevel activity =
-    Maybe.map2
-        (\dist duration ->
+    case activity.data of
+        Race minutes distance_ _ ->
             MPRLevel.lookup MPRLevel.Neutral
-                (distance.toString dist)
-                (duration * 60)
+                (distance.toString distance_)
+                (minutes * 60)
                 |> Result.map (\( rt, level ) -> level)
                 |> Result.toMaybe
-        )
-        activity.distance
-        activity.duration
-        |> Maybe.withDefault Nothing
+
+        _ ->
+            Nothing
 
 
 type alias Id =
@@ -223,46 +202,98 @@ distance =
 
 decoder : Decode.Decoder Activity
 decoder =
-    Decode.map8 Activity
+    Decode.map4 Activity
         (Decode.field "id" Decode.string)
         (Decode.field "date" dateDecoder)
         (Decode.field "description" Decode.string)
-        (Decode.maybe (Decode.field "emoji" Decode.string))
-        (Decode.field "completed" Decode.bool)
-        (Decode.maybe (Decode.field "duration" Decode.int))
-        (Decode.field "pace" (Decode.nullable pace.decoder))
-        (Decode.maybe (Decode.field "distance" distance.decoder))
+        (Decode.field "data" activityDataDecoder)
+
+
+activityDataDecoder : Decode.Decoder ActivityData
+activityDataDecoder =
+    let
+        runDecoder =
+            Decode.map3 Run
+                (Decode.field "duration" Decode.int)
+                (Decode.field "pace" pace.decoder)
+                (Decode.field "completed" Decode.bool)
+
+        raceDecoder =
+            Decode.map3 Race
+                (Decode.field "duration" Decode.int)
+                (Decode.field "distance" distance.decoder)
+                (Decode.field "completed" Decode.bool)
+
+        otherDecoder =
+            Decode.map2 Other
+                (Decode.field "duration" Decode.int)
+                (Decode.field "completed" Decode.bool)
+
+        noteDecoder =
+            Decode.map Note
+                (Decode.field "emoji" Decode.string)
+    in
+    Decode.field "type" Decode.string
+        |> Decode.andThen
+            (\dataType ->
+                case dataType of
+                    "run" ->
+                        runDecoder
+
+                    "race" ->
+                        raceDecoder
+
+                    "other" ->
+                        otherDecoder
+
+                    "note" ->
+                        noteDecoder
+
+                    _ ->
+                        Decode.fail ("Invalid type: " ++ dataType)
+            )
 
 
 encoder : Activity -> Encode.Value
 encoder activity =
     let
-        paceEncoder =
-            case activity.pace of
-                Just pace_ ->
-                    pace.encode pace_
+        dataEncoder =
+            case activity.data of
+                Run minutes pace_ completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "run" )
+                        , ( "duration", Encode.int minutes )
+                        , ( "pace", pace.encode pace_ )
+                        , ( "completed", Encode.bool completed )
+                        ]
 
-                Nothing ->
-                    Encode.null
+                Race minutes distance_ completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "race" )
+                        , ( "duration", Encode.int minutes )
+                        , ( "distance", distance.encode distance_ )
+                        , ( "completed", Encode.bool completed )
+                        ]
 
-        distanceEncoder =
-            case activity.distance of
-                Just distance_ ->
-                    [ ( "distance", distance.encode distance_ ) ]
+                Other minutes completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "other" )
+                        , ( "duration", Encode.int minutes )
+                        , ( "completed", Encode.bool completed )
+                        ]
 
-                Nothing ->
-                    []
+                Note emoji ->
+                    Encode.object
+                        [ ( "type", Encode.string "note" )
+                        , ( "emoji", Encode.string emoji )
+                        ]
     in
     Encode.object <|
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "emoji", activity.emoji |> Maybe.map Encode.string |> Maybe.withDefault Encode.null )
-        , ( "completed", Encode.bool activity.completed )
-        , ( "duration", activity.duration |> Maybe.map Encode.int |> Maybe.withDefault Encode.null )
-        , ( "pace", paceEncoder )
+        , ( "data", dataEncoder )
         ]
-            ++ distanceEncoder
 
 
 dateDecoder : Decode.Decoder Date
