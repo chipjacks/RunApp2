@@ -26,6 +26,17 @@ view activity =
             Block Green completed { width = toWidth pace, height = toHeight mins }
                 |> viewShape
 
+        Activity.Workout intervals completed ->
+            column [] <|
+                List.map
+                    (\(Activity.Interval seconds pace) ->
+                        row []
+                            [ Block Orange completed { width = toWidth pace, height = toIntervalHeight seconds }
+                                |> viewShape
+                            ]
+                    )
+                    intervals
+
         Activity.Race mins dist completed ->
             Block Orange completed { width = toWidth (Maybe.withDefault Activity.Lactate Nothing), height = toHeight mins }
                 |> viewShape
@@ -44,6 +55,10 @@ viewDefault completed activityData =
     case activityData of
         Activity.Run _ _ _ ->
             Block Green completed { width = 3, height = 1 }
+                |> viewShape
+
+        Activity.Workout _ _ ->
+            Block Orange completed { width = 3, height = 1 }
                 |> viewShape
 
         Activity.Race _ _ _ ->
@@ -118,6 +133,11 @@ colorString color =
 toHeight : Activity.Minutes -> Float
 toHeight duration =
     toFloat duration / 10
+
+
+toIntervalHeight : Activity.Seconds -> Float
+toIntervalHeight duration =
+    toFloat duration / 600
 
 
 toWidth : Activity.Pace -> Float

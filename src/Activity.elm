@@ -1,4 +1,4 @@
-module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
+module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Interval(..), Minutes, Pace(..), Seconds, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Emoji
@@ -20,9 +20,14 @@ type alias Activity =
 
 type ActivityData
     = Run Minutes Pace Bool
+    | Workout (List Interval) Bool
     | Race Minutes Distance Bool
     | Other Minutes Bool
     | Note String
+
+
+type Interval
+    = Interval Seconds Pace
 
 
 activityTypeToString : ActivityData -> String
@@ -30,6 +35,9 @@ activityTypeToString aType =
     case aType of
         Run _ _ _ ->
             "Run"
+
+        Workout _ _ ->
+            "Workout"
 
         Race _ _ _ ->
             "Race"
@@ -71,6 +79,10 @@ type alias Id =
 
 
 type alias Minutes =
+    Int
+
+
+type alias Seconds =
     Int
 
 
@@ -257,14 +269,21 @@ activityDataDecoder =
 encoder : Activity -> Encode.Value
 encoder activity =
     let
-        dataEncoder =
-            case activity.data of
+        dataEncoder data =
+            case data of
                 Run minutes pace_ completed ->
                     Encode.object
                         [ ( "type", Encode.string "run" )
                         , ( "duration", Encode.int minutes )
                         , ( "pace", pace.encode pace_ )
                         , ( "completed", Encode.bool completed )
+                        ]
+
+                Workout intervals completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "workout" )
+                        , ( "completed", Encode.bool completed )
+                        , ( "intervals", Encode.list intervalEncoder intervals )
                         ]
 
                 Race minutes distance_ completed ->
@@ -287,12 +306,18 @@ encoder activity =
                         [ ( "type", Encode.string "note" )
                         , ( "emoji", Encode.string emoji )
                         ]
+
+        intervalEncoder (Interval seconds pace_) =
+            Encode.object
+                [ ( "duration", Encode.int seconds )
+                , ( "pace", pace.encode pace_ )
+                ]
     in
     Encode.object <|
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "data", dataEncoder )
+        , ( "data", dataEncoder activity.data )
         ]
 
 
