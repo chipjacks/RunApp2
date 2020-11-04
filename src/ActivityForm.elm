@@ -35,6 +35,9 @@ init activity =
             Activity.Run minutes pace_ completed ->
                 RunForm { duration = String.fromInt minutes, pace = pace_, completed = completed }
 
+            Activity.Interval seconds pace_ completed ->
+                IntervalForm { duration = String.fromInt seconds, pace = pace_, completed = completed }
+
             Activity.Race minutes distance_ completed ->
                 RaceForm { duration = String.fromInt minutes, distance = distance_, completed = completed }
 
@@ -118,6 +121,14 @@ update msg model =
                     , Cmd.none
                     )
 
+                Activity.Interval secs pace_ completed ->
+                    ( updateResult
+                        { model
+                            | dataForm = IntervalForm { duration = String.fromInt secs, pace = pace_, completed = completed }
+                        }
+                    , Cmd.none
+                    )
+
                 Activity.Race mins dist completed ->
                     ( updateResult
                         { model
@@ -185,6 +196,9 @@ updateCompleted dataForm =
         RunForm data ->
             RunForm { data | completed = not data.completed }
 
+        IntervalForm data ->
+            IntervalForm { data | completed = not data.completed }
+
         RaceForm data ->
             RaceForm { data | completed = not data.completed }
 
@@ -201,6 +215,9 @@ updateDuration duration dataForm =
         RunForm data ->
             RunForm { data | duration = duration }
 
+        IntervalForm data ->
+            IntervalForm { data | duration = duration }
+
         RaceForm data ->
             RaceForm { data | duration = duration }
 
@@ -216,6 +233,9 @@ updatePace paceStr dataForm =
     case dataForm of
         RunForm data ->
             RunForm { data | pace = Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace) }
+
+        IntervalForm data ->
+            IntervalForm { data | pace = Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace) }
 
         _ ->
             dataForm
@@ -242,12 +262,17 @@ view levelM modelM =
         dataInputs form result =
             case form of
                 RunForm { duration, pace } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ]
+                    , compactColumn [] [ paceSelect levelM SelectedPace pace ]
+                    ]
+
+                IntervalForm { duration, pace } ->
+                    [ compactColumn [] [ durationInput EditedDuration True duration ]
                     , compactColumn [] [ paceSelect levelM SelectedPace pace ]
                     ]
 
                 RaceForm { duration, distance } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ]
                     , compactColumn [] [ distanceSelect SelectedDistance distance ]
                     , compactColumn []
                         [ viewMaybe (Result.toMaybe result |> Maybe.andThen Activity.mprLevel)
@@ -256,7 +281,7 @@ view levelM modelM =
                     ]
 
                 OtherForm { duration } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ] ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ] ]
 
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
@@ -349,6 +374,7 @@ shapeSelect model =
 
         types =
             [ Activity.Run duration pace completed
+            , Activity.Interval duration pace completed
             , Activity.Race duration distance completed
             , Activity.Other duration completed
             , Activity.Note emoji
@@ -445,6 +471,9 @@ toActivityData dataForm =
         RunForm { duration, pace, completed } ->
             Activity.Run (parseDuration duration) pace completed
 
+        IntervalForm { duration, pace, completed } ->
+            Activity.Interval (parseDuration duration) pace completed
+
         RaceForm { duration, distance, completed } ->
             Activity.Race (parseDuration duration) distance completed
 
@@ -510,11 +539,17 @@ emojiSelect msg emoji =
         ]
 
 
-durationInput : (String -> Msg) -> String -> Html Msg
-durationInput msg duration =
+durationInput : (String -> Msg) -> Bool -> String -> Html Msg
+durationInput msg isSeconds duration =
     input
         [ type_ "number"
-        , placeholder "Mins"
+        , placeholder
+            (if isSeconds then
+                "Secs"
+
+             else
+                "Mins"
+            )
         , onInput msg
         , onFocus (msg "")
         , name "duration"

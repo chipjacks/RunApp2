@@ -505,6 +505,9 @@ viewActivity isActive activity =
                                 Activity.Run mins pace_ _ ->
                                     String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
 
+                                Activity.Interval secs pace_ _ ->
+                                    String.fromInt secs ++ " secs " ++ String.toLower (Activity.pace.toString pace_)
+
                                 Activity.Race mins _ _ ->
                                     String.fromInt mins ++ " min "
 

@@ -29,6 +29,7 @@ type FormError
 
 type DataForm
     = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
+    | IntervalForm { duration : String, pace : Activity.Pace, completed : Bool }
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
     | OtherForm { duration : String, completed : Bool }
     | NoteForm { emoji : String }

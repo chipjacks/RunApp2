@@ -1,4 +1,4 @@
-module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
+module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), Seconds, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Emoji
@@ -20,6 +20,7 @@ type alias Activity =
 
 type ActivityData
     = Run Minutes Pace Bool
+    | Interval Seconds Pace Bool
     | Race Minutes Distance Bool
     | Other Minutes Bool
     | Note String
@@ -30,6 +31,9 @@ activityTypeToString aType =
     case aType of
         Run _ _ _ ->
             "Run"
+
+        Interval _ _ _ ->
+            "Interval"
 
         Race _ _ _ ->
             "Race"
@@ -71,6 +75,10 @@ type alias Id =
 
 
 type alias Minutes =
+    Int
+
+
+type alias Seconds =
     Int
 
 
@@ -218,6 +226,12 @@ activityDataDecoder =
                 (Decode.field "pace" pace.decoder)
                 (Decode.field "completed" Decode.bool)
 
+        intervalDecoder =
+            Decode.map3 Interval
+                (Decode.field "duration" Decode.int)
+                (Decode.field "pace" pace.decoder)
+                (Decode.field "completed" Decode.bool)
+
         raceDecoder =
             Decode.map3 Race
                 (Decode.field "duration" Decode.int)
@@ -239,6 +253,9 @@ activityDataDecoder =
                 case dataType of
                     "run" ->
                         runDecoder
+
+                    "interval" ->
+                        intervalDecoder
 
                     "race" ->
                         raceDecoder
@@ -267,6 +284,14 @@ encoder activity =
                         , ( "completed", Encode.bool completed )
                         ]
 
+                Interval seconds pace_ completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "interval" )
+                        , ( "duration", Encode.int seconds )
+                        , ( "pace", pace.encode pace_ )
+                        , ( "completed", Encode.bool completed )
+                        ]
+
                 Race minutes distance_ completed ->
                     Encode.object
                         [ ( "type", Encode.string "race" )
@@ -288,7 +313,7 @@ encoder activity =
                         , ( "emoji", Encode.string emoji )
                         ]
     in
-    Encode.object <|
+    Encode.object
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
