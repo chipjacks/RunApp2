@@ -49,6 +49,9 @@ init activity =
             Activity.Run minutes pace_ completed ->
                 RunForm { duration = String.fromInt minutes, pace = pace_, completed = completed }
 
+            Activity.Workout intervals completed ->
+                WorkoutForm { selected = 0, intervals = Array.fromList intervals, completed = completed }
+
             Activity.Race minutes distance_ completed ->
                 RaceForm { duration = String.fromInt minutes, distance = distance_, completed = completed }
 
@@ -116,6 +119,14 @@ update msg model =
                     ( updateResult
                         { model
                             | dataForm = RunForm { duration = String.fromInt mins, pace = pace_, completed = completed }
+                        }
+                    , Cmd.none
+                    )
+
+                Activity.Workout intervals completed ->
+                    ( updateResult
+                        { model
+                            | dataForm = WorkoutForm { selected = 0, intervals = Array.fromList intervals, completed = completed }
                         }
                     , Cmd.none
                     )
@@ -212,6 +223,14 @@ updateDuration duration dataForm =
         RunForm data ->
             RunForm { data | duration = duration }
 
+        WorkoutForm data ->
+            case Array.get data.selected data.intervals of
+                Just (Activity.Interval seconds pace) ->
+                    WorkoutForm { data | intervals = Array.set data.selected (Activity.Interval (parseDuration duration) pace) data.intervals }
+
+                Nothing ->
+                    dataForm
+
         RaceForm data ->
             RaceForm { data | duration = duration }
 
@@ -224,9 +243,21 @@ updateDuration duration dataForm =
 
 updatePace : String -> DataForm -> DataForm
 updatePace paceStr dataForm =
+    let
+        pace =
+            Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace)
+    in
     case dataForm of
         RunForm data ->
-            RunForm { data | pace = Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace) }
+            RunForm { data | pace = pace }
+
+        WorkoutForm data ->
+            case Array.get data.selected data.intervals of
+                Just (Activity.Interval seconds pace_) ->
+                    WorkoutForm { data | intervals = Array.set data.selected (Activity.Interval seconds pace) data.intervals }
+
+                Nothing ->
+                    dataForm
 
         _ ->
             dataForm
@@ -265,6 +296,16 @@ viewForm model levelM =
                             (\level -> text <| "Level " ++ String.fromInt level)
                         ]
                     ]
+
+                WorkoutForm { selected, intervals } ->
+                    case Array.get selected intervals of
+                        Just (Activity.Interval seconds pace) ->
+                            [ compactColumn [] [ durationInput EditedDuration (String.fromInt seconds) ]
+                            , compactColumn [] [ paceSelect levelM SelectedPace pace ]
+                            ]
+
+                        Nothing ->
+                            []
 
                 OtherForm { duration } ->
                     [ compactColumn [] [ durationInput EditedDuration duration ] ]
@@ -328,6 +369,7 @@ shapeSelect model =
 
         types =
             [ Activity.Run duration pace completed
+            , Activity.Workout [ Activity.Interval duration pace ] completed
             , Activity.Race duration distance completed
             , Activity.Other duration completed
             , Activity.Note emoji
@@ -423,6 +465,9 @@ toActivityData dataForm =
     case dataForm of
         RunForm { duration, pace, completed } ->
             Activity.Run (parseDuration duration) pace completed
+
+        WorkoutForm { intervals, completed } ->
+            Activity.Workout (Array.toList intervals) completed
 
         RaceForm { duration, distance, completed } ->
             Activity.Race (parseDuration duration) distance completed
