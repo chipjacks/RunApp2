@@ -1,4 +1,4 @@
-module Msg exposing (Msg(..), Zoom(..))
+module Msg exposing (DataForm(..), Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
 import Browser.Dom as Dom
@@ -10,6 +10,13 @@ type Zoom
     = Year
     | Month
     | Day
+
+
+type DataForm
+    = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
+    | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
+    | OtherForm { duration : String, completed : Bool }
+    | NoteForm { emoji : String }
 
 
 type Msg
@@ -39,7 +46,7 @@ type Msg
     | SelectedShape Activity.ActivityData
     | EditedDescription String
     | SelectedEmoji String
-    | CheckedCompleted Bool
+    | CheckedCompleted
     | EditedDuration String
     | SelectedPace String
     | SelectedDistance String

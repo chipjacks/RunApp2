@@ -239,7 +239,7 @@ update msg model =
                     updateActivityForm msg state
                         |> loaded
 
-                CheckedCompleted _ ->
+                CheckedCompleted ->
                     updateActivityForm msg state
                         |> loaded
 
