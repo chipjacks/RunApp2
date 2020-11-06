@@ -18,12 +18,12 @@ import Time exposing (Month(..))
 
 
 type alias Model =
-    { zoom : Zoom, start : Date, selected : Date, end : Date, scrollCompleted : Bool }
+    { zoom : Zoom, start : Date, selected : Date, end : Date, today : Date, scrollCompleted : Bool }
 
 
-init : Zoom -> Date -> Model
-init zoom date =
-    Model zoom (Date.floor Date.Year date) date (Date.ceiling Date.Year date) True
+init : Zoom -> Date -> Date -> Model
+init zoom selected today =
+    Model zoom (Date.floor Date.Year selected) selected (Date.ceiling Date.Year selected) today True
 
 
 getDate : Model -> Date
@@ -34,11 +34,14 @@ getDate { selected } =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LoadToday today ->
+            ( { model | today = today }, Cmd.none )
+
         Jump date ->
-            ( init model.zoom date, scrollToSelectedDate () )
+            ( init model.zoom date model.today, scrollToSelectedDate () )
 
         ChangeZoom zoom dateM ->
-            ( init zoom (Maybe.withDefault model.selected dateM)
+            ( init zoom (Maybe.withDefault model.selected dateM) model.today
             , scrollToSelectedDate ()
             )
 
@@ -76,8 +79,8 @@ update msg model =
 -- VIEW MENU
 
 
-viewMenu : Model -> Msg -> Html Msg
-viewMenu model loadToday =
+viewMenu : Model -> Html Msg
+viewMenu model =
     row []
         [ compactColumn [] [ viewBackButton model ]
         , column []
@@ -85,7 +88,7 @@ viewMenu model loadToday =
                 [ viewDatePicker model
                 , button
                     [ style "margin-left" "0.2rem"
-                    , onClick loadToday
+                    , onClick (Jump model.today)
                     ]
                     [ text "Today" ]
                 ]
@@ -175,34 +178,34 @@ viewDropdownItem changeDate formatDate date =
 -- VIEW
 
 
-view : Model -> Date -> List Activity -> Maybe String -> Html Msg
-view calendar today activities selectedIdM =
+view : Model -> List Activity -> Maybe String -> Html Msg
+view model activities selectedIdM =
     let
         filterActivities =
             \date -> List.filter (\a -> a.date == date) activities
 
         body =
-            case calendar.zoom of
+            case model.zoom of
                 Year ->
-                    weekList calendar.start calendar.end
+                    weekList model.start model.end
                         |> List.map
                             (\d ->
-                                viewWeek filterActivities today calendar.selected d
+                                viewWeek filterActivities model.today model.selected d
                             )
 
                 Month ->
-                    listDays calendar.start calendar.end
+                    listDays model.start model.end
                         |> List.map
                             (\d ->
-                                viewDay d (filterActivities d) (d == today) (d == calendar.selected) selectedIdM
+                                viewDay d (filterActivities d) (d == model.today) (d == model.selected) selectedIdM
                             )
 
                 Day ->
                     let
                         d =
-                            calendar.selected
+                            model.selected
                     in
-                    [ viewDay d (filterActivities d) (d == today) (d == calendar.selected) selectedIdM ]
+                    [ viewDay d (filterActivities d) (d == model.today) (d == model.selected) selectedIdM ]
     in
     expandingRow [ style "overflow" "hidden" ]
         [ column
@@ -210,7 +213,7 @@ view calendar today activities selectedIdM =
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
             , style "padding-right" "0.5rem"
-            , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
+            , attributeIf model.scrollCompleted (onScroll <| scrollHandler model)
             ]
             body
         ]
