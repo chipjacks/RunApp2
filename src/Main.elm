@@ -14,6 +14,7 @@ import Date exposing (Date, Interval(..), Unit(..))
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
+import Html.Lazy
 import Http
 import Json.Decode as Decode
 import Msg exposing (Msg(..))
@@ -382,21 +383,24 @@ view model =
 
                 Loaded (State calendar store formM today) ->
                     let
+                        selectedIdM =
+                            formM |> Maybe.map .id
+
                         activities =
                             Store.get store .activities
 
                         levelM =
                             calculateLevel activities
-
-                        selectedIdM =
-                            formM |> Maybe.map .id
                     in
-                    viewMaybe formM (ActivityForm.view levelM)
-                        :: Calendar.view
-                            calendar
-                            today
-                            activities
-                            selectedIdM
+                    [ viewMaybe formM (ActivityForm.view levelM |> Html.Lazy.lazy)
+                    , Html.Lazy.lazy Calendar.viewHeader calendar
+                    , Html.Lazy.lazy4 Calendar.view
+                        calendar
+                        today
+                        activities
+                        -- TODO optimize selectedIdM
+                        Nothing
+                    ]
         ]
 
 

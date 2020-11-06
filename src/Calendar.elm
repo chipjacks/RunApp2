@@ -1,4 +1,4 @@
-module Calendar exposing (Model, getDate, init, update, view, viewMenu)
+module Calendar exposing (Model, getDate, init, update, view, viewHeader, viewMenu)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -175,7 +175,7 @@ viewDropdownItem changeDate formatDate date =
 -- VIEW
 
 
-view : Model -> Date -> List Activity -> Maybe String -> List (Html Msg)
+view : Model -> Date -> List Activity -> Maybe String -> Html Msg
 view calendar today activities selectedIdM =
     let
         filterActivities =
@@ -204,8 +204,7 @@ view calendar today activities selectedIdM =
                     in
                     [ viewDay d (filterActivities d) (d == today) (d == calendar.selected) selectedIdM ]
     in
-    [ viewIf (calendar.zoom == Year) viewHeader
-    , expandingRow [ style "overflow" "hidden" ]
+    expandingRow [ style "overflow" "hidden" ]
         [ column
             [ id "calendar"
             , style "overflow-y" "scroll"
@@ -215,7 +214,6 @@ view calendar today activities selectedIdM =
             ]
             body
         ]
-    ]
 
 
 
@@ -272,18 +270,19 @@ scrollHandler model =
 -- YEAR VIEW
 
 
-viewHeader : Html Msg
-viewHeader =
-    row []
-        (column [ style "min-width" "4rem" ] []
-            :: ([ "M", "T", "W", "T", "F", "S", "S" ]
-                    |> List.map
-                        (\d ->
-                            column [ style "background" "white", style "color" "var(--icon-gray)" ]
-                                [ text d ]
-                        )
-               )
-        )
+viewHeader : Model -> Html Msg
+viewHeader model =
+    viewIf (model.zoom == Year) <|
+        row []
+            (column [ style "min-width" "4rem" ] []
+                :: ([ "M", "T", "W", "T", "F", "S", "S" ]
+                        |> List.map
+                            (\d ->
+                                column [ style "background" "white", style "color" "var(--icon-gray)" ]
+                                    [ text d ]
+                            )
+                   )
+            )
 
 
 viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
