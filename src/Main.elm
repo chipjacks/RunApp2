@@ -47,12 +47,8 @@ type Model
     | Error String
 
 
-type alias State =
-    { calendar : Calendar.Model
-    , store : Store.Model
-    , activityForm : Maybe ActivityForm.Model
-    , today : Date
-    }
+type State
+    = State Calendar.Model Store.Model (Maybe ActivityForm.Model) Date
 
 
 init : () -> ( Model, Cmd Msg )
@@ -87,7 +83,7 @@ viewNavbar model =
                 []
     in
     case model of
-        Loaded { store, calendar, today } ->
+        Loaded (State calendar store _ today) ->
             row [ style "padding" "0.5rem" ]
                 [ column [] [ Calendar.viewMenu calendar (Jump today) ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
@@ -132,25 +128,18 @@ update msg model =
             ( model, Cmd.none )
 
         Loaded state ->
+            let
+                (State calendar store formM today) =
+                    state
+            in
             case msg of
                 LoadToday date ->
-                    ( Loaded { state | today = date }
+                    ( Loaded (State calendar store formM date)
                     , Cmd.none
                     )
 
                 GotActivities _ ->
                     updateStore msg state |> loaded
-
-                ClickedNewActivity date ->
-                    ( model, initActivity state.today (Just date) )
-
-                NewActivity activity ->
-                    updateStore (Create activity) { state | activityForm = Just <| ActivityForm.init activity } |> loaded
-
-                EditActivity activity ->
-                    ( Loaded { state | activityForm = Just <| ActivityForm.init activity }
-                    , Cmd.none
-                    )
 
                 VisibilityChange visibility ->
                     case visibility of
@@ -158,13 +147,13 @@ update msg model =
                             ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities Api.getActivities ] )
 
                         "hidden" ->
-                            ( model, Store.flush state.store )
+                            ( model, Store.flush store )
 
                         _ ->
                             ( model, Cmd.none )
 
                 KeyPressed key ->
-                    if state.activityForm /= Nothing then
+                    if formM /= Nothing then
                         case key of
                             "Enter" ->
                                 updateActivityForm ClickedSubmit state
@@ -180,10 +169,10 @@ update msg model =
                     ( model, Cmd.none )
 
                 Create _ ->
-                    updateStore msg { state | activityForm = Nothing } |> loaded
+                    updateStore msg (State calendar store Nothing today) |> loaded
 
                 Update _ ->
-                    updateStore msg { state | activityForm = Nothing } |> loaded
+                    updateStore msg (State calendar store Nothing today) |> loaded
 
                 Move _ _ ->
                     updateStore msg state |> loaded
@@ -226,6 +215,16 @@ update msg model =
                 ReceiveSelectDate _ ->
                     updateCalendar msg state
                         |> loaded
+
+                ClickedNewActivity date ->
+                    ( model, initActivity today (Just date) )
+
+                NewActivity activity ->
+                    updateStore (Create activity) (State calendar store (Just (ActivityForm.init activity)) today)
+                        |> loaded
+
+                EditActivity activity ->
+                    ( Loaded <| State calendar store (Just (ActivityForm.init activity)) today, Cmd.none )
 
                 SelectedDate _ ->
                     updateActivityForm msg state
@@ -311,23 +310,29 @@ updateLoading model =
             ( model, Cmd.none )
 
 
+andThenUpdate : (State -> ( State, Cmd Msg )) -> ( State, Cmd Msg ) -> ( State, Cmd Msg )
+andThenUpdate updateFunc ( state, cmd ) =
+    updateFunc state
+        |> Tuple.mapSecond (\cmd2 -> Cmd.batch [ cmd, cmd2 ])
+
+
 updateActivityForm : Msg -> State -> ( State, Cmd Msg )
-updateActivityForm msg state =
-    Maybe.map (ActivityForm.update msg) state.activityForm
-        |> Maybe.map (Tuple.mapFirst (\activityForm -> { state | activityForm = Just activityForm }))
-        |> Maybe.withDefault ( state, Cmd.none )
+updateActivityForm msg (State calendar store formM date) =
+    Maybe.map (ActivityForm.update msg) formM
+        |> Maybe.map (Tuple.mapFirst (\updated -> State calendar store (Just updated) date))
+        |> Maybe.withDefault ( State calendar store formM date, Cmd.none )
 
 
 updateCalendar : Msg -> State -> ( State, Cmd Msg )
-updateCalendar msg state =
-    Calendar.update msg state.calendar
-        |> Tuple.mapFirst (\calendar -> { state | calendar = calendar })
+updateCalendar msg (State calendar store formM date) =
+    Calendar.update msg calendar
+        |> Tuple.mapFirst (\updated -> State updated store formM date)
 
 
 updateStore : Msg -> State -> ( State, Cmd Msg )
-updateStore msg state =
-    Store.update msg state.store
-        |> Tuple.mapFirst (\store -> { state | store = store })
+updateStore msg (State calendar store formM date) =
+    Store.update msg store
+        |> Tuple.mapFirst (\updated -> State calendar updated formM date)
 
 
 loaded : ( State, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -375,21 +380,21 @@ view model =
                 Error errorString ->
                     [ row [] [ text errorString ] ]
 
-                Loaded state ->
+                Loaded (State calendar store formM today) ->
                     let
                         activities =
-                            Store.get state.store .activities
+                            Store.get store .activities
 
                         levelM =
                             calculateLevel activities
 
                         selectedIdM =
-                            state.activityForm |> Maybe.map .id
+                            formM |> Maybe.map .id
                     in
-                    viewMaybe state.activityForm (ActivityForm.view levelM)
+                    viewMaybe formM (ActivityForm.view levelM)
                         :: Calendar.view
-                            state.calendar
-                            state.today
+                            calendar
+                            today
                             activities
                             selectedIdM
         ]

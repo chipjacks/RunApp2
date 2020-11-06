@@ -24,7 +24,6 @@ type DataForm
 type Msg
     = LoadToday Date
     | GotActivities (Result String (List Activity))
-    | EditActivity Activity
     | ReceiveSelectDate String
     | VisibilityChange String
     | KeyPressed String
@@ -45,6 +44,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
+    | EditActivity Activity
     | SelectedDate Date
     | SelectedShape Activity.ActivityData
     | EditedDescription String
