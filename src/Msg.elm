@@ -45,6 +45,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
+    | SelectedDate Date
     | SelectedShape Activity.ActivityData
     | EditedDescription String
     | SelectedEmoji String

@@ -445,7 +445,7 @@ viewActivity selectedIdM activity =
                 Nothing ->
                     False
     in
-    a [ onClick (EditActivity activity) ]
+    a [ attributeIf (not isSelected) (onClick (EditActivity activity)) ]
         [ row [ style "margin-top" "1rem" ]
             [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
             , column [ style "justify-content" "center" ] <|

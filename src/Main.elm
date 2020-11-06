@@ -186,7 +186,7 @@ update msg model =
                     updateStore msg { state | activityForm = Nothing } |> loaded
 
                 Move _ _ ->
-                    updateStore msg { state | activityForm = Nothing } |> loaded
+                    updateStore msg state |> loaded
 
                 Shift _ _ ->
                     updateStore msg state |> loaded
@@ -206,14 +206,14 @@ update msg model =
 
                 ChangeZoom zoom dateM ->
                     let
-                        activityFormCmd =
-                            Maybe.map2 ActivityForm.selectDate dateM state.activityForm
-                                |> Maybe.map Store.cmd
-                                |> Maybe.withDefault Cmd.none
+                        ( calendarState, calendarCmd ) =
+                            updateCalendar msg state
+
+                        ( activityFormState, activityFormCmd ) =
+                            updateActivityForm (Maybe.map SelectedDate dateM |> Maybe.withDefault NoOp) calendarState
                     in
-                    updateCalendar msg state
+                    ( activityFormState, Cmd.batch [ calendarCmd, activityFormCmd ] )
                         |> loaded
-                        |> Tuple.mapSecond (\cmd -> Cmd.batch [ cmd, activityFormCmd ])
 
                 Scroll _ _ _ ->
                     updateCalendar msg state
@@ -225,6 +225,10 @@ update msg model =
 
                 ReceiveSelectDate _ ->
                     updateCalendar msg state
+                        |> loaded
+
+                SelectedDate _ ->
+                    updateActivityForm msg state
                         |> loaded
 
                 SelectedShape _ ->
@@ -382,12 +386,12 @@ view model =
                         selectedIdM =
                             state.activityForm |> Maybe.map .id
                     in
-                            (viewMaybe state.activityForm (ActivityForm.view levelM))
-                                :: Calendar.view
-                                    state.calendar
-                                    state.today
-                                    activities
-                                    selectedIdM
+                    viewMaybe state.activityForm (ActivityForm.view levelM)
+                        :: Calendar.view
+                            state.calendar
+                            state.today
+                            activities
+                            selectedIdM
         ]
 
 

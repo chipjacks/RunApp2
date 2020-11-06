@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, selectDate, update, view)
+module ActivityForm exposing (Model, init, isEditing, update, view)
 
 import Activity exposing (Activity, ActivityData, Minutes)
 import ActivityShape
@@ -72,15 +72,6 @@ apply toMsg { result } =
             NoOp
 
 
-selectDate : Date -> Model -> Msg
-selectDate date model =
-    if model.date == Nothing then
-        apply (Move date) (updateResult { model | date = Just date })
-
-    else
-        NoOp
-
-
 isEditing : Activity -> Model -> Bool
 isEditing activity { id } =
     activity.id == id
@@ -113,6 +104,18 @@ validate model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        SelectedDate date ->
+            case model.date of
+                Nothing ->
+                    let
+                        newModel =
+                            updateResult { model | date = Just date }
+                    in
+                    ( newModel, Store.cmd (apply (Move date) newModel) )
+
+                _ ->
+                    ( model, Cmd.none )
+
         SelectedShape activityData ->
             case activityData of
                 Activity.Run mins pace_ completed ->
@@ -316,7 +319,8 @@ view levelM model =
     row [ style "padding" "1rem 0 1rem 0", style "border-bottom" "1px solid lightgray" ]
         [ viewShape model
         , column []
-            [ row []
+            [ row [] [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date") ]
+            , row []
                 [ input
                     [ type_ "text"
                     , Html.Attributes.autocomplete False
