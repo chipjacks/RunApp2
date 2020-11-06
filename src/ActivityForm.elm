@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, selectDate, update, viewForm)
+module ActivityForm exposing (Model, init, isEditing, selectDate, update, view)
 
 import Activity exposing (Activity, ActivityData, Minutes)
 import ActivityShape
@@ -278,8 +278,8 @@ updateResult model =
     { model | result = validate model }
 
 
-viewForm : Model -> Maybe Int -> Html Msg
-viewForm model levelM =
+view : Maybe Int -> Model -> Html Msg
+view levelM model =
     let
         dataInputs form =
             case form of
@@ -313,17 +313,10 @@ viewForm model levelM =
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
     in
-    row [ style "margin-top" "1rem" ]
+    row [ style "padding" "1rem 0 1rem 0", style "border-bottom" "1px solid lightgray" ]
         [ viewShape model
         , column []
-            [ row [ style "flex-wrap" "wrap" ]
-                [ viewMaybe (Result.toMaybe model.result) (\activity -> a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ])
-                , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
-                , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
-                , moreButtons
-                , column [ style "align-items" "flex-end" ] [ submitButton ]
-                ]
-            , row []
+            [ row []
                 [ input
                     [ type_ "text"
                     , Html.Attributes.autocomplete False
@@ -334,6 +327,7 @@ viewForm model levelM =
                     , style "width" "100%"
                     ]
                     []
+                , compactColumn [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
                 compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
@@ -488,18 +482,6 @@ submitButton =
         , onClick ClickedSubmit
         ]
         [ i [ class "fas fa-check" ] [] ]
-
-
-moreButtons : Html Msg
-moreButtons =
-    div [ class "dropdown" ]
-        [ button [ class "button small", style "height" "100%" ]
-            [ i [ class "fas fa-ellipsis-h" ] [] ]
-        , div [ class "dropdown-content" ]
-            [ a [ onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
-            , a [ onClick ClickedDelete ] [ i [ class "fas fa-times" ] [] ]
-            ]
-        ]
 
 
 emojiSelect : (String -> Msg) -> String -> Html Msg

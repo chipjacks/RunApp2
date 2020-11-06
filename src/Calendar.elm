@@ -1,4 +1,4 @@
-module Calendar exposing (Model, getDate, init, update, view, viewEditDay, viewMenu)
+module Calendar exposing (Model, getDate, init, update, view, viewMenu)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -175,8 +175,8 @@ viewDropdownItem changeDate formatDate date =
 -- VIEW
 
 
-view : Model -> Date -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)
-view calendar today activities formM levelM =
+view : Model -> Date -> List Activity -> Maybe String -> List (Html Msg)
+view calendar today activities selectedIdM =
     let
         filterActivities =
             \date -> List.filter (\a -> a.date == date) activities
@@ -194,24 +194,26 @@ view calendar today activities formM levelM =
                     listDays calendar.start calendar.end
                         |> List.map
                             (\d ->
-                                viewDay d (filterActivities d) (d == today) (d == calendar.selected)
+                                viewDay d (filterActivities d) (d == today) (d == calendar.selected) selectedIdM
                             )
 
                 Day ->
-                    viewEditDay calendar (filterActivities calendar.selected) formM levelM
+                    let
+                        d =
+                            calendar.selected
+                    in
+                    [ viewDay d (filterActivities d) (d == today) (d == calendar.selected) selectedIdM ]
     in
-    [ column []
-        [ viewIf (calendar.zoom == Year) (viewHeader (Maybe.map viewChooseDay formM))
-        , expandingRow [ style "overflow" "hidden" ]
-            [ column
-                [ id "calendar"
-                , style "overflow-y" "scroll"
-                , style "overflow-x" "hidden"
-                , style "padding-right" "0.5rem"
-                , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
-                ]
-                body
+    [ viewIf (calendar.zoom == Year) viewHeader
+    , expandingRow [ style "overflow" "hidden" ]
+        [ column
+            [ id "calendar"
+            , style "overflow-y" "scroll"
+            , style "overflow-x" "hidden"
+            , style "padding-right" "0.5rem"
+            , attributeIf calendar.scrollCompleted (onScroll <| scrollHandler calendar)
             ]
+            body
         ]
     ]
 
@@ -270,10 +272,10 @@ scrollHandler model =
 -- YEAR VIEW
 
 
-viewHeader : Maybe (List (Html Msg)) -> Html Msg
-viewHeader sidebarM =
+viewHeader : Html Msg
+viewHeader =
     row []
-        (column [ style "min-width" "4rem" ] (sidebarM |> Maybe.withDefault [])
+        (column [ style "min-width" "4rem" ] []
             :: ([ "M", "T", "W", "T", "F", "S", "S" ]
                     |> List.map
                         (\d ->
@@ -282,12 +284,6 @@ viewHeader sidebarM =
                         )
                )
         )
-
-
-viewChooseDay : ActivityForm.Model -> List (Html Msg)
-viewChooseDay form =
-    [ row [ style "background" "white" ] [ text "Select Date" ]
-    ]
 
 
 viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
@@ -402,58 +398,81 @@ daysOfWeek start =
 -- MONTH VIEW
 
 
-viewDay : Date -> List Activity -> Bool -> Bool -> Html Msg
-viewDay date activities isToday isSelected =
+viewDay : Date -> List Activity -> Bool -> Bool -> Maybe String -> Html Msg
+viewDay date activities isToday isSelected selectedIdM =
     row
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")
         , attribute "data-date" (Date.toIsoString date)
-        , onClick (ChangeZoom Day (Just date))
         , style "min-height" "3rem"
         , style "margin-bottom" "1rem"
         ]
         [ column []
-            [ row [ styleIf isToday "font-weight" "bold" ]
+            [ row [ styleIf isToday "font-weight" "bold", onClick (ChangeZoom Day (Just date)) ]
                 [ text (Date.format "E MMM d" date)
                 ]
             , row []
-                [ column [] (List.map viewActivity activities) ]
+                [ column [] (List.map (viewActivity selectedIdM) activities) ]
+            , row [ style "margin-top" "1rem" ]
+                [ compactColumn []
+                    [ a
+                        [ onClick (ClickedNewActivity date)
+                        , class "button tiny fas fa-plus"
+                        , style "font-size" "0.6rem"
+                        , style "padding" "0.3rem"
+                        , style "color" "var(--icon-gray)"
+                        ]
+                        []
+                    ]
+                ]
             ]
         ]
 
 
-viewActivity : Activity -> Html Msg
-viewActivity activity =
+viewActivity : Maybe String -> Activity -> Html Msg
+viewActivity selectedIdM activity =
     let
         level =
             Activity.mprLevel activity
                 |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
+
+        isSelected =
+            case selectedIdM of
+                Just id ->
+                    activity.id == id
+
+                Nothing ->
+                    False
     in
     a [ onClick (EditActivity activity) ]
         [ row [ style "margin-top" "1rem" ]
             [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-            , column [ style "justify-content" "center" ]
-                [ row [] [ text activity.description ]
-                , row [ style "font-size" "0.8rem" ]
-                    [ column []
-                        [ text <|
-                            case activity.data of
-                                Activity.Run mins pace_ _ ->
-                                    String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
+            , column [ style "justify-content" "center" ] <|
+                if isSelected then
+                    [ viewButtons activity ]
 
-                                Activity.Race mins _ _ ->
-                                    String.fromInt mins ++ " min "
+                else
+                    [ row [] [ text activity.description ]
+                    , row [ style "font-size" "0.8rem" ]
+                        [ column []
+                            [ text <|
+                                case activity.data of
+                                    Activity.Run mins pace_ _ ->
+                                        String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
 
-                                Activity.Other mins _ ->
-                                    String.fromInt mins ++ " min "
+                                    Activity.Race mins _ _ ->
+                                        String.fromInt mins ++ " min "
 
-                                _ ->
-                                    ""
+                                    Activity.Other mins _ ->
+                                        String.fromInt mins ++ " min "
+
+                                    _ ->
+                                        ""
+                            ]
+                        , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                         ]
-                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                     ]
-                ]
             ]
         ]
 
@@ -463,40 +482,12 @@ listDays start end =
     Date.range Date.Day 1 start end
 
 
-
--- DAY VIEW
-
-
-viewEditDay : Model -> List Activity -> Maybe ActivityForm.Model -> Maybe Int -> List (Html Msg)
-viewEditDay calendar activities formM levelM =
-    let
-        viewFormM activity =
-            case formM of
-                Just form ->
-                    if ActivityForm.isEditing activity form then
-                        ActivityForm.viewForm form levelM
-
-                    else
-                        viewActivity activity
-
-                Nothing ->
-                    viewActivity activity
-    in
-    [ column []
-        [ row [] [ text (Date.format "E MMM d" calendar.selected) ]
-        , row []
-            [ column [] (List.map viewFormM activities) ]
-        , row [ style "margin-top" "1rem" ]
-            [ compactColumn []
-                [ a
-                    [ onClick (ClickedNewActivity calendar.selected)
-                    , class "button tiny fas fa-plus"
-                    , style "font-size" "0.6rem"
-                    , style "padding" "0.3rem"
-                    , style "color" "var(--icon-gray)"
-                    ]
-                    []
-                ]
-            ]
+viewButtons : Activity -> Html Msg
+viewButtons activity =
+    row [ style "flex-wrap" "wrap" ]
+        [ a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedDelete ] [ i [ class "fas fa-times" ] [] ]
         ]
-    ]

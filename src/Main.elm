@@ -363,28 +363,32 @@ view model =
         [ id "home"
         , style "margin-left" "1rem"
         ]
-    <|
-        case model of
-            Loading _ _ ->
-                [ text "Loading" ]
+        [ column [] <|
+            case model of
+                Loading _ _ ->
+                    [ row [] [ text "Loading" ] ]
 
-            Error errorString ->
-                [ text errorString ]
+                Error errorString ->
+                    [ row [] [ text errorString ] ]
 
-            Loaded state ->
-                let
-                    activities =
-                        Store.get state.store .activities
+                Loaded state ->
+                    let
+                        activities =
+                            Store.get state.store .activities
 
-                    levelM =
-                        calculateLevel activities
-                in
-                Calendar.view
-                    state.calendar
-                    state.today
-                    (Store.get state.store .activities)
-                    state.activityForm
-                    levelM
+                        levelM =
+                            calculateLevel activities
+
+                        selectedIdM =
+                            state.activityForm |> Maybe.map .id
+                    in
+                            (viewMaybe state.activityForm (ActivityForm.view levelM))
+                                :: Calendar.view
+                                    state.calendar
+                                    state.today
+                                    activities
+                                    selectedIdM
+        ]
 
 
 
