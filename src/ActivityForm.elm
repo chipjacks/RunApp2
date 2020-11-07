@@ -406,7 +406,7 @@ defaults dataForm =
                         duration
 
                     _ ->
-                        ""
+                        "30"
 
         pace_ =
             case dataForm of

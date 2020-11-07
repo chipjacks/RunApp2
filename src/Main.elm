@@ -4,13 +4,11 @@ import Activity exposing (Activity)
 import ActivityForm
 import ActivityShape
 import Api
-import Array
 import Browser
 import Browser.Dom as Dom
 import Browser.Events as Events
 import Calendar
-import Config exposing (config)
-import Date exposing (Date, Interval(..), Unit(..))
+import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
@@ -23,10 +21,6 @@ import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
-import Time exposing (Month(..))
-import Url exposing (Url)
-import Url.Parser as Parser exposing ((</>), (<?>))
-import Url.Parser.Query as Query
 
 
 
