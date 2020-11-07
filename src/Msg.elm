@@ -1,7 +1,6 @@
 module Msg exposing (ActivityState(..), DataForm(..), Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
-import Array exposing (Array)
 import Browser.Dom as Dom
 import Date exposing (Date)
 import Http
@@ -15,7 +14,6 @@ type Zoom
 
 type DataForm
     = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
-    | WorkoutForm { selected : Int, intervals : Array Activity.Interval, completed : Bool }
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
     | OtherForm { duration : String, completed : Bool }
     | NoteForm { emoji : String }

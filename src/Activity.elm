@@ -218,16 +218,6 @@ activityDataDecoder =
                 (Decode.field "pace" pace.decoder)
                 (Decode.field "completed" Decode.bool)
 
-        workoutDecoder =
-            Decode.map2 Workout
-                (Decode.field "intervals" (Decode.list intervalDecoder))
-                (Decode.field "completed" Decode.bool)
-
-        intervalDecoder =
-            Decode.map2 Interval
-                (Decode.field "duration" Decode.int)
-                (Decode.field "pace" pace.decoder)
-
         raceDecoder =
             Decode.map3 Race
                 (Decode.field "duration" Decode.int)
@@ -249,9 +239,6 @@ activityDataDecoder =
                 case dataType of
                     "run" ->
                         runDecoder
-
-                    "workout" ->
-                        workoutDecoder
 
                     "race" ->
                         raceDecoder
