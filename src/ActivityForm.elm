@@ -316,7 +316,7 @@ view levelM model =
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
     in
-    row [ style "padding" "1rem 0 1rem 1rem", style "border-bottom" "2px solid var(--border-gray)" ]
+    row [ style "padding" "1rem 0 1rem 1rem", style "border-bottom" "1px solid var(--border-gray)" ]
         [ viewShape model
         , column []
             [ row [] [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date") ]

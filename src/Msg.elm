@@ -1,4 +1,4 @@
-module Msg exposing (DataForm(..), Msg(..), Zoom(..))
+module Msg exposing (ActivityState(..), DataForm(..), Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
 import Array exposing (Array)
@@ -19,6 +19,11 @@ type DataForm
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
     | OtherForm { duration : String, completed : Bool }
     | NoteForm { emoji : String }
+
+
+type ActivityState
+    = Editing Activity
+    | None
 
 
 type Msg

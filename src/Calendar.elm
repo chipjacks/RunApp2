@@ -9,7 +9,7 @@ import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
 import Json.Decode as Decode
-import Msg exposing (Msg(..), Zoom(..))
+import Msg exposing (ActivityState(..), Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
 import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
@@ -178,9 +178,17 @@ viewDropdownItem changeDate formatDate date =
 -- VIEW
 
 
-view : Model -> List Activity -> Maybe String -> Html Msg
-view model activities selectedIdM =
+view : Model -> List Activity -> ActivityState -> Html Msg
+view model activities activityM =
     let
+        selectedIdM =
+            case activityM of
+                Editing { id } ->
+                    Just id
+
+                None ->
+                    Nothing
+
         filterActivities =
             \date -> List.filter (\a -> a.date == date) activities
 

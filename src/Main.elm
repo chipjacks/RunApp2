@@ -15,7 +15,7 @@ import Html.Events exposing (on, onClick)
 import Html.Lazy
 import Http
 import Json.Decode as Decode
-import Msg exposing (Msg(..))
+import Msg exposing (ActivityState(..), Msg(..))
 import Ports
 import Random
 import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
@@ -43,7 +43,7 @@ type Model
 
 
 type State
-    = State Calendar.Model Store.Model (Maybe ActivityForm.Model)
+    = State Calendar.Model Store.Model (Maybe ActivityForm.Model) ActivityState
 
 
 init : () -> ( Model, Cmd Msg )
@@ -78,7 +78,7 @@ viewNavbar model =
                 []
     in
     case model of
-        Loaded (State calendar store _) ->
+        Loaded (State calendar store _ _) ->
             row [ style "padding" "0.5rem" ]
                 [ column [] [ Calendar.viewMenu calendar ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
@@ -124,7 +124,7 @@ update msg model =
 
         Loaded state ->
             let
-                (State calendar store formM) =
+                (State calendar store formM activityM) =
                     state
             in
             case msg of
@@ -159,10 +159,10 @@ update msg model =
                     ( model, Cmd.none )
 
                 Create _ ->
-                    updateStore msg (State calendar store Nothing) |> loaded
+                    updateStore msg (State calendar store Nothing None) |> loaded
 
                 Update _ ->
-                    updateStore msg (State calendar store Nothing) |> loaded
+                    updateStore msg (State calendar store Nothing None) |> loaded
 
                 Move _ _ ->
                     updateStore msg state |> loaded
@@ -214,11 +214,11 @@ update msg model =
                     ( model, initActivity calendar.today (Just date) )
 
                 NewActivity activity ->
-                    updateStore (Create activity) (State calendar store (Just (ActivityForm.init activity)))
+                    updateStore (Create activity) (State calendar store (Just (ActivityForm.init activity)) (Editing activity))
                         |> loaded
 
                 EditActivity activity ->
-                    ( Loaded <| State calendar store (Just (ActivityForm.init activity)), Cmd.none )
+                    ( Loaded <| State calendar store (Just (ActivityForm.init activity)) (Editing activity), Cmd.none )
 
                 SelectedDate _ ->
                     updateActivityForm msg state
@@ -296,6 +296,7 @@ updateLoading model =
                     (Calendar.init Msg.Month date date)
                     (Store.init activities)
                     Nothing
+                    None
             )
                 |> update (Jump date)
 
@@ -310,22 +311,22 @@ andThenUpdate updateFunc ( state, cmd ) =
 
 
 updateActivityForm : Msg -> State -> ( State, Cmd Msg )
-updateActivityForm msg (State calendar store formM) =
+updateActivityForm msg (State calendar store formM activityM) =
     Maybe.map (ActivityForm.update msg) formM
-        |> Maybe.map (Tuple.mapFirst (\updated -> State calendar store (Just updated)))
-        |> Maybe.withDefault ( State calendar store formM, Cmd.none )
+        |> Maybe.map (Tuple.mapFirst (\updated -> State calendar store (Just updated) activityM))
+        |> Maybe.withDefault ( State calendar store formM activityM, Cmd.none )
 
 
 updateCalendar : Msg -> State -> ( State, Cmd Msg )
-updateCalendar msg (State calendar store formM) =
+updateCalendar msg (State calendar store formM activityM) =
     Calendar.update msg calendar
-        |> Tuple.mapFirst (\updated -> State updated store formM)
+        |> Tuple.mapFirst (\updated -> State updated store formM activityM)
 
 
 updateStore : Msg -> State -> ( State, Cmd Msg )
-updateStore msg (State calendar store formM) =
+updateStore msg (State calendar store formM activityM) =
     Store.update msg store
-        |> Tuple.mapFirst (\updated -> State calendar updated formM)
+        |> Tuple.mapFirst (\updated -> State calendar updated formM activityM)
 
 
 loaded : ( State, Cmd Msg ) -> ( Model, Cmd Msg )
@@ -370,11 +371,8 @@ view model =
                 Error errorString ->
                     [ row [] [ text errorString ] ]
 
-                Loaded (State calendar store formM) ->
+                Loaded (State calendar store formM activityM) ->
                     let
-                        selectedIdM =
-                            formM |> Maybe.map .id
-
                         activities =
                             Store.get store .activities
 
@@ -386,8 +384,7 @@ view model =
                     , Html.Lazy.lazy3 Calendar.view
                         calendar
                         activities
-                        -- TODO optimize selectedIdM
-                        Nothing
+                        activityM
                     ]
         ]
 
