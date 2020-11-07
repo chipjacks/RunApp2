@@ -9,7 +9,7 @@ import Task exposing (Task)
 import Time exposing (Month(..), utc)
 
 
-getActivities : Task Http.Error (List Activity)
+getActivities : Task String (List Activity)
 getActivities =
     Http.task
         { method = "GET"
@@ -24,7 +24,7 @@ getActivities =
         }
 
 
-postActivities : List Activity -> Task Http.Error (List Activity)
+postActivities : List Activity -> Task String (List Activity)
 postActivities activities =
     Http.task
         { method = "PUT"
@@ -47,25 +47,25 @@ storeUrl =
     "https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c"
 
 
-handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result Http.Error a
+handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result String a
 handleJsonResponse decoder response =
     case response of
         Http.BadUrl_ url ->
-            Err (Http.BadUrl url)
+            Err ("Bad URL: " ++ url)
 
         Http.Timeout_ ->
-            Err Http.Timeout
+            Err "Timeout"
 
         Http.BadStatus_ { statusCode } _ ->
-            Err (Http.BadStatus statusCode)
+            Err ("Bad status code: " ++ String.fromInt statusCode)
 
         Http.NetworkError_ ->
-            Err Http.NetworkError
+            Err "Network error"
 
         Http.GoodStatus_ _ body ->
             case Decode.decodeString decoder body of
-                Err _ ->
-                    Err (Http.BadBody body)
+                Err decoderErr ->
+                    Err (Decode.errorToString decoderErr)
 
                 Ok result ->
                     Ok result

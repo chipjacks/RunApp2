@@ -1,4 +1,4 @@
-module Msg exposing (Msg(..), Zoom(..))
+module Msg exposing (ActivityState(..), DataForm(..), Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
 import Browser.Dom as Dom
@@ -12,10 +12,21 @@ type Zoom
     | Day
 
 
+type DataForm
+    = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
+    | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
+    | OtherForm { duration : String, completed : Bool }
+    | NoteForm { emoji : String }
+
+
+type ActivityState
+    = Editing Activity
+    | None
+
+
 type Msg
     = LoadToday Date
-    | GotActivities (Result Http.Error (List Activity))
-    | EditActivity Activity
+    | GotActivities (Result String (List Activity))
     | ReceiveSelectDate String
     | VisibilityChange String
     | KeyPressed String
@@ -26,7 +37,7 @@ type Msg
     | Move Date Activity
     | Shift Bool Activity
     | Delete Activity
-    | Posted (List Msg) (Result Http.Error (List Activity))
+    | Posted (List Msg) (Result String (List Activity))
     | DebounceFlush Int
       -- CALENDAR
     | Jump Date
@@ -36,10 +47,12 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
+    | EditActivity Activity
+    | SelectedDate Date
     | SelectedShape Activity.ActivityData
     | EditedDescription String
     | SelectedEmoji String
-    | CheckedCompleted Bool
+    | CheckedCompleted
     | EditedDuration String
     | SelectedPace String
     | SelectedDistance String
