@@ -207,7 +207,7 @@ view model activities selectedIdM =
                     in
                     [ viewDay d (filterActivities d) (d == model.today) (d == model.selected) selectedIdM ]
     in
-    expandingRow [ style "overflow" "hidden" ]
+    expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
         [ column
             [ id "calendar"
             , style "overflow-y" "scroll"
@@ -276,7 +276,7 @@ scrollHandler model =
 viewHeader : Model -> Html Msg
 viewHeader model =
     viewIf (model.zoom == Year) <|
-        row []
+        row [ style "border-bottom" "1px solid var(--border-gray)" ]
             (column [ style "min-width" "4rem" ] []
                 :: ([ "M", "T", "W", "T", "F", "S", "S" ]
                         |> List.map

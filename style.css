@@ -4,9 +4,10 @@
 :root {
   --header-blue: #4183c4;
   --accent-blue: #4183c4;
-  --interact-gray: #f9f9f9;
-  --highlight-gray: #f1f1f1;
-  --icon-gray: lightgray;
+  --border-gray: rgb(249, 249, 249);
+  --button-gray: rgb(249, 249, 249);
+  --highlight-gray: rgb(241, 241, 241);
+  --icon-gray: rgb(211,211,211);
   --activity-orange: orange;
   --activity-green: limegreen;
   --activity-gray: gray;
@@ -22,7 +23,7 @@ html, body { height: 100%; margin: 0; }
 @media screen and (max-width: 390px) { html { font-size: 15px; } }
 .container-x { max-width: 1000px; min-width: 320px; margin-left: auto; margin-right: auto;}
 .container-y {  min-height: 450px; height: 100%; overflow: hidden; }
-.navbar { border-bottom: 2px solid var(--interact-gray) }
+.navbar { border-bottom: 2px solid var(--border-gray) }
 
 @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(359deg); } }
 
@@ -51,7 +52,7 @@ select { border: 1px solid var(--highlight-gray); border-radius: 0.25rem; paddin
 select.input-small { padding: 0.3rem; }
 select:focus { border-color: var(--accent-blue); }
 button, .button {
-  background-color: var(--interact-gray);
+  background-color: var(--button-gray);
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
   border: none;
@@ -84,7 +85,7 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: var(--interact-gray);
+  background-color: var(--button-gray);
   z-index: 1;
   border-radius: 0 0 0.25rem 0.25rem;
 }
