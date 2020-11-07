@@ -278,7 +278,10 @@ view levelM model =
     row [ style "padding" "1rem 0 1rem 1rem", style "border-bottom" "1px solid var(--border-gray)" ]
         [ viewShape model
         , column []
-            [ row [] [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date") ]
+            [ row []
+                [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date")
+                , column [ style "align-items" "flex-end" ] [ submitButton ]
+                ]
             , row []
                 [ input
                     [ type_ "text"
@@ -290,7 +293,6 @@ view levelM model =
                     , style "width" "100%"
                     ]
                     []
-                , compactColumn [ style "align-items" "flex-end" ] [ submitButton ]
                 ]
             , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
                 compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
