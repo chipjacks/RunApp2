@@ -379,7 +379,7 @@ view model =
                         levelM =
                             calculateLevel activities
                     in
-                    [ viewMaybe formM (ActivityForm.view levelM |> Html.Lazy.lazy)
+                    [ Html.Lazy.lazy (ActivityForm.view levelM) formM
                     , Html.Lazy.lazy Calendar.viewHeader calendar
                     , Html.Lazy.lazy3 Calendar.view
                         calendar
