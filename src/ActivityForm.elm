@@ -13,7 +13,7 @@ import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
 import Msg exposing (DataForm(..), Msg(..))
-import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
+import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 
@@ -250,10 +250,10 @@ updateResult model =
     { model | result = validate model }
 
 
-view : Maybe Int -> Model -> Html Msg
-view levelM model =
+view : Maybe Int -> Maybe Model -> Html Msg
+view levelM modelM =
     let
-        dataInputs form =
+        dataInputs form result =
             case form of
                 RunForm { duration, pace } ->
                     [ compactColumn [] [ durationInput EditedDuration duration ]
@@ -264,7 +264,7 @@ view levelM model =
                     [ compactColumn [] [ durationInput EditedDuration duration ]
                     , compactColumn [] [ distanceSelect SelectedDistance distance ]
                     , compactColumn []
-                        [ viewMaybe (Result.toMaybe model.result |> Maybe.andThen Activity.mprLevel)
+                        [ viewMaybe (Result.toMaybe result |> Maybe.andThen Activity.mprLevel)
                             (\level -> text <| "Level " ++ String.fromInt level)
                         ]
                     ]
@@ -275,32 +275,51 @@ view levelM model =
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
     in
-    row [ style "padding" "1rem 0 1rem 1rem", style "border-bottom" "1px solid var(--border-gray)" ]
-        [ viewShape model
-        , column []
-            [ row []
-                [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date")
-                , column [ style "align-items" "flex-end" ] [ submitButton ]
+    case modelM of
+        Nothing ->
+            row
+                [ style "transition" "max-height 1s, min-height 1s, border-width 1s"
+                , style "min-height" "0"
+                , style "max-height" "0"
+                , borderStyle "border-bottom"
+                , style "border-width" "0px"
                 ]
-            , row []
-                [ input
-                    [ type_ "text"
-                    , Html.Attributes.autocomplete False
-                    , placeholder "Description"
-                    , onInput EditedDescription
-                    , name "description"
-                    , value model.description
-                    , style "width" "100%"
+                []
+
+        Just model ->
+            row
+                [ style "transition" "max-height 1s, min-height 1s"
+                , style "max-height" "20rem"
+                , style "min-height" "5rem"
+                , style "padding" "1rem 1rem 1rem 1rem"
+                , borderStyle "border-bottom"
+                , style "border-width" "1px"
+                ]
+                [ viewShape model
+                , column []
+                    [ row []
+                        [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date")
+                        , column [ style "align-items" "flex-end" ] [ submitButton ]
+                        ]
+                    , row []
+                        [ input
+                            [ type_ "text"
+                            , Html.Attributes.autocomplete False
+                            , placeholder "Description"
+                            , onInput EditedDescription
+                            , name "description"
+                            , value model.description
+                            , style "width" "100%"
+                            ]
+                            []
+                        ]
+                    , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
+                        compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
+                            :: dataInputs model.dataForm model.result
+                    , row []
+                        [ viewError model.result ]
                     ]
-                    []
                 ]
-            , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
-                compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
-                    :: dataInputs model.dataForm
-            , row []
-                [ viewError model.result ]
-            ]
-        ]
 
 
 viewShape : Model -> Html Msg

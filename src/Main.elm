@@ -18,7 +18,7 @@ import Json.Decode as Decode
 import Msg exposing (ActivityState(..), Msg(..))
 import Ports
 import Random
-import Skeleton exposing (column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
+import Skeleton exposing (borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 
@@ -362,7 +362,7 @@ calculateLevel activities =
 
 view : Model -> Html Msg
 view model =
-    expandingRow [ id "home", style "border-left" "1px solid var(--border-gray)", style "border-right" "1px solid var(--border-gray)" ]
+    expandingRow [ id "home", borderStyle "border-left", borderStyle "border-right" ]
         [ column [] <|
             case model of
                 Loading _ _ ->
@@ -379,7 +379,7 @@ view model =
                         levelM =
                             calculateLevel activities
                     in
-                    [ viewMaybe formM (ActivityForm.view levelM |> Html.Lazy.lazy)
+                    [ Html.Lazy.lazy (ActivityForm.view levelM) formM
                     , Html.Lazy.lazy Calendar.viewHeader calendar
                     , Html.Lazy.lazy3 Calendar.view
                         calendar
