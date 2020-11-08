@@ -12,7 +12,7 @@ import Json.Decode as Decode
 import Msg exposing (ActivityState(..), Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
-import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
+import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Task
 import Time exposing (Month(..))
 
@@ -284,7 +284,7 @@ scrollHandler model =
 viewHeader : Model -> Html Msg
 viewHeader model =
     viewIf (model.zoom == Year) <|
-        row [ style "border-bottom" "1px solid var(--border-gray)" ]
+        row [ borderStyle "border-bottom" ]
             (column [ style "min-width" "4rem" ] []
                 :: ([ "M", "T", "W", "T", "F", "S", "S" ]
                         |> List.map

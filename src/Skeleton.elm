@@ -1,4 +1,4 @@
-module Skeleton exposing (attributeIf, column, compactColumn, expandingRow, layout, row, styleIf, viewIf, viewMaybe)
+module Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, layout, row, styleIf, viewIf, viewMaybe)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -81,3 +81,8 @@ attributeIf bool attr =
 
     else
         style "" ""
+
+
+borderStyle : String -> Html.Attribute msg
+borderStyle position =
+    style position "1px solid var(--border-gray)"

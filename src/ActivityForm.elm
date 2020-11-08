@@ -13,7 +13,7 @@ import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
 import Msg exposing (DataForm(..), Msg(..))
-import Skeleton exposing (attributeIf, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
+import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 
@@ -275,7 +275,7 @@ view levelM model =
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
     in
-    row [ style "padding" "1rem 0 1rem 1rem", style "border-bottom" "1px solid var(--border-gray)" ]
+    row [ style "padding" "1rem 1rem 1rem 1rem", borderStyle "border-bottom" ]
         [ viewShape model
         , column []
             [ row []
