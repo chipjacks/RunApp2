@@ -10164,6 +10164,11 @@ var $author$project$Main$updateLoading = function (model) {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	}
 };
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $author$project$Skeleton$borderStyle = function (position) {
+	return A2($elm$html$Html$Attributes$style, position, '1px solid var(--border-gray)');
+};
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -10372,8 +10377,6 @@ var $elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
 var $elm$html$Html$Lazy$lazy = $elm$virtual_dom$VirtualDom$lazy;
 var $elm$virtual_dom$VirtualDom$lazy3 = _VirtualDom_lazy3;
 var $elm$html$Html$Lazy$lazy3 = $elm$virtual_dom$VirtualDom$lazy3;
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Msg$EditedDescription = function (a) {
@@ -13189,176 +13192,196 @@ var $author$project$ActivityForm$viewShape = function (model) {
 			[activityShape]));
 };
 var $author$project$ActivityForm$view = F2(
-	function (levelM, model) {
-		var dataInputs = function (form) {
-			switch (form.$) {
-				case 0:
-					var duration = form.a.f;
-					var pace = form.a.r;
-					return _List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-								])),
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A3($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace, pace)
-								]))
-						]);
-				case 1:
-					var duration = form.a.f;
-					var distance = form.a.p;
-					return _List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-								])),
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2($author$project$ActivityForm$distanceSelect, $author$project$Msg$SelectedDistance, distance)
-								])),
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$author$project$Skeleton$viewMaybe,
-									A2(
-										$elm$core$Maybe$andThen,
-										$author$project$Activity$mprLevel,
-										$elm$core$Result$toMaybe(model.O)),
-									function (level) {
-										return $elm$html$Html$text(
-											'Level ' + $elm$core$String$fromInt(level));
-									})
-								]))
-						]);
-				case 2:
-					var duration = form.a.f;
-					return _List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-								]))
-						]);
-				default:
-					var emoji = form.a.u;
-					return _List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$compactColumn,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2($author$project$ActivityForm$emojiSelect, $author$project$Msg$SelectedEmoji, emoji)
-								]))
-						]);
-			}
-		};
-		return A2(
-			$author$project$Skeleton$row,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'padding', '1rem 0 1rem 1rem'),
-					A2($elm$html$Html$Attributes$style, 'border-bottom', '1px solid var(--border-gray)')
-				]),
-			_List_fromArray(
-				[
-					$author$project$ActivityForm$viewShape(model),
-					A2(
-					$author$project$Skeleton$column,
-					_List_Nil,
-					_List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text(
-									A2(
-										$elm$core$Maybe$withDefault,
-										'Select Date',
-										A2(
-											$elm$core$Maybe$map,
-											$justinmimbs$date$Date$format('E MMM d'),
-											model.ao))),
-									A2(
-									$author$project$Skeleton$column,
-									_List_fromArray(
-										[
-											A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
-										]),
-									_List_fromArray(
-										[$author$project$ActivityForm$submitButton]))
-								])),
-							A2(
-							$author$project$Skeleton$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$type_('text'),
-											$elm$html$Html$Attributes$autocomplete(false),
-											$elm$html$Html$Attributes$placeholder('Description'),
-											$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
-											$elm$html$Html$Attributes$name('description'),
-											$elm$html$Html$Attributes$value(model.ar),
-											A2($elm$html$Html$Attributes$style, 'width', '100%')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							$author$project$Skeleton$row,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
-									A2($elm$html$Html$Attributes$style, 'align-items', 'center')
-								]),
-							A2(
-								$elm$core$List$cons,
+	function (levelM, modelM) {
+		var dataInputs = F2(
+			function (form, result) {
+				switch (form.$) {
+					case 0:
+						var duration = form.a.f;
+						var pace = form.a.r;
+						return _List_fromArray(
+							[
 								A2(
-									$author$project$Skeleton$compactColumn,
-									_List_fromArray(
-										[
-											A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
-										]),
-									_List_fromArray(
-										[
-											$author$project$ActivityForm$shapeSelect(model)
-										])),
-								dataInputs(model.h))),
-							A2(
-							$author$project$Skeleton$row,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$author$project$ActivityForm$viewError(model.O)
-								]))
-						]))
-				]));
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A3($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace, pace)
+									]))
+							]);
+					case 1:
+						var duration = form.a.f;
+						var distance = form.a.p;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$distanceSelect, $author$project$Msg$SelectedDistance, distance)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$author$project$Skeleton$viewMaybe,
+										A2(
+											$elm$core$Maybe$andThen,
+											$author$project$Activity$mprLevel,
+											$elm$core$Result$toMaybe(result)),
+										function (level) {
+											return $elm$html$Html$text(
+												'Level ' + $elm$core$String$fromInt(level));
+										})
+									]))
+							]);
+					case 2:
+						var duration = form.a.f;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									]))
+							]);
+					default:
+						var emoji = form.a.u;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$emojiSelect, $author$project$Msg$SelectedEmoji, emoji)
+									]))
+							]);
+				}
+			});
+		if (modelM.$ === 1) {
+			return A2(
+				$author$project$Skeleton$row,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s, border-width 1s'),
+						A2($elm$html$Html$Attributes$style, 'min-height', '0'),
+						A2($elm$html$Html$Attributes$style, 'max-height', '0'),
+						$author$project$Skeleton$borderStyle('border-bottom'),
+						A2($elm$html$Html$Attributes$style, 'border-width', '0px')
+					]),
+				_List_Nil);
+		} else {
+			var model = modelM.a;
+			return A2(
+				$author$project$Skeleton$row,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s'),
+						A2($elm$html$Html$Attributes$style, 'max-height', '20rem'),
+						A2($elm$html$Html$Attributes$style, 'min-height', '5rem'),
+						A2($elm$html$Html$Attributes$style, 'padding', '1rem 1rem 1rem 1rem'),
+						$author$project$Skeleton$borderStyle('border-bottom'),
+						A2($elm$html$Html$Attributes$style, 'border-width', '1px')
+					]),
+				_List_fromArray(
+					[
+						$author$project$ActivityForm$viewShape(model),
+						A2(
+						$author$project$Skeleton$column,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2(
+											$elm$core$Maybe$withDefault,
+											'Select Date',
+											A2(
+												$elm$core$Maybe$map,
+												$justinmimbs$date$Date$format('E MMM d'),
+												model.ao))),
+										A2(
+										$author$project$Skeleton$column,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
+											]),
+										_List_fromArray(
+											[$author$project$ActivityForm$submitButton]))
+									])),
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$input,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$type_('text'),
+												$elm$html$Html$Attributes$autocomplete(false),
+												$elm$html$Html$Attributes$placeholder('Description'),
+												$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
+												$elm$html$Html$Attributes$name('description'),
+												$elm$html$Html$Attributes$value(model.ar),
+												A2($elm$html$Html$Attributes$style, 'width', '100%')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$author$project$Skeleton$row,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center')
+									]),
+								A2(
+									$elm$core$List$cons,
+									A2(
+										$author$project$Skeleton$compactColumn,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
+											]),
+										_List_fromArray(
+											[
+												$author$project$ActivityForm$shapeSelect(model)
+											])),
+									A2(dataInputs, model.h, model.O))),
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$author$project$ActivityForm$viewError(model.O)
+									]))
+							]))
+					]));
+		}
 	});
 var $author$project$Skeleton$attributeIf = F2(
 	function (bool, attr) {
@@ -14139,7 +14162,7 @@ var $author$project$Calendar$viewHeader = function (model) {
 			$author$project$Skeleton$row,
 			_List_fromArray(
 				[
-					A2($elm$html$Html$Attributes$style, 'border-bottom', '1px solid var(--border-gray)')
+					$author$project$Skeleton$borderStyle('border-bottom')
 				]),
 			A2(
 				$elm$core$List$cons,
@@ -14174,8 +14197,8 @@ var $author$project$Main$view = function (model) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$id('home'),
-				A2($elm$html$Html$Attributes$style, 'border-left', '1px solid var(--border-gray)'),
-				A2($elm$html$Html$Attributes$style, 'border-right', '1px solid var(--border-gray)')
+				$author$project$Skeleton$borderStyle('border-left'),
+				$author$project$Skeleton$borderStyle('border-right')
 			]),
 		_List_fromArray(
 			[
@@ -14223,10 +14246,9 @@ var $author$project$Main$view = function (model) {
 							return _List_fromArray(
 								[
 									A2(
-									$author$project$Skeleton$viewMaybe,
-									formM,
-									$elm$html$Html$Lazy$lazy(
-										$author$project$ActivityForm$view(levelM))),
+									$elm$html$Html$Lazy$lazy,
+									$author$project$ActivityForm$view(levelM),
+									formM),
 									A2($elm$html$Html$Lazy$lazy, $author$project$Calendar$viewHeader, calendar),
 									A4($elm$html$Html$Lazy$lazy3, $author$project$Calendar$view, calendar, activities, activityM)
 								]);
