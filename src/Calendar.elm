@@ -7,7 +7,7 @@ import Browser.Dom as Dom
 import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
-import Html.Events exposing (on, onClick)
+import Html.Events exposing (on, onClick, onMouseDown, onMouseOver)
 import Html.Keyed
 import Html.Lazy
 import Json.Decode as Decode
@@ -213,20 +213,31 @@ view model activities activityM =
         (Model zoom start end selected today scrollCompleted) =
             model
 
-        isEditing activity =
+        activityState a =
             case activityM of
                 Editing { id } ->
-                    activity.id == id
+                    if a.id == id then
+                        activityM
 
-                _ ->
-                    False
+                    else
+                        None
+
+                Moving { id } _ _ ->
+                    if a.id == id then
+                        activityM
+
+                    else
+                        None
+
+                None ->
+                    None
 
         dayRows date =
             List.concat
                 [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
                 , filterActivities date activities
                     |> List.map
-                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (isEditing activity) activity ))
+                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (activityState activity) activity ))
                 , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
                 ]
 
@@ -253,6 +264,7 @@ view model activities activityM =
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
             , style "padding-right" "0.5rem"
+            , style "user-select" "none"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             ]
             body
@@ -454,26 +466,29 @@ viewDay isToday isSelected rataDie =
         , style "margin-top" "1rem"
         , styleIf isToday "font-weight" "bold"
         , onClick (ChangeZoom Day (Just date))
+        , onMouseOver (MoveTo date)
         ]
         [ text (Date.format "E MMM d" date) ]
 
 
-viewActivity : Bool -> Activity -> Html Msg
-viewActivity isSelected activity =
+viewActivity : ActivityState -> Activity -> Html Msg
+viewActivity state activity =
     let
         level =
             Activity.mprLevel activity
                 |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
     in
-    a [ attributeIf (not isSelected) (onClick (EditActivity activity)) ]
-        [ row [ style "margin-bottom" "1rem" ]
-            [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
-            , column [ style "justify-content" "center" ] <|
-                if isSelected then
+    row [ style "margin-bottom" "1rem" ]
+        [ compactColumn [ onMouseDown (MoveActivity activity), style "flex-basis" "5rem" ]
+            [ ActivityShape.view activity ]
+        , case state of
+            Editing _ ->
+                column [ style "justify-content" "center" ]
                     [ viewButtons activity ]
 
-                else
+            _ ->
+                a [ onClick (EditActivity activity), class "column expand", style "justify-content" "center" ]
                     [ row [] [ text activity.description ]
                     , row [ style "font-size" "0.8rem" ]
                         [ column []
@@ -494,7 +509,6 @@ viewActivity isSelected activity =
                         , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                         ]
                     ]
-            ]
         ]
 
 

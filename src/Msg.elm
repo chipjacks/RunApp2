@@ -21,15 +21,18 @@ type DataForm
 
 type ActivityState
     = Editing Activity
+    | Moving Activity Int Int
     | None
 
 
 type Msg
     = LoadToday Date
     | GotActivities (Result String (List Activity))
-    | ReceiveSelectDate String
     | VisibilityChange String
     | KeyPressed String
+    | MouseMoved Int Int
+    | MouseReleased
+    | MoveTo Date
     | NoOp
       -- STORE
     | Create Activity
@@ -44,6 +47,8 @@ type Msg
     | ChangeZoom Zoom (Maybe Date)
     | Scroll Bool Date Int
     | ScrollCompleted (Result Dom.Error Dom.Element)
+    | ReceiveSelectDate String
+    | MoveActivity Activity
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
