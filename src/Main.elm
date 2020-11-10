@@ -211,7 +211,7 @@ update msg model =
                         |> loaded
 
                 ClickedNewActivity date ->
-                    ( model, initActivity calendar.today (Just date) )
+                    ( model, initActivity (calendar |> Calendar.get |> .today) (Just date) )
 
                 NewActivity activity ->
                     updateStore (Create activity) (State calendar store (Just (ActivityForm.init activity)) (Editing activity))
