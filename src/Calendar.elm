@@ -1,4 +1,4 @@
-module Calendar exposing (Model, getDate, init, update, view, viewHeader, viewMenu)
+module Calendar exposing (Model, get, init, update, view, viewHeader, viewMenu)
 
 import Activity exposing (Activity)
 import ActivityForm
@@ -8,6 +8,8 @@ import Date exposing (Date)
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
+import Html.Keyed
+import Html.Lazy
 import Json.Decode as Decode
 import Msg exposing (ActivityState(..), Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
@@ -17,59 +19,69 @@ import Task
 import Time exposing (Month(..))
 
 
-type alias Model =
-    { zoom : Zoom, start : Date, selected : Date, end : Date, today : Date, scrollCompleted : Bool }
+type
+    Model
+    -- zoom start end selected today scrollCompleted
+    = Model Zoom Date Date Date Date Bool
+
+
+get : Model -> { zoom : Zoom, start : Date, end : Date, selected : Date, today : Date, scrollCompleted : Bool }
+get (Model zoom start end selected today scrollCompleted) =
+    { zoom = zoom, start = start, end = end, selected = selected, today = today, scrollCompleted = scrollCompleted }
 
 
 init : Zoom -> Date -> Date -> Model
 init zoom selected today =
-    Model zoom (Date.floor Date.Year selected) selected (Date.ceiling Date.Year selected) today True
-
-
-getDate : Model -> Date
-getDate { selected } =
-    selected
+    Model zoom (Date.floor Date.Year selected) (Date.ceiling Date.Year selected) selected today True
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        (Model zoom start end selected today scrollCompleted) =
+            model
+    in
     case msg of
-        LoadToday today ->
-            ( { model | today = today }, Cmd.none )
+        LoadToday date ->
+            ( Model zoom start end selected date scrollCompleted, Cmd.none )
 
         Jump date ->
-            ( init model.zoom date model.today, scrollToSelectedDate () )
+            ( init zoom date today, scrollToSelectedDate () )
 
-        ChangeZoom zoom dateM ->
-            ( init zoom (Maybe.withDefault model.selected dateM) model.today
+        ChangeZoom newZoom dateM ->
+            ( init newZoom (Maybe.withDefault selected dateM) today
             , scrollToSelectedDate ()
             )
 
         Scroll up date currentHeight ->
-            if not model.scrollCompleted then
+            if not scrollCompleted then
                 ( model, Cmd.none )
 
             else if up then
-                ( { model | start = date, scrollCompleted = False }
+                ( Model zoom date end selected today False
                 , returnScroll currentHeight
                 )
 
             else
-                ( { model | end = date }
+                ( Model zoom start date selected today scrollCompleted
                 , Cmd.none
                 )
 
         ScrollCompleted result ->
-            ( { model | scrollCompleted = True }
+            ( Model zoom start end selected today True
             , Cmd.none
             )
 
         ReceiveSelectDate selectDate ->
             let
                 newSelected =
-                    Date.fromIsoString selectDate |> Result.withDefault model.selected
+                    Date.fromIsoString selectDate |> Result.withDefault selected
             in
-            ( { model | selected = newSelected }, Cmd.none )
+            if newSelected == selected then
+                ( model, Cmd.none )
+
+            else
+                ( Model zoom start end newSelected today scrollCompleted, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -81,6 +93,10 @@ update msg model =
 
 viewMenu : Model -> Html Msg
 viewMenu model =
+    let
+        (Model zoom start end selected today scrollCompleted) =
+            model
+    in
     row []
         [ compactColumn [] [ viewBackButton model ]
         , column []
@@ -88,7 +104,7 @@ viewMenu model =
                 [ viewDatePicker model
                 , button
                     [ style "margin-left" "0.2rem"
-                    , onClick (Jump model.today)
+                    , onClick (Jump today)
                     ]
                     [ text "Today" ]
                 ]
@@ -98,42 +114,50 @@ viewMenu model =
 
 viewBackButton : Model -> Html Msg
 viewBackButton model =
-    case model.zoom of
+    let
+        (Model zoom start end selected today scrollCompleted) =
+            model
+    in
+    case zoom of
         Year ->
             text ""
 
         Month ->
             a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Year Nothing) ]
                 [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
-                , text (Date.format "yyyy" model.selected)
+                , text (Date.format "yyyy" selected)
                 ]
 
         Day ->
             a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Month Nothing) ]
                 [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
-                , text (Date.format "MMMM yyyy" model.selected)
+                , text (Date.format "MMMM yyyy" selected)
                 ]
 
 
 viewDatePicker : Model -> Html Msg
 viewDatePicker model =
-    case model.zoom of
+    let
+        (Model zoom start end selected today scrollCompleted) =
+            model
+    in
+    case zoom of
         Year ->
             div [ class "dropdown" ]
                 [ button []
-                    [ text (Date.format "yyyy" model.selected)
+                    [ text (Date.format "yyyy" selected)
                     ]
                 , div [ class "dropdown-content" ]
-                    (listYears model.selected Jump)
+                    (listYears selected Jump)
                 ]
 
         Month ->
             div [ class "dropdown" ]
                 [ button []
-                    [ text (Date.format "MMMM" model.selected)
+                    [ text (Date.format "MMMM" selected)
                     ]
                 , div [ class "dropdown-content" ]
-                    (listMonths model.selected Jump)
+                    (listMonths selected Jump)
                 ]
 
         Day ->
@@ -178,50 +202,60 @@ viewDropdownItem changeDate formatDate date =
 -- VIEW
 
 
+filterActivities : Date -> List Activity -> List Activity
+filterActivities date activities =
+    List.filter (\a -> a.date == date) activities
+
+
 view : Model -> List Activity -> ActivityState -> Html Msg
 view model activities activityM =
     let
-        selectedIdM =
+        (Model zoom start end selected today scrollCompleted) =
+            model
+
+        selectedIdM d =
             case activityM of
-                Editing { id } ->
-                    Just id
+                Editing { id, date } ->
+                    if d == date then
+                        id
 
-                None ->
-                    Nothing
+                    else
+                        ""
 
-        filterActivities =
-            \date -> List.filter (\a -> a.date == date) activities
+                _ ->
+                    ""
 
         body =
-            case model.zoom of
+            case zoom of
                 Year ->
-                    weekList model.start model.end
+                    weekList start end
                         |> List.map
                             (\d ->
-                                viewWeek filterActivities model.today model.selected d
+                                ( Date.toIsoString d, Html.Lazy.lazy4 viewWeek activities today selected d )
                             )
 
                 Month ->
-                    listDays model.start model.end
+                    listDays start end
                         |> List.map
                             (\d ->
-                                viewDay d (filterActivities d) (d == model.today) (d == model.selected) selectedIdM
+                                ( Date.toIsoString d, Html.Lazy.lazy5 viewDay activities (d == today) (d == selected) (selectedIdM d) (Date.toRataDie d) )
                             )
 
                 Day ->
                     let
                         d =
-                            model.selected
+                            selected
                     in
-                    [ viewDay d (filterActivities d) (d == model.today) (d == model.selected) selectedIdM ]
+                    [ ( Date.toIsoString d, Html.Lazy.lazy5 viewDay activities (d == today) (d == selected) (selectedIdM d) (Date.toRataDie d) ) ]
     in
     expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
-        [ column
+        [ Html.Keyed.node "div"
             [ id "calendar"
+            , class "column expand"
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
             , style "padding-right" "0.5rem"
-            , attributeIf model.scrollCompleted (onScroll <| scrollHandler model)
+            , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             ]
             body
         ]
@@ -272,8 +306,8 @@ returnScroll previousHeight =
 
 
 scrollHandler : Model -> ( Int -> Msg, Int -> Msg )
-scrollHandler model =
-    ( Date.add Date.Months -2 model.start, Date.add Date.Months 2 model.end )
+scrollHandler (Model zoom start end _ _ _) =
+    ( Date.add Date.Months -2 start, Date.add Date.Months 2 end )
         |> Tuple.mapBoth (Scroll True) (Scroll False)
 
 
@@ -283,7 +317,7 @@ scrollHandler model =
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    viewIf (model.zoom == Year) <|
+    viewIf ((model |> get |> .zoom) == Year) <|
         row [ borderStyle "border-bottom" ]
             (column [ style "min-width" "4rem" ] []
                 :: ([ "M", "T", "W", "T", "F", "S", "S" ]
@@ -296,16 +330,16 @@ viewHeader model =
             )
 
 
-viewWeek : (Date -> List Activity) -> Date -> Date -> Date -> Html Msg
-viewWeek filterActivities today selected start =
+viewWeek : List Activity -> Date -> Date -> Date -> Html Msg
+viewWeek allActivities today selected start =
     let
         dayViews =
             daysOfWeek start
-                |> List.map (\d -> viewWeekDay ( d, filterActivities d ) (d == today) (d == selected))
+                |> List.map (\d -> viewWeekDay ( d, filterActivities d allActivities ) (d == today) (d == selected))
 
         activities =
             daysOfWeek start
-                |> List.map (\d -> filterActivities d)
+                |> List.map (\d -> filterActivities d allActivities)
                 |> List.concat
 
         ( runDuration, otherDuration ) =
@@ -408,8 +442,15 @@ daysOfWeek start =
 -- MONTH VIEW
 
 
-viewDay : Date -> List Activity -> Bool -> Bool -> Maybe String -> Html Msg
-viewDay date activities isToday isSelected selectedIdM =
+viewDay : List Activity -> Bool -> Bool -> String -> Int -> Html Msg
+viewDay allActivities isToday isSelected selectedIdM rataDie =
+    let
+        activities =
+            filterActivities date allActivities
+
+        date =
+            Date.fromRataDie rataDie
+    in
     row
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")
@@ -439,7 +480,7 @@ viewDay date activities isToday isSelected selectedIdM =
         ]
 
 
-viewActivity : Maybe String -> Activity -> Html Msg
+viewActivity : String -> Activity -> Html Msg
 viewActivity selectedIdM activity =
     let
         level =
@@ -448,12 +489,7 @@ viewActivity selectedIdM activity =
                 |> Maybe.withDefault ""
 
         isSelected =
-            case selectedIdM of
-                Just id ->
-                    activity.id == id
-
-                Nothing ->
-                    False
+            activity.id == selectedIdM
     in
     a [ attributeIf (not isSelected) (onClick (EditActivity activity)) ]
         [ row [ style "margin-top" "1rem" ]

@@ -278,7 +278,7 @@ view levelM modelM =
     case modelM of
         Nothing ->
             row
-                [ style "transition" "max-height 1s, min-height 1s, border-width 1s"
+                [ style "transition" "max-height 1s, min-height 1s, border-width 1s 1s"
                 , style "min-height" "0"
                 , style "max-height" "0"
                 , borderStyle "border-bottom"
