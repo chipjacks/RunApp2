@@ -213,17 +213,22 @@ view model activities activityM =
         (Model zoom start end selected today scrollCompleted) =
             model
 
-        selectedIdM d =
+        isEditing activity =
             case activityM of
-                Editing { id, date } ->
-                    if d == date then
-                        id
-
-                    else
-                        ""
+                Editing { id } ->
+                    activity.id == id
 
                 _ ->
-                    ""
+                    False
+
+        dayRows date =
+            List.concat
+                [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
+                , filterActivities date activities
+                    |> List.map
+                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (isEditing activity) activity ))
+                , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
+                ]
 
         body =
             case zoom of
@@ -236,17 +241,10 @@ view model activities activityM =
 
                 Month ->
                     listDays start end
-                        |> List.map
-                            (\d ->
-                                ( Date.toIsoString d, Html.Lazy.lazy5 viewDay activities (d == today) (d == selected) (selectedIdM d) (Date.toRataDie d) )
-                            )
+                        |> List.concatMap dayRows
 
                 Day ->
-                    let
-                        d =
-                            selected
-                    in
-                    [ ( Date.toIsoString d, Html.Lazy.lazy5 viewDay activities (d == today) (d == selected) (selectedIdM d) (Date.toRataDie d) ) ]
+                    dayRows selected
     in
     expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
         [ Html.Keyed.node "div"
@@ -442,12 +440,9 @@ daysOfWeek start =
 -- MONTH VIEW
 
 
-viewDay : List Activity -> Bool -> Bool -> String -> Int -> Html Msg
-viewDay allActivities isToday isSelected selectedIdM rataDie =
+viewDay : Bool -> Bool -> Int -> Html Msg
+viewDay isToday isSelected rataDie =
     let
-        activities =
-            filterActivities date allActivities
-
         date =
             Date.fromRataDie rataDie
     in
@@ -455,44 +450,24 @@ viewDay allActivities isToday isSelected selectedIdM rataDie =
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")
         , attribute "data-date" (Date.toIsoString date)
-        , style "min-height" "3rem"
         , style "margin-bottom" "1rem"
+        , style "margin-top" "1rem"
+        , styleIf isToday "font-weight" "bold"
+        , onClick (ChangeZoom Day (Just date))
         ]
-        [ column []
-            [ row [ styleIf isToday "font-weight" "bold", onClick (ChangeZoom Day (Just date)) ]
-                [ text (Date.format "E MMM d" date)
-                ]
-            , row []
-                [ column [] (List.map (viewActivity selectedIdM) activities) ]
-            , row [ style "margin-top" "1rem" ]
-                [ compactColumn []
-                    [ a
-                        [ onClick (ClickedNewActivity date)
-                        , class "button tiny fas fa-plus"
-                        , style "font-size" "0.6rem"
-                        , style "padding" "0.3rem"
-                        , style "color" "var(--icon-gray)"
-                        ]
-                        []
-                    ]
-                ]
-            ]
-        ]
+        [ text (Date.format "E MMM d" date) ]
 
 
-viewActivity : String -> Activity -> Html Msg
-viewActivity selectedIdM activity =
+viewActivity : Bool -> Activity -> Html Msg
+viewActivity isSelected activity =
     let
         level =
             Activity.mprLevel activity
                 |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
-
-        isSelected =
-            activity.id == selectedIdM
     in
     a [ attributeIf (not isSelected) (onClick (EditActivity activity)) ]
-        [ row [ style "margin-top" "1rem" ]
+        [ row [ style "margin-bottom" "1rem" ]
             [ compactColumn [ style "flex-basis" "5rem" ] [ ActivityShape.view activity ]
             , column [ style "justify-content" "center" ] <|
                 if isSelected then
@@ -519,6 +494,22 @@ viewActivity selectedIdM activity =
                         , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                         ]
                     ]
+            ]
+        ]
+
+
+viewAddButton : Date -> Html Msg
+viewAddButton date =
+    row [ style "margin-bottom" "1rem" ]
+        [ compactColumn []
+            [ a
+                [ onClick (ClickedNewActivity date)
+                , class "button tiny fas fa-plus"
+                , style "font-size" "0.6rem"
+                , style "padding" "0.3rem"
+                , style "color" "var(--icon-gray)"
+                ]
+                []
             ]
         ]
 
