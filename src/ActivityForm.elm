@@ -274,27 +274,41 @@ view levelM modelM =
 
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
+
+        sharedAttributes =
+            [ borderStyle "border-bottom"
+            , style "position" "absolute"
+            , style "left" "0"
+            , style "right" "0"
+            , style "background-color" "white"
+            ]
     in
     case modelM of
         Nothing ->
             row
-                [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
-                , style "min-height" "0"
-                , style "max-height" "0"
-                , borderStyle "border-bottom"
-                , style "border-width" "0px"
-                ]
+                (List.concat
+                    [ [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
+                      , style "min-height" "0"
+                      , style "max-height" "0"
+                      , style "border-width" "0px"
+                      ]
+                    , sharedAttributes
+                    ]
+                )
                 []
 
         Just model ->
             row
-                [ style "transition" "max-height 1s, min-height 1s"
-                , style "max-height" "20rem"
-                , style "min-height" "5rem"
-                , style "padding" "1rem 1rem 1rem 1rem"
-                , borderStyle "border-bottom"
-                , style "border-width" "1px"
-                ]
+                (List.concat
+                    [ [ style "transition" "max-height 1s, min-height 1s"
+                      , style "max-height" "20rem"
+                      , style "min-height" "5rem"
+                      , style "padding" "1rem 1rem 1rem 1rem"
+                      , style "border-width" "1px"
+                      ]
+                    , sharedAttributes
+                    ]
+                )
                 [ viewShape model
                 , column []
                     [ row []
