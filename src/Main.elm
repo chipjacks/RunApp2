@@ -155,6 +155,38 @@ update msg model =
                     else
                         ( model, Cmd.none )
 
+                MouseMoved x y ->
+                    let
+                        newActivityM =
+                            case activityM of
+                                Moving activity _ _ ->
+                                    Moving activity x y
+
+                                _ ->
+                                    activityM
+                    in
+                    ( Loaded (State calendar store formM newActivityM), Cmd.none )
+
+                MouseReleased ->
+                    let
+                        newActivityM =
+                            case activityM of
+                                Moving activity _ _ ->
+                                    None
+
+                                _ ->
+                                    activityM
+                    in
+                    ( Loaded (State calendar store formM newActivityM), Cmd.none )
+
+                MoveTo date ->
+                    case activityM of
+                        Moving activity _ _ ->
+                            updateStore (Move date activity) state |> loaded
+
+                        _ ->
+                            ( model, Cmd.none )
+
                 NoOp ->
                     ( model, Cmd.none )
 
@@ -219,6 +251,9 @@ update msg model =
 
                 EditActivity activity ->
                     ( Loaded <| State calendar store (Just (ActivityForm.init activity)) (Editing activity), Cmd.none )
+
+                MoveActivity activity ->
+                    ( Loaded <| State calendar store formM (Moving activity 0 0), Cmd.none )
 
                 SelectedDate _ ->
                     updateActivityForm msg state
@@ -381,12 +416,27 @@ view model =
                     in
                     [ Html.Lazy.lazy (ActivityForm.view levelM) formM
                     , Html.Lazy.lazy Calendar.viewHeader calendar
-                    , Html.Lazy.lazy3 Calendar.view
-                        calendar
-                        activities
-                        activityM
+                    , Html.Lazy.lazy3 Calendar.view calendar activities activityM
+                    , Html.Lazy.lazy viewMovingActivity activityM
                     ]
         ]
+
+
+viewMovingActivity : ActivityState -> Html Msg
+viewMovingActivity activityState =
+    case activityState of
+        Moving activity x y ->
+            row
+                [ style "position" "fixed"
+                , style "left" (String.fromInt x ++ "px")
+                , style "top" (String.fromInt y ++ "px")
+                ]
+                [ compactColumn [ style "flex-basis" "5rem" ]
+                    [ ActivityShape.view activity ]
+                ]
+
+        _ ->
+            Html.text ""
 
 
 
@@ -398,10 +448,35 @@ keyPressDecoder =
         |> Decode.map KeyPressed
 
 
+mouseMoveDecoder =
+    Decode.map2 MouseMoved
+        (Decode.field "x" Decode.int)
+        (Decode.field "y" Decode.int)
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Ports.selectDateFromScroll ReceiveSelectDate
-        , Ports.visibilityChange VisibilityChange
-        , Events.onKeyPress keyPressDecoder
-        ]
+    case model of
+        Loaded (State _ _ formM activityM) ->
+            Sub.batch
+                [ Ports.selectDateFromScroll ReceiveSelectDate
+                , Ports.visibilityChange VisibilityChange
+                , case formM of
+                    Just form ->
+                        Events.onKeyPress keyPressDecoder
+
+                    Nothing ->
+                        Sub.none
+                , case activityM of
+                    Moving _ _ _ ->
+                        Sub.batch
+                            [ Events.onMouseMove mouseMoveDecoder
+                            , Events.onMouseUp (Decode.succeed MouseReleased)
+                            ]
+
+                    _ ->
+                        Sub.none
+                ]
+
+        _ ->
+            Sub.none
