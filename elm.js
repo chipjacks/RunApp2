@@ -13199,6 +13199,14 @@ var $author$project$ActivityForm$viewShape = function (model) {
 };
 var $author$project$ActivityForm$view = F2(
 	function (levelM, modelM) {
+		var sharedAttributes = _List_fromArray(
+			[
+				$author$project$Skeleton$borderStyle('border-bottom'),
+				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+				A2($elm$html$Html$Attributes$style, 'left', '0'),
+				A2($elm$html$Html$Attributes$style, 'right', '0'),
+				A2($elm$html$Html$Attributes$style, 'background-color', 'white')
+			]);
 		var dataInputs = F2(
 			function (form, result) {
 				switch (form.$) {
@@ -13287,28 +13295,36 @@ var $author$project$ActivityForm$view = F2(
 		if (modelM.$ === 1) {
 			return A2(
 				$author$project$Skeleton$row,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s'),
-						A2($elm$html$Html$Attributes$style, 'min-height', '0'),
-						A2($elm$html$Html$Attributes$style, 'max-height', '0'),
-						$author$project$Skeleton$borderStyle('border-bottom'),
-						A2($elm$html$Html$Attributes$style, 'border-width', '0px')
-					]),
+				$elm$core$List$concat(
+					_List_fromArray(
+						[
+							_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s'),
+								A2($elm$html$Html$Attributes$style, 'min-height', '0'),
+								A2($elm$html$Html$Attributes$style, 'max-height', '0'),
+								A2($elm$html$Html$Attributes$style, 'border-width', '0px')
+							]),
+							sharedAttributes
+						])),
 				_List_Nil);
 		} else {
 			var model = modelM.a;
 			return A2(
 				$author$project$Skeleton$row,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s'),
-						A2($elm$html$Html$Attributes$style, 'max-height', '20rem'),
-						A2($elm$html$Html$Attributes$style, 'min-height', '5rem'),
-						A2($elm$html$Html$Attributes$style, 'padding', '1rem 1rem 1rem 1rem'),
-						$author$project$Skeleton$borderStyle('border-bottom'),
-						A2($elm$html$Html$Attributes$style, 'border-width', '1px')
-					]),
+				$elm$core$List$concat(
+					_List_fromArray(
+						[
+							_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s'),
+								A2($elm$html$Html$Attributes$style, 'max-height', '20rem'),
+								A2($elm$html$Html$Attributes$style, 'min-height', '5rem'),
+								A2($elm$html$Html$Attributes$style, 'padding', '1rem 1rem 1rem 1rem'),
+								A2($elm$html$Html$Attributes$style, 'border-width', '1px')
+							]),
+							sharedAttributes
+						])),
 				_List_fromArray(
 					[
 						$author$project$ActivityForm$viewShape(model),
@@ -14230,7 +14246,10 @@ var $author$project$Main$view = function (model) {
 			[
 				A2(
 				$author$project$Skeleton$column,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'position', 'relative')
+					]),
 				function () {
 					switch (model.$) {
 						case 0:
