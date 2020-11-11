@@ -7383,7 +7383,6 @@ var $author$project$Skeleton$layout = F2(
 						]))
 				]));
 	});
-var $author$project$Msg$MouseReleased = {$: 5};
 var $author$project$Msg$ReceiveSelectDate = function (a) {
 	return {$: 19, a: a};
 };
@@ -7398,15 +7397,6 @@ var $author$project$Main$keyPressDecoder = A2(
 	$elm$json$Json$Decode$map,
 	$author$project$Msg$KeyPressed,
 	A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string));
-var $author$project$Msg$MouseMoved = F2(
-	function (a, b) {
-		return {$: 4, a: a, b: b};
-	});
-var $author$project$Main$mouseMoveDecoder = A3(
-	$elm$json$Json$Decode$map2,
-	$author$project$Msg$MouseMoved,
-	A2($elm$json$Json$Decode$field, 'x', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'y', $elm$json$Json$Decode$int));
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
 var $elm$browser$Browser$Events$Document = 0;
 var $elm$browser$Browser$Events$MySub = F3(
@@ -7685,8 +7675,6 @@ var $elm$browser$Browser$Events$on = F3(
 			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
 	});
 var $elm$browser$Browser$Events$onKeyPress = A2($elm$browser$Browser$Events$on, 0, 'keypress');
-var $elm$browser$Browser$Events$onMouseMove = A2($elm$browser$Browser$Events$on, 0, 'mousemove');
-var $elm$browser$Browser$Events$onMouseUp = A2($elm$browser$Browser$Events$on, 0, 'mouseup');
 var $author$project$Ports$selectDateFromScroll = _Platform_incomingPort('selectDateFromScroll', $elm$json$Json$Decode$string);
 var $author$project$Ports$visibilityChange = _Platform_incomingPort('visibilityChange', $elm$json$Json$Decode$string);
 var $author$project$Main$subscriptions = function (model) {
@@ -7703,19 +7691,6 @@ var $author$project$Main$subscriptions = function (model) {
 					if (!formM.$) {
 						var form = formM.a;
 						return $elm$browser$Browser$Events$onKeyPress($author$project$Main$keyPressDecoder);
-					} else {
-						return $elm$core$Platform$Sub$none;
-					}
-				}(),
-					function () {
-					if (activityM.$ === 1) {
-						return $elm$core$Platform$Sub$batch(
-							_List_fromArray(
-								[
-									$elm$browser$Browser$Events$onMouseMove($author$project$Main$mouseMoveDecoder),
-									$elm$browser$Browser$Events$onMouseUp(
-									$elm$json$Json$Decode$succeed($author$project$Msg$MouseReleased))
-								]));
 					} else {
 						return $elm$core$Platform$Sub$none;
 					}
@@ -9288,6 +9263,8 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
+var $elm$core$Basics$round = _Basics_round;
+var $author$project$Ports$scrollCalendarBy = _Platform_outgoingPort('scrollCalendarBy', $elm$json$Json$Encode$int);
 var $author$project$Msg$Delete = function (a) {
 	return {$: 12, a: a};
 };
@@ -10038,7 +10015,8 @@ var $author$project$Main$update = F2(
 						return _Utils_Tuple2(
 							$author$project$Main$Loaded(
 								A4($author$project$Main$State, calendar, store, formM, newActivityM)),
-							$elm$core$Platform$Cmd$none);
+							$author$project$Ports$scrollCalendarBy(
+								$elm$core$Basics$round(y)));
 					case 5:
 						var newActivityM = function () {
 							if (activityM.$ === 1) {
@@ -10265,6 +10243,7 @@ var $author$project$Main$updateLoading = function (model) {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	}
 };
+var $author$project$Msg$MouseReleased = {$: 5};
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Skeleton$borderStyle = function (position) {
@@ -10478,6 +10457,27 @@ var $elm$virtual_dom$VirtualDom$lazy = _VirtualDom_lazy;
 var $elm$html$Html$Lazy$lazy = $elm$virtual_dom$VirtualDom$lazy;
 var $elm$virtual_dom$VirtualDom$lazy3 = _VirtualDom_lazy3;
 var $elm$html$Html$Lazy$lazy3 = $elm$virtual_dom$VirtualDom$lazy3;
+var $author$project$Msg$MouseMoved = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var $elm$json$Json$Decode$float = _Json_decodeFloat;
+var $author$project$Main$mouseMoveDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Msg$MouseMoved,
+	A2($elm$json$Json$Decode$field, 'x', $elm$json$Json$Decode$float),
+	A2($elm$json$Json$Decode$field, 'y', $elm$json$Json$Decode$float));
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Msg$EditedDescription = function (a) {
@@ -10522,17 +10522,6 @@ var $author$project$Skeleton$compactColumn = F2(
 	});
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 0, a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
 var $elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
@@ -13645,12 +13634,6 @@ var $author$project$Msg$EditActivity = function (a) {
 var $author$project$Msg$MoveActivity = function (a) {
 	return {$: 20, a: a};
 };
-var $elm$html$Html$Events$onMouseDown = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'mousedown',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $author$project$Msg$ClickedCopy = function (a) {
 	return {$: 34, a: a};
 };
@@ -13786,8 +13769,12 @@ var $author$project$Calendar$viewActivity = F2(
 					$author$project$Skeleton$compactColumn,
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onMouseDown(
-							$author$project$Msg$MoveActivity(activity)),
+							A2(
+							$elm$html$Html$Events$on,
+							'pointerdown',
+							$elm$json$Json$Decode$succeed(
+								$author$project$Msg$MoveActivity(activity))),
+							A2($elm$html$Html$Attributes$style, 'touch-action', 'none'),
 							A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
 						]),
 					_List_fromArray(
@@ -13921,12 +13908,6 @@ var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $justinmimbs$date$Date$fromRataDie = function (rd) {
 	return rd;
 };
-var $elm$html$Html$Events$onMouseOver = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'mouseover',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $author$project$Skeleton$styleIf = F3(
 	function (bool, name, value) {
 		return bool ? A2($elm$html$Html$Attributes$style, name, value) : A2($elm$html$Html$Attributes$style, '', '');
@@ -13958,8 +13939,11 @@ var $author$project$Calendar$viewDay = F3(
 						$author$project$Msg$ChangeZoom,
 						2,
 						$elm$core$Maybe$Just(date))),
-					$elm$html$Html$Events$onMouseOver(
-					$author$project$Msg$MoveTo(date))
+					A2(
+					$elm$html$Html$Events$on,
+					'pointerenter',
+					$elm$json$Json$Decode$succeed(
+						$author$project$Msg$MoveTo(date)))
 				]),
 			_List_fromArray(
 				[
@@ -14370,11 +14354,11 @@ var $author$project$Main$viewMovingActivity = function (activityState) {
 					A2(
 					$elm$html$Html$Attributes$style,
 					'left',
-					$elm$core$String$fromInt(x) + 'px'),
+					$elm$core$String$fromFloat(x) + 'px'),
 					A2(
 					$elm$html$Html$Attributes$style,
 					'top',
-					$elm$core$String$fromInt(y) + 'px')
+					$elm$core$String$fromFloat(y) + 'px')
 				]),
 			_List_fromArray(
 				[
@@ -14404,51 +14388,60 @@ var $author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
-				A2(
-				$author$project$Skeleton$column,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'relative')
-					]),
 				function () {
-					switch (model.$) {
-						case 0:
-							return _List_fromArray(
+				switch (model.$) {
+					case 0:
+						return A2(
+							$author$project$Skeleton$column,
+							_List_Nil,
+							_List_fromArray(
 								[
-									A2(
-									$author$project$Skeleton$row,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text('Loading')
-										]))
-								]);
-						case 2:
-							var errorString = model.a;
-							return _List_fromArray(
+									$elm$html$Html$text('Loading')
+								]));
+					case 2:
+						var errorString = model.a;
+						return A2(
+							$author$project$Skeleton$column,
+							_List_Nil,
+							_List_fromArray(
 								[
-									A2(
-									$author$project$Skeleton$row,
-									_List_Nil,
-									_List_fromArray(
-										[
-											$elm$html$Html$text(errorString)
-										]))
-								]);
-						default:
-							var _v1 = model.a;
-							var calendar = _v1.a;
-							var store = _v1.b;
-							var formM = _v1.c;
-							var activityM = _v1.d;
-							var activities = A2(
-								$author$project$Store$get,
-								store,
-								function ($) {
-									return $.a7;
-								});
-							var levelM = $author$project$Main$calculateLevel(activities);
-							return _List_fromArray(
+									$elm$html$Html$text(errorString)
+								]));
+					default:
+						var _v1 = model.a;
+						var calendar = _v1.a;
+						var store = _v1.b;
+						var formM = _v1.c;
+						var activityM = _v1.d;
+						var events = function () {
+							if (activityM.$ === 1) {
+								return _List_fromArray(
+									[
+										A2($elm$html$Html$Events$on, 'pointermove', $author$project$Main$mouseMoveDecoder),
+										A2(
+										$elm$html$Html$Events$on,
+										'pointerup',
+										$elm$json$Json$Decode$succeed($author$project$Msg$MouseReleased)),
+										A2($elm$html$Html$Attributes$style, 'touch-action', 'none')
+									]);
+							} else {
+								return _List_Nil;
+							}
+						}();
+						var activities = A2(
+							$author$project$Store$get,
+							store,
+							function ($) {
+								return $.a7;
+							});
+						var levelM = $author$project$Main$calculateLevel(activities);
+						return A2(
+							$author$project$Skeleton$column,
+							A2(
+								$elm$core$List$cons,
+								A2($elm$html$Html$Attributes$style, 'position', 'relative'),
+								events),
+							_List_fromArray(
 								[
 									A2(
 									$elm$html$Html$Lazy$lazy,
@@ -14457,9 +14450,9 @@ var $author$project$Main$view = function (model) {
 									A2($elm$html$Html$Lazy$lazy, $author$project$Calendar$viewHeader, calendar),
 									A4($elm$html$Html$Lazy$lazy3, $author$project$Calendar$view, calendar, activities, activityM),
 									A2($elm$html$Html$Lazy$lazy, $author$project$Main$viewMovingActivity, activityM)
-								]);
-					}
-				}())
+								]));
+				}
+			}()
 			]));
 };
 var $elm$core$List$isEmpty = function (xs) {
