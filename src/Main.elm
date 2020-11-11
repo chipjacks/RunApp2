@@ -165,7 +165,7 @@ update msg model =
                                 _ ->
                                     activityM
                     in
-                    ( Loaded (State calendar store formM newActivityM), Cmd.none )
+                    ( Loaded (State calendar store formM newActivityM), Ports.scrollCalendarBy (round y) )
 
                 MouseReleased ->
                     let
