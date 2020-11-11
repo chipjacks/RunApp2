@@ -482,7 +482,7 @@ viewActivity state activity =
     row [ style "margin-bottom" "1rem" ]
         [ compactColumn
             [ Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity))
-            , style "touch-action" "none"
+            , style "pointer-action" "none"
             , style "flex-basis" "5rem"
             ]
             [ ActivityShape.view activity ]
