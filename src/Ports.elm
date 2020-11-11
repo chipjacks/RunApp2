@@ -1,6 +1,10 @@
-port module Ports exposing (scrollToSelectedDate, selectDateFromScroll, visibilityChange)
+port module Ports exposing (scrollCalendarBy, scrollToSelectedDate, selectDateFromScroll, visibilityChange)
+
 
 port scrollToSelectedDate : () -> Cmd msg
+
+
+port scrollCalendarBy : Int -> Cmd msg
 
 
 port selectDateFromScroll : (String -> msg) -> Sub msg

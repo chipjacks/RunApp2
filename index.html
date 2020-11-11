@@ -5,6 +5,7 @@
     <title>RunApp2</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="elm.js" charset="utf-8"></script>
+    <script src="elm-pep.js" charset="utf-8"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="manifest" href="manifest.json">
@@ -62,8 +63,23 @@
         }, 100);
       });
 
+      const autoScrollConfig = { margin: 50, distance: 100 }
+      app.ports.scrollCalendarBy.subscribe(function(y) {
+        const calendar = document.getElementById('calendar');
+        const boundingBox = calendar.getBoundingClientRect();
+        if (y < boundingBox.top + autoScrollConfig.margin) {
+          calendar.scrollBy({top: -autoScrollConfig.distance, behavior: 'smooth'});
+        } else if (y > boundingBox.top + boundingBox.height - autoScrollConfig.margin) {
+          calendar.scrollBy({top: autoScrollConfig.distance, behavior: 'smooth'});
+        }
+      })
+
       document.addEventListener('visibilitychange', function() {
         app.ports.visibilityChange.send(document.visibilityState);
+      });
+
+      document.addEventListener('gotpointercapture', (e) => {
+        e.target.releasePointerCapture(e.pointerId)
       });
     </script>
   </body>

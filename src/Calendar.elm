@@ -466,7 +466,7 @@ viewDay isToday isSelected rataDie =
         , style "margin-top" "1rem"
         , styleIf isToday "font-weight" "bold"
         , onClick (ChangeZoom Day (Just date))
-        , onMouseOver (MoveTo date)
+        , Html.Events.on "pointerenter" (Decode.succeed (MoveTo date))
         ]
         [ text (Date.format "E MMM d" date) ]
 
@@ -480,7 +480,11 @@ viewActivity state activity =
                 |> Maybe.withDefault ""
     in
     row [ style "margin-bottom" "1rem" ]
-        [ compactColumn [ onMouseDown (MoveActivity activity), style "flex-basis" "5rem" ]
+        [ compactColumn
+            [ Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity))
+            , style "touch-action" "none"
+            , style "flex-basis" "5rem"
+            ]
             [ ActivityShape.view activity ]
         , case state of
             Editing _ ->

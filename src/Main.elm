@@ -165,7 +165,7 @@ update msg model =
                                 _ ->
                                     activityM
                     in
-                    ( Loaded (State calendar store formM newActivityM), Cmd.none )
+                    ( Loaded (State calendar store formM newActivityM), Ports.scrollCalendarBy (round y) )
 
                 MouseReleased ->
                     let
@@ -397,23 +397,35 @@ calculateLevel activities =
 
 view : Model -> Html Msg
 view model =
-    expandingRow [ id "home", borderStyle "border-left", borderStyle "border-right" ]
-        [ column [ style "position" "relative" ] <|
-            case model of
-                Loading _ _ ->
-                    [ row [] [ text "Loading" ] ]
+    expandingRow
+        [ id "home"
+        , borderStyle "border-left"
+        , borderStyle "border-right"
+        ]
+        [ case model of
+            Loading _ _ ->
+                column [] [ text "Loading" ]
 
-                Error errorString ->
-                    [ row [] [ text errorString ] ]
+            Error errorString ->
+                column [] [ text errorString ]
 
-                Loaded (State calendar store formM activityM) ->
-                    let
-                        activities =
-                            Store.get store .activities
+            Loaded (State calendar store formM activityM) ->
+                let
+                    activities =
+                        Store.get store .activities
 
-                        levelM =
-                            calculateLevel activities
-                    in
+                    levelM =
+                        calculateLevel activities
+
+                    events =
+                        case activityM of
+                            Moving _ _ _ ->
+                                [ Html.Events.on "pointermove" mouseMoveDecoder, Html.Events.on "pointerup" (Decode.succeed MouseReleased), style "touch-action" "none" ]
+
+                            _ ->
+                                []
+                in
+                column (style "position" "relative" :: events)
                     [ Html.Lazy.lazy (ActivityForm.view levelM) formM
                     , Html.Lazy.lazy Calendar.viewHeader calendar
                     , Html.Lazy.lazy3 Calendar.view calendar activities activityM
@@ -428,8 +440,8 @@ viewMovingActivity activityState =
         Moving activity x y ->
             row
                 [ style "position" "fixed"
-                , style "left" (String.fromInt x ++ "px")
-                , style "top" (String.fromInt y ++ "px")
+                , style "left" (String.fromFloat x ++ "px")
+                , style "top" (String.fromFloat y ++ "px")
                 ]
                 [ compactColumn [ style "flex-basis" "5rem" ]
                     [ ActivityShape.view activity ]
@@ -439,6 +451,12 @@ viewMovingActivity activityState =
             Html.text ""
 
 
+mouseMoveDecoder =
+    Decode.map2 MouseMoved
+        (Decode.field "x" Decode.float)
+        (Decode.field "y" Decode.float)
+
+
 
 -- SUBSCRIPTIONS
 
@@ -446,12 +464,6 @@ viewMovingActivity activityState =
 keyPressDecoder =
     Decode.field "key" Decode.string
         |> Decode.map KeyPressed
-
-
-mouseMoveDecoder =
-    Decode.map2 MouseMoved
-        (Decode.field "x" Decode.int)
-        (Decode.field "y" Decode.int)
 
 
 subscriptions : Model -> Sub Msg
@@ -466,15 +478,6 @@ subscriptions model =
                         Events.onKeyPress keyPressDecoder
 
                     Nothing ->
-                        Sub.none
-                , case activityM of
-                    Moving _ _ _ ->
-                        Sub.batch
-                            [ Events.onMouseMove mouseMoveDecoder
-                            , Events.onMouseUp (Decode.succeed MouseReleased)
-                            ]
-
-                    _ ->
                         Sub.none
                 ]
 
