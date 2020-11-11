@@ -13774,7 +13774,7 @@ var $author$project$Calendar$viewActivity = F2(
 							'pointerdown',
 							$elm$json$Json$Decode$succeed(
 								$author$project$Msg$MoveActivity(activity))),
-							A2($elm$html$Html$Attributes$style, 'touch-action', 'none'),
+							A2($elm$html$Html$Attributes$style, 'pointer-action', 'none'),
 							A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
 						]),
 					_List_fromArray(
@@ -14422,7 +14422,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Events$on,
 										'pointerup',
 										$elm$json$Json$Decode$succeed($author$project$Msg$MouseReleased)),
-										A2($elm$html$Html$Attributes$style, 'touch-action', 'none')
+										A2($elm$html$Html$Attributes$style, 'pointer-action', 'none')
 									]);
 							} else {
 								return _List_Nil;
