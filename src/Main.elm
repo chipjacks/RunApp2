@@ -420,7 +420,7 @@ view model =
                     events =
                         case activityM of
                             Moving _ _ _ ->
-                                [ Html.Events.on "pointermove" mouseMoveDecoder, Html.Events.on "pointerup" (Decode.succeed MouseReleased), style "touch-action" "none" ]
+                                [ Html.Events.on "pointermove" mouseMoveDecoder, Html.Events.on "pointerup" (Decode.succeed MouseReleased), style "pointer-action" "none" ]
 
                             _ ->
                                 []
