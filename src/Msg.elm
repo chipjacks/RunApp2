@@ -21,7 +21,7 @@ type DataForm
 
 type ActivityState
     = Editing Activity
-    | Moving Activity Int Int
+    | Moving Activity Float Float
     | None
 
 
@@ -30,7 +30,7 @@ type Msg
     | GotActivities (Result String (List Activity))
     | VisibilityChange String
     | KeyPressed String
-    | MouseMoved Int Int
+    | MouseMoved Float Float
     | MouseReleased
     | MoveTo Date
     | NoOp
