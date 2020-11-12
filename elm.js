@@ -7354,7 +7354,7 @@ var $author$project$Skeleton$layout = F2(
 					$author$project$Skeleton$row,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('navbar')
+							$elm$html$Html$Attributes$class('navbar no-touching')
 						]),
 					_List_fromArray(
 						[
@@ -10153,7 +10153,7 @@ var $author$project$Main$update = F2(
 									calendar,
 									store,
 									formM,
-									A3($author$project$Msg$Moving, activity, 0, 0))),
+									A3($author$project$Msg$Moving, activity, -100, -100))),
 							$elm$core$Platform$Cmd$none);
 					case 24:
 						return $author$project$Main$loaded(
@@ -13289,7 +13289,8 @@ var $author$project$ActivityForm$view = F2(
 				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 				A2($elm$html$Html$Attributes$style, 'left', '0'),
 				A2($elm$html$Html$Attributes$style, 'right', '0'),
-				A2($elm$html$Html$Attributes$style, 'background-color', 'white')
+				A2($elm$html$Html$Attributes$style, 'background-color', 'white'),
+				A2($elm$html$Html$Attributes$style, 'z-index', '2')
 			]);
 		var dataInputs = F2(
 			function (form, result) {
@@ -13774,7 +13775,7 @@ var $author$project$Calendar$viewActivity = F2(
 							'pointerdown',
 							$elm$json$Json$Decode$succeed(
 								$author$project$Msg$MoveActivity(activity))),
-							A2($elm$html$Html$Attributes$style, 'pointer-action', 'none'),
+							$elm$html$Html$Attributes$class('no-touching'),
 							A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
 						]),
 					_List_fromArray(
@@ -14290,7 +14291,6 @@ var $author$project$Calendar$view = F3(
 							A2($elm$html$Html$Attributes$style, 'overflow-y', 'scroll'),
 							A2($elm$html$Html$Attributes$style, 'overflow-x', 'hidden'),
 							A2($elm$html$Html$Attributes$style, 'padding-right', '0.5rem'),
-							A2($elm$html$Html$Attributes$style, 'user-select', 'none'),
 							A2(
 							$author$project$Skeleton$attributeIf,
 							scrollCompleted,
@@ -14358,7 +14358,8 @@ var $author$project$Main$viewMovingActivity = function (activityState) {
 					A2(
 					$elm$html$Html$Attributes$style,
 					'top',
-					$elm$core$String$fromFloat(y) + 'px')
+					$elm$core$String$fromFloat(y) + 'px'),
+					A2($elm$html$Html$Attributes$style, 'z-index', '3')
 				]),
 			_List_fromArray(
 				[
@@ -14422,7 +14423,7 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$Events$on,
 										'pointerup',
 										$elm$json$Json$Decode$succeed($author$project$Msg$MouseReleased)),
-										A2($elm$html$Html$Attributes$style, 'pointer-action', 'none')
+										$elm$html$Html$Attributes$class('no-touching')
 									]);
 							} else {
 								return _List_Nil;
