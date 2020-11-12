@@ -165,7 +165,9 @@ update msg model =
                                 _ ->
                                     activityM
                     in
-                    ( Loaded (State calendar store formM newActivityM), Ports.scrollCalendarBy (round y) )
+                    ( Loaded (State calendar store formM newActivityM)
+                    , Ports.scrollCalendarBy (round y)
+                    )
 
                 MouseReleased ->
                     let
@@ -253,7 +255,7 @@ update msg model =
                     ( Loaded <| State calendar store (Just (ActivityForm.init activity)) (Editing activity), Cmd.none )
 
                 MoveActivity activity ->
-                    ( Loaded <| State calendar store formM (Moving activity 0 0), Cmd.none )
+                    ( Loaded <| State calendar store formM (Moving activity -100 -100), Cmd.none )
 
                 SelectedDate _ ->
                     updateActivityForm msg state
@@ -420,7 +422,10 @@ view model =
                     events =
                         case activityM of
                             Moving _ _ _ ->
-                                [ Html.Events.on "pointermove" mouseMoveDecoder, Html.Events.on "pointerup" (Decode.succeed MouseReleased), style "pointer-action" "none" ]
+                                [ Html.Events.on "pointermove" mouseMoveDecoder
+                                , Html.Events.on "pointerup" (Decode.succeed MouseReleased)
+                                , class "no-touching"
+                                ]
 
                             _ ->
                                 []
@@ -442,6 +447,7 @@ viewMovingActivity activityState =
                 [ style "position" "fixed"
                 , style "left" (String.fromFloat x ++ "px")
                 , style "top" (String.fromFloat y ++ "px")
+                , style "z-index" "3"
                 ]
                 [ compactColumn [ style "flex-basis" "5rem" ]
                     [ ActivityShape.view activity ]

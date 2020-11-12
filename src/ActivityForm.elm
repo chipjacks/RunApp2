@@ -281,6 +281,7 @@ view levelM modelM =
             , style "left" "0"
             , style "right" "0"
             , style "background-color" "white"
+            , style "z-index" "2"
             ]
     in
     case modelM of

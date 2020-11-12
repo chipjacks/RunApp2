@@ -264,7 +264,6 @@ view model activities activityM =
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
             , style "padding-right" "0.5rem"
-            , style "user-select" "none"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             ]
             body
@@ -482,7 +481,7 @@ viewActivity state activity =
     row [ style "margin-bottom" "1rem" ]
         [ compactColumn
             [ Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity))
-            , style "pointer-action" "none"
+            , class "no-touching"
             , style "flex-basis" "5rem"
             ]
             [ ActivityShape.view activity ]

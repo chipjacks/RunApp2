@@ -63,14 +63,15 @@
         }, 100);
       });
 
-      const autoScrollConfig = { margin: 50, distance: 100 }
       app.ports.scrollCalendarBy.subscribe(function(y) {
         const calendar = document.getElementById('calendar');
         const boundingBox = calendar.getBoundingClientRect();
-        if (y < boundingBox.top + autoScrollConfig.margin) {
-          calendar.scrollBy({top: -autoScrollConfig.distance, behavior: 'smooth'});
-        } else if (y > boundingBox.top + boundingBox.height - autoScrollConfig.margin) {
-          calendar.scrollBy({top: autoScrollConfig.distance, behavior: 'smooth'});
+        const margin = Math.min(100, boundingBox.height * 0.1);
+        const distance = Math.min(50, boundingBox.height * 0.1);
+        if (y < boundingBox.top + margin) {
+          calendar.scrollBy({top: -distance, left: 0});
+        } else if (y > boundingBox.top + boundingBox.height - margin) {
+          calendar.scrollBy({top: distance, left: 0});
         }
       })
 
