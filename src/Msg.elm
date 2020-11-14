@@ -1,4 +1,4 @@
-module Msg exposing (ActivityState(..), DataForm(..), Msg(..), Zoom(..))
+module Msg exposing (ActivityForm, ActivityState(..), DataForm(..), FormError(..), Msg(..), Zoom(..))
 
 import Activity exposing (Activity)
 import Browser.Dom as Dom
@@ -12,6 +12,20 @@ type Zoom
     | Day
 
 
+type alias ActivityForm =
+    { id : Activity.Id
+    , date : Maybe Date
+    , description : String
+    , result : Result FormError Activity
+    , dataForm : DataForm
+    }
+
+
+type FormError
+    = ApiError
+    | EmptyFieldError String
+
+
 type DataForm
     = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
@@ -20,7 +34,8 @@ type DataForm
 
 
 type ActivityState
-    = Editing Activity
+    = Selected Activity
+    | Editing ActivityForm
     | Moving Activity Float Float
     | None
 
@@ -52,6 +67,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
+    | SelectActivity Activity
     | EditActivity Activity
     | SelectedDate Date
     | SelectedShape Activity.ActivityData
@@ -62,8 +78,6 @@ type Msg
     | SelectedPace String
     | SelectedDistance String
     | ClickedSubmit
-    | ClickedDelete
     | ClickedCopy Activity
-    | ClickedMove
-    | ClickedShift Bool
+    | ClickedMove Activity
     | NewId String

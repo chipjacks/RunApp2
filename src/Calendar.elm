@@ -215,6 +215,13 @@ view model activities activityM =
 
         activityState a =
             case activityM of
+                Selected { id } ->
+                    if a.id == id then
+                        activityM
+
+                    else
+                        None
+
                 Editing { id } ->
                     if a.id == id then
                         activityM
@@ -486,12 +493,8 @@ viewActivity state activity =
             ]
             [ ActivityShape.view activity ]
         , case state of
-            Editing _ ->
-                column [ style "justify-content" "center" ]
-                    [ viewButtons activity ]
-
-            _ ->
-                a [ onClick (EditActivity activity), class "column expand", style "justify-content" "center" ]
+            None ->
+                a [ onClick (SelectActivity activity), class "column expand", style "justify-content" "center" ]
                     [ row [] [ text activity.description ]
                     , row [ style "font-size" "0.8rem" ]
                         [ column []
@@ -512,6 +515,10 @@ viewActivity state activity =
                         , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                         ]
                     ]
+
+            _ ->
+                column [ style "justify-content" "center" ]
+                    [ viewButtons activity ]
         ]
 
 
@@ -539,9 +546,11 @@ listDays start end =
 viewButtons : Activity -> Html Msg
 viewButtons activity =
     row [ style "flex-wrap" "wrap" ]
-        [ a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift True) ] [ i [ class "fas fa-arrow-up" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedShift False) ] [ i [ class "fas fa-arrow-down" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedMove ] [ i [ class "fas fa-arrow-right" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick ClickedDelete ] [ i [ class "fas fa-times" ] [] ]
+        [ a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
+        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
         ]

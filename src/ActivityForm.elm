@@ -1,4 +1,4 @@
-module ActivityForm exposing (Model, init, isEditing, update, view)
+module ActivityForm exposing (init, initMove, isEditing, update, view)
 
 import Activity exposing (Activity, ActivityData, Minutes)
 import ActivityShape
@@ -12,7 +12,7 @@ import Html.Events exposing (on, onClick, onFocus, onInput)
 import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
-import Msg exposing (DataForm(..), Msg(..))
+import Msg exposing (ActivityForm, DataForm(..), FormError(..), Msg(..))
 import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
@@ -24,25 +24,11 @@ import Task exposing (Task)
 -}
 
 
-type alias Model =
-    { id : Activity.Id
-    , date : Maybe Date
-    , description : String
-    , result : Result Error Activity
-    , dataForm : DataForm
-    }
-
-
-type Error
-    = ApiError
-    | EmptyFieldError String
-
-
-init : Activity -> Model
+init : Activity -> ActivityForm
 init activity =
     let
         baseModel =
-            Model activity.id (Just activity.date) activity.description (Ok activity)
+            ActivityForm activity.id (Just activity.date) activity.description (Ok activity)
     in
     baseModel <|
         case activity.data of
@@ -59,7 +45,16 @@ init activity =
                 NoteForm { emoji = emoji_ }
 
 
-apply : (Activity -> Msg) -> Model -> Msg
+initMove : Activity -> ActivityForm
+initMove activity =
+    let
+        model =
+            init activity
+    in
+    { model | date = Nothing }
+
+
+apply : (Activity -> Msg) -> ActivityForm -> Msg
 apply toMsg { result } =
     case result of
         Ok activity ->
@@ -69,12 +64,12 @@ apply toMsg { result } =
             NoOp
 
 
-isEditing : Activity -> Model -> Bool
+isEditing : Activity -> ActivityForm -> Bool
 isEditing activity { id } =
     activity.id == id
 
 
-validateFieldExists : Maybe a -> String -> Result Error a
+validateFieldExists : Maybe a -> String -> Result FormError a
 validateFieldExists fieldM fieldName =
     case fieldM of
         Just field ->
@@ -84,7 +79,7 @@ validateFieldExists fieldM fieldName =
             Err <| EmptyFieldError fieldName
 
 
-validate : Model -> Result Error Activity
+validate : ActivityForm -> Result FormError Activity
 validate model =
     Result.map2
         (\date description ->
@@ -98,7 +93,7 @@ validate model =
         (validateFieldExists (Just model.description) "description")
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> ActivityForm -> ( ActivityForm, Cmd Msg )
 update msg model =
     case msg of
         SelectedDate date ->
@@ -180,15 +175,6 @@ update msg model =
         ClickedSubmit ->
             ( model, Store.cmd (apply Update model) )
 
-        ClickedDelete ->
-            ( model, Store.cmd (apply Delete model) )
-
-        ClickedMove ->
-            ( { model | date = Nothing }, Cmd.none )
-
-        ClickedShift up ->
-            ( model, Store.cmd (apply (Shift up) model) )
-
         _ ->
             ( model, Cmd.none )
 
@@ -245,12 +231,12 @@ updateDistance distanceStr dataForm =
             dataForm
 
 
-updateResult : Model -> Model
+updateResult : ActivityForm -> ActivityForm
 updateResult model =
     { model | result = validate model }
 
 
-view : Maybe Int -> Maybe Model -> Html Msg
+view : Maybe Int -> Maybe ActivityForm -> Html Msg
 view levelM modelM =
     let
         dataInputs form result =
@@ -337,7 +323,7 @@ view levelM modelM =
                 ]
 
 
-viewShape : Model -> Html Msg
+viewShape : ActivityForm -> Html Msg
 viewShape model =
     let
         activityShape =
@@ -354,7 +340,7 @@ viewShape model =
         [ activityShape ]
 
 
-shapeSelect : Model -> Html Msg
+shapeSelect : ActivityForm -> Html Msg
 shapeSelect model =
     let
         { duration, pace, distance, emoji, completed } =
@@ -583,7 +569,7 @@ distanceSelect msg distance =
         ]
 
 
-viewError : Result Error Activity -> Html Msg
+viewError : Result FormError Activity -> Html Msg
 viewError errorR =
     case errorR of
         Err error ->
@@ -593,7 +579,7 @@ viewError errorR =
             div [ class "error" ] []
 
 
-errorMessage : Error -> String
+errorMessage : FormError -> String
 errorMessage error =
     case error of
         EmptyFieldError field ->
