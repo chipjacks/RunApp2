@@ -4191,7 +4191,7 @@ function _Browser_getViewport()
 		a0: {
 			a3: _Browser_window.pageXOffset,
 			a4: _Browser_window.pageYOffset,
-			P: _Browser_doc.documentElement.clientWidth,
+			O: _Browser_doc.documentElement.clientWidth,
 			I: _Browser_doc.documentElement.clientHeight
 		}
 	};
@@ -4202,7 +4202,7 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		P: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		O: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
 		I: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
@@ -4227,13 +4227,13 @@ function _Browser_getViewportOf(id)
 	{
 		return {
 			aS: {
-				P: node.scrollWidth,
+				O: node.scrollWidth,
 				I: node.scrollHeight
 			},
 			a0: {
 				a3: node.scrollLeft,
 				a4: node.scrollTop,
-				P: node.clientWidth,
+				O: node.clientWidth,
 				I: node.clientHeight
 			}
 		};
@@ -4268,13 +4268,13 @@ function _Browser_getElement(id)
 			a0: {
 				a3: x,
 				a4: y,
-				P: _Browser_doc.documentElement.clientWidth,
+				O: _Browser_doc.documentElement.clientWidth,
 				I: _Browser_doc.documentElement.clientHeight
 			},
 			bd: {
 				a3: x + rect.left,
 				a4: y + rect.top,
-				P: rect.width,
+				O: rect.width,
 				I: rect.height
 			}
 		};
@@ -5107,10 +5107,10 @@ var $elm$core$Array$builderToArray = F2(
 		if (!builder.g) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.j),
+				$elm$core$Elm$JsArray$length(builder.i),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.j);
+				builder.i);
 		} else {
 			var treeLen = builder.g * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
@@ -5119,10 +5119,10 @@ var $elm$core$Array$builderToArray = F2(
 			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.g);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.j) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.i) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.j);
+				builder.i);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -5135,7 +5135,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{k: nodeList, g: (len / $elm$core$Array$branchFactor) | 0, j: tail});
+					{k: nodeList, g: (len / $elm$core$Array$branchFactor) | 0, i: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5738,7 +5738,7 @@ var $author$project$Enum$create = F2(
 			as: function (string) {
 				return A2($elm$core$Dict$get, string, dict);
 			},
-			Q: list2,
+			P: list2,
 			bC: toStr
 		};
 	});
@@ -7680,19 +7680,22 @@ var $author$project$Ports$visibilityChange = _Platform_incomingPort('visibilityC
 var $author$project$Main$subscriptions = function (model) {
 	if (model.$ === 1) {
 		var _v1 = model.a;
-		var formM = _v1.c;
-		var activityM = _v1.d;
+		var activityM = _v1.c;
 		return $elm$core$Platform$Sub$batch(
 			_List_fromArray(
 				[
 					$author$project$Ports$selectDateFromScroll($author$project$Msg$ReceiveSelectDate),
 					$author$project$Ports$visibilityChange($author$project$Msg$VisibilityChange),
 					function () {
-					if (!formM.$) {
-						var form = formM.a;
-						return $elm$browser$Browser$Events$onKeyPress($author$project$Main$keyPressDecoder);
-					} else {
-						return $elm$core$Platform$Sub$none;
+					switch (activityM.$) {
+						case 1:
+							var form = activityM.a;
+							return $elm$browser$Browser$Events$onKeyPress($author$project$Main$keyPressDecoder);
+						case 0:
+							var form = activityM.a;
+							return $elm$browser$Browser$Events$onKeyPress($author$project$Main$keyPressDecoder);
+						default:
+							return $elm$core$Platform$Sub$none;
 					}
 				}()
 				]));
@@ -7704,12 +7707,12 @@ var $author$project$Msg$ChangeZoom = F2(
 	function (a, b) {
 		return {$: 16, a: a, b: b};
 	});
-var $author$project$Msg$ClickedSubmit = {$: 32};
+var $author$project$Msg$ClickedSubmit = {$: 33};
 var $author$project$Msg$Create = function (a) {
 	return {$: 8, a: a};
 };
 var $author$project$Msg$Editing = function (a) {
-	return {$: 0, a: a};
+	return {$: 1, a: a};
 };
 var $author$project$Main$Error = function (a) {
 	return {$: 2, a: a};
@@ -7727,19 +7730,22 @@ var $author$project$Msg$Move = F2(
 	});
 var $author$project$Msg$Moving = F3(
 	function (a, b, c) {
-		return {$: 1, a: a, b: b, c: c};
+		return {$: 2, a: a, b: b, c: c};
 	});
 var $author$project$Msg$NewActivity = function (a) {
 	return {$: 22, a: a};
 };
 var $author$project$Msg$NoOp = {$: 7};
-var $author$project$Msg$None = {$: 2};
-var $author$project$Msg$SelectedDate = function (a) {
-	return {$: 24, a: a};
+var $author$project$Msg$None = {$: 3};
+var $author$project$Msg$Selected = function (a) {
+	return {$: 0, a: a};
 };
-var $author$project$Main$State = F4(
-	function (a, b, c, d) {
-		return {$: 0, a: a, b: b, c: c, d: d};
+var $author$project$Msg$SelectedDate = function (a) {
+	return {$: 25, a: a};
+};
+var $author$project$Main$State = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
 	});
 var $author$project$Msg$Year = 0;
 var $author$project$Msg$Posted = F2(
@@ -8066,7 +8072,7 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$monthNumber(date)));
 					case 3:
-						return language.R(
+						return language.Q(
 							$justinmimbs$date$Date$month(date));
 					case 4:
 						return language.W(
@@ -8075,7 +8081,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return A2(
 							$elm$core$String$left,
 							1,
-							language.R(
+							language.Q(
 								$justinmimbs$date$Date$month(date)));
 					default:
 						return '';
@@ -8481,7 +8487,7 @@ var $justinmimbs$date$Date$weekdayToName = function (wd) {
 var $justinmimbs$date$Date$language_en = {
 	T: $justinmimbs$date$Date$withOrdinalSuffix,
 	W: $justinmimbs$date$Date$monthToName,
-	R: A2(
+	Q: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
@@ -8931,9 +8937,9 @@ var $author$project$Calendar$get = function (_v0) {
 	var scrollCompleted = _v0.f;
 	return {be: end, bt: scrollCompleted, bu: selected, bw: start, bD: today, a6: zoom};
 };
-var $author$project$ActivityForm$Model = F5(
+var $author$project$Msg$ActivityForm = F5(
 	function (id, date, description, result, dataForm) {
-		return {h: dataForm, ai: date, al: description, aw: id, K: result};
+		return {j: dataForm, ai: date, al: description, aw: id, R: result};
 	});
 var $author$project$Msg$NoteForm = function (a) {
 	return {$: 3, a: a};
@@ -8949,7 +8955,7 @@ var $author$project$Msg$RunForm = function (a) {
 };
 var $author$project$ActivityForm$init = function (activity) {
 	var baseModel = A4(
-		$author$project$ActivityForm$Model,
+		$author$project$Msg$ActivityForm,
 		activity.aw,
 		$elm$core$Maybe$Just(activity.ai),
 		activity.al,
@@ -9242,6 +9248,12 @@ var $author$project$Main$initActivity = F2(
 				},
 				$author$project$Activity$newId));
 	});
+var $author$project$ActivityForm$initMove = function (activity) {
+	var model = $author$project$ActivityForm$init(activity);
+	return _Utils_update(
+		model,
+		{ai: $elm$core$Maybe$Nothing});
+};
 var $elm$core$Tuple$mapFirst = F2(
 	function (func, _v0) {
 		var x = _v0.a;
@@ -9265,19 +9277,12 @@ var $elm$core$Maybe$map = F2(
 	});
 var $elm$core$Basics$round = _Basics_round;
 var $author$project$Ports$scrollCalendarBy = _Platform_outgoingPort('scrollCalendarBy', $elm$json$Json$Encode$int);
-var $author$project$Msg$Delete = function (a) {
-	return {$: 12, a: a};
-};
-var $author$project$Msg$Shift = F2(
-	function (a, b) {
-		return {$: 11, a: a, b: b};
-	});
 var $author$project$Msg$Update = function (a) {
 	return {$: 9, a: a};
 };
 var $author$project$ActivityForm$apply = F2(
 	function (toMsg, _v0) {
-		var result = _v0.K;
+		var result = _v0.R;
 		if (!result.$) {
 			var activity = result.a;
 			return toMsg(activity);
@@ -9498,7 +9503,7 @@ var $author$project$ActivityForm$toActivityData = function (dataForm) {
 			return $author$project$Activity$Note(emoji);
 	}
 };
-var $author$project$ActivityForm$EmptyFieldError = function (a) {
+var $author$project$Msg$EmptyFieldError = function (a) {
 	return {$: 1, a: a};
 };
 var $author$project$ActivityForm$validateFieldExists = F2(
@@ -9508,7 +9513,7 @@ var $author$project$ActivityForm$validateFieldExists = F2(
 			return $elm$core$Result$Ok(field);
 		} else {
 			return $elm$core$Result$Err(
-				$author$project$ActivityForm$EmptyFieldError(fieldName));
+				$author$project$Msg$EmptyFieldError(fieldName));
 		}
 	});
 var $author$project$ActivityForm$validate = function (model) {
@@ -9521,7 +9526,7 @@ var $author$project$ActivityForm$validate = function (model) {
 					model.aw,
 					date,
 					description,
-					$author$project$ActivityForm$toActivityData(model.h));
+					$author$project$ActivityForm$toActivityData(model.j));
 			}),
 		A2($author$project$ActivityForm$validateFieldExists, model.ai, 'date'),
 		A2(
@@ -9533,13 +9538,13 @@ var $author$project$ActivityForm$updateResult = function (model) {
 	return _Utils_update(
 		model,
 		{
-			K: $author$project$ActivityForm$validate(model)
+			R: $author$project$ActivityForm$validate(model)
 		});
 };
 var $author$project$ActivityForm$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 24:
+			case 25:
 				var date = msg.a;
 				var _v1 = model.ai;
 				if (_v1.$ === 1) {
@@ -9559,7 +9564,7 @@ var $author$project$ActivityForm$update = F2(
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
-			case 25:
+			case 26:
 				var activityData = msg.a;
 				switch (activityData.$) {
 					case 0:
@@ -9571,7 +9576,7 @@ var $author$project$ActivityForm$update = F2(
 								_Utils_update(
 									model,
 									{
-										h: $author$project$Msg$RunForm(
+										j: $author$project$Msg$RunForm(
 											{
 												e: completed,
 												f: $elm$core$String$fromInt(mins),
@@ -9588,7 +9593,7 @@ var $author$project$ActivityForm$update = F2(
 								_Utils_update(
 									model,
 									{
-										h: $author$project$Msg$RaceForm(
+										j: $author$project$Msg$RaceForm(
 											{
 												e: completed,
 												o: dist,
@@ -9604,7 +9609,7 @@ var $author$project$ActivityForm$update = F2(
 								_Utils_update(
 									model,
 									{
-										h: $author$project$Msg$OtherForm(
+										j: $author$project$Msg$OtherForm(
 											{
 												e: completed,
 												f: $elm$core$String$fromInt(mins)
@@ -9618,12 +9623,12 @@ var $author$project$ActivityForm$update = F2(
 								_Utils_update(
 									model,
 									{
-										h: $author$project$Msg$NoteForm(
+										j: $author$project$Msg$NoteForm(
 											{t: emoji})
 									})),
 							$elm$core$Platform$Cmd$none);
 				}
-			case 26:
+			case 27:
 				var desc = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
@@ -9631,34 +9636,24 @@ var $author$project$ActivityForm$update = F2(
 							model,
 							{al: desc})),
 					$elm$core$Platform$Cmd$none);
-			case 27:
+			case 28:
 				var _char = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
 							{
-								h: $author$project$Msg$NoteForm(
+								j: $author$project$Msg$NoteForm(
 									{t: _char})
 							})),
 					$elm$core$Platform$Cmd$none);
-			case 28:
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								h: $author$project$ActivityForm$updateCompleted(model.h)
-							})),
-					$elm$core$Platform$Cmd$none);
 			case 29:
-				var str = msg.a;
 				return _Utils_Tuple2(
 					$author$project$ActivityForm$updateResult(
 						_Utils_update(
 							model,
 							{
-								h: A2($author$project$ActivityForm$updateDuration, str, model.h)
+								j: $author$project$ActivityForm$updateCompleted(model.j)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 30:
@@ -9668,7 +9663,7 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								h: A2($author$project$ActivityForm$updatePace, str, model.h)
+								j: A2($author$project$ActivityForm$updateDuration, str, model.j)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 31:
@@ -9678,34 +9673,24 @@ var $author$project$ActivityForm$update = F2(
 						_Utils_update(
 							model,
 							{
-								h: A2($author$project$ActivityForm$updateDistance, str, model.h)
+								j: A2($author$project$ActivityForm$updatePace, str, model.j)
 							})),
 					$elm$core$Platform$Cmd$none);
 			case 32:
+				var str = msg.a;
 				return _Utils_Tuple2(
-					model,
-					$author$project$Store$cmd(
-						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								j: A2($author$project$ActivityForm$updateDistance, str, model.j)
+							})),
+					$elm$core$Platform$Cmd$none);
 			case 33:
 				return _Utils_Tuple2(
 					model,
 					$author$project$Store$cmd(
-						A2($author$project$ActivityForm$apply, $author$project$Msg$Delete, model)));
-			case 35:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{ai: $elm$core$Maybe$Nothing}),
-					$elm$core$Platform$Cmd$none);
-			case 36:
-				var up = msg.a;
-				return _Utils_Tuple2(
-					model,
-					$author$project$Store$cmd(
-						A2(
-							$author$project$ActivityForm$apply,
-							$author$project$Msg$Shift(up),
-							model)));
+						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
 			default:
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
@@ -9714,28 +9699,23 @@ var $author$project$Main$updateActivityForm = F2(
 	function (msg, _v0) {
 		var calendar = _v0.a;
 		var store = _v0.b;
-		var formM = _v0.c;
-		var activityM = _v0.d;
-		return A2(
-			$elm$core$Maybe$withDefault,
-			_Utils_Tuple2(
-				A4($author$project$Main$State, calendar, store, formM, activityM),
-				$elm$core$Platform$Cmd$none),
-			A2(
-				$elm$core$Maybe$map,
-				$elm$core$Tuple$mapFirst(
-					function (updated) {
-						return A4(
-							$author$project$Main$State,
-							calendar,
-							store,
-							$elm$core$Maybe$Just(updated),
-							activityM);
-					}),
-				A2(
-					$elm$core$Maybe$map,
-					$author$project$ActivityForm$update(msg),
-					formM)));
+		var activityM = _v0.c;
+		var _v1 = function () {
+			if (activityM.$ === 1) {
+				var form = activityM.a;
+				return A2(
+					$elm$core$Tuple$mapFirst,
+					$author$project$Msg$Editing,
+					A2($author$project$ActivityForm$update, msg, form));
+			} else {
+				return _Utils_Tuple2(activityM, $elm$core$Platform$Cmd$none);
+			}
+		}();
+		var newActivityM = _v1.a;
+		var cmd = _v1.b;
+		return _Utils_Tuple2(
+			A3($author$project$Main$State, calendar, store, newActivityM),
+			cmd);
 	});
 var $author$project$Msg$ScrollCompleted = function (a) {
 	return {$: 18, a: a};
@@ -9835,12 +9815,11 @@ var $author$project$Main$updateCalendar = F2(
 	function (msg, _v0) {
 		var calendar = _v0.a;
 		var store = _v0.b;
-		var formM = _v0.c;
-		var activityM = _v0.d;
+		var activityM = _v0.c;
 		return A2(
 			$elm$core$Tuple$mapFirst,
 			function (updated) {
-				return A4($author$project$Main$State, updated, store, formM, activityM);
+				return A3($author$project$Main$State, updated, store, activityM);
 			},
 			A2($author$project$Calendar$update, msg, calendar));
 	});
@@ -9916,12 +9895,11 @@ var $author$project$Main$updateStore = F2(
 	function (msg, _v0) {
 		var calendar = _v0.a;
 		var store = _v0.b;
-		var formM = _v0.c;
-		var activityM = _v0.d;
+		var activityM = _v0.c;
 		return A2(
 			$elm$core$Tuple$mapFirst,
 			function (updated) {
-				return A4($author$project$Main$State, calendar, updated, formM, activityM);
+				return A3($author$project$Main$State, calendar, updated, activityM);
 			},
 			A2($author$project$Store$update, msg, store));
 	});
@@ -9964,8 +9942,7 @@ var $author$project$Main$update = F2(
 				var _v4 = state;
 				var calendar = _v4.a;
 				var store = _v4.b;
-				var formM = _v4.c;
-				var activityM = _v4.d;
+				var activityM = _v4.c;
 				switch (msg.$) {
 					case 1:
 						return $author$project$Main$loaded(
@@ -9991,13 +9968,9 @@ var $author$project$Main$update = F2(
 						}
 					case 3:
 						var key = msg.a;
-						if (!_Utils_eq(formM, $elm$core$Maybe$Nothing)) {
-							if (key === 'Enter') {
-								return $author$project$Main$loaded(
-									A2($author$project$Main$updateActivityForm, $author$project$Msg$ClickedSubmit, state));
-							} else {
-								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-							}
+						if (key === 'Enter') {
+							return $author$project$Main$loaded(
+								A2($author$project$Main$updateActivityForm, $author$project$Msg$ClickedSubmit, state));
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -10005,7 +9978,7 @@ var $author$project$Main$update = F2(
 						var x = msg.a;
 						var y = msg.b;
 						var newActivityM = function () {
-							if (activityM.$ === 1) {
+							if (activityM.$ === 2) {
 								var activity = activityM.a;
 								return A3($author$project$Msg$Moving, activity, x, y);
 							} else {
@@ -10014,25 +9987,25 @@ var $author$project$Main$update = F2(
 						}();
 						return _Utils_Tuple2(
 							$author$project$Main$Loaded(
-								A4($author$project$Main$State, calendar, store, formM, newActivityM)),
+								A3($author$project$Main$State, calendar, store, newActivityM)),
 							$author$project$Ports$scrollCalendarBy(
 								$elm$core$Basics$round(y)));
 					case 5:
 						var newActivityM = function () {
-							if (activityM.$ === 1) {
+							if (activityM.$ === 2) {
 								var activity = activityM.a;
-								return $author$project$Msg$None;
+								return $author$project$Msg$Selected(activity);
 							} else {
 								return activityM;
 							}
 						}();
 						return _Utils_Tuple2(
 							$author$project$Main$Loaded(
-								A4($author$project$Main$State, calendar, store, formM, newActivityM)),
+								A3($author$project$Main$State, calendar, store, newActivityM)),
 							$elm$core$Platform$Cmd$none);
 					case 6:
 						var date = msg.a;
-						if (activityM.$ === 1) {
+						if (activityM.$ === 2) {
 							var activity = activityM.a;
 							return $author$project$Main$loaded(
 								A2(
@@ -10049,13 +10022,13 @@ var $author$project$Main$update = F2(
 							A2(
 								$author$project$Main$updateStore,
 								msg,
-								A4($author$project$Main$State, calendar, store, $elm$core$Maybe$Nothing, $author$project$Msg$None)));
+								A3($author$project$Main$State, calendar, store, $author$project$Msg$None)));
 					case 9:
 						return $author$project$Main$loaded(
 							A2(
 								$author$project$Main$updateStore,
 								msg,
-								A4($author$project$Main$State, calendar, store, $elm$core$Maybe$Nothing, $author$project$Msg$None)));
+								A3($author$project$Main$State, calendar, store, $author$project$Msg$None)));
 					case 10:
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateStore, msg, state));
@@ -10067,7 +10040,7 @@ var $author$project$Main$update = F2(
 							A2(
 								$author$project$Main$updateStore,
 								msg,
-								A4($author$project$Main$State, calendar, store, $elm$core$Maybe$Nothing, $author$project$Msg$None)));
+								A3($author$project$Main$State, calendar, store, $author$project$Msg$None)));
 					case 13:
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateStore, msg, state));
@@ -10121,43 +10094,47 @@ var $author$project$Main$update = F2(
 								$elm$core$Maybe$Just(date)));
 					case 22:
 						var activity = msg.a;
+						var form = $author$project$ActivityForm$init(activity);
 						return $author$project$Main$loaded(
 							A2(
 								$author$project$Main$updateStore,
 								$author$project$Msg$Create(activity),
-								A4(
+								A3(
 									$author$project$Main$State,
 									calendar,
 									store,
-									$elm$core$Maybe$Just(
-										$author$project$ActivityForm$init(activity)),
-									$author$project$Msg$Editing(activity))));
+									$author$project$Msg$Editing(form))));
+					case 24:
+						var activity = msg.a;
+						var form = $author$project$ActivityForm$init(activity);
+						return _Utils_Tuple2(
+							$author$project$Main$Loaded(
+								A3(
+									$author$project$Main$State,
+									calendar,
+									store,
+									$author$project$Msg$Editing(form))),
+							$elm$core$Platform$Cmd$none);
 					case 23:
 						var activity = msg.a;
 						return _Utils_Tuple2(
 							$author$project$Main$Loaded(
-								A4(
+								A3(
 									$author$project$Main$State,
 									calendar,
 									store,
-									$elm$core$Maybe$Just(
-										$author$project$ActivityForm$init(activity)),
-									$author$project$Msg$Editing(activity))),
+									$author$project$Msg$Selected(activity))),
 							$elm$core$Platform$Cmd$none);
 					case 20:
 						var activity = msg.a;
 						return _Utils_Tuple2(
 							$author$project$Main$Loaded(
-								A4(
+								A3(
 									$author$project$Main$State,
 									calendar,
 									store,
-									formM,
 									A3($author$project$Msg$Moving, activity, -100, -100))),
 							$elm$core$Platform$Cmd$none);
-					case 24:
-						return $author$project$Main$loaded(
-							A2($author$project$Main$updateActivityForm, msg, state));
 					case 25:
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateActivityForm, msg, state));
@@ -10183,8 +10160,16 @@ var $author$project$Main$update = F2(
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateActivityForm, msg, state));
 					case 33:
-						return $author$project$Main$loaded(
-							A2($author$project$Main$updateActivityForm, msg, state));
+						if (activityM.$ === 1) {
+							var form = activityM.a;
+							return $author$project$Main$loaded(
+								A2($author$project$Main$updateActivityForm, msg, state));
+						} else {
+							return _Utils_Tuple2(
+								$author$project$Main$Loaded(
+									A3($author$project$Main$State, calendar, store, $author$project$Msg$None)),
+								$elm$core$Platform$Cmd$none);
+						}
 					case 34:
 						var activity = msg.a;
 						return _Utils_Tuple2(
@@ -10201,24 +10186,27 @@ var $author$project$Main$update = F2(
 									},
 									$author$project$Activity$newId)));
 					case 35:
-						var _v13 = A2(
+						var activity = msg.a;
+						var _v14 = A2(
 							$author$project$Main$updateCalendar,
 							A2($author$project$Msg$ChangeZoom, 0, $elm$core$Maybe$Nothing),
-							state);
-						var calendarState = _v13.a;
-						var calendarCmd = _v13.b;
-						var _v14 = A2($author$project$Main$updateActivityForm, msg, calendarState);
-						var activityFormState = _v14.a;
-						var activityFormCmd = _v14.b;
+							A3(
+								$author$project$Main$State,
+								calendar,
+								store,
+								$author$project$Msg$Editing(
+									$author$project$ActivityForm$initMove(activity))));
+						var calendarState = _v14.a;
+						var calendarCmd = _v14.b;
+						var _v15 = A2($author$project$Main$updateActivityForm, msg, calendarState);
+						var activityFormState = _v15.a;
+						var activityFormCmd = _v15.b;
 						return $author$project$Main$loaded(
 							_Utils_Tuple2(
 								activityFormState,
 								$elm$core$Platform$Cmd$batch(
 									_List_fromArray(
 										[calendarCmd, activityFormCmd]))));
-					case 36:
-						return $author$project$Main$loaded(
-							A2($author$project$Main$updateActivityForm, msg, state));
 					default:
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateActivityForm, msg, state));
@@ -10233,11 +10221,10 @@ var $author$project$Main$updateLoading = function (model) {
 			$author$project$Main$update,
 			$author$project$Msg$Jump(date),
 			$author$project$Main$Loaded(
-				A4(
+				A3(
 					$author$project$Main$State,
 					A3($author$project$Calendar$init, 1, date, date),
 					$author$project$Store$init(activities),
-					$elm$core$Maybe$Nothing,
 					$author$project$Msg$None)));
 	} else {
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -10480,36 +10467,156 @@ var $elm$html$Html$Events$on = F2(
 	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Msg$EditedDescription = function (a) {
-	return {$: 26, a: a};
-};
-var $author$project$Msg$EditedDuration = function (a) {
-	return {$: 29, a: a};
-};
-var $author$project$Msg$SelectedDistance = function (a) {
-	return {$: 31, a: a};
-};
-var $author$project$Msg$SelectedEmoji = function (a) {
-	return {$: 27, a: a};
-};
-var $author$project$Msg$SelectedPace = function (a) {
-	return {$: 30, a: a};
-};
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (!maybeValue.$) {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
+var $author$project$Skeleton$attributeIf = F2(
+	function (bool, attr) {
+		return bool ? attr : A2($elm$html$Html$Attributes$style, '', '');
+	});
+var $elm$core$List$concatMap = F2(
+	function (f, list) {
+		return $elm$core$List$concat(
+			A2($elm$core$List$map, f, list));
+	});
+var $author$project$Calendar$filterActivities = F2(
+	function (date, activities) {
+		return A2(
+			$elm$core$List$filter,
+			function (a) {
+				return _Utils_eq(a.ai, date);
+			},
+			activities);
+	});
+var $elm$virtual_dom$VirtualDom$lazy2 = _VirtualDom_lazy2;
+var $elm$html$Html$Lazy$lazy2 = $elm$virtual_dom$VirtualDom$lazy2;
+var $elm$virtual_dom$VirtualDom$lazy4 = _VirtualDom_lazy4;
+var $elm$html$Html$Lazy$lazy4 = $elm$virtual_dom$VirtualDom$lazy4;
+var $justinmimbs$date$Date$Day = 11;
+var $justinmimbs$date$Date$rangeHelp = F5(
+	function (unit, step, until, revList, current) {
+		rangeHelp:
+		while (true) {
+			if (_Utils_cmp(current, until) < 0) {
+				var _v0 = A3($justinmimbs$date$Date$add, unit, step, current);
+				var next = _v0;
+				var $temp$unit = unit,
+					$temp$step = step,
+					$temp$until = until,
+					$temp$revList = A2($elm$core$List$cons, current, revList),
+					$temp$current = next;
+				unit = $temp$unit;
+				step = $temp$step;
+				until = $temp$until;
+				revList = $temp$revList;
+				current = $temp$current;
+				continue rangeHelp;
+			} else {
+				return $elm$core$List$reverse(revList);
+			}
 		}
 	});
-var $elm$html$Html$Attributes$autocomplete = function (bool) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'autocomplete',
-		bool ? 'on' : 'off');
+var $justinmimbs$date$Date$range = F4(
+	function (interval, step, _v0, _v1) {
+		var start = _v0;
+		var until = _v1;
+		var _v2 = $justinmimbs$date$Date$intervalToUnits(interval);
+		var n = _v2.a;
+		var unit = _v2.b;
+		var _v3 = A2($justinmimbs$date$Date$ceiling, interval, start);
+		var first = _v3;
+		return (_Utils_cmp(first, until) < 0) ? A5(
+			$justinmimbs$date$Date$rangeHelp,
+			unit,
+			A2($elm$core$Basics$max, 1, step) * n,
+			until,
+			_List_Nil,
+			first) : _List_Nil;
+	});
+var $author$project$Calendar$listDays = F2(
+	function (start, end) {
+		return A4($justinmimbs$date$Date$range, 11, 1, start, end);
+	});
+var $elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
+	return _VirtualDom_keyedNode(
+		_VirtualDom_noScript(tag));
 };
+var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $author$project$Calendar$onScroll = function (_v0) {
+	var loadPrevious = _v0.a;
+	var loadNext = _v0.b;
+	var loadMargin = 10;
+	return A2(
+		$elm$html$Html$Events$on,
+		'scroll',
+		A2(
+			$elm$json$Json$Decode$andThen,
+			function (_v1) {
+				var scrollTop = _v1.a;
+				var scrollHeight = _v1.b;
+				var clientHeight = _v1.c;
+				return (_Utils_cmp(scrollTop, loadMargin) < 0) ? $elm$json$Json$Decode$succeed(
+					loadPrevious(scrollHeight)) : ((_Utils_cmp(scrollTop, (scrollHeight - clientHeight) - loadMargin) > 0) ? $elm$json$Json$Decode$succeed(
+					loadNext(scrollHeight)) : $elm$json$Json$Decode$fail(''));
+			},
+			A4(
+				$elm$json$Json$Decode$map3,
+				F3(
+					function (a, b, c) {
+						return _Utils_Tuple3(a, b, c);
+					}),
+				A2(
+					$elm$json$Json$Decode$at,
+					_List_fromArray(
+						['target', 'scrollTop']),
+					$elm$json$Json$Decode$int),
+				A2(
+					$elm$json$Json$Decode$at,
+					_List_fromArray(
+						['target', 'scrollHeight']),
+					$elm$json$Json$Decode$int),
+				A2(
+					$elm$json$Json$Decode$at,
+					_List_fromArray(
+						['target', 'clientHeight']),
+					$elm$json$Json$Decode$int))));
+};
+var $author$project$Msg$Scroll = F3(
+	function (a, b, c) {
+		return {$: 17, a: a, b: b, c: c};
+	});
+var $elm$core$Tuple$mapBoth = F3(
+	function (funcA, funcB, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			funcA(x),
+			funcB(y));
+	});
+var $author$project$Calendar$scrollHandler = function (_v0) {
+	var zoom = _v0.a;
+	var start = _v0.b;
+	var end = _v0.c;
+	return A3(
+		$elm$core$Tuple$mapBoth,
+		$author$project$Msg$Scroll(true),
+		$author$project$Msg$Scroll(false),
+		_Utils_Tuple2(
+			A3($justinmimbs$date$Date$add, 1, -2, start),
+			A3($justinmimbs$date$Date$add, 1, 2, end)));
+};
+var $justinmimbs$date$Date$toRataDie = function (_v0) {
+	var rd = _v0;
+	return rd;
+};
+var $author$project$Msg$MoveActivity = function (a) {
+	return {$: 20, a: a};
+};
+var $author$project$Msg$SelectActivity = function (a) {
+	return {$: 23, a: a};
+};
+var $elm$html$Html$a = _VirtualDom_node('a');
 var $author$project$Skeleton$compactColumn = F2(
 	function (attributes, children) {
 		return A2(
@@ -10520,121 +10627,62 @@ var $author$project$Skeleton$compactColumn = F2(
 				attributes),
 			children);
 	});
-var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,
 		'click',
 		$elm$json$Json$Decode$succeed(msg));
 };
-var $author$project$ActivityForm$distanceSelect = F2(
-	function (msg, distance) {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('dropdown medium')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button medium')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$author$project$Activity$distance.bC(distance))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('dropdown-content')
-						]),
-					A2(
-						$elm$core$List$map,
-						function (_v0) {
-							var distanceOpt = _v0.a;
-							return A2(
-								$elm$html$Html$a,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										msg(distanceOpt)),
-										A2($elm$html$Html$Attributes$style, 'text-align', 'left')
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text(distanceOpt)
-									]));
-						},
-						$author$project$Activity$distance.Q))
-				]));
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$ActivityShape$Block = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
 	});
-var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
-var $elm$html$Html$Events$onFocus = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'focus',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $elm$html$Html$Events$alwaysStop = function (x) {
-	return _Utils_Tuple2(x, true);
-};
-var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
-	return {$: 1, a: a};
-};
-var $elm$html$Html$Events$stopPropagationOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+var $author$project$ActivityShape$Circle = F3(
+	function (a, b, c) {
+		return {$: 1, a: a, b: b, c: c};
 	});
-var $elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
-	});
-var $elm$html$Html$Events$targetValue = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	$elm$json$Json$Decode$string);
-var $elm$html$Html$Events$onInput = function (tagger) {
-	return A2(
-		$elm$html$Html$Events$stopPropagationOn,
-		'input',
-		A2(
-			$elm$json$Json$Decode$map,
-			$elm$html$Html$Events$alwaysStop,
-			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+var $author$project$ActivityShape$Emoji = function (a) {
+	return {$: 2, a: a};
 };
-var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
-var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
-var $author$project$ActivityForm$durationInput = F2(
-	function (msg, duration) {
-		return A2(
-			$elm$html$Html$input,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$type_('number'),
-					$elm$html$Html$Attributes$placeholder('Mins'),
-					$elm$html$Html$Events$onInput(msg),
-					$elm$html$Html$Events$onFocus(
-					msg('')),
-					$elm$html$Html$Attributes$name('duration'),
-					A2($elm$html$Html$Attributes$style, 'width', '3rem'),
-					$elm$html$Html$Attributes$class('input small'),
-					$elm$html$Html$Attributes$value(duration)
-				]),
-			_List_Nil);
-	});
+var $author$project$ActivityShape$Gray = 2;
+var $author$project$ActivityShape$Green = 0;
+var $author$project$ActivityShape$Orange = 1;
+var $author$project$ActivityShape$toHeight = function (duration) {
+	return duration / 10;
+};
+var $author$project$ActivityShape$toWidth = function (pace) {
+	switch (pace) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		case 6:
+			return 7;
+		case 7:
+			return 8;
+		default:
+			return 9;
+	}
+};
+var $author$project$ActivityShape$colorString = function (color) {
+	switch (color) {
+		case 0:
+			return 'var(--activity-green)';
+		case 1:
+			return 'var(--activity-orange)';
+		default:
+			return 'var(--activity-gray)';
+	}
+};
 var $author$project$Emoji$list = _List_fromArray(
 	[
 		A3($author$project$Emoji$EmojiData, 'hash', 0, 0),
@@ -12408,133 +12456,15 @@ var $author$project$Emoji$filter = function (name) {
 			},
 			$author$project$Emoji$list));
 };
-var $elm$core$List$takeReverse = F3(
-	function (n, list, kept) {
-		takeReverse:
-		while (true) {
-			if (n <= 0) {
-				return kept;
-			} else {
-				if (!list.b) {
-					return kept;
-				} else {
-					var x = list.a;
-					var xs = list.b;
-					var $temp$n = n - 1,
-						$temp$list = xs,
-						$temp$kept = A2($elm$core$List$cons, x, kept);
-					n = $temp$n;
-					list = $temp$list;
-					kept = $temp$kept;
-					continue takeReverse;
-				}
-			}
-		}
-	});
-var $elm$core$List$takeTailRec = F2(
-	function (n, list) {
-		return $elm$core$List$reverse(
-			A3($elm$core$List$takeReverse, n, list, _List_Nil));
-	});
-var $elm$core$List$takeFast = F3(
-	function (ctr, n, list) {
-		if (n <= 0) {
-			return _List_Nil;
-		} else {
-			var _v0 = _Utils_Tuple2(n, list);
-			_v0$1:
-			while (true) {
-				_v0$5:
-				while (true) {
-					if (!_v0.b.b) {
-						return list;
-					} else {
-						if (_v0.b.b.b) {
-							switch (_v0.a) {
-								case 1:
-									break _v0$1;
-								case 2:
-									var _v2 = _v0.b;
-									var x = _v2.a;
-									var _v3 = _v2.b;
-									var y = _v3.a;
-									return _List_fromArray(
-										[x, y]);
-								case 3:
-									if (_v0.b.b.b.b) {
-										var _v4 = _v0.b;
-										var x = _v4.a;
-										var _v5 = _v4.b;
-										var y = _v5.a;
-										var _v6 = _v5.b;
-										var z = _v6.a;
-										return _List_fromArray(
-											[x, y, z]);
-									} else {
-										break _v0$5;
-									}
-								default:
-									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
-										var _v7 = _v0.b;
-										var x = _v7.a;
-										var _v8 = _v7.b;
-										var y = _v8.a;
-										var _v9 = _v8.b;
-										var z = _v9.a;
-										var _v10 = _v9.b;
-										var w = _v10.a;
-										var tl = _v10.b;
-										return (ctr > 1000) ? A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
-											$elm$core$List$cons,
-											x,
-											A2(
-												$elm$core$List$cons,
-												y,
-												A2(
-													$elm$core$List$cons,
-													z,
-													A2(
-														$elm$core$List$cons,
-														w,
-														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
-									} else {
-										break _v0$5;
-									}
-							}
-						} else {
-							if (_v0.a === 1) {
-								break _v0$1;
-							} else {
-								break _v0$5;
-							}
-						}
-					}
-				}
-				return list;
-			}
-			var _v1 = _v0.b;
-			var x = _v1.a;
-			return _List_fromArray(
-				[x]);
-		}
-	});
-var $elm$core$List$take = F2(
-	function (n, list) {
-		return A3($elm$core$List$takeFast, 0, n, list);
-	});
-var $elm$core$String$toLower = _String_toLower;
+var $author$project$Emoji$find = function (name) {
+	return A2(
+		$elm$core$Maybe$withDefault,
+		$author$project$Emoji$default,
+		$elm$core$List$head(
+			$author$project$Emoji$filter(name)));
+};
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$core$Char$toUpper = _Char_toUpper;
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
@@ -12561,400 +12491,12 @@ var $author$project$Emoji$view = function (_v0) {
 			]),
 		_List_Nil);
 };
-var $author$project$ActivityForm$emojiSelect = F2(
-	function (msg, emoji) {
-		var padding = A2($elm$html$Html$Attributes$style, 'padding', '3.5px 0.5rem 0.5px 0.5rem');
-		var emojis = A2(
-			$elm$core$List$take,
-			10,
-			$author$project$Emoji$filter(
-				$elm$core$String$toLower(emoji)));
-		var emojiItem = function (data) {
-			return A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						msg(data.X)),
-						A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
-						padding,
-						A2($elm$html$Html$Attributes$style, 'white-space', 'nowrap')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Emoji$view(data),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'display', 'inline-block'),
-								A2($elm$html$Html$Attributes$style, 'vertical-align', 'top'),
-								A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(data.X)
-							]))
-					]));
-		};
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('row')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('dropdown')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('row')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$button,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('button'),
-											padding,
-											A2($elm$html$Html$Attributes$style, 'border-top-right-radius', '0'),
-											A2($elm$html$Html$Attributes$style, 'border-bottom-right-radius', '0')
-										]),
-									_List_fromArray(
-										[
-											$author$project$Emoji$view(
-											A2(
-												$elm$core$Maybe$withDefault,
-												$author$project$Emoji$default,
-												$elm$core$List$head(emojis)))
-										])),
-									A2(
-									$elm$html$Html$input,
-									_List_fromArray(
-										[
-											$elm$html$Html$Events$onInput(msg),
-											$elm$html$Html$Events$onFocus(
-											msg('')),
-											$elm$html$Html$Attributes$class('input small icon'),
-											A2($elm$html$Html$Attributes$style, 'width', '6rem'),
-											$elm$html$Html$Attributes$value(emoji)
-										]),
-									_List_Nil)
-								])),
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('dropdown-content')
-								]),
-							A2($elm$core$List$map, emojiItem, emojis))
-						]))
-				]));
-	});
-var $elm$core$List$repeatHelp = F3(
-	function (result, n, value) {
-		repeatHelp:
-		while (true) {
-			if (n <= 0) {
-				return result;
-			} else {
-				var $temp$result = A2($elm$core$List$cons, value, result),
-					$temp$n = n - 1,
-					$temp$value = value;
-				result = $temp$result;
-				n = $temp$n;
-				value = $temp$value;
-				continue repeatHelp;
-			}
-		}
-	});
-var $elm$core$List$repeat = F2(
-	function (n, value) {
-		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
-	});
-var $elm$html$Html$span = _VirtualDom_node('span');
-var $author$project$MPRLevel$stripTimeStr = function (str) {
-	var _v0 = $author$project$MPRLevel$timeStrToHrsMinsSecs(str);
-	if ((((_v0.b && (!_v0.a)) && _v0.b.b) && _v0.b.b.b) && (!_v0.b.b.b.b)) {
-		var _v1 = _v0.b;
-		var min = _v1.a;
-		var _v2 = _v1.b;
-		var sec = _v2.a;
-		return $elm$core$String$fromInt(min) + (':' + function () {
-			var _v3 = A2($elm$core$Basics$compare, sec, 10);
-			if (!_v3) {
-				return '0' + $elm$core$String$fromInt(sec);
-			} else {
-				return $elm$core$String$fromInt(sec);
-			}
-		}());
-	} else {
-		return str;
-	}
-};
-var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
-var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
-var $elm$core$Array$getHelp = F3(
-	function (shift, index, tree) {
-		getHelp:
-		while (true) {
-			var pos = $elm$core$Array$bitMask & (index >>> shift);
-			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
-			if (!_v0.$) {
-				var subTree = _v0.a;
-				var $temp$shift = shift - $elm$core$Array$shiftStep,
-					$temp$index = index,
-					$temp$tree = subTree;
-				shift = $temp$shift;
-				index = $temp$index;
-				tree = $temp$tree;
-				continue getHelp;
-			} else {
-				var values = _v0.a;
-				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
-			}
-		}
-	});
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $elm$core$Array$tailIndex = function (len) {
-	return (len >>> 5) << 5;
-};
-var $elm$core$Array$get = F2(
-	function (index, _v0) {
-		var len = _v0.a;
-		var startShift = _v0.b;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
-			index,
-			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
-			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
-			A3($elm$core$Array$getHelp, startShift, index, tree)));
-	});
-var $author$project$MPRLevel$paceList = _List_fromArray(
-	['Easy', 'Moderate', 'Steady State', 'Brisk', 'Aerobic Threshold', 'Lactate Threshold', 'Groove', 'VO2 Max', 'Fast']);
-var $author$project$MPRData$aerobicTraining = '\n[[["0:11:12","0:12:19"],["0:10:49","0:10:55"],["0:10:27","0:10:32"],["0:10:04","0:10:10"],["0:09:42","0:09:47"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:35","0:08:39"],["0:08:13","0:08:17"]],[["0:11:06","0:12:12"],["0:10:44","0:10:49"],["0:10:21","0:10:27"],["0:09:59","0:10:04"],["0:09:37","0:09:42"],["0:09:15","0:09:20"],["0:08:53","0:08:57"],["0:08:30","0:08:35"],["0:08:08","0:08:13"]],[["0:11:00","0:12:06"],["0:10:38","0:10:44"],["0:10:16","0:10:21"],["0:09:54","0:09:59"],["0:09:32","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:30"],["0:08:04","0:08:08"]],[["0:10:54","0:11:59"],["0:10:32","0:10:38"],["0:10:10","0:10:16"],["0:09:49","0:09:54"],["0:09:27","0:09:32"],["0:09:05","0:09:10"],["0:08:43","0:08:48"],["0:08:21","0:08:26"],["0:08:00","0:08:04"]],[["0:10:48","0:11:53"],["0:10:27","0:10:32"],["0:10:05","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:27"],["0:09:00","0:09:05"],["0:08:39","0:08:43"],["0:08:17","0:08:21"],["0:07:55","0:08:00"]],[["0:10:42","0:11:47"],["0:10:21","0:10:27"],["0:10:00","0:10:05"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:55","0:09:00"],["0:08:34","0:08:39"],["0:08:12","0:08:17"],["0:07:51","0:07:55"]],[["0:10:37","0:11:40"],["0:10:15","0:10:21"],["0:09:54","0:10:00"],["0:09:33","0:09:38"],["0:09:12","0:09:17"],["0:08:50","0:08:55"],["0:08:29","0:08:34"],["0:08:08","0:08:12"],["0:07:47","0:07:51"]],[["0:10:31","0:11:34"],["0:10:10","0:10:15"],["0:09:49","0:09:54"],["0:09:28","0:09:33"],["0:09:07","0:09:12"],["0:08:46","0:08:50"],["0:08:25","0:08:29"],["0:08:03","0:08:08"],["0:07:42","0:07:47"]],[["0:10:25","0:11:27"],["0:10:04","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:28"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:20","0:08:25"],["0:07:59","0:08:03"],["0:07:38","0:07:42"]],[["0:10:19","0:11:21"],["0:09:58","0:10:04"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:15","0:08:20"],["0:07:55","0:07:59"],["0:07:34","0:07:38"]],[["0:10:13","0:11:14"],["0:09:53","0:09:58"],["0:09:32","0:09:38"],["0:09:12","0:09:17"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:10","0:08:15"],["0:07:50","0:07:55"],["0:07:30","0:07:34"]],[["0:10:07","0:11:08"],["0:09:47","0:09:53"],["0:09:27","0:09:32"],["0:09:07","0:09:12"],["0:08:46","0:08:51"],["0:08:26","0:08:31"],["0:08:06","0:08:10"],["0:07:46","0:07:50"],["0:07:25","0:07:30"]],[["0:10:01","0:11:02"],["0:09:41","0:09:47"],["0:09:21","0:09:27"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:21","0:08:26"],["0:08:01","0:08:06"],["0:07:41","0:07:46"],["0:07:21","0:07:25"]],[["0:09:56","0:10:55"],["0:09:36","0:09:41"],["0:09:16","0:09:21"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:16","0:08:21"],["0:07:56","0:08:01"],["0:07:37","0:07:41"],["0:07:17","0:07:21"]],[["0:09:50","0:10:49"],["0:09:30","0:09:36"],["0:09:10","0:09:16"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:52","0:07:56"],["0:07:32","0:07:37"],["0:07:12","0:07:17"]],[["0:09:44","0:10:42"],["0:09:24","0:09:30"],["0:09:05","0:09:10"],["0:08:45","0:08:51"],["0:08:26","0:08:31"],["0:08:07","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:32"],["0:07:08","0:07:12"]],[["0:09:38","0:10:36"],["0:09:19","0:09:24"],["0:08:59","0:09:05"],["0:08:40","0:08:45"],["0:08:21","0:08:26"],["0:08:02","0:08:07"],["0:07:42","0:07:47"],["0:07:23","0:07:28"],["0:07:04","0:07:08"]],[["0:09:32","0:10:29"],["0:09:13","0:09:19"],["0:08:54","0:08:59"],["0:08:35","0:08:40"],["0:08:16","0:08:21"],["0:07:57","0:08:02"],["0:07:38","0:07:42"],["0:07:19","0:07:23"],["0:07:00","0:07:04"]],[["0:09:26","0:10:23"],["0:09:07","0:09:13"],["0:08:48","0:08:54"],["0:08:30","0:08:35"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:38"],["0:07:14","0:07:19"],["0:06:55","0:07:00"]],[["0:09:20","0:10:16"],["0:09:02","0:09:07"],["0:08:43","0:08:48"],["0:08:24","0:08:30"],["0:08:06","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:33"],["0:07:10","0:07:14"],["0:06:51","0:06:55"]],[["0:09:15","0:10:10"],["0:08:56","0:09:02"],["0:08:38","0:08:43"],["0:08:19","0:08:24"],["0:08:01","0:08:06"],["0:07:42","0:07:47"],["0:07:24","0:07:28"],["0:07:05","0:07:10"],["0:06:47","0:06:51"]],[["0:09:09","0:10:04"],["0:08:50","0:08:56"],["0:08:32","0:08:38"],["0:08:14","0:08:19"],["0:07:56","0:08:01"],["0:07:37","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:05"],["0:06:42","0:06:47"]],[["0:09:03","0:09:57"],["0:08:45","0:08:50"],["0:08:27","0:08:32"],["0:08:09","0:08:14"],["0:07:50","0:07:56"],["0:07:32","0:07:37"],["0:07:14","0:07:19"],["0:06:56","0:07:01"],["0:06:38","0:06:42"]],[["0:08:57","0:09:51"],["0:08:39","0:08:45"],["0:08:21","0:08:27"],["0:08:03","0:08:09"],["0:07:45","0:07:50"],["0:07:27","0:07:32"],["0:07:10","0:07:14"],["0:06:52","0:06:56"],["0:06:34","0:06:38"]],[["0:08:51","0:09:44"],["0:08:33","0:08:39"],["0:08:16","0:08:21"],["0:07:58","0:08:03"],["0:07:40","0:07:45"],["0:07:23","0:07:27"],["0:07:05","0:07:10"],["0:06:47","0:06:52"],["0:06:29","0:06:34"]],[["0:08:45","0:09:38"],["0:08:28","0:08:33"],["0:08:10","0:08:16"],["0:07:53","0:07:58"],["0:07:35","0:07:40"],["0:07:18","0:07:23"],["0:07:00","0:07:05"],["0:06:43","0:06:47"],["0:06:25","0:06:29"]],[["0:08:39","0:09:31"],["0:08:22","0:08:28"],["0:08:05","0:08:10"],["0:07:47","0:07:53"],["0:07:30","0:07:35"],["0:07:13","0:07:18"],["0:06:56","0:07:00"],["0:06:38","0:06:43"],["0:06:21","0:06:25"]],[["0:08:34","0:09:25"],["0:08:16","0:08:22"],["0:07:59","0:08:05"],["0:07:42","0:07:47"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:38"],["0:06:17","0:06:21"]],[["0:08:28","0:09:18"],["0:08:11","0:08:16"],["0:07:54","0:07:59"],["0:07:37","0:07:42"],["0:07:20","0:07:25"],["0:07:03","0:07:08"],["0:06:46","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"]],[["0:08:22","0:09:12"],["0:08:05","0:08:11"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:15","0:07:20"],["0:06:58","0:07:03"],["0:06:41","0:06:46"],["0:06:25","0:06:29"],["0:06:08","0:06:12"]],[["0:08:16","0:09:06"],["0:07:59","0:08:05"],["0:07:43","0:07:48"],["0:07:26","0:07:32"],["0:07:10","0:07:15"],["0:06:53","0:06:58"],["0:06:37","0:06:41"],["0:06:20","0:06:25"],["0:06:04","0:06:08"]],[["0:08:10","0:08:59"],["0:07:54","0:07:59"],["0:07:37","0:07:43"],["0:07:21","0:07:26"],["0:07:05","0:07:10"],["0:06:48","0:06:53"],["0:06:32","0:06:37"],["0:06:16","0:06:20"],["0:05:59","0:06:04"]],[["0:08:04","0:08:53"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:48"],["0:06:27","0:06:32"],["0:06:11","0:06:16"],["0:05:55","0:05:59"]],[["0:07:58","0:08:46"],["0:07:42","0:07:48"],["0:07:26","0:07:32"],["0:07:11","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:23","0:06:27"],["0:06:07","0:06:11"],["0:05:51","0:05:55"]],[["0:07:53","0:08:40"],["0:07:37","0:07:42"],["0:07:21","0:07:26"],["0:07:05","0:07:11"],["0:06:50","0:06:55"],["0:06:34","0:06:39"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:47","0:05:51"]],[["0:07:47","0:08:33"],["0:07:31","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:18"],["0:05:58","0:06:02"],["0:05:42","0:05:47"]],[["0:07:41","0:08:27"],["0:07:25","0:07:31"],["0:07:10","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:42"]],[["0:07:35","0:08:20"],["0:07:20","0:07:25"],["0:07:05","0:07:10"],["0:06:49","0:06:55"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:49","0:05:53"],["0:05:34","0:05:38"]],[["0:07:29","0:08:14"],["0:07:14","0:07:20"],["0:06:59","0:07:05"],["0:06:44","0:06:49"],["0:06:29","0:06:34"],["0:06:14","0:06:19"],["0:05:59","0:06:04"],["0:05:44","0:05:49"],["0:05:29","0:05:34"]],[["0:07:23","0:08:08"],["0:07:08","0:07:14"],["0:06:54","0:06:59"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:14"],["0:05:55","0:05:59"],["0:05:40","0:05:44"],["0:05:25","0:05:29"]],[["0:07:17","0:08:01"],["0:07:03","0:07:08"],["0:06:48","0:06:54"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:35","0:05:40"],["0:05:21","0:05:25"]],[["0:07:12","0:07:55"],["0:06:57","0:07:03"],["0:06:43","0:06:48"],["0:06:28","0:06:34"],["0:06:14","0:06:19"],["0:06:00","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:35"],["0:05:16","0:05:21"]],[["0:07:06","0:07:48"],["0:06:51","0:06:57"],["0:06:37","0:06:43"],["0:06:23","0:06:28"],["0:06:09","0:06:14"],["0:05:55","0:06:00"],["0:05:41","0:05:45"],["0:05:26","0:05:31"],["0:05:12","0:05:16"]],[["0:07:00","0:07:42"],["0:06:46","0:06:51"],["0:06:32","0:06:37"],["0:06:18","0:06:23"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:36","0:05:41"],["0:05:22","0:05:26"],["0:05:08","0:05:12"]],[["0:06:54","0:07:35"],["0:06:40","0:06:46"],["0:06:26","0:06:32"],["0:06:13","0:06:18"],["0:05:59","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:04","0:05:08"]],[["0:06:48","0:07:29"],["0:06:35","0:06:40"],["0:06:21","0:06:26"],["0:06:07","0:06:13"],["0:05:54","0:05:59"],["0:05:40","0:05:45"],["0:05:26","0:05:31"],["0:05:13","0:05:17"],["0:04:59","0:05:04"]],[["0:06:42","0:07:22"],["0:06:29","0:06:35"],["0:06:15","0:06:21"],["0:06:02","0:06:07"],["0:05:49","0:05:54"],["0:05:35","0:05:40"],["0:05:22","0:05:26"],["0:05:08","0:05:13"],["0:04:55","0:04:59"]],[["0:06:36","0:07:16"],["0:06:23","0:06:29"],["0:06:10","0:06:15"],["0:05:57","0:06:02"],["0:05:44","0:05:49"],["0:05:30","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:08"],["0:04:51","0:04:55"]],[["0:06:31","0:07:10"],["0:06:18","0:06:23"],["0:06:05","0:06:10"],["0:05:51","0:05:57"],["0:05:38","0:05:44"],["0:05:25","0:05:30"],["0:05:12","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:51"]],[["0:06:25","0:07:03"],["0:06:12","0:06:18"],["0:05:59","0:06:05"],["0:05:46","0:05:51"],["0:05:33","0:05:38"],["0:05:21","0:05:25"],["0:05:08","0:05:12"],["0:04:55","0:04:59"],["0:04:42","0:04:46"]],[["0:06:19","0:06:57"],["0:06:06","0:06:12"],["0:05:54","0:05:59"],["0:05:41","0:05:46"],["0:05:28","0:05:33"],["0:05:16","0:05:21"],["0:05:03","0:05:08"],["0:04:50","0:04:55"],["0:04:38","0:04:42"]],[["0:06:13","0:06:50"],["0:06:01","0:06:06"],["0:05:48","0:05:54"],["0:05:36","0:05:41"],["0:05:23","0:05:28"],["0:05:11","0:05:16"],["0:04:58","0:05:03"],["0:04:46","0:04:50"],["0:04:34","0:04:38"]],[["0:06:07","0:06:44"],["0:05:55","0:06:01"],["0:05:43","0:05:48"],["0:05:30","0:05:36"],["0:05:18","0:05:23"],["0:05:06","0:05:11"],["0:04:54","0:04:58"],["0:04:41","0:04:46"],["0:04:29","0:04:34"]],[["0:06:01","0:06:37"],["0:05:49","0:05:55"],["0:05:37","0:05:43"],["0:05:25","0:05:30"],["0:05:13","0:05:18"],["0:05:01","0:05:06"],["0:04:49","0:04:54"],["0:04:37","0:04:41"],["0:04:25","0:04:29"]],[["0:05:55","0:06:31"],["0:05:44","0:05:49"],["0:05:32","0:05:37"],["0:05:20","0:05:25"],["0:05:08","0:05:13"],["0:04:56","0:05:01"],["0:04:44","0:04:49"],["0:04:32","0:04:37"],["0:04:21","0:04:25"]],[["0:05:50","0:06:25"],["0:05:38","0:05:44"],["0:05:26","0:05:32"],["0:05:15","0:05:20"],["0:05:03","0:05:08"],["0:04:51","0:04:56"],["0:04:40","0:04:44"],["0:04:28","0:04:32"],["0:04:16","0:04:21"]],[["0:05:44","0:06:18"],["0:05:32","0:05:38"],["0:05:21","0:05:26"],["0:05:09","0:05:15"],["0:04:58","0:05:03"],["0:04:46","0:04:51"],["0:04:35","0:04:40"],["0:04:24","0:04:28"],["0:04:12","0:04:16"]],[["0:05:38","0:06:12"],["0:05:27","0:05:32"],["0:05:15","0:05:21"],["0:05:04","0:05:09"],["0:04:53","0:04:58"],["0:04:42","0:04:46"],["0:04:30","0:04:35"],["0:04:19","0:04:24"],["0:04:08","0:04:12"]],[["0:05:32","0:06:05"],["0:05:21","0:05:27"],["0:05:10","0:05:15"],["0:04:59","0:05:04"],["0:04:48","0:04:53"],["0:04:37","0:04:42"],["0:04:26","0:04:30"],["0:04:15","0:04:19"],["0:04:03","0:04:08"]],[["0:05:26","0:05:59"],["0:05:15","0:05:21"],["0:05:04","0:05:10"],["0:04:54","0:04:59"],["0:04:43","0:04:48"],["0:04:32","0:04:37"],["0:04:21","0:04:26"],["0:04:10","0:04:15"],["0:03:59","0:04:03"]]]\n';
-var $author$project$MPRData$neutralTraining = '\n[[["0:11:29","0:12:38"],["0:11:04","0:11:09"],["0:10:38","0:10:44"],["0:10:13","0:10:18"],["0:09:48","0:09:53"],["0:09:22","0:09:27"],["0:08:57","0:09:02"],["0:08:32","0:08:36"],["0:08:06","0:08:11"]],[["0:11:23","0:12:31"],["0:10:58","0:11:04"],["0:10:33","0:10:38"],["0:10:08","0:10:13"],["0:09:43","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:27","0:08:32"],["0:08:02","0:08:06"]],[["0:11:17","0:12:25"],["0:10:52","0:10:58"],["0:10:27","0:10:33"],["0:10:02","0:10:08"],["0:09:37","0:09:43"],["0:09:13","0:09:17"],["0:08:48","0:08:52"],["0:08:23","0:08:27"],["0:07:58","0:08:02"]],[["0:11:11","0:12:18"],["0:10:46","0:10:52"],["0:10:22","0:10:27"],["0:09:57","0:10:02"],["0:09:32","0:09:37"],["0:09:08","0:09:13"],["0:08:43","0:08:48"],["0:08:18","0:08:23"],["0:07:54","0:07:58"]],[["0:11:05","0:12:11"],["0:10:41","0:10:46"],["0:10:16","0:10:22"],["0:09:52","0:09:57"],["0:09:27","0:09:32"],["0:09:03","0:09:08"],["0:08:38","0:08:43"],["0:08:14","0:08:18"],["0:07:50","0:07:54"]],[["0:10:59","0:12:05"],["0:10:35","0:10:41"],["0:10:11","0:10:16"],["0:09:46","0:09:52"],["0:09:22","0:09:27"],["0:08:58","0:09:03"],["0:08:34","0:08:38"],["0:08:10","0:08:14"],["0:07:45","0:07:50"]],[["0:10:53","0:11:58"],["0:10:29","0:10:35"],["0:10:05","0:10:11"],["0:09:41","0:09:46"],["0:09:17","0:09:22"],["0:08:53","0:08:58"],["0:08:29","0:08:34"],["0:08:05","0:08:10"],["0:07:41","0:07:45"]],[["0:10:47","0:11:52"],["0:10:23","0:10:29"],["0:09:59","0:10:05"],["0:09:36","0:09:41"],["0:09:12","0:09:17"],["0:08:48","0:08:53"],["0:08:24","0:08:29"],["0:08:01","0:08:05"],["0:07:37","0:07:41"]],[["0:10:41","0:11:45"],["0:10:17","0:10:23"],["0:09:54","0:09:59"],["0:09:30","0:09:36"],["0:09:07","0:09:12"],["0:08:43","0:08:48"],["0:08:20","0:08:24"],["0:07:56","0:08:01"],["0:07:33","0:07:37"]],[["0:10:35","0:11:39"],["0:10:12","0:10:17"],["0:09:48","0:09:54"],["0:09:25","0:09:30"],["0:09:02","0:09:07"],["0:08:38","0:08:43"],["0:08:15","0:08:20"],["0:07:52","0:07:56"],["0:07:28","0:07:33"]],[["0:10:29","0:11:32"],["0:10:06","0:10:12"],["0:09:43","0:09:48"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:34","0:08:38"],["0:08:10","0:08:15"],["0:07:47","0:07:52"],["0:07:24","0:07:28"]],[["0:10:23","0:11:25"],["0:10:00","0:10:06"],["0:09:37","0:09:43"],["0:09:14","0:09:20"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:06","0:08:10"],["0:07:43","0:07:47"],["0:07:20","0:07:24"]],[["0:10:17","0:11:19"],["0:09:54","0:10:00"],["0:09:32","0:09:37"],["0:09:09","0:09:14"],["0:08:46","0:08:52"],["0:08:24","0:08:29"],["0:08:01","0:08:06"],["0:07:38","0:07:43"],["0:07:16","0:07:20"]],[["0:10:11","0:11:12"],["0:09:49","0:09:54"],["0:09:26","0:09:32"],["0:09:04","0:09:09"],["0:08:41","0:08:46"],["0:08:19","0:08:24"],["0:07:56","0:08:01"],["0:07:34","0:07:38"],["0:07:12","0:07:16"]],[["0:10:05","0:11:06"],["0:09:43","0:09:49"],["0:09:21","0:09:26"],["0:08:58","0:09:04"],["0:08:36","0:08:41"],["0:08:14","0:08:19"],["0:07:52","0:07:56"],["0:07:30","0:07:34"],["0:07:07","0:07:12"]],[["0:09:59","0:10:59"],["0:09:37","0:09:43"],["0:09:15","0:09:21"],["0:08:53","0:08:58"],["0:08:31","0:08:36"],["0:08:09","0:08:14"],["0:07:47","0:07:52"],["0:07:25","0:07:30"],["0:07:03","0:07:07"]],[["0:09:53","0:10:52"],["0:09:31","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:31"],["0:08:04","0:08:09"],["0:07:42","0:07:47"],["0:07:21","0:07:25"],["0:06:59","0:07:03"]],[["0:09:47","0:10:46"],["0:09:26","0:09:31"],["0:09:04","0:09:10"],["0:08:42","0:08:48"],["0:08:21","0:08:26"],["0:07:59","0:08:04"],["0:07:38","0:07:42"],["0:07:16","0:07:21"],["0:06:55","0:06:59"]],[["0:09:41","0:10:39"],["0:09:20","0:09:26"],["0:08:58","0:09:04"],["0:08:37","0:08:42"],["0:08:16","0:08:21"],["0:07:54","0:07:59"],["0:07:33","0:07:38"],["0:07:12","0:07:16"],["0:06:50","0:06:55"]],[["0:09:35","0:10:33"],["0:09:14","0:09:20"],["0:08:53","0:08:58"],["0:08:32","0:08:37"],["0:08:11","0:08:16"],["0:07:50","0:07:54"],["0:07:28","0:07:33"],["0:07:07","0:07:12"],["0:06:46","0:06:50"]],[["0:09:29","0:10:26"],["0:09:08","0:09:14"],["0:08:47","0:08:53"],["0:08:26","0:08:32"],["0:08:06","0:08:11"],["0:07:45","0:07:50"],["0:07:24","0:07:28"],["0:07:03","0:07:07"],["0:06:42","0:06:46"]],[["0:09:23","0:10:20"],["0:09:03","0:09:08"],["0:08:42","0:08:47"],["0:08:21","0:08:26"],["0:08:00","0:08:06"],["0:07:40","0:07:45"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:38","0:06:42"]],[["0:09:17","0:10:13"],["0:08:57","0:09:03"],["0:08:36","0:08:42"],["0:08:16","0:08:21"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:54","0:06:58"],["0:06:33","0:06:38"]],[["0:09:11","0:10:06"],["0:08:51","0:08:57"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:50","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:14"],["0:06:50","0:06:54"],["0:06:29","0:06:33"]],[["0:09:05","0:10:00"],["0:08:45","0:08:51"],["0:08:25","0:08:31"],["0:08:05","0:08:11"],["0:07:45","0:07:50"],["0:07:25","0:07:30"],["0:07:05","0:07:10"],["0:06:45","0:06:50"],["0:06:25","0:06:29"]],[["0:08:59","0:09:53"],["0:08:39","0:08:45"],["0:08:20","0:08:25"],["0:08:00","0:08:05"],["0:07:40","0:07:45"],["0:07:20","0:07:25"],["0:07:00","0:07:05"],["0:06:41","0:06:45"],["0:06:21","0:06:25"]],[["0:08:53","0:09:47"],["0:08:34","0:08:39"],["0:08:14","0:08:20"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:15","0:07:20"],["0:06:56","0:07:00"],["0:06:36","0:06:41"],["0:06:17","0:06:21"]],[["0:08:47","0:09:40"],["0:08:28","0:08:34"],["0:08:09","0:08:14"],["0:07:49","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:36"],["0:06:12","0:06:17"]],[["0:08:41","0:09:33"],["0:08:22","0:08:28"],["0:08:03","0:08:09"],["0:07:44","0:07:49"],["0:07:25","0:07:30"],["0:07:06","0:07:10"],["0:06:46","0:06:51"],["0:06:27","0:06:32"],["0:06:08","0:06:12"]],[["0:08:35","0:09:27"],["0:08:16","0:08:22"],["0:07:57","0:08:03"],["0:07:39","0:07:44"],["0:07:20","0:07:25"],["0:07:01","0:07:06"],["0:06:42","0:06:46"],["0:06:23","0:06:27"],["0:06:04","0:06:08"]],[["0:08:29","0:09:20"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:39"],["0:07:15","0:07:20"],["0:06:56","0:07:01"],["0:06:37","0:06:42"],["0:06:18","0:06:23"],["0:06:00","0:06:04"]],[["0:08:23","0:09:14"],["0:08:05","0:08:11"],["0:07:46","0:07:52"],["0:07:28","0:07:33"],["0:07:09","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:37"],["0:06:14","0:06:18"],["0:05:55","0:06:00"]],[["0:08:17","0:09:07"],["0:07:59","0:08:05"],["0:07:41","0:07:46"],["0:07:23","0:07:28"],["0:07:04","0:07:09"],["0:06:46","0:06:51"],["0:06:28","0:06:32"],["0:06:09","0:06:14"],["0:05:51","0:05:55"]],[["0:08:11","0:09:01"],["0:07:53","0:07:59"],["0:07:35","0:07:41"],["0:07:17","0:07:23"],["0:06:59","0:07:04"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:05","0:06:09"],["0:05:47","0:05:51"]],[["0:08:05","0:08:54"],["0:07:48","0:07:53"],["0:07:30","0:07:35"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:01","0:06:05"],["0:05:43","0:05:47"]],[["0:07:59","0:08:47"],["0:07:42","0:07:48"],["0:07:24","0:07:30"],["0:07:07","0:07:12"],["0:06:49","0:06:54"],["0:06:31","0:06:36"],["0:06:14","0:06:18"],["0:05:56","0:06:01"],["0:05:39","0:05:43"]],[["0:07:53","0:08:41"],["0:07:36","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:07"],["0:06:44","0:06:49"],["0:06:26","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:56"],["0:05:34","0:05:39"]],[["0:07:47","0:08:34"],["0:07:30","0:07:36"],["0:07:13","0:07:19"],["0:06:56","0:07:01"],["0:06:39","0:06:44"],["0:06:22","0:06:26"],["0:06:04","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:34"]],[["0:07:41","0:08:28"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:39"],["0:06:17","0:06:22"],["0:06:00","0:06:04"],["0:05:43","0:05:47"],["0:05:26","0:05:30"]],[["0:07:36","0:08:21"],["0:07:19","0:07:25"],["0:07:02","0:07:08"],["0:06:45","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"],["0:05:55","0:06:00"],["0:05:38","0:05:43"],["0:05:22","0:05:26"]],[["0:07:30","0:08:14"],["0:07:13","0:07:19"],["0:06:56","0:07:02"],["0:06:40","0:06:45"],["0:06:23","0:06:29"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:34","0:05:38"],["0:05:17","0:05:22"]],[["0:07:24","0:08:08"],["0:07:07","0:07:13"],["0:06:51","0:06:56"],["0:06:35","0:06:40"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:46","0:05:50"],["0:05:29","0:05:34"],["0:05:13","0:05:17"]],[["0:07:18","0:08:01"],["0:07:01","0:07:07"],["0:06:45","0:06:51"],["0:06:29","0:06:35"],["0:06:13","0:06:18"],["0:05:57","0:06:02"],["0:05:41","0:05:46"],["0:05:25","0:05:29"],["0:05:09","0:05:13"]],[["0:07:12","0:07:55"],["0:06:56","0:07:01"],["0:06:40","0:06:45"],["0:06:24","0:06:29"],["0:06:08","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:41"],["0:05:21","0:05:25"],["0:05:05","0:05:09"]],[["0:07:06","0:07:48"],["0:06:50","0:06:56"],["0:06:34","0:06:40"],["0:06:19","0:06:24"],["0:06:03","0:06:08"],["0:05:47","0:05:52"],["0:05:32","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:05"]],[["0:07:00","0:07:42"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:19"],["0:05:58","0:06:03"],["0:05:43","0:05:47"],["0:05:27","0:05:32"],["0:05:12","0:05:16"],["0:04:56","0:05:01"]],[["0:06:54","0:07:35"],["0:06:38","0:06:44"],["0:06:23","0:06:29"],["0:06:08","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:43"],["0:05:22","0:05:27"],["0:05:07","0:05:12"],["0:04:52","0:04:56"]],[["0:06:48","0:07:28"],["0:06:33","0:06:38"],["0:06:18","0:06:23"],["0:06:03","0:06:08"],["0:05:48","0:05:53"],["0:05:33","0:05:38"],["0:05:18","0:05:22"],["0:05:03","0:05:07"],["0:04:48","0:04:52"]],[["0:06:42","0:07:22"],["0:06:27","0:06:33"],["0:06:12","0:06:18"],["0:05:57","0:06:03"],["0:05:43","0:05:48"],["0:05:28","0:05:33"],["0:05:13","0:05:18"],["0:04:58","0:05:03"],["0:04:44","0:04:48"]],[["0:06:36","0:07:15"],["0:06:21","0:06:27"],["0:06:07","0:06:12"],["0:05:52","0:05:57"],["0:05:38","0:05:43"],["0:05:23","0:05:28"],["0:05:08","0:05:13"],["0:04:54","0:04:58"],["0:04:39","0:04:44"]],[["0:06:30","0:07:09"],["0:06:15","0:06:21"],["0:06:01","0:06:07"],["0:05:47","0:05:52"],["0:05:32","0:05:38"],["0:05:18","0:05:23"],["0:05:04","0:05:08"],["0:04:49","0:04:54"],["0:04:35","0:04:39"]],[["0:06:24","0:07:02"],["0:06:10","0:06:15"],["0:05:56","0:06:01"],["0:05:41","0:05:47"],["0:05:27","0:05:32"],["0:05:13","0:05:18"],["0:04:59","0:05:04"],["0:04:45","0:04:49"],["0:04:31","0:04:35"]],[["0:06:18","0:06:55"],["0:06:04","0:06:10"],["0:05:50","0:05:56"],["0:05:36","0:05:41"],["0:05:22","0:05:27"],["0:05:08","0:05:13"],["0:04:54","0:04:59"],["0:04:41","0:04:45"],["0:04:27","0:04:31"]],[["0:06:12","0:06:49"],["0:05:58","0:06:04"],["0:05:44","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:03","0:05:08"],["0:04:50","0:04:54"],["0:04:36","0:04:41"],["0:04:22","0:04:27"]],[["0:06:06","0:06:42"],["0:05:52","0:05:58"],["0:05:39","0:05:44"],["0:05:25","0:05:31"],["0:05:12","0:05:17"],["0:04:59","0:05:03"],["0:04:45","0:04:50"],["0:04:32","0:04:36"],["0:04:18","0:04:22"]],[["0:06:00","0:06:36"],["0:05:47","0:05:52"],["0:05:33","0:05:39"],["0:05:20","0:05:25"],["0:05:07","0:05:12"],["0:04:54","0:04:59"],["0:04:40","0:04:45"],["0:04:27","0:04:32"],["0:04:14","0:04:18"]],[["0:05:54","0:06:29"],["0:05:41","0:05:47"],["0:05:28","0:05:33"],["0:05:15","0:05:20"],["0:05:02","0:05:07"],["0:04:49","0:04:54"],["0:04:36","0:04:40"],["0:04:23","0:04:27"],["0:04:10","0:04:14"]],[["0:05:48","0:06:23"],["0:05:35","0:05:41"],["0:05:22","0:05:28"],["0:05:09","0:05:15"],["0:04:57","0:05:02"],["0:04:44","0:04:49"],["0:04:31","0:04:36"],["0:04:18","0:04:23"],["0:04:06","0:04:10"]],[["0:05:42","0:06:16"],["0:05:29","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:09"],["0:04:52","0:04:57"],["0:04:39","0:04:44"],["0:04:26","0:04:31"],["0:04:14","0:04:18"],["0:04:01","0:04:06"]],[["0:05:36","0:06:09"],["0:05:23","0:05:29"],["0:05:11","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:52"],["0:04:34","0:04:39"],["0:04:22","0:04:26"],["0:04:09","0:04:14"],["0:03:57","0:04:01"]]]\n';
-var $author$project$MPRData$speedTraining = '\n[[["0:11:46","0:12:57"],["0:11:18","0:11:24"],["0:10:50","0:10:55"],["0:10:22","0:10:27"],["0:09:53","0:09:58"],["0:09:25","0:09:30"],["0:08:57","0:09:01"],["0:08:29","0:08:33"],["0:08:00","0:08:04"]],[["0:11:40","0:12:50"],["0:11:12","0:11:18"],["0:10:44","0:10:50"],["0:10:16","0:10:22"],["0:09:48","0:09:53"],["0:09:20","0:09:25"],["0:08:52","0:08:57"],["0:08:24","0:08:29"],["0:07:56","0:08:00"]],[["0:11:34","0:12:43"],["0:11:06","0:11:12"],["0:10:39","0:10:44"],["0:10:11","0:10:16"],["0:09:43","0:09:48"],["0:09:15","0:09:20"],["0:08:47","0:08:52"],["0:08:20","0:08:24"],["0:07:52","0:07:56"]],[["0:11:28","0:12:37"],["0:11:00","0:11:06"],["0:10:33","0:10:39"],["0:10:05","0:10:11"],["0:09:38","0:09:43"],["0:09:10","0:09:15"],["0:08:43","0:08:47"],["0:08:15","0:08:20"],["0:07:48","0:07:52"]],[["0:11:22","0:12:30"],["0:10:55","0:11:00"],["0:10:27","0:10:33"],["0:10:00","0:10:05"],["0:09:33","0:09:38"],["0:09:05","0:09:10"],["0:08:38","0:08:43"],["0:08:11","0:08:15"],["0:07:44","0:07:48"]],[["0:11:16","0:12:23"],["0:10:49","0:10:55"],["0:10:22","0:10:27"],["0:09:55","0:10:00"],["0:09:28","0:09:33"],["0:09:01","0:09:05"],["0:08:34","0:08:38"],["0:08:07","0:08:11"],["0:07:39","0:07:44"]],[["0:11:10","0:12:17"],["0:10:43","0:10:49"],["0:10:16","0:10:22"],["0:09:49","0:09:55"],["0:09:22","0:09:28"],["0:08:56","0:09:01"],["0:08:29","0:08:34"],["0:08:02","0:08:07"],["0:07:35","0:07:39"]],[["0:11:03","0:12:10"],["0:10:37","0:10:43"],["0:10:10","0:10:16"],["0:09:44","0:09:49"],["0:09:17","0:09:22"],["0:08:51","0:08:56"],["0:08:24","0:08:29"],["0:07:58","0:08:02"],["0:07:31","0:07:35"]],[["0:10:57","0:12:03"],["0:10:31","0:10:37"],["0:10:05","0:10:10"],["0:09:38","0:09:44"],["0:09:12","0:09:17"],["0:08:46","0:08:51"],["0:08:20","0:08:24"],["0:07:53","0:07:58"],["0:07:27","0:07:31"]],[["0:10:51","0:11:56"],["0:10:25","0:10:31"],["0:09:59","0:10:05"],["0:09:33","0:09:38"],["0:09:07","0:09:12"],["0:08:41","0:08:46"],["0:08:15","0:08:20"],["0:07:49","0:07:53"],["0:07:23","0:07:27"]],[["0:10:45","0:11:50"],["0:10:19","0:10:25"],["0:09:54","0:09:59"],["0:09:28","0:09:33"],["0:09:02","0:09:07"],["0:08:36","0:08:41"],["0:08:10","0:08:15"],["0:07:45","0:07:49"],["0:07:19","0:07:23"]],[["0:10:39","0:11:43"],["0:10:13","0:10:19"],["0:09:48","0:09:54"],["0:09:22","0:09:28"],["0:08:57","0:09:02"],["0:08:31","0:08:36"],["0:08:06","0:08:10"],["0:07:40","0:07:45"],["0:07:15","0:07:19"]],[["0:10:33","0:11:36"],["0:10:08","0:10:13"],["0:09:42","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:26","0:08:31"],["0:08:01","0:08:06"],["0:07:36","0:07:40"],["0:07:10","0:07:15"]],[["0:10:27","0:11:29"],["0:10:02","0:10:08"],["0:09:37","0:09:42"],["0:09:12","0:09:17"],["0:08:47","0:08:52"],["0:08:21","0:08:26"],["0:07:56","0:08:01"],["0:07:31","0:07:36"],["0:07:06","0:07:10"]],[["0:10:21","0:11:23"],["0:09:56","0:10:02"],["0:09:31","0:09:37"],["0:09:06","0:09:12"],["0:08:41","0:08:47"],["0:08:17","0:08:21"],["0:07:52","0:07:56"],["0:07:27","0:07:31"],["0:07:02","0:07:06"]],[["0:10:15","0:11:16"],["0:09:50","0:09:56"],["0:09:25","0:09:31"],["0:09:01","0:09:06"],["0:08:36","0:08:41"],["0:08:12","0:08:17"],["0:07:47","0:07:52"],["0:07:22","0:07:27"],["0:06:58","0:07:02"]],[["0:10:08","0:11:09"],["0:09:44","0:09:50"],["0:09:20","0:09:25"],["0:08:55","0:09:01"],["0:08:31","0:08:36"],["0:08:07","0:08:12"],["0:07:42","0:07:47"],["0:07:18","0:07:22"],["0:06:54","0:06:58"]],[["0:10:02","0:11:03"],["0:09:38","0:09:44"],["0:09:14","0:09:20"],["0:08:50","0:08:55"],["0:08:26","0:08:31"],["0:08:02","0:08:07"],["0:07:38","0:07:42"],["0:07:14","0:07:18"],["0:06:50","0:06:54"]],[["0:09:56","0:10:56"],["0:09:32","0:09:38"],["0:09:09","0:09:14"],["0:08:45","0:08:50"],["0:08:21","0:08:26"],["0:07:57","0:08:02"],["0:07:33","0:07:38"],["0:07:09","0:07:14"],["0:06:45","0:06:50"]],[["0:09:50","0:10:49"],["0:09:27","0:09:32"],["0:09:03","0:09:09"],["0:08:39","0:08:45"],["0:08:16","0:08:21"],["0:07:52","0:07:57"],["0:07:28","0:07:33"],["0:07:05","0:07:09"],["0:06:41","0:06:45"]],[["0:09:44","0:10:42"],["0:09:21","0:09:27"],["0:08:57","0:09:03"],["0:08:34","0:08:39"],["0:08:11","0:08:16"],["0:07:47","0:07:52"],["0:07:24","0:07:28"],["0:07:00","0:07:05"],["0:06:37","0:06:41"]],[["0:09:38","0:10:36"],["0:09:15","0:09:21"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:05","0:08:11"],["0:07:42","0:07:47"],["0:07:19","0:07:24"],["0:06:56","0:07:00"],["0:06:33","0:06:37"]],[["0:09:32","0:10:29"],["0:09:09","0:09:15"],["0:08:46","0:08:52"],["0:08:23","0:08:29"],["0:08:00","0:08:05"],["0:07:37","0:07:42"],["0:07:15","0:07:19"],["0:06:52","0:06:56"],["0:06:29","0:06:33"]],[["0:09:26","0:10:22"],["0:09:03","0:09:09"],["0:08:40","0:08:46"],["0:08:18","0:08:23"],["0:07:55","0:08:00"],["0:07:33","0:07:37"],["0:07:10","0:07:15"],["0:06:47","0:06:52"],["0:06:25","0:06:29"]],[["0:09:20","0:10:16"],["0:08:57","0:09:03"],["0:08:35","0:08:40"],["0:08:12","0:08:18"],["0:07:50","0:07:55"],["0:07:28","0:07:33"],["0:07:05","0:07:10"],["0:06:43","0:06:47"],["0:06:20","0:06:25"]],[["0:09:13","0:10:09"],["0:08:51","0:08:57"],["0:08:29","0:08:35"],["0:08:07","0:08:12"],["0:07:45","0:07:50"],["0:07:23","0:07:28"],["0:07:01","0:07:05"],["0:06:38","0:06:43"],["0:06:16","0:06:20"]],[["0:09:07","0:10:02"],["0:08:45","0:08:51"],["0:08:24","0:08:29"],["0:08:02","0:08:07"],["0:07:40","0:07:45"],["0:07:18","0:07:23"],["0:06:56","0:07:01"],["0:06:34","0:06:38"],["0:06:12","0:06:16"]],[["0:09:01","0:09:55"],["0:08:40","0:08:45"],["0:08:18","0:08:24"],["0:07:56","0:08:02"],["0:07:35","0:07:40"],["0:07:13","0:07:18"],["0:06:51","0:06:56"],["0:06:30","0:06:34"],["0:06:08","0:06:12"]],[["0:08:55","0:09:49"],["0:08:34","0:08:40"],["0:08:12","0:08:18"],["0:07:51","0:07:56"],["0:07:29","0:07:35"],["0:07:08","0:07:13"],["0:06:47","0:06:51"],["0:06:25","0:06:30"],["0:06:04","0:06:08"]],[["0:08:49","0:09:42"],["0:08:28","0:08:34"],["0:08:07","0:08:12"],["0:07:46","0:07:51"],["0:07:24","0:07:29"],["0:07:03","0:07:08"],["0:06:42","0:06:47"],["0:06:21","0:06:25"],["0:06:00","0:06:04"]],[["0:08:43","0:09:35"],["0:08:22","0:08:28"],["0:08:01","0:08:07"],["0:07:40","0:07:46"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:37","0:06:42"],["0:06:16","0:06:21"],["0:05:56","0:06:00"]],[["0:08:37","0:09:28"],["0:08:16","0:08:22"],["0:07:55","0:08:01"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:53","0:06:58"],["0:06:33","0:06:37"],["0:06:12","0:06:16"],["0:05:51","0:05:56"]],[["0:08:31","0:09:22"],["0:08:10","0:08:16"],["0:07:50","0:07:55"],["0:07:29","0:07:35"],["0:07:09","0:07:14"],["0:06:49","0:06:53"],["0:06:28","0:06:33"],["0:06:08","0:06:12"],["0:05:47","0:05:51"]],[["0:08:25","0:09:15"],["0:08:04","0:08:10"],["0:07:44","0:07:50"],["0:07:24","0:07:29"],["0:07:04","0:07:09"],["0:06:44","0:06:49"],["0:06:23","0:06:28"],["0:06:03","0:06:08"],["0:05:43","0:05:47"]],[["0:08:18","0:09:08"],["0:07:58","0:08:04"],["0:07:39","0:07:44"],["0:07:19","0:07:24"],["0:06:59","0:07:04"],["0:06:39","0:06:44"],["0:06:19","0:06:23"],["0:05:59","0:06:03"],["0:05:39","0:05:43"]],[["0:08:12","0:09:02"],["0:07:53","0:07:58"],["0:07:33","0:07:39"],["0:07:13","0:07:19"],["0:06:54","0:06:59"],["0:06:34","0:06:39"],["0:06:14","0:06:19"],["0:05:54","0:05:59"],["0:05:35","0:05:39"]],[["0:08:06","0:08:55"],["0:07:47","0:07:53"],["0:07:27","0:07:33"],["0:07:08","0:07:13"],["0:06:48","0:06:54"],["0:06:29","0:06:34"],["0:06:10","0:06:14"],["0:05:50","0:05:54"],["0:05:31","0:05:35"]],[["0:08:00","0:08:48"],["0:07:41","0:07:47"],["0:07:22","0:07:27"],["0:07:02","0:07:08"],["0:06:43","0:06:48"],["0:06:24","0:06:29"],["0:06:05","0:06:10"],["0:05:46","0:05:50"],["0:05:26","0:05:31"]],[["0:07:54","0:08:41"],["0:07:35","0:07:41"],["0:07:16","0:07:22"],["0:06:57","0:07:02"],["0:06:38","0:06:43"],["0:06:19","0:06:24"],["0:06:00","0:06:05"],["0:05:41","0:05:46"],["0:05:22","0:05:26"]],[["0:07:48","0:08:35"],["0:07:29","0:07:35"],["0:07:10","0:07:16"],["0:06:52","0:06:57"],["0:06:33","0:06:38"],["0:06:14","0:06:19"],["0:05:56","0:06:00"],["0:05:37","0:05:41"],["0:05:18","0:05:22"]],[["0:07:42","0:08:28"],["0:07:23","0:07:29"],["0:07:05","0:07:10"],["0:06:46","0:06:52"],["0:06:28","0:06:33"],["0:06:09","0:06:14"],["0:05:51","0:05:56"],["0:05:32","0:05:37"],["0:05:14","0:05:18"]],[["0:07:36","0:08:21"],["0:07:17","0:07:23"],["0:06:59","0:07:05"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:04","0:06:09"],["0:05:46","0:05:51"],["0:05:28","0:05:32"],["0:05:10","0:05:14"]],[["0:07:30","0:08:14"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:00","0:06:04"],["0:05:42","0:05:46"],["0:05:24","0:05:28"],["0:05:06","0:05:10"]],[["0:07:23","0:08:08"],["0:07:06","0:07:12"],["0:06:48","0:06:54"],["0:06:30","0:06:36"],["0:06:12","0:06:18"],["0:05:55","0:06:00"],["0:05:37","0:05:42"],["0:05:19","0:05:24"],["0:05:02","0:05:06"]],[["0:07:17","0:08:01"],["0:07:00","0:07:06"],["0:06:42","0:06:48"],["0:06:25","0:06:30"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:32","0:05:37"],["0:05:15","0:05:19"],["0:04:57","0:05:02"]],[["0:07:11","0:07:54"],["0:06:54","0:07:00"],["0:06:37","0:06:42"],["0:06:19","0:06:25"],["0:06:02","0:06:07"],["0:05:45","0:05:50"],["0:05:28","0:05:32"],["0:05:10","0:05:15"],["0:04:53","0:04:57"]],[["0:07:05","0:07:48"],["0:06:48","0:06:54"],["0:06:31","0:06:37"],["0:06:14","0:06:19"],["0:05:57","0:06:02"],["0:05:40","0:05:45"],["0:05:23","0:05:28"],["0:05:06","0:05:10"],["0:04:49","0:04:53"]],[["0:06:59","0:07:41"],["0:06:42","0:06:48"],["0:06:25","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:57"],["0:05:35","0:05:40"],["0:05:18","0:05:23"],["0:05:02","0:05:06"],["0:04:45","0:04:49"]],[["0:06:53","0:07:34"],["0:06:36","0:06:42"],["0:06:20","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:35"],["0:05:14","0:05:18"],["0:04:57","0:05:02"],["0:04:41","0:04:45"]],[["0:06:47","0:07:27"],["0:06:30","0:06:36"],["0:06:14","0:06:20"],["0:05:58","0:06:03"],["0:05:42","0:05:47"],["0:05:25","0:05:30"],["0:05:09","0:05:14"],["0:04:53","0:04:57"],["0:04:37","0:04:41"]],[["0:06:41","0:07:21"],["0:06:25","0:06:30"],["0:06:09","0:06:14"],["0:05:53","0:05:58"],["0:05:37","0:05:42"],["0:05:20","0:05:25"],["0:05:04","0:05:09"],["0:04:48","0:04:53"],["0:04:32","0:04:37"]],[["0:06:34","0:07:14"],["0:06:19","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:53"],["0:05:31","0:05:37"],["0:05:16","0:05:20"],["0:05:00","0:05:04"],["0:04:44","0:04:48"],["0:04:28","0:04:32"]],[["0:06:28","0:07:07"],["0:06:13","0:06:19"],["0:05:57","0:06:03"],["0:05:42","0:05:47"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:55","0:05:00"],["0:04:40","0:04:44"],["0:04:24","0:04:28"]],[["0:06:22","0:07:00"],["0:06:07","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:42"],["0:05:21","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:55"],["0:04:35","0:04:40"],["0:04:20","0:04:24"]],[["0:06:16","0:06:54"],["0:06:01","0:06:07"],["0:05:46","0:05:52"],["0:05:31","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:31","0:04:35"],["0:04:16","0:04:20"]],[["0:06:10","0:06:47"],["0:05:55","0:06:01"],["0:05:40","0:05:46"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:56","0:05:01"],["0:04:41","0:04:46"],["0:04:26","0:04:31"],["0:04:12","0:04:16"]],[["0:06:04","0:06:40"],["0:05:49","0:05:55"],["0:05:35","0:05:40"],["0:05:20","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:56"],["0:04:37","0:04:41"],["0:04:22","0:04:26"],["0:04:07","0:04:12"]],[["0:05:58","0:06:34"],["0:05:43","0:05:49"],["0:05:29","0:05:35"],["0:05:15","0:05:20"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:32","0:04:37"],["0:04:18","0:04:22"],["0:04:03","0:04:07"]],[["0:05:52","0:06:27"],["0:05:38","0:05:43"],["0:05:24","0:05:29"],["0:05:09","0:05:15"],["0:04:55","0:05:01"],["0:04:41","0:04:46"],["0:04:27","0:04:32"],["0:04:13","0:04:18"],["0:03:59","0:04:03"]],[["0:05:46","0:06:20"],["0:05:32","0:05:38"],["0:05:18","0:05:24"],["0:05:04","0:05:09"],["0:04:50","0:04:55"],["0:04:36","0:04:41"],["0:04:23","0:04:27"],["0:04:09","0:04:13"],["0:03:55","0:03:59"]]]\n';
-var $author$project$MPRLevel$toTuple = function (l) {
-	if ((l.b && l.b.b) && (!l.b.b.b)) {
-		var a = l.a;
-		var _v1 = l.b;
-		var b = _v1.a;
-		return $elm$core$Maybe$Just(
-			_Utils_Tuple2(a, b));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $author$project$MPRLevel$trainingPacesTable = function (runnerType) {
-	var json = function () {
-		switch (runnerType) {
-			case 0:
-				return $author$project$MPRData$neutralTraining;
-			case 1:
-				return $author$project$MPRData$aerobicTraining;
-			default:
-				return $author$project$MPRData$speedTraining;
-		}
-	}();
-	return A2(
-		$elm$core$Array$map,
-		function (a) {
-			return A2(
-				$elm$core$Array$map,
-				function (t) {
-					return A2(
-						$elm$core$Maybe$withDefault,
-						_Utils_Tuple2('', ''),
-						$author$project$MPRLevel$toTuple(t));
-				},
-				a);
-		},
-		A2(
-			$elm$core$Result$withDefault,
-			$elm$core$Array$empty,
-			A2(
-				$elm$json$Json$Decode$decodeString,
-				$elm$json$Json$Decode$array(
-					$elm$json$Json$Decode$array(
-						$elm$json$Json$Decode$list($elm$json$Json$Decode$string))),
-				json)));
-};
-var $author$project$MPRLevel$trainingPaces = function (_v0) {
-	var runnerType = _v0.a;
-	var level = _v0.b;
-	var res = A2(
-		$elm$core$Array$get,
-		level - 1,
-		$author$project$MPRLevel$trainingPacesTable(runnerType));
-	if (!res.$) {
-		var arr = res.a;
-		return $elm$core$Result$Ok(
-			A3(
-				$elm$core$List$map2,
-				F2(
-					function (x, y) {
-						return A2($elm$core$Tuple$pair, x, y);
-					}),
-				$author$project$MPRLevel$paceList,
-				$elm$core$Array$toList(arr)));
-	} else {
-		return $elm$core$Result$Err('out of range');
-	}
-};
-var $author$project$ActivityForm$paceSelect = F3(
-	function (levelM, msg, pace) {
-		var paceTimes = function () {
-			if (!levelM.$) {
-				var level = levelM.a;
-				return A2(
-					$elm$core$Result$withDefault,
-					A2(
-						$elm$core$List$repeat,
-						$elm$core$List$length($author$project$Activity$pace.Q),
-						''),
-					A2(
-						$elm$core$Result$map,
-						$elm$core$List$map(
-							function (_v1) {
-								var name = _v1.a;
-								var _v2 = _v1.b;
-								var minPace = _v2.a;
-								var maxPace = _v2.b;
-								return $author$project$MPRLevel$stripTimeStr(maxPace);
-							}),
-						$author$project$MPRLevel$trainingPaces(
-							_Utils_Tuple2(0, level))));
-			} else {
-				return A2(
-					$elm$core$List$repeat,
-					$elm$core$List$length($author$project$Activity$pace.Q),
-					'');
-			}
-		}();
-		var paceNames = A2($elm$core$List$map, $elm$core$Tuple$first, $author$project$Activity$pace.Q);
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('dropdown medium')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button medium')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text(
-							$author$project$Activity$pace.bC(pace))
-						])),
-					A2(
-					$elm$html$Html$div,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('dropdown-content')
-						]),
-					A3(
-						$elm$core$List$map2,
-						F2(
-							function (name, time) {
-								return A2(
-									$elm$html$Html$a,
-									_List_fromArray(
-										[
-											$elm$html$Html$Events$onClick(
-											msg(name)),
-											A2($elm$html$Html$Attributes$style, 'text-align', 'left')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$span,
-											_List_fromArray(
-												[
-													A2($elm$html$Html$Attributes$style, 'color', 'var(--accent-blue)'),
-													A2($elm$html$Html$Attributes$style, 'margin-right', '0.5rem')
-												]),
-											_List_fromArray(
-												[
-													$elm$html$Html$text(time)
-												])),
-											$elm$html$Html$text(name)
-										]));
-							}),
-						paceNames,
-						paceTimes))
-				]));
-	});
-var $author$project$Msg$SelectedShape = function (a) {
-	return {$: 25, a: a};
-};
-var $author$project$Activity$activityTypeToString = function (aType) {
-	switch (aType.$) {
-		case 0:
-			return 'Run';
-		case 1:
-			return 'Race';
-		case 2:
-			return 'Other';
-		default:
-			return 'Note';
-	}
-};
-var $author$project$ActivityShape$Block = F3(
-	function (a, b, c) {
-		return {$: 0, a: a, b: b, c: c};
-	});
-var $author$project$ActivityShape$Circle = F3(
-	function (a, b, c) {
-		return {$: 1, a: a, b: b, c: c};
-	});
-var $author$project$ActivityShape$Emoji = function (a) {
-	return {$: 2, a: a};
-};
-var $author$project$ActivityShape$Gray = 2;
-var $author$project$ActivityShape$Green = 0;
-var $author$project$ActivityShape$Orange = 1;
-var $author$project$ActivityShape$colorString = function (color) {
-	switch (color) {
-		case 0:
-			return 'var(--activity-green)';
-		case 1:
-			return 'var(--activity-orange)';
-		default:
-			return 'var(--activity-gray)';
-	}
-};
-var $author$project$Emoji$find = function (name) {
-	return A2(
-		$elm$core$Maybe$withDefault,
-		$author$project$Emoji$default,
-		$elm$core$List$head(
-			$author$project$Emoji$filter(name)));
-};
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$core$Char$toUpper = _Char_toUpper;
 var $author$project$ActivityShape$viewShape = function (shape) {
 	switch (shape.$) {
 		case 0:
 			var color = shape.a;
 			var completed = shape.b;
-			var width = shape.c.P;
+			var width = shape.c.O;
 			var height = shape.c.I;
 			return A2(
 				$elm$html$Html$div,
@@ -13024,194 +12566,6 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 				$author$project$Emoji$find(name));
 	}
 };
-var $author$project$ActivityShape$viewDefault = F2(
-	function (completed, activityData) {
-		switch (activityData.$) {
-			case 0:
-				return $author$project$ActivityShape$viewShape(
-					A3(
-						$author$project$ActivityShape$Block,
-						0,
-						completed,
-						{I: 1, P: 3}));
-			case 1:
-				return $author$project$ActivityShape$viewShape(
-					A3(
-						$author$project$ActivityShape$Block,
-						1,
-						completed,
-						{I: 1, P: 3}));
-			case 2:
-				return $author$project$ActivityShape$viewShape(
-					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
-			default:
-				return $author$project$ActivityShape$viewShape(
-					$author$project$ActivityShape$Emoji($author$project$Emoji$default.X));
-		}
-	});
-var $author$project$ActivityForm$shapeSelect = function (model) {
-	var _v0 = $author$project$ActivityForm$defaults(model.h);
-	var duration = _v0.f;
-	var pace = _v0.q;
-	var distance = _v0.o;
-	var emoji = _v0.t;
-	var completed = _v0.e;
-	var types = _List_fromArray(
-		[
-			A3($author$project$Activity$Run, duration, pace, completed),
-			A3($author$project$Activity$Race, duration, distance, completed),
-			A2($author$project$Activity$Other, duration, completed),
-			$author$project$Activity$Note(emoji)
-		]);
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('dropdown medium')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('button medium')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$author$project$Activity$activityTypeToString(
-							$author$project$ActivityForm$toActivityData(model.h)))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('dropdown-content')
-					]),
-				A2(
-					$elm$core$List$map,
-					function (aType) {
-						return A2(
-							$elm$html$Html$a,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick(
-									$author$project$Msg$SelectedShape(aType))
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$author$project$Skeleton$row,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2($author$project$ActivityShape$viewDefault, true, aType),
-											A2(
-											$author$project$Skeleton$compactColumn,
-											_List_fromArray(
-												[
-													A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
-													A2($elm$html$Html$Attributes$style, 'margin-top', '0.1rem')
-												]),
-											_List_fromArray(
-												[
-													$elm$html$Html$text(
-													$author$project$Activity$activityTypeToString(aType))
-												]))
-										]))
-								]));
-					},
-					types))
-			]));
-};
-var $elm$html$Html$i = _VirtualDom_node('i');
-var $author$project$ActivityForm$submitButton = A2(
-	$elm$html$Html$a,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('button small'),
-			$elm$html$Html$Attributes$class('primary'),
-			$elm$html$Html$Attributes$type_('submit'),
-			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
-		]),
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$i,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('fas fa-check')
-				]),
-			_List_Nil)
-		]));
-var $author$project$ActivityForm$errorMessage = function (error) {
-	if (error.$ === 1) {
-		var field = error.a;
-		return 'Please fill in ' + (field + ' field');
-	} else {
-		return 'There has been an error';
-	}
-};
-var $author$project$ActivityForm$viewError = function (errorR) {
-	if (errorR.$ === 1) {
-		var error = errorR.a;
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('error')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text(
-					$author$project$ActivityForm$errorMessage(error))
-				]));
-	} else {
-		return A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('error')
-				]),
-			_List_Nil);
-	}
-};
-var $author$project$Skeleton$viewMaybe = F2(
-	function (attrM, viewF) {
-		if (!attrM.$) {
-			var attr = attrM.a;
-			return viewF(attr);
-		} else {
-			return $elm$html$Html$text('');
-		}
-	});
-var $author$project$Msg$CheckedCompleted = {$: 28};
-var $author$project$ActivityShape$toHeight = function (duration) {
-	return duration / 10;
-};
-var $author$project$ActivityShape$toWidth = function (pace) {
-	switch (pace) {
-		case 0:
-			return 1;
-		case 1:
-			return 2;
-		case 2:
-			return 3;
-		case 3:
-			return 4;
-		case 4:
-			return 5;
-		case 5:
-			return 6;
-		case 6:
-			return 7;
-		case 7:
-			return 8;
-		default:
-			return 9;
-	}
-};
 var $author$project$ActivityShape$view = function (activity) {
 	var _v0 = activity.S;
 	switch (_v0.$) {
@@ -13226,7 +12580,7 @@ var $author$project$ActivityShape$view = function (activity) {
 					completed,
 					{
 						I: $author$project$ActivityShape$toHeight(mins),
-						P: $author$project$ActivityShape$toWidth(pace)
+						O: $author$project$ActivityShape$toWidth(pace)
 					}));
 		case 1:
 			var mins = _v0.a;
@@ -13239,7 +12593,7 @@ var $author$project$ActivityShape$view = function (activity) {
 					completed,
 					{
 						I: $author$project$ActivityShape$toHeight(mins),
-						P: $author$project$ActivityShape$toWidth(
+						O: $author$project$ActivityShape$toWidth(
 							A2($elm$core$Maybe$withDefault, 5, $elm$core$Maybe$Nothing))
 					}));
 		case 2:
@@ -13258,391 +12612,23 @@ var $author$project$ActivityShape$view = function (activity) {
 				$author$project$ActivityShape$Emoji(emoji));
 	}
 };
-var $author$project$ActivityForm$viewShape = function (model) {
-	var activityShape = A2(
-		$elm$core$Maybe$withDefault,
-		A2(
-			$author$project$ActivityShape$viewDefault,
-			true,
-			A3($author$project$Activity$Run, 30, 0, true)),
-		A2(
-			$elm$core$Maybe$map,
-			$author$project$ActivityShape$view,
-			$elm$core$Result$toMaybe(
-				$author$project$ActivityForm$validate(model))));
-	return A2(
-		$author$project$Skeleton$compactColumn,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'flex-basis', '3.3rem'),
-				A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-				$elm$html$Html$Events$onClick($author$project$Msg$CheckedCompleted)
-			]),
-		_List_fromArray(
-			[activityShape]));
-};
-var $author$project$ActivityForm$view = F2(
-	function (levelM, modelM) {
-		var sharedAttributes = _List_fromArray(
-			[
-				$author$project$Skeleton$borderStyle('border-bottom'),
-				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-				A2($elm$html$Html$Attributes$style, 'left', '0'),
-				A2($elm$html$Html$Attributes$style, 'right', '0'),
-				A2($elm$html$Html$Attributes$style, 'background-color', 'white'),
-				A2($elm$html$Html$Attributes$style, 'z-index', '2')
-			]);
-		var dataInputs = F2(
-			function (form, result) {
-				switch (form.$) {
-					case 0:
-						var duration = form.a.f;
-						var pace = form.a.q;
-						return _List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-									])),
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A3($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace, pace)
-									]))
-							]);
-					case 1:
-						var duration = form.a.f;
-						var distance = form.a.o;
-						return _List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-									])),
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$ActivityForm$distanceSelect, $author$project$Msg$SelectedDistance, distance)
-									])),
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$author$project$Skeleton$viewMaybe,
-										A2(
-											$elm$core$Maybe$andThen,
-											$author$project$Activity$mprLevel,
-											$elm$core$Result$toMaybe(result)),
-										function (level) {
-											return $elm$html$Html$text(
-												'Level ' + $elm$core$String$fromInt(level));
-										})
-									]))
-							]);
-					case 2:
-						var duration = form.a.f;
-						return _List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
-									]))
-							]);
-					default:
-						var emoji = form.a.t;
-						return _List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$compactColumn,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2($author$project$ActivityForm$emojiSelect, $author$project$Msg$SelectedEmoji, emoji)
-									]))
-							]);
-				}
-			});
-		if (modelM.$ === 1) {
-			return A2(
-				$author$project$Skeleton$row,
-				$elm$core$List$concat(
-					_List_fromArray(
-						[
-							_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s'),
-								A2($elm$html$Html$Attributes$style, 'min-height', '0'),
-								A2($elm$html$Html$Attributes$style, 'max-height', '0'),
-								A2($elm$html$Html$Attributes$style, 'border-width', '0px')
-							]),
-							sharedAttributes
-						])),
-				_List_Nil);
-		} else {
-			var model = modelM.a;
-			return A2(
-				$author$project$Skeleton$row,
-				$elm$core$List$concat(
-					_List_fromArray(
-						[
-							_List_fromArray(
-							[
-								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s'),
-								A2($elm$html$Html$Attributes$style, 'max-height', '20rem'),
-								A2($elm$html$Html$Attributes$style, 'min-height', '5rem'),
-								A2($elm$html$Html$Attributes$style, 'padding', '1rem 1rem 1rem 1rem'),
-								A2($elm$html$Html$Attributes$style, 'border-width', '1px')
-							]),
-							sharedAttributes
-						])),
-				_List_fromArray(
-					[
-						$author$project$ActivityForm$viewShape(model),
-						A2(
-						$author$project$Skeleton$column,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2(
-								$author$project$Skeleton$row,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2(
-											$elm$core$Maybe$withDefault,
-											'Select Date',
-											A2(
-												$elm$core$Maybe$map,
-												$justinmimbs$date$Date$format('E MMM d'),
-												model.ai))),
-										A2(
-										$author$project$Skeleton$column,
-										_List_fromArray(
-											[
-												A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
-											]),
-										_List_fromArray(
-											[$author$project$ActivityForm$submitButton]))
-									])),
-								A2(
-								$author$project$Skeleton$row,
-								_List_Nil,
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$input,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$type_('text'),
-												$elm$html$Html$Attributes$autocomplete(false),
-												$elm$html$Html$Attributes$placeholder('Description'),
-												$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
-												$elm$html$Html$Attributes$name('description'),
-												$elm$html$Html$Attributes$value(model.al),
-												A2($elm$html$Html$Attributes$style, 'width', '100%')
-											]),
-										_List_Nil)
-									])),
-								A2(
-								$author$project$Skeleton$row,
-								_List_fromArray(
-									[
-										A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
-										A2($elm$html$Html$Attributes$style, 'align-items', 'center')
-									]),
-								A2(
-									$elm$core$List$cons,
-									A2(
-										$author$project$Skeleton$compactColumn,
-										_List_fromArray(
-											[
-												A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
-											]),
-										_List_fromArray(
-											[
-												$author$project$ActivityForm$shapeSelect(model)
-											])),
-									A2(dataInputs, model.h, model.K))),
-								A2(
-								$author$project$Skeleton$row,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$author$project$ActivityForm$viewError(model.K)
-									]))
-							]))
-					]));
-		}
-	});
-var $author$project$Skeleton$attributeIf = F2(
-	function (bool, attr) {
-		return bool ? attr : A2($elm$html$Html$Attributes$style, '', '');
-	});
-var $elm$core$List$concatMap = F2(
-	function (f, list) {
-		return $elm$core$List$concat(
-			A2($elm$core$List$map, f, list));
-	});
-var $author$project$Calendar$filterActivities = F2(
-	function (date, activities) {
-		return A2(
-			$elm$core$List$filter,
-			function (a) {
-				return _Utils_eq(a.ai, date);
-			},
-			activities);
-	});
-var $elm$virtual_dom$VirtualDom$lazy2 = _VirtualDom_lazy2;
-var $elm$html$Html$Lazy$lazy2 = $elm$virtual_dom$VirtualDom$lazy2;
-var $elm$virtual_dom$VirtualDom$lazy4 = _VirtualDom_lazy4;
-var $elm$html$Html$Lazy$lazy4 = $elm$virtual_dom$VirtualDom$lazy4;
-var $justinmimbs$date$Date$Day = 11;
-var $justinmimbs$date$Date$rangeHelp = F5(
-	function (unit, step, until, revList, current) {
-		rangeHelp:
-		while (true) {
-			if (_Utils_cmp(current, until) < 0) {
-				var _v0 = A3($justinmimbs$date$Date$add, unit, step, current);
-				var next = _v0;
-				var $temp$unit = unit,
-					$temp$step = step,
-					$temp$until = until,
-					$temp$revList = A2($elm$core$List$cons, current, revList),
-					$temp$current = next;
-				unit = $temp$unit;
-				step = $temp$step;
-				until = $temp$until;
-				revList = $temp$revList;
-				current = $temp$current;
-				continue rangeHelp;
-			} else {
-				return $elm$core$List$reverse(revList);
-			}
-		}
-	});
-var $justinmimbs$date$Date$range = F4(
-	function (interval, step, _v0, _v1) {
-		var start = _v0;
-		var until = _v1;
-		var _v2 = $justinmimbs$date$Date$intervalToUnits(interval);
-		var n = _v2.a;
-		var unit = _v2.b;
-		var _v3 = A2($justinmimbs$date$Date$ceiling, interval, start);
-		var first = _v3;
-		return (_Utils_cmp(first, until) < 0) ? A5(
-			$justinmimbs$date$Date$rangeHelp,
-			unit,
-			A2($elm$core$Basics$max, 1, step) * n,
-			until,
-			_List_Nil,
-			first) : _List_Nil;
-	});
-var $author$project$Calendar$listDays = F2(
-	function (start, end) {
-		return A4($justinmimbs$date$Date$range, 11, 1, start, end);
-	});
-var $elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
-	return _VirtualDom_keyedNode(
-		_VirtualDom_noScript(tag));
-};
-var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
-var $author$project$Calendar$onScroll = function (_v0) {
-	var loadPrevious = _v0.a;
-	var loadNext = _v0.b;
-	var loadMargin = 10;
-	return A2(
-		$elm$html$Html$Events$on,
-		'scroll',
-		A2(
-			$elm$json$Json$Decode$andThen,
-			function (_v1) {
-				var scrollTop = _v1.a;
-				var scrollHeight = _v1.b;
-				var clientHeight = _v1.c;
-				return (_Utils_cmp(scrollTop, loadMargin) < 0) ? $elm$json$Json$Decode$succeed(
-					loadPrevious(scrollHeight)) : ((_Utils_cmp(scrollTop, (scrollHeight - clientHeight) - loadMargin) > 0) ? $elm$json$Json$Decode$succeed(
-					loadNext(scrollHeight)) : $elm$json$Json$Decode$fail(''));
-			},
-			A4(
-				$elm$json$Json$Decode$map3,
-				F3(
-					function (a, b, c) {
-						return _Utils_Tuple3(a, b, c);
-					}),
-				A2(
-					$elm$json$Json$Decode$at,
-					_List_fromArray(
-						['target', 'scrollTop']),
-					$elm$json$Json$Decode$int),
-				A2(
-					$elm$json$Json$Decode$at,
-					_List_fromArray(
-						['target', 'scrollHeight']),
-					$elm$json$Json$Decode$int),
-				A2(
-					$elm$json$Json$Decode$at,
-					_List_fromArray(
-						['target', 'clientHeight']),
-					$elm$json$Json$Decode$int))));
-};
-var $author$project$Msg$Scroll = F3(
-	function (a, b, c) {
-		return {$: 17, a: a, b: b, c: c};
-	});
-var $elm$core$Tuple$mapBoth = F3(
-	function (funcA, funcB, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			funcA(x),
-			funcB(y));
-	});
-var $author$project$Calendar$scrollHandler = function (_v0) {
-	var zoom = _v0.a;
-	var start = _v0.b;
-	var end = _v0.c;
-	return A3(
-		$elm$core$Tuple$mapBoth,
-		$author$project$Msg$Scroll(true),
-		$author$project$Msg$Scroll(false),
-		_Utils_Tuple2(
-			A3($justinmimbs$date$Date$add, 1, -2, start),
-			A3($justinmimbs$date$Date$add, 1, 2, end)));
-};
-var $justinmimbs$date$Date$toRataDie = function (_v0) {
-	var rd = _v0;
-	return rd;
-};
-var $author$project$Msg$EditActivity = function (a) {
-	return {$: 23, a: a};
-};
-var $author$project$Msg$MoveActivity = function (a) {
-	return {$: 20, a: a};
-};
 var $author$project$Msg$ClickedCopy = function (a) {
 	return {$: 34, a: a};
 };
-var $author$project$Msg$ClickedDelete = {$: 33};
-var $author$project$Msg$ClickedMove = {$: 35};
-var $author$project$Msg$ClickedShift = function (a) {
-	return {$: 36, a: a};
+var $author$project$Msg$ClickedMove = function (a) {
+	return {$: 35, a: a};
 };
+var $author$project$Msg$Delete = function (a) {
+	return {$: 12, a: a};
+};
+var $author$project$Msg$EditActivity = function (a) {
+	return {$: 24, a: a};
+};
+var $author$project$Msg$Shift = F2(
+	function (a, b) {
+		return {$: 11, a: a, b: b};
+	});
+var $elm$html$Html$i = _VirtualDom_node('i');
 var $author$project$Calendar$viewButtons = function (activity) {
 	return A2(
 		$author$project$Skeleton$row,
@@ -13652,6 +12638,25 @@ var $author$project$Calendar$viewButtons = function (activity) {
 			]),
 		_List_fromArray(
 			[
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('button small'),
+						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+						$elm$html$Html$Events$onClick(
+						$author$project$Msg$EditActivity(activity))
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$i,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('fas fa-edit')
+							]),
+						_List_Nil)
+					])),
 				A2(
 				$elm$html$Html$a,
 				_List_fromArray(
@@ -13678,7 +12683,7 @@ var $author$project$Calendar$viewButtons = function (activity) {
 						$elm$html$Html$Attributes$class('button small'),
 						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
 						$elm$html$Html$Events$onClick(
-						$author$project$Msg$ClickedShift(true))
+						A2($author$project$Msg$Shift, true, activity))
 					]),
 				_List_fromArray(
 					[
@@ -13697,7 +12702,7 @@ var $author$project$Calendar$viewButtons = function (activity) {
 						$elm$html$Html$Attributes$class('button small'),
 						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
 						$elm$html$Html$Events$onClick(
-						$author$project$Msg$ClickedShift(false))
+						A2($author$project$Msg$Shift, false, activity))
 					]),
 				_List_fromArray(
 					[
@@ -13715,7 +12720,8 @@ var $author$project$Calendar$viewButtons = function (activity) {
 					[
 						$elm$html$Html$Attributes$class('button small'),
 						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-						$elm$html$Html$Events$onClick($author$project$Msg$ClickedMove)
+						$elm$html$Html$Events$onClick(
+						$author$project$Msg$ClickedMove(activity))
 					]),
 				_List_fromArray(
 					[
@@ -13733,7 +12739,8 @@ var $author$project$Calendar$viewButtons = function (activity) {
 					[
 						$elm$html$Html$Attributes$class('button small'),
 						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-						$elm$html$Html$Events$onClick($author$project$Msg$ClickedDelete)
+						$elm$html$Html$Events$onClick(
+						$author$project$Msg$Delete(activity))
 					]),
 				_List_fromArray(
 					[
@@ -13742,6 +12749,24 @@ var $author$project$Calendar$viewButtons = function (activity) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('fas fa-times')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('button small primary'),
+						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+						$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$i,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('fas fa-check')
 							]),
 						_List_Nil)
 					]))
@@ -13783,24 +12808,13 @@ var $author$project$Calendar$viewActivity = F2(
 							$author$project$ActivityShape$view(activity)
 						])),
 					function () {
-					if (!state.$) {
-						return A2(
-							$author$project$Skeleton$column,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
-								]),
-							_List_fromArray(
-								[
-									$author$project$Calendar$viewButtons(activity)
-								]));
-					} else {
+					if (state.$ === 3) {
 						return A2(
 							$elm$html$Html$a,
 							_List_fromArray(
 								[
 									$elm$html$Html$Events$onClick(
-									$author$project$Msg$EditActivity(activity)),
+									$author$project$Msg$SelectActivity(activity)),
 									$elm$html$Html$Attributes$class('column expand'),
 									A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 								]),
@@ -13857,6 +12871,17 @@ var $author$project$Calendar$viewActivity = F2(
 													$elm$html$Html$text(level)
 												]))
 										]))
+								]));
+					} else {
+						return A2(
+							$author$project$Skeleton$column,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
+								]),
+							_List_fromArray(
+								[
+									$author$project$Calendar$viewButtons(activity)
 								]));
 					}
 				}()
@@ -14206,6 +13231,9 @@ var $author$project$Calendar$view = F3(
 				case 1:
 					var id = activityM.a.aw;
 					return _Utils_eq(a.aw, id) ? activityM : $author$project$Msg$None;
+				case 2:
+					var id = activityM.a.aw;
+					return _Utils_eq(a.aw, id) ? activityM : $author$project$Msg$None;
 				default:
 					return $author$project$Msg$None;
 			}
@@ -14300,6 +13328,1059 @@ var $author$project$Calendar$view = F3(
 					body)
 				]));
 	});
+var $author$project$Msg$EditedDescription = function (a) {
+	return {$: 27, a: a};
+};
+var $author$project$Msg$EditedDuration = function (a) {
+	return {$: 30, a: a};
+};
+var $author$project$Msg$SelectedDistance = function (a) {
+	return {$: 32, a: a};
+};
+var $author$project$Msg$SelectedEmoji = function (a) {
+	return {$: 28, a: a};
+};
+var $author$project$Msg$SelectedPace = function (a) {
+	return {$: 31, a: a};
+};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (!maybeValue.$) {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$html$Html$Attributes$autocomplete = function (bool) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'autocomplete',
+		bool ? 'on' : 'off');
+};
+var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$ActivityForm$distanceSelect = F2(
+	function (msg, distance) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('dropdown medium')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('button medium')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Activity$distance.bC(distance))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown-content')
+						]),
+					A2(
+						$elm$core$List$map,
+						function (_v0) {
+							var distanceOpt = _v0.a;
+							return A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										msg(distanceOpt)),
+										A2($elm$html$Html$Attributes$style, 'text-align', 'left')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(distanceOpt)
+									]));
+						},
+						$author$project$Activity$distance.P))
+				]));
+	});
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Attributes$name = $elm$html$Html$Attributes$stringProperty('name');
+var $elm$html$Html$Events$onFocus = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'focus',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 1, a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
+var $author$project$ActivityForm$durationInput = F2(
+	function (msg, duration) {
+		return A2(
+			$elm$html$Html$input,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$type_('number'),
+					$elm$html$Html$Attributes$placeholder('Mins'),
+					$elm$html$Html$Events$onInput(msg),
+					$elm$html$Html$Events$onFocus(
+					msg('')),
+					$elm$html$Html$Attributes$name('duration'),
+					A2($elm$html$Html$Attributes$style, 'width', '3rem'),
+					$elm$html$Html$Attributes$class('input small'),
+					$elm$html$Html$Attributes$value(duration)
+				]),
+			_List_Nil);
+	});
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $author$project$ActivityForm$emojiSelect = F2(
+	function (msg, emoji) {
+		var padding = A2($elm$html$Html$Attributes$style, 'padding', '3.5px 0.5rem 0.5px 0.5rem');
+		var emojis = A2(
+			$elm$core$List$take,
+			10,
+			$author$project$Emoji$filter(
+				$elm$core$String$toLower(emoji)));
+		var emojiItem = function (data) {
+			return A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						msg(data.X)),
+						A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
+						padding,
+						A2($elm$html$Html$Attributes$style, 'white-space', 'nowrap')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Emoji$view(data),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'display', 'inline-block'),
+								A2($elm$html$Html$Attributes$style, 'vertical-align', 'top'),
+								A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(data.X)
+							]))
+					]));
+		};
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('row')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('row')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$button,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('button'),
+											padding,
+											A2($elm$html$Html$Attributes$style, 'border-top-right-radius', '0'),
+											A2($elm$html$Html$Attributes$style, 'border-bottom-right-radius', '0')
+										]),
+									_List_fromArray(
+										[
+											$author$project$Emoji$view(
+											A2(
+												$elm$core$Maybe$withDefault,
+												$author$project$Emoji$default,
+												$elm$core$List$head(emojis)))
+										])),
+									A2(
+									$elm$html$Html$input,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onInput(msg),
+											$elm$html$Html$Events$onFocus(
+											msg('')),
+											$elm$html$Html$Attributes$class('input small icon'),
+											A2($elm$html$Html$Attributes$style, 'width', '6rem'),
+											$elm$html$Html$Attributes$value(emoji)
+										]),
+									_List_Nil)
+								])),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('dropdown-content')
+								]),
+							A2($elm$core$List$map, emojiItem, emojis))
+						]))
+				]));
+	});
+var $elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2($elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var $elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3($elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var $elm$html$Html$span = _VirtualDom_node('span');
+var $author$project$MPRLevel$stripTimeStr = function (str) {
+	var _v0 = $author$project$MPRLevel$timeStrToHrsMinsSecs(str);
+	if ((((_v0.b && (!_v0.a)) && _v0.b.b) && _v0.b.b.b) && (!_v0.b.b.b.b)) {
+		var _v1 = _v0.b;
+		var min = _v1.a;
+		var _v2 = _v1.b;
+		var sec = _v2.a;
+		return $elm$core$String$fromInt(min) + (':' + function () {
+			var _v3 = A2($elm$core$Basics$compare, sec, 10);
+			if (!_v3) {
+				return '0' + $elm$core$String$fromInt(sec);
+			} else {
+				return $elm$core$String$fromInt(sec);
+			}
+		}());
+	} else {
+		return str;
+	}
+};
+var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
+var $elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var $elm$core$Array$getHelp = F3(
+	function (shift, index, tree) {
+		getHelp:
+		while (true) {
+			var pos = $elm$core$Array$bitMask & (index >>> shift);
+			var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (!_v0.$) {
+				var subTree = _v0.a;
+				var $temp$shift = shift - $elm$core$Array$shiftStep,
+					$temp$index = index,
+					$temp$tree = subTree;
+				shift = $temp$shift;
+				index = $temp$index;
+				tree = $temp$tree;
+				continue getHelp;
+			} else {
+				var values = _v0.a;
+				return A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, values);
+			}
+		}
+	});
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $elm$core$Array$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var $elm$core$Array$get = F2(
+	function (index, _v0) {
+		var len = _v0.a;
+		var startShift = _v0.b;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? $elm$core$Maybe$Nothing : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? $elm$core$Maybe$Just(
+			A2($elm$core$Elm$JsArray$unsafeGet, $elm$core$Array$bitMask & index, tail)) : $elm$core$Maybe$Just(
+			A3($elm$core$Array$getHelp, startShift, index, tree)));
+	});
+var $author$project$MPRLevel$paceList = _List_fromArray(
+	['Easy', 'Moderate', 'Steady State', 'Brisk', 'Aerobic Threshold', 'Lactate Threshold', 'Groove', 'VO2 Max', 'Fast']);
+var $author$project$MPRData$aerobicTraining = '\n[[["0:11:12","0:12:19"],["0:10:49","0:10:55"],["0:10:27","0:10:32"],["0:10:04","0:10:10"],["0:09:42","0:09:47"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:35","0:08:39"],["0:08:13","0:08:17"]],[["0:11:06","0:12:12"],["0:10:44","0:10:49"],["0:10:21","0:10:27"],["0:09:59","0:10:04"],["0:09:37","0:09:42"],["0:09:15","0:09:20"],["0:08:53","0:08:57"],["0:08:30","0:08:35"],["0:08:08","0:08:13"]],[["0:11:00","0:12:06"],["0:10:38","0:10:44"],["0:10:16","0:10:21"],["0:09:54","0:09:59"],["0:09:32","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:30"],["0:08:04","0:08:08"]],[["0:10:54","0:11:59"],["0:10:32","0:10:38"],["0:10:10","0:10:16"],["0:09:49","0:09:54"],["0:09:27","0:09:32"],["0:09:05","0:09:10"],["0:08:43","0:08:48"],["0:08:21","0:08:26"],["0:08:00","0:08:04"]],[["0:10:48","0:11:53"],["0:10:27","0:10:32"],["0:10:05","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:27"],["0:09:00","0:09:05"],["0:08:39","0:08:43"],["0:08:17","0:08:21"],["0:07:55","0:08:00"]],[["0:10:42","0:11:47"],["0:10:21","0:10:27"],["0:10:00","0:10:05"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:55","0:09:00"],["0:08:34","0:08:39"],["0:08:12","0:08:17"],["0:07:51","0:07:55"]],[["0:10:37","0:11:40"],["0:10:15","0:10:21"],["0:09:54","0:10:00"],["0:09:33","0:09:38"],["0:09:12","0:09:17"],["0:08:50","0:08:55"],["0:08:29","0:08:34"],["0:08:08","0:08:12"],["0:07:47","0:07:51"]],[["0:10:31","0:11:34"],["0:10:10","0:10:15"],["0:09:49","0:09:54"],["0:09:28","0:09:33"],["0:09:07","0:09:12"],["0:08:46","0:08:50"],["0:08:25","0:08:29"],["0:08:03","0:08:08"],["0:07:42","0:07:47"]],[["0:10:25","0:11:27"],["0:10:04","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:28"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:20","0:08:25"],["0:07:59","0:08:03"],["0:07:38","0:07:42"]],[["0:10:19","0:11:21"],["0:09:58","0:10:04"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:15","0:08:20"],["0:07:55","0:07:59"],["0:07:34","0:07:38"]],[["0:10:13","0:11:14"],["0:09:53","0:09:58"],["0:09:32","0:09:38"],["0:09:12","0:09:17"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:10","0:08:15"],["0:07:50","0:07:55"],["0:07:30","0:07:34"]],[["0:10:07","0:11:08"],["0:09:47","0:09:53"],["0:09:27","0:09:32"],["0:09:07","0:09:12"],["0:08:46","0:08:51"],["0:08:26","0:08:31"],["0:08:06","0:08:10"],["0:07:46","0:07:50"],["0:07:25","0:07:30"]],[["0:10:01","0:11:02"],["0:09:41","0:09:47"],["0:09:21","0:09:27"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:21","0:08:26"],["0:08:01","0:08:06"],["0:07:41","0:07:46"],["0:07:21","0:07:25"]],[["0:09:56","0:10:55"],["0:09:36","0:09:41"],["0:09:16","0:09:21"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:16","0:08:21"],["0:07:56","0:08:01"],["0:07:37","0:07:41"],["0:07:17","0:07:21"]],[["0:09:50","0:10:49"],["0:09:30","0:09:36"],["0:09:10","0:09:16"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:52","0:07:56"],["0:07:32","0:07:37"],["0:07:12","0:07:17"]],[["0:09:44","0:10:42"],["0:09:24","0:09:30"],["0:09:05","0:09:10"],["0:08:45","0:08:51"],["0:08:26","0:08:31"],["0:08:07","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:32"],["0:07:08","0:07:12"]],[["0:09:38","0:10:36"],["0:09:19","0:09:24"],["0:08:59","0:09:05"],["0:08:40","0:08:45"],["0:08:21","0:08:26"],["0:08:02","0:08:07"],["0:07:42","0:07:47"],["0:07:23","0:07:28"],["0:07:04","0:07:08"]],[["0:09:32","0:10:29"],["0:09:13","0:09:19"],["0:08:54","0:08:59"],["0:08:35","0:08:40"],["0:08:16","0:08:21"],["0:07:57","0:08:02"],["0:07:38","0:07:42"],["0:07:19","0:07:23"],["0:07:00","0:07:04"]],[["0:09:26","0:10:23"],["0:09:07","0:09:13"],["0:08:48","0:08:54"],["0:08:30","0:08:35"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:38"],["0:07:14","0:07:19"],["0:06:55","0:07:00"]],[["0:09:20","0:10:16"],["0:09:02","0:09:07"],["0:08:43","0:08:48"],["0:08:24","0:08:30"],["0:08:06","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:33"],["0:07:10","0:07:14"],["0:06:51","0:06:55"]],[["0:09:15","0:10:10"],["0:08:56","0:09:02"],["0:08:38","0:08:43"],["0:08:19","0:08:24"],["0:08:01","0:08:06"],["0:07:42","0:07:47"],["0:07:24","0:07:28"],["0:07:05","0:07:10"],["0:06:47","0:06:51"]],[["0:09:09","0:10:04"],["0:08:50","0:08:56"],["0:08:32","0:08:38"],["0:08:14","0:08:19"],["0:07:56","0:08:01"],["0:07:37","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:05"],["0:06:42","0:06:47"]],[["0:09:03","0:09:57"],["0:08:45","0:08:50"],["0:08:27","0:08:32"],["0:08:09","0:08:14"],["0:07:50","0:07:56"],["0:07:32","0:07:37"],["0:07:14","0:07:19"],["0:06:56","0:07:01"],["0:06:38","0:06:42"]],[["0:08:57","0:09:51"],["0:08:39","0:08:45"],["0:08:21","0:08:27"],["0:08:03","0:08:09"],["0:07:45","0:07:50"],["0:07:27","0:07:32"],["0:07:10","0:07:14"],["0:06:52","0:06:56"],["0:06:34","0:06:38"]],[["0:08:51","0:09:44"],["0:08:33","0:08:39"],["0:08:16","0:08:21"],["0:07:58","0:08:03"],["0:07:40","0:07:45"],["0:07:23","0:07:27"],["0:07:05","0:07:10"],["0:06:47","0:06:52"],["0:06:29","0:06:34"]],[["0:08:45","0:09:38"],["0:08:28","0:08:33"],["0:08:10","0:08:16"],["0:07:53","0:07:58"],["0:07:35","0:07:40"],["0:07:18","0:07:23"],["0:07:00","0:07:05"],["0:06:43","0:06:47"],["0:06:25","0:06:29"]],[["0:08:39","0:09:31"],["0:08:22","0:08:28"],["0:08:05","0:08:10"],["0:07:47","0:07:53"],["0:07:30","0:07:35"],["0:07:13","0:07:18"],["0:06:56","0:07:00"],["0:06:38","0:06:43"],["0:06:21","0:06:25"]],[["0:08:34","0:09:25"],["0:08:16","0:08:22"],["0:07:59","0:08:05"],["0:07:42","0:07:47"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:38"],["0:06:17","0:06:21"]],[["0:08:28","0:09:18"],["0:08:11","0:08:16"],["0:07:54","0:07:59"],["0:07:37","0:07:42"],["0:07:20","0:07:25"],["0:07:03","0:07:08"],["0:06:46","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"]],[["0:08:22","0:09:12"],["0:08:05","0:08:11"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:15","0:07:20"],["0:06:58","0:07:03"],["0:06:41","0:06:46"],["0:06:25","0:06:29"],["0:06:08","0:06:12"]],[["0:08:16","0:09:06"],["0:07:59","0:08:05"],["0:07:43","0:07:48"],["0:07:26","0:07:32"],["0:07:10","0:07:15"],["0:06:53","0:06:58"],["0:06:37","0:06:41"],["0:06:20","0:06:25"],["0:06:04","0:06:08"]],[["0:08:10","0:08:59"],["0:07:54","0:07:59"],["0:07:37","0:07:43"],["0:07:21","0:07:26"],["0:07:05","0:07:10"],["0:06:48","0:06:53"],["0:06:32","0:06:37"],["0:06:16","0:06:20"],["0:05:59","0:06:04"]],[["0:08:04","0:08:53"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:48"],["0:06:27","0:06:32"],["0:06:11","0:06:16"],["0:05:55","0:05:59"]],[["0:07:58","0:08:46"],["0:07:42","0:07:48"],["0:07:26","0:07:32"],["0:07:11","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:23","0:06:27"],["0:06:07","0:06:11"],["0:05:51","0:05:55"]],[["0:07:53","0:08:40"],["0:07:37","0:07:42"],["0:07:21","0:07:26"],["0:07:05","0:07:11"],["0:06:50","0:06:55"],["0:06:34","0:06:39"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:47","0:05:51"]],[["0:07:47","0:08:33"],["0:07:31","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:18"],["0:05:58","0:06:02"],["0:05:42","0:05:47"]],[["0:07:41","0:08:27"],["0:07:25","0:07:31"],["0:07:10","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:42"]],[["0:07:35","0:08:20"],["0:07:20","0:07:25"],["0:07:05","0:07:10"],["0:06:49","0:06:55"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:49","0:05:53"],["0:05:34","0:05:38"]],[["0:07:29","0:08:14"],["0:07:14","0:07:20"],["0:06:59","0:07:05"],["0:06:44","0:06:49"],["0:06:29","0:06:34"],["0:06:14","0:06:19"],["0:05:59","0:06:04"],["0:05:44","0:05:49"],["0:05:29","0:05:34"]],[["0:07:23","0:08:08"],["0:07:08","0:07:14"],["0:06:54","0:06:59"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:14"],["0:05:55","0:05:59"],["0:05:40","0:05:44"],["0:05:25","0:05:29"]],[["0:07:17","0:08:01"],["0:07:03","0:07:08"],["0:06:48","0:06:54"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:35","0:05:40"],["0:05:21","0:05:25"]],[["0:07:12","0:07:55"],["0:06:57","0:07:03"],["0:06:43","0:06:48"],["0:06:28","0:06:34"],["0:06:14","0:06:19"],["0:06:00","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:35"],["0:05:16","0:05:21"]],[["0:07:06","0:07:48"],["0:06:51","0:06:57"],["0:06:37","0:06:43"],["0:06:23","0:06:28"],["0:06:09","0:06:14"],["0:05:55","0:06:00"],["0:05:41","0:05:45"],["0:05:26","0:05:31"],["0:05:12","0:05:16"]],[["0:07:00","0:07:42"],["0:06:46","0:06:51"],["0:06:32","0:06:37"],["0:06:18","0:06:23"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:36","0:05:41"],["0:05:22","0:05:26"],["0:05:08","0:05:12"]],[["0:06:54","0:07:35"],["0:06:40","0:06:46"],["0:06:26","0:06:32"],["0:06:13","0:06:18"],["0:05:59","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:04","0:05:08"]],[["0:06:48","0:07:29"],["0:06:35","0:06:40"],["0:06:21","0:06:26"],["0:06:07","0:06:13"],["0:05:54","0:05:59"],["0:05:40","0:05:45"],["0:05:26","0:05:31"],["0:05:13","0:05:17"],["0:04:59","0:05:04"]],[["0:06:42","0:07:22"],["0:06:29","0:06:35"],["0:06:15","0:06:21"],["0:06:02","0:06:07"],["0:05:49","0:05:54"],["0:05:35","0:05:40"],["0:05:22","0:05:26"],["0:05:08","0:05:13"],["0:04:55","0:04:59"]],[["0:06:36","0:07:16"],["0:06:23","0:06:29"],["0:06:10","0:06:15"],["0:05:57","0:06:02"],["0:05:44","0:05:49"],["0:05:30","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:08"],["0:04:51","0:04:55"]],[["0:06:31","0:07:10"],["0:06:18","0:06:23"],["0:06:05","0:06:10"],["0:05:51","0:05:57"],["0:05:38","0:05:44"],["0:05:25","0:05:30"],["0:05:12","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:51"]],[["0:06:25","0:07:03"],["0:06:12","0:06:18"],["0:05:59","0:06:05"],["0:05:46","0:05:51"],["0:05:33","0:05:38"],["0:05:21","0:05:25"],["0:05:08","0:05:12"],["0:04:55","0:04:59"],["0:04:42","0:04:46"]],[["0:06:19","0:06:57"],["0:06:06","0:06:12"],["0:05:54","0:05:59"],["0:05:41","0:05:46"],["0:05:28","0:05:33"],["0:05:16","0:05:21"],["0:05:03","0:05:08"],["0:04:50","0:04:55"],["0:04:38","0:04:42"]],[["0:06:13","0:06:50"],["0:06:01","0:06:06"],["0:05:48","0:05:54"],["0:05:36","0:05:41"],["0:05:23","0:05:28"],["0:05:11","0:05:16"],["0:04:58","0:05:03"],["0:04:46","0:04:50"],["0:04:34","0:04:38"]],[["0:06:07","0:06:44"],["0:05:55","0:06:01"],["0:05:43","0:05:48"],["0:05:30","0:05:36"],["0:05:18","0:05:23"],["0:05:06","0:05:11"],["0:04:54","0:04:58"],["0:04:41","0:04:46"],["0:04:29","0:04:34"]],[["0:06:01","0:06:37"],["0:05:49","0:05:55"],["0:05:37","0:05:43"],["0:05:25","0:05:30"],["0:05:13","0:05:18"],["0:05:01","0:05:06"],["0:04:49","0:04:54"],["0:04:37","0:04:41"],["0:04:25","0:04:29"]],[["0:05:55","0:06:31"],["0:05:44","0:05:49"],["0:05:32","0:05:37"],["0:05:20","0:05:25"],["0:05:08","0:05:13"],["0:04:56","0:05:01"],["0:04:44","0:04:49"],["0:04:32","0:04:37"],["0:04:21","0:04:25"]],[["0:05:50","0:06:25"],["0:05:38","0:05:44"],["0:05:26","0:05:32"],["0:05:15","0:05:20"],["0:05:03","0:05:08"],["0:04:51","0:04:56"],["0:04:40","0:04:44"],["0:04:28","0:04:32"],["0:04:16","0:04:21"]],[["0:05:44","0:06:18"],["0:05:32","0:05:38"],["0:05:21","0:05:26"],["0:05:09","0:05:15"],["0:04:58","0:05:03"],["0:04:46","0:04:51"],["0:04:35","0:04:40"],["0:04:24","0:04:28"],["0:04:12","0:04:16"]],[["0:05:38","0:06:12"],["0:05:27","0:05:32"],["0:05:15","0:05:21"],["0:05:04","0:05:09"],["0:04:53","0:04:58"],["0:04:42","0:04:46"],["0:04:30","0:04:35"],["0:04:19","0:04:24"],["0:04:08","0:04:12"]],[["0:05:32","0:06:05"],["0:05:21","0:05:27"],["0:05:10","0:05:15"],["0:04:59","0:05:04"],["0:04:48","0:04:53"],["0:04:37","0:04:42"],["0:04:26","0:04:30"],["0:04:15","0:04:19"],["0:04:03","0:04:08"]],[["0:05:26","0:05:59"],["0:05:15","0:05:21"],["0:05:04","0:05:10"],["0:04:54","0:04:59"],["0:04:43","0:04:48"],["0:04:32","0:04:37"],["0:04:21","0:04:26"],["0:04:10","0:04:15"],["0:03:59","0:04:03"]]]\n';
+var $author$project$MPRData$neutralTraining = '\n[[["0:11:29","0:12:38"],["0:11:04","0:11:09"],["0:10:38","0:10:44"],["0:10:13","0:10:18"],["0:09:48","0:09:53"],["0:09:22","0:09:27"],["0:08:57","0:09:02"],["0:08:32","0:08:36"],["0:08:06","0:08:11"]],[["0:11:23","0:12:31"],["0:10:58","0:11:04"],["0:10:33","0:10:38"],["0:10:08","0:10:13"],["0:09:43","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:27","0:08:32"],["0:08:02","0:08:06"]],[["0:11:17","0:12:25"],["0:10:52","0:10:58"],["0:10:27","0:10:33"],["0:10:02","0:10:08"],["0:09:37","0:09:43"],["0:09:13","0:09:17"],["0:08:48","0:08:52"],["0:08:23","0:08:27"],["0:07:58","0:08:02"]],[["0:11:11","0:12:18"],["0:10:46","0:10:52"],["0:10:22","0:10:27"],["0:09:57","0:10:02"],["0:09:32","0:09:37"],["0:09:08","0:09:13"],["0:08:43","0:08:48"],["0:08:18","0:08:23"],["0:07:54","0:07:58"]],[["0:11:05","0:12:11"],["0:10:41","0:10:46"],["0:10:16","0:10:22"],["0:09:52","0:09:57"],["0:09:27","0:09:32"],["0:09:03","0:09:08"],["0:08:38","0:08:43"],["0:08:14","0:08:18"],["0:07:50","0:07:54"]],[["0:10:59","0:12:05"],["0:10:35","0:10:41"],["0:10:11","0:10:16"],["0:09:46","0:09:52"],["0:09:22","0:09:27"],["0:08:58","0:09:03"],["0:08:34","0:08:38"],["0:08:10","0:08:14"],["0:07:45","0:07:50"]],[["0:10:53","0:11:58"],["0:10:29","0:10:35"],["0:10:05","0:10:11"],["0:09:41","0:09:46"],["0:09:17","0:09:22"],["0:08:53","0:08:58"],["0:08:29","0:08:34"],["0:08:05","0:08:10"],["0:07:41","0:07:45"]],[["0:10:47","0:11:52"],["0:10:23","0:10:29"],["0:09:59","0:10:05"],["0:09:36","0:09:41"],["0:09:12","0:09:17"],["0:08:48","0:08:53"],["0:08:24","0:08:29"],["0:08:01","0:08:05"],["0:07:37","0:07:41"]],[["0:10:41","0:11:45"],["0:10:17","0:10:23"],["0:09:54","0:09:59"],["0:09:30","0:09:36"],["0:09:07","0:09:12"],["0:08:43","0:08:48"],["0:08:20","0:08:24"],["0:07:56","0:08:01"],["0:07:33","0:07:37"]],[["0:10:35","0:11:39"],["0:10:12","0:10:17"],["0:09:48","0:09:54"],["0:09:25","0:09:30"],["0:09:02","0:09:07"],["0:08:38","0:08:43"],["0:08:15","0:08:20"],["0:07:52","0:07:56"],["0:07:28","0:07:33"]],[["0:10:29","0:11:32"],["0:10:06","0:10:12"],["0:09:43","0:09:48"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:34","0:08:38"],["0:08:10","0:08:15"],["0:07:47","0:07:52"],["0:07:24","0:07:28"]],[["0:10:23","0:11:25"],["0:10:00","0:10:06"],["0:09:37","0:09:43"],["0:09:14","0:09:20"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:06","0:08:10"],["0:07:43","0:07:47"],["0:07:20","0:07:24"]],[["0:10:17","0:11:19"],["0:09:54","0:10:00"],["0:09:32","0:09:37"],["0:09:09","0:09:14"],["0:08:46","0:08:52"],["0:08:24","0:08:29"],["0:08:01","0:08:06"],["0:07:38","0:07:43"],["0:07:16","0:07:20"]],[["0:10:11","0:11:12"],["0:09:49","0:09:54"],["0:09:26","0:09:32"],["0:09:04","0:09:09"],["0:08:41","0:08:46"],["0:08:19","0:08:24"],["0:07:56","0:08:01"],["0:07:34","0:07:38"],["0:07:12","0:07:16"]],[["0:10:05","0:11:06"],["0:09:43","0:09:49"],["0:09:21","0:09:26"],["0:08:58","0:09:04"],["0:08:36","0:08:41"],["0:08:14","0:08:19"],["0:07:52","0:07:56"],["0:07:30","0:07:34"],["0:07:07","0:07:12"]],[["0:09:59","0:10:59"],["0:09:37","0:09:43"],["0:09:15","0:09:21"],["0:08:53","0:08:58"],["0:08:31","0:08:36"],["0:08:09","0:08:14"],["0:07:47","0:07:52"],["0:07:25","0:07:30"],["0:07:03","0:07:07"]],[["0:09:53","0:10:52"],["0:09:31","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:31"],["0:08:04","0:08:09"],["0:07:42","0:07:47"],["0:07:21","0:07:25"],["0:06:59","0:07:03"]],[["0:09:47","0:10:46"],["0:09:26","0:09:31"],["0:09:04","0:09:10"],["0:08:42","0:08:48"],["0:08:21","0:08:26"],["0:07:59","0:08:04"],["0:07:38","0:07:42"],["0:07:16","0:07:21"],["0:06:55","0:06:59"]],[["0:09:41","0:10:39"],["0:09:20","0:09:26"],["0:08:58","0:09:04"],["0:08:37","0:08:42"],["0:08:16","0:08:21"],["0:07:54","0:07:59"],["0:07:33","0:07:38"],["0:07:12","0:07:16"],["0:06:50","0:06:55"]],[["0:09:35","0:10:33"],["0:09:14","0:09:20"],["0:08:53","0:08:58"],["0:08:32","0:08:37"],["0:08:11","0:08:16"],["0:07:50","0:07:54"],["0:07:28","0:07:33"],["0:07:07","0:07:12"],["0:06:46","0:06:50"]],[["0:09:29","0:10:26"],["0:09:08","0:09:14"],["0:08:47","0:08:53"],["0:08:26","0:08:32"],["0:08:06","0:08:11"],["0:07:45","0:07:50"],["0:07:24","0:07:28"],["0:07:03","0:07:07"],["0:06:42","0:06:46"]],[["0:09:23","0:10:20"],["0:09:03","0:09:08"],["0:08:42","0:08:47"],["0:08:21","0:08:26"],["0:08:00","0:08:06"],["0:07:40","0:07:45"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:38","0:06:42"]],[["0:09:17","0:10:13"],["0:08:57","0:09:03"],["0:08:36","0:08:42"],["0:08:16","0:08:21"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:54","0:06:58"],["0:06:33","0:06:38"]],[["0:09:11","0:10:06"],["0:08:51","0:08:57"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:50","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:14"],["0:06:50","0:06:54"],["0:06:29","0:06:33"]],[["0:09:05","0:10:00"],["0:08:45","0:08:51"],["0:08:25","0:08:31"],["0:08:05","0:08:11"],["0:07:45","0:07:50"],["0:07:25","0:07:30"],["0:07:05","0:07:10"],["0:06:45","0:06:50"],["0:06:25","0:06:29"]],[["0:08:59","0:09:53"],["0:08:39","0:08:45"],["0:08:20","0:08:25"],["0:08:00","0:08:05"],["0:07:40","0:07:45"],["0:07:20","0:07:25"],["0:07:00","0:07:05"],["0:06:41","0:06:45"],["0:06:21","0:06:25"]],[["0:08:53","0:09:47"],["0:08:34","0:08:39"],["0:08:14","0:08:20"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:15","0:07:20"],["0:06:56","0:07:00"],["0:06:36","0:06:41"],["0:06:17","0:06:21"]],[["0:08:47","0:09:40"],["0:08:28","0:08:34"],["0:08:09","0:08:14"],["0:07:49","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:36"],["0:06:12","0:06:17"]],[["0:08:41","0:09:33"],["0:08:22","0:08:28"],["0:08:03","0:08:09"],["0:07:44","0:07:49"],["0:07:25","0:07:30"],["0:07:06","0:07:10"],["0:06:46","0:06:51"],["0:06:27","0:06:32"],["0:06:08","0:06:12"]],[["0:08:35","0:09:27"],["0:08:16","0:08:22"],["0:07:57","0:08:03"],["0:07:39","0:07:44"],["0:07:20","0:07:25"],["0:07:01","0:07:06"],["0:06:42","0:06:46"],["0:06:23","0:06:27"],["0:06:04","0:06:08"]],[["0:08:29","0:09:20"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:39"],["0:07:15","0:07:20"],["0:06:56","0:07:01"],["0:06:37","0:06:42"],["0:06:18","0:06:23"],["0:06:00","0:06:04"]],[["0:08:23","0:09:14"],["0:08:05","0:08:11"],["0:07:46","0:07:52"],["0:07:28","0:07:33"],["0:07:09","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:37"],["0:06:14","0:06:18"],["0:05:55","0:06:00"]],[["0:08:17","0:09:07"],["0:07:59","0:08:05"],["0:07:41","0:07:46"],["0:07:23","0:07:28"],["0:07:04","0:07:09"],["0:06:46","0:06:51"],["0:06:28","0:06:32"],["0:06:09","0:06:14"],["0:05:51","0:05:55"]],[["0:08:11","0:09:01"],["0:07:53","0:07:59"],["0:07:35","0:07:41"],["0:07:17","0:07:23"],["0:06:59","0:07:04"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:05","0:06:09"],["0:05:47","0:05:51"]],[["0:08:05","0:08:54"],["0:07:48","0:07:53"],["0:07:30","0:07:35"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:01","0:06:05"],["0:05:43","0:05:47"]],[["0:07:59","0:08:47"],["0:07:42","0:07:48"],["0:07:24","0:07:30"],["0:07:07","0:07:12"],["0:06:49","0:06:54"],["0:06:31","0:06:36"],["0:06:14","0:06:18"],["0:05:56","0:06:01"],["0:05:39","0:05:43"]],[["0:07:53","0:08:41"],["0:07:36","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:07"],["0:06:44","0:06:49"],["0:06:26","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:56"],["0:05:34","0:05:39"]],[["0:07:47","0:08:34"],["0:07:30","0:07:36"],["0:07:13","0:07:19"],["0:06:56","0:07:01"],["0:06:39","0:06:44"],["0:06:22","0:06:26"],["0:06:04","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:34"]],[["0:07:41","0:08:28"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:39"],["0:06:17","0:06:22"],["0:06:00","0:06:04"],["0:05:43","0:05:47"],["0:05:26","0:05:30"]],[["0:07:36","0:08:21"],["0:07:19","0:07:25"],["0:07:02","0:07:08"],["0:06:45","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"],["0:05:55","0:06:00"],["0:05:38","0:05:43"],["0:05:22","0:05:26"]],[["0:07:30","0:08:14"],["0:07:13","0:07:19"],["0:06:56","0:07:02"],["0:06:40","0:06:45"],["0:06:23","0:06:29"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:34","0:05:38"],["0:05:17","0:05:22"]],[["0:07:24","0:08:08"],["0:07:07","0:07:13"],["0:06:51","0:06:56"],["0:06:35","0:06:40"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:46","0:05:50"],["0:05:29","0:05:34"],["0:05:13","0:05:17"]],[["0:07:18","0:08:01"],["0:07:01","0:07:07"],["0:06:45","0:06:51"],["0:06:29","0:06:35"],["0:06:13","0:06:18"],["0:05:57","0:06:02"],["0:05:41","0:05:46"],["0:05:25","0:05:29"],["0:05:09","0:05:13"]],[["0:07:12","0:07:55"],["0:06:56","0:07:01"],["0:06:40","0:06:45"],["0:06:24","0:06:29"],["0:06:08","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:41"],["0:05:21","0:05:25"],["0:05:05","0:05:09"]],[["0:07:06","0:07:48"],["0:06:50","0:06:56"],["0:06:34","0:06:40"],["0:06:19","0:06:24"],["0:06:03","0:06:08"],["0:05:47","0:05:52"],["0:05:32","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:05"]],[["0:07:00","0:07:42"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:19"],["0:05:58","0:06:03"],["0:05:43","0:05:47"],["0:05:27","0:05:32"],["0:05:12","0:05:16"],["0:04:56","0:05:01"]],[["0:06:54","0:07:35"],["0:06:38","0:06:44"],["0:06:23","0:06:29"],["0:06:08","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:43"],["0:05:22","0:05:27"],["0:05:07","0:05:12"],["0:04:52","0:04:56"]],[["0:06:48","0:07:28"],["0:06:33","0:06:38"],["0:06:18","0:06:23"],["0:06:03","0:06:08"],["0:05:48","0:05:53"],["0:05:33","0:05:38"],["0:05:18","0:05:22"],["0:05:03","0:05:07"],["0:04:48","0:04:52"]],[["0:06:42","0:07:22"],["0:06:27","0:06:33"],["0:06:12","0:06:18"],["0:05:57","0:06:03"],["0:05:43","0:05:48"],["0:05:28","0:05:33"],["0:05:13","0:05:18"],["0:04:58","0:05:03"],["0:04:44","0:04:48"]],[["0:06:36","0:07:15"],["0:06:21","0:06:27"],["0:06:07","0:06:12"],["0:05:52","0:05:57"],["0:05:38","0:05:43"],["0:05:23","0:05:28"],["0:05:08","0:05:13"],["0:04:54","0:04:58"],["0:04:39","0:04:44"]],[["0:06:30","0:07:09"],["0:06:15","0:06:21"],["0:06:01","0:06:07"],["0:05:47","0:05:52"],["0:05:32","0:05:38"],["0:05:18","0:05:23"],["0:05:04","0:05:08"],["0:04:49","0:04:54"],["0:04:35","0:04:39"]],[["0:06:24","0:07:02"],["0:06:10","0:06:15"],["0:05:56","0:06:01"],["0:05:41","0:05:47"],["0:05:27","0:05:32"],["0:05:13","0:05:18"],["0:04:59","0:05:04"],["0:04:45","0:04:49"],["0:04:31","0:04:35"]],[["0:06:18","0:06:55"],["0:06:04","0:06:10"],["0:05:50","0:05:56"],["0:05:36","0:05:41"],["0:05:22","0:05:27"],["0:05:08","0:05:13"],["0:04:54","0:04:59"],["0:04:41","0:04:45"],["0:04:27","0:04:31"]],[["0:06:12","0:06:49"],["0:05:58","0:06:04"],["0:05:44","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:03","0:05:08"],["0:04:50","0:04:54"],["0:04:36","0:04:41"],["0:04:22","0:04:27"]],[["0:06:06","0:06:42"],["0:05:52","0:05:58"],["0:05:39","0:05:44"],["0:05:25","0:05:31"],["0:05:12","0:05:17"],["0:04:59","0:05:03"],["0:04:45","0:04:50"],["0:04:32","0:04:36"],["0:04:18","0:04:22"]],[["0:06:00","0:06:36"],["0:05:47","0:05:52"],["0:05:33","0:05:39"],["0:05:20","0:05:25"],["0:05:07","0:05:12"],["0:04:54","0:04:59"],["0:04:40","0:04:45"],["0:04:27","0:04:32"],["0:04:14","0:04:18"]],[["0:05:54","0:06:29"],["0:05:41","0:05:47"],["0:05:28","0:05:33"],["0:05:15","0:05:20"],["0:05:02","0:05:07"],["0:04:49","0:04:54"],["0:04:36","0:04:40"],["0:04:23","0:04:27"],["0:04:10","0:04:14"]],[["0:05:48","0:06:23"],["0:05:35","0:05:41"],["0:05:22","0:05:28"],["0:05:09","0:05:15"],["0:04:57","0:05:02"],["0:04:44","0:04:49"],["0:04:31","0:04:36"],["0:04:18","0:04:23"],["0:04:06","0:04:10"]],[["0:05:42","0:06:16"],["0:05:29","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:09"],["0:04:52","0:04:57"],["0:04:39","0:04:44"],["0:04:26","0:04:31"],["0:04:14","0:04:18"],["0:04:01","0:04:06"]],[["0:05:36","0:06:09"],["0:05:23","0:05:29"],["0:05:11","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:52"],["0:04:34","0:04:39"],["0:04:22","0:04:26"],["0:04:09","0:04:14"],["0:03:57","0:04:01"]]]\n';
+var $author$project$MPRData$speedTraining = '\n[[["0:11:46","0:12:57"],["0:11:18","0:11:24"],["0:10:50","0:10:55"],["0:10:22","0:10:27"],["0:09:53","0:09:58"],["0:09:25","0:09:30"],["0:08:57","0:09:01"],["0:08:29","0:08:33"],["0:08:00","0:08:04"]],[["0:11:40","0:12:50"],["0:11:12","0:11:18"],["0:10:44","0:10:50"],["0:10:16","0:10:22"],["0:09:48","0:09:53"],["0:09:20","0:09:25"],["0:08:52","0:08:57"],["0:08:24","0:08:29"],["0:07:56","0:08:00"]],[["0:11:34","0:12:43"],["0:11:06","0:11:12"],["0:10:39","0:10:44"],["0:10:11","0:10:16"],["0:09:43","0:09:48"],["0:09:15","0:09:20"],["0:08:47","0:08:52"],["0:08:20","0:08:24"],["0:07:52","0:07:56"]],[["0:11:28","0:12:37"],["0:11:00","0:11:06"],["0:10:33","0:10:39"],["0:10:05","0:10:11"],["0:09:38","0:09:43"],["0:09:10","0:09:15"],["0:08:43","0:08:47"],["0:08:15","0:08:20"],["0:07:48","0:07:52"]],[["0:11:22","0:12:30"],["0:10:55","0:11:00"],["0:10:27","0:10:33"],["0:10:00","0:10:05"],["0:09:33","0:09:38"],["0:09:05","0:09:10"],["0:08:38","0:08:43"],["0:08:11","0:08:15"],["0:07:44","0:07:48"]],[["0:11:16","0:12:23"],["0:10:49","0:10:55"],["0:10:22","0:10:27"],["0:09:55","0:10:00"],["0:09:28","0:09:33"],["0:09:01","0:09:05"],["0:08:34","0:08:38"],["0:08:07","0:08:11"],["0:07:39","0:07:44"]],[["0:11:10","0:12:17"],["0:10:43","0:10:49"],["0:10:16","0:10:22"],["0:09:49","0:09:55"],["0:09:22","0:09:28"],["0:08:56","0:09:01"],["0:08:29","0:08:34"],["0:08:02","0:08:07"],["0:07:35","0:07:39"]],[["0:11:03","0:12:10"],["0:10:37","0:10:43"],["0:10:10","0:10:16"],["0:09:44","0:09:49"],["0:09:17","0:09:22"],["0:08:51","0:08:56"],["0:08:24","0:08:29"],["0:07:58","0:08:02"],["0:07:31","0:07:35"]],[["0:10:57","0:12:03"],["0:10:31","0:10:37"],["0:10:05","0:10:10"],["0:09:38","0:09:44"],["0:09:12","0:09:17"],["0:08:46","0:08:51"],["0:08:20","0:08:24"],["0:07:53","0:07:58"],["0:07:27","0:07:31"]],[["0:10:51","0:11:56"],["0:10:25","0:10:31"],["0:09:59","0:10:05"],["0:09:33","0:09:38"],["0:09:07","0:09:12"],["0:08:41","0:08:46"],["0:08:15","0:08:20"],["0:07:49","0:07:53"],["0:07:23","0:07:27"]],[["0:10:45","0:11:50"],["0:10:19","0:10:25"],["0:09:54","0:09:59"],["0:09:28","0:09:33"],["0:09:02","0:09:07"],["0:08:36","0:08:41"],["0:08:10","0:08:15"],["0:07:45","0:07:49"],["0:07:19","0:07:23"]],[["0:10:39","0:11:43"],["0:10:13","0:10:19"],["0:09:48","0:09:54"],["0:09:22","0:09:28"],["0:08:57","0:09:02"],["0:08:31","0:08:36"],["0:08:06","0:08:10"],["0:07:40","0:07:45"],["0:07:15","0:07:19"]],[["0:10:33","0:11:36"],["0:10:08","0:10:13"],["0:09:42","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:26","0:08:31"],["0:08:01","0:08:06"],["0:07:36","0:07:40"],["0:07:10","0:07:15"]],[["0:10:27","0:11:29"],["0:10:02","0:10:08"],["0:09:37","0:09:42"],["0:09:12","0:09:17"],["0:08:47","0:08:52"],["0:08:21","0:08:26"],["0:07:56","0:08:01"],["0:07:31","0:07:36"],["0:07:06","0:07:10"]],[["0:10:21","0:11:23"],["0:09:56","0:10:02"],["0:09:31","0:09:37"],["0:09:06","0:09:12"],["0:08:41","0:08:47"],["0:08:17","0:08:21"],["0:07:52","0:07:56"],["0:07:27","0:07:31"],["0:07:02","0:07:06"]],[["0:10:15","0:11:16"],["0:09:50","0:09:56"],["0:09:25","0:09:31"],["0:09:01","0:09:06"],["0:08:36","0:08:41"],["0:08:12","0:08:17"],["0:07:47","0:07:52"],["0:07:22","0:07:27"],["0:06:58","0:07:02"]],[["0:10:08","0:11:09"],["0:09:44","0:09:50"],["0:09:20","0:09:25"],["0:08:55","0:09:01"],["0:08:31","0:08:36"],["0:08:07","0:08:12"],["0:07:42","0:07:47"],["0:07:18","0:07:22"],["0:06:54","0:06:58"]],[["0:10:02","0:11:03"],["0:09:38","0:09:44"],["0:09:14","0:09:20"],["0:08:50","0:08:55"],["0:08:26","0:08:31"],["0:08:02","0:08:07"],["0:07:38","0:07:42"],["0:07:14","0:07:18"],["0:06:50","0:06:54"]],[["0:09:56","0:10:56"],["0:09:32","0:09:38"],["0:09:09","0:09:14"],["0:08:45","0:08:50"],["0:08:21","0:08:26"],["0:07:57","0:08:02"],["0:07:33","0:07:38"],["0:07:09","0:07:14"],["0:06:45","0:06:50"]],[["0:09:50","0:10:49"],["0:09:27","0:09:32"],["0:09:03","0:09:09"],["0:08:39","0:08:45"],["0:08:16","0:08:21"],["0:07:52","0:07:57"],["0:07:28","0:07:33"],["0:07:05","0:07:09"],["0:06:41","0:06:45"]],[["0:09:44","0:10:42"],["0:09:21","0:09:27"],["0:08:57","0:09:03"],["0:08:34","0:08:39"],["0:08:11","0:08:16"],["0:07:47","0:07:52"],["0:07:24","0:07:28"],["0:07:00","0:07:05"],["0:06:37","0:06:41"]],[["0:09:38","0:10:36"],["0:09:15","0:09:21"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:05","0:08:11"],["0:07:42","0:07:47"],["0:07:19","0:07:24"],["0:06:56","0:07:00"],["0:06:33","0:06:37"]],[["0:09:32","0:10:29"],["0:09:09","0:09:15"],["0:08:46","0:08:52"],["0:08:23","0:08:29"],["0:08:00","0:08:05"],["0:07:37","0:07:42"],["0:07:15","0:07:19"],["0:06:52","0:06:56"],["0:06:29","0:06:33"]],[["0:09:26","0:10:22"],["0:09:03","0:09:09"],["0:08:40","0:08:46"],["0:08:18","0:08:23"],["0:07:55","0:08:00"],["0:07:33","0:07:37"],["0:07:10","0:07:15"],["0:06:47","0:06:52"],["0:06:25","0:06:29"]],[["0:09:20","0:10:16"],["0:08:57","0:09:03"],["0:08:35","0:08:40"],["0:08:12","0:08:18"],["0:07:50","0:07:55"],["0:07:28","0:07:33"],["0:07:05","0:07:10"],["0:06:43","0:06:47"],["0:06:20","0:06:25"]],[["0:09:13","0:10:09"],["0:08:51","0:08:57"],["0:08:29","0:08:35"],["0:08:07","0:08:12"],["0:07:45","0:07:50"],["0:07:23","0:07:28"],["0:07:01","0:07:05"],["0:06:38","0:06:43"],["0:06:16","0:06:20"]],[["0:09:07","0:10:02"],["0:08:45","0:08:51"],["0:08:24","0:08:29"],["0:08:02","0:08:07"],["0:07:40","0:07:45"],["0:07:18","0:07:23"],["0:06:56","0:07:01"],["0:06:34","0:06:38"],["0:06:12","0:06:16"]],[["0:09:01","0:09:55"],["0:08:40","0:08:45"],["0:08:18","0:08:24"],["0:07:56","0:08:02"],["0:07:35","0:07:40"],["0:07:13","0:07:18"],["0:06:51","0:06:56"],["0:06:30","0:06:34"],["0:06:08","0:06:12"]],[["0:08:55","0:09:49"],["0:08:34","0:08:40"],["0:08:12","0:08:18"],["0:07:51","0:07:56"],["0:07:29","0:07:35"],["0:07:08","0:07:13"],["0:06:47","0:06:51"],["0:06:25","0:06:30"],["0:06:04","0:06:08"]],[["0:08:49","0:09:42"],["0:08:28","0:08:34"],["0:08:07","0:08:12"],["0:07:46","0:07:51"],["0:07:24","0:07:29"],["0:07:03","0:07:08"],["0:06:42","0:06:47"],["0:06:21","0:06:25"],["0:06:00","0:06:04"]],[["0:08:43","0:09:35"],["0:08:22","0:08:28"],["0:08:01","0:08:07"],["0:07:40","0:07:46"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:37","0:06:42"],["0:06:16","0:06:21"],["0:05:56","0:06:00"]],[["0:08:37","0:09:28"],["0:08:16","0:08:22"],["0:07:55","0:08:01"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:53","0:06:58"],["0:06:33","0:06:37"],["0:06:12","0:06:16"],["0:05:51","0:05:56"]],[["0:08:31","0:09:22"],["0:08:10","0:08:16"],["0:07:50","0:07:55"],["0:07:29","0:07:35"],["0:07:09","0:07:14"],["0:06:49","0:06:53"],["0:06:28","0:06:33"],["0:06:08","0:06:12"],["0:05:47","0:05:51"]],[["0:08:25","0:09:15"],["0:08:04","0:08:10"],["0:07:44","0:07:50"],["0:07:24","0:07:29"],["0:07:04","0:07:09"],["0:06:44","0:06:49"],["0:06:23","0:06:28"],["0:06:03","0:06:08"],["0:05:43","0:05:47"]],[["0:08:18","0:09:08"],["0:07:58","0:08:04"],["0:07:39","0:07:44"],["0:07:19","0:07:24"],["0:06:59","0:07:04"],["0:06:39","0:06:44"],["0:06:19","0:06:23"],["0:05:59","0:06:03"],["0:05:39","0:05:43"]],[["0:08:12","0:09:02"],["0:07:53","0:07:58"],["0:07:33","0:07:39"],["0:07:13","0:07:19"],["0:06:54","0:06:59"],["0:06:34","0:06:39"],["0:06:14","0:06:19"],["0:05:54","0:05:59"],["0:05:35","0:05:39"]],[["0:08:06","0:08:55"],["0:07:47","0:07:53"],["0:07:27","0:07:33"],["0:07:08","0:07:13"],["0:06:48","0:06:54"],["0:06:29","0:06:34"],["0:06:10","0:06:14"],["0:05:50","0:05:54"],["0:05:31","0:05:35"]],[["0:08:00","0:08:48"],["0:07:41","0:07:47"],["0:07:22","0:07:27"],["0:07:02","0:07:08"],["0:06:43","0:06:48"],["0:06:24","0:06:29"],["0:06:05","0:06:10"],["0:05:46","0:05:50"],["0:05:26","0:05:31"]],[["0:07:54","0:08:41"],["0:07:35","0:07:41"],["0:07:16","0:07:22"],["0:06:57","0:07:02"],["0:06:38","0:06:43"],["0:06:19","0:06:24"],["0:06:00","0:06:05"],["0:05:41","0:05:46"],["0:05:22","0:05:26"]],[["0:07:48","0:08:35"],["0:07:29","0:07:35"],["0:07:10","0:07:16"],["0:06:52","0:06:57"],["0:06:33","0:06:38"],["0:06:14","0:06:19"],["0:05:56","0:06:00"],["0:05:37","0:05:41"],["0:05:18","0:05:22"]],[["0:07:42","0:08:28"],["0:07:23","0:07:29"],["0:07:05","0:07:10"],["0:06:46","0:06:52"],["0:06:28","0:06:33"],["0:06:09","0:06:14"],["0:05:51","0:05:56"],["0:05:32","0:05:37"],["0:05:14","0:05:18"]],[["0:07:36","0:08:21"],["0:07:17","0:07:23"],["0:06:59","0:07:05"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:04","0:06:09"],["0:05:46","0:05:51"],["0:05:28","0:05:32"],["0:05:10","0:05:14"]],[["0:07:30","0:08:14"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:00","0:06:04"],["0:05:42","0:05:46"],["0:05:24","0:05:28"],["0:05:06","0:05:10"]],[["0:07:23","0:08:08"],["0:07:06","0:07:12"],["0:06:48","0:06:54"],["0:06:30","0:06:36"],["0:06:12","0:06:18"],["0:05:55","0:06:00"],["0:05:37","0:05:42"],["0:05:19","0:05:24"],["0:05:02","0:05:06"]],[["0:07:17","0:08:01"],["0:07:00","0:07:06"],["0:06:42","0:06:48"],["0:06:25","0:06:30"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:32","0:05:37"],["0:05:15","0:05:19"],["0:04:57","0:05:02"]],[["0:07:11","0:07:54"],["0:06:54","0:07:00"],["0:06:37","0:06:42"],["0:06:19","0:06:25"],["0:06:02","0:06:07"],["0:05:45","0:05:50"],["0:05:28","0:05:32"],["0:05:10","0:05:15"],["0:04:53","0:04:57"]],[["0:07:05","0:07:48"],["0:06:48","0:06:54"],["0:06:31","0:06:37"],["0:06:14","0:06:19"],["0:05:57","0:06:02"],["0:05:40","0:05:45"],["0:05:23","0:05:28"],["0:05:06","0:05:10"],["0:04:49","0:04:53"]],[["0:06:59","0:07:41"],["0:06:42","0:06:48"],["0:06:25","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:57"],["0:05:35","0:05:40"],["0:05:18","0:05:23"],["0:05:02","0:05:06"],["0:04:45","0:04:49"]],[["0:06:53","0:07:34"],["0:06:36","0:06:42"],["0:06:20","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:35"],["0:05:14","0:05:18"],["0:04:57","0:05:02"],["0:04:41","0:04:45"]],[["0:06:47","0:07:27"],["0:06:30","0:06:36"],["0:06:14","0:06:20"],["0:05:58","0:06:03"],["0:05:42","0:05:47"],["0:05:25","0:05:30"],["0:05:09","0:05:14"],["0:04:53","0:04:57"],["0:04:37","0:04:41"]],[["0:06:41","0:07:21"],["0:06:25","0:06:30"],["0:06:09","0:06:14"],["0:05:53","0:05:58"],["0:05:37","0:05:42"],["0:05:20","0:05:25"],["0:05:04","0:05:09"],["0:04:48","0:04:53"],["0:04:32","0:04:37"]],[["0:06:34","0:07:14"],["0:06:19","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:53"],["0:05:31","0:05:37"],["0:05:16","0:05:20"],["0:05:00","0:05:04"],["0:04:44","0:04:48"],["0:04:28","0:04:32"]],[["0:06:28","0:07:07"],["0:06:13","0:06:19"],["0:05:57","0:06:03"],["0:05:42","0:05:47"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:55","0:05:00"],["0:04:40","0:04:44"],["0:04:24","0:04:28"]],[["0:06:22","0:07:00"],["0:06:07","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:42"],["0:05:21","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:55"],["0:04:35","0:04:40"],["0:04:20","0:04:24"]],[["0:06:16","0:06:54"],["0:06:01","0:06:07"],["0:05:46","0:05:52"],["0:05:31","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:31","0:04:35"],["0:04:16","0:04:20"]],[["0:06:10","0:06:47"],["0:05:55","0:06:01"],["0:05:40","0:05:46"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:56","0:05:01"],["0:04:41","0:04:46"],["0:04:26","0:04:31"],["0:04:12","0:04:16"]],[["0:06:04","0:06:40"],["0:05:49","0:05:55"],["0:05:35","0:05:40"],["0:05:20","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:56"],["0:04:37","0:04:41"],["0:04:22","0:04:26"],["0:04:07","0:04:12"]],[["0:05:58","0:06:34"],["0:05:43","0:05:49"],["0:05:29","0:05:35"],["0:05:15","0:05:20"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:32","0:04:37"],["0:04:18","0:04:22"],["0:04:03","0:04:07"]],[["0:05:52","0:06:27"],["0:05:38","0:05:43"],["0:05:24","0:05:29"],["0:05:09","0:05:15"],["0:04:55","0:05:01"],["0:04:41","0:04:46"],["0:04:27","0:04:32"],["0:04:13","0:04:18"],["0:03:59","0:04:03"]],[["0:05:46","0:06:20"],["0:05:32","0:05:38"],["0:05:18","0:05:24"],["0:05:04","0:05:09"],["0:04:50","0:04:55"],["0:04:36","0:04:41"],["0:04:23","0:04:27"],["0:04:09","0:04:13"],["0:03:55","0:03:59"]]]\n';
+var $author$project$MPRLevel$toTuple = function (l) {
+	if ((l.b && l.b.b) && (!l.b.b.b)) {
+		var a = l.a;
+		var _v1 = l.b;
+		var b = _v1.a;
+		return $elm$core$Maybe$Just(
+			_Utils_Tuple2(a, b));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$MPRLevel$trainingPacesTable = function (runnerType) {
+	var json = function () {
+		switch (runnerType) {
+			case 0:
+				return $author$project$MPRData$neutralTraining;
+			case 1:
+				return $author$project$MPRData$aerobicTraining;
+			default:
+				return $author$project$MPRData$speedTraining;
+		}
+	}();
+	return A2(
+		$elm$core$Array$map,
+		function (a) {
+			return A2(
+				$elm$core$Array$map,
+				function (t) {
+					return A2(
+						$elm$core$Maybe$withDefault,
+						_Utils_Tuple2('', ''),
+						$author$project$MPRLevel$toTuple(t));
+				},
+				a);
+		},
+		A2(
+			$elm$core$Result$withDefault,
+			$elm$core$Array$empty,
+			A2(
+				$elm$json$Json$Decode$decodeString,
+				$elm$json$Json$Decode$array(
+					$elm$json$Json$Decode$array(
+						$elm$json$Json$Decode$list($elm$json$Json$Decode$string))),
+				json)));
+};
+var $author$project$MPRLevel$trainingPaces = function (_v0) {
+	var runnerType = _v0.a;
+	var level = _v0.b;
+	var res = A2(
+		$elm$core$Array$get,
+		level - 1,
+		$author$project$MPRLevel$trainingPacesTable(runnerType));
+	if (!res.$) {
+		var arr = res.a;
+		return $elm$core$Result$Ok(
+			A3(
+				$elm$core$List$map2,
+				F2(
+					function (x, y) {
+						return A2($elm$core$Tuple$pair, x, y);
+					}),
+				$author$project$MPRLevel$paceList,
+				$elm$core$Array$toList(arr)));
+	} else {
+		return $elm$core$Result$Err('out of range');
+	}
+};
+var $author$project$ActivityForm$paceSelect = F3(
+	function (levelM, msg, pace) {
+		var paceTimes = function () {
+			if (!levelM.$) {
+				var level = levelM.a;
+				return A2(
+					$elm$core$Result$withDefault,
+					A2(
+						$elm$core$List$repeat,
+						$elm$core$List$length($author$project$Activity$pace.P),
+						''),
+					A2(
+						$elm$core$Result$map,
+						$elm$core$List$map(
+							function (_v1) {
+								var name = _v1.a;
+								var _v2 = _v1.b;
+								var minPace = _v2.a;
+								var maxPace = _v2.b;
+								return $author$project$MPRLevel$stripTimeStr(maxPace);
+							}),
+						$author$project$MPRLevel$trainingPaces(
+							_Utils_Tuple2(0, level))));
+			} else {
+				return A2(
+					$elm$core$List$repeat,
+					$elm$core$List$length($author$project$Activity$pace.P),
+					'');
+			}
+		}();
+		var paceNames = A2($elm$core$List$map, $elm$core$Tuple$first, $author$project$Activity$pace.P);
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('dropdown medium')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$button,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('button medium')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text(
+							$author$project$Activity$pace.bC(pace))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('dropdown-content')
+						]),
+					A3(
+						$elm$core$List$map2,
+						F2(
+							function (name, time) {
+								return A2(
+									$elm$html$Html$a,
+									_List_fromArray(
+										[
+											$elm$html$Html$Events$onClick(
+											msg(name)),
+											A2($elm$html$Html$Attributes$style, 'text-align', 'left')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$span,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'color', 'var(--accent-blue)'),
+													A2($elm$html$Html$Attributes$style, 'margin-right', '0.5rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(time)
+												])),
+											$elm$html$Html$text(name)
+										]));
+							}),
+						paceNames,
+						paceTimes))
+				]));
+	});
+var $author$project$Msg$SelectedShape = function (a) {
+	return {$: 26, a: a};
+};
+var $author$project$Activity$activityTypeToString = function (aType) {
+	switch (aType.$) {
+		case 0:
+			return 'Run';
+		case 1:
+			return 'Race';
+		case 2:
+			return 'Other';
+		default:
+			return 'Note';
+	}
+};
+var $author$project$ActivityShape$viewDefault = F2(
+	function (completed, activityData) {
+		switch (activityData.$) {
+			case 0:
+				return $author$project$ActivityShape$viewShape(
+					A3(
+						$author$project$ActivityShape$Block,
+						0,
+						completed,
+						{I: 1, O: 3}));
+			case 1:
+				return $author$project$ActivityShape$viewShape(
+					A3(
+						$author$project$ActivityShape$Block,
+						1,
+						completed,
+						{I: 1, O: 3}));
+			case 2:
+				return $author$project$ActivityShape$viewShape(
+					A3($author$project$ActivityShape$Circle, 2, completed, $elm$core$Maybe$Nothing));
+			default:
+				return $author$project$ActivityShape$viewShape(
+					$author$project$ActivityShape$Emoji($author$project$Emoji$default.X));
+		}
+	});
+var $author$project$ActivityForm$shapeSelect = function (model) {
+	var _v0 = $author$project$ActivityForm$defaults(model.j);
+	var duration = _v0.f;
+	var pace = _v0.q;
+	var distance = _v0.o;
+	var emoji = _v0.t;
+	var completed = _v0.e;
+	var types = _List_fromArray(
+		[
+			A3($author$project$Activity$Run, duration, pace, completed),
+			A3($author$project$Activity$Race, duration, distance, completed),
+			A2($author$project$Activity$Other, duration, completed),
+			$author$project$Activity$Note(emoji)
+		]);
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('dropdown medium')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('button medium')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						$author$project$Activity$activityTypeToString(
+							$author$project$ActivityForm$toActivityData(model.j)))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('dropdown-content')
+					]),
+				A2(
+					$elm$core$List$map,
+					function (aType) {
+						return A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Msg$SelectedShape(aType))
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$author$project$Skeleton$row,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2($author$project$ActivityShape$viewDefault, true, aType),
+											A2(
+											$author$project$Skeleton$compactColumn,
+											_List_fromArray(
+												[
+													A2($elm$html$Html$Attributes$style, 'margin-left', '0.5rem'),
+													A2($elm$html$Html$Attributes$style, 'margin-top', '0.1rem')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													$author$project$Activity$activityTypeToString(aType))
+												]))
+										]))
+								]));
+					},
+					types))
+			]));
+};
+var $author$project$ActivityForm$submitButton = A2(
+	$elm$html$Html$a,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('button small'),
+			$elm$html$Html$Attributes$class('primary'),
+			$elm$html$Html$Attributes$type_('submit'),
+			$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$i,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('fas fa-check')
+				]),
+			_List_Nil)
+		]));
+var $author$project$ActivityForm$errorMessage = function (error) {
+	if (error.$ === 1) {
+		var field = error.a;
+		return 'Please fill in ' + (field + ' field');
+	} else {
+		return 'There has been an error';
+	}
+};
+var $author$project$ActivityForm$viewError = function (errorR) {
+	if (errorR.$ === 1) {
+		var error = errorR.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$author$project$ActivityForm$errorMessage(error))
+				]));
+	} else {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('error')
+				]),
+			_List_Nil);
+	}
+};
+var $author$project$Skeleton$viewMaybe = F2(
+	function (attrM, viewF) {
+		if (!attrM.$) {
+			var attr = attrM.a;
+			return viewF(attr);
+		} else {
+			return $elm$html$Html$text('');
+		}
+	});
+var $author$project$Msg$CheckedCompleted = {$: 29};
+var $author$project$ActivityForm$viewShape = function (model) {
+	var activityShape = A2(
+		$elm$core$Maybe$withDefault,
+		A2(
+			$author$project$ActivityShape$viewDefault,
+			true,
+			A3($author$project$Activity$Run, 30, 0, true)),
+		A2(
+			$elm$core$Maybe$map,
+			$author$project$ActivityShape$view,
+			$elm$core$Result$toMaybe(
+				$author$project$ActivityForm$validate(model))));
+	return A2(
+		$author$project$Skeleton$compactColumn,
+		_List_fromArray(
+			[
+				A2($elm$html$Html$Attributes$style, 'flex-basis', '3.3rem'),
+				A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+				$elm$html$Html$Events$onClick($author$project$Msg$CheckedCompleted)
+			]),
+		_List_fromArray(
+			[activityShape]));
+};
+var $author$project$ActivityForm$view = F2(
+	function (levelM, modelM) {
+		var sharedAttributes = _List_fromArray(
+			[
+				$author$project$Skeleton$borderStyle('border-bottom'),
+				A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+				A2($elm$html$Html$Attributes$style, 'left', '0'),
+				A2($elm$html$Html$Attributes$style, 'right', '0'),
+				A2($elm$html$Html$Attributes$style, 'background-color', 'white'),
+				A2($elm$html$Html$Attributes$style, 'z-index', '2')
+			]);
+		var dataInputs = F2(
+			function (form, result) {
+				switch (form.$) {
+					case 0:
+						var duration = form.a.f;
+						var pace = form.a.q;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A3($author$project$ActivityForm$paceSelect, levelM, $author$project$Msg$SelectedPace, pace)
+									]))
+							]);
+					case 1:
+						var duration = form.a.f;
+						var distance = form.a.o;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$distanceSelect, $author$project$Msg$SelectedDistance, distance)
+									])),
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$author$project$Skeleton$viewMaybe,
+										A2(
+											$elm$core$Maybe$andThen,
+											$author$project$Activity$mprLevel,
+											$elm$core$Result$toMaybe(result)),
+										function (level) {
+											return $elm$html$Html$text(
+												'Level ' + $elm$core$String$fromInt(level));
+										})
+									]))
+							]);
+					case 2:
+						var duration = form.a.f;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$durationInput, $author$project$Msg$EditedDuration, duration)
+									]))
+							]);
+					default:
+						var emoji = form.a.t;
+						return _List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$compactColumn,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$emojiSelect, $author$project$Msg$SelectedEmoji, emoji)
+									]))
+							]);
+				}
+			});
+		if (modelM.$ === 1) {
+			return A2(
+				$author$project$Skeleton$row,
+				$elm$core$List$concat(
+					_List_fromArray(
+						[
+							_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s'),
+								A2($elm$html$Html$Attributes$style, 'min-height', '0'),
+								A2($elm$html$Html$Attributes$style, 'max-height', '0'),
+								A2($elm$html$Html$Attributes$style, 'border-width', '0px')
+							]),
+							sharedAttributes
+						])),
+				_List_Nil);
+		} else {
+			var model = modelM.a;
+			return A2(
+				$author$project$Skeleton$row,
+				$elm$core$List$concat(
+					_List_fromArray(
+						[
+							_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'transition', 'max-height 1s, min-height 1s'),
+								A2($elm$html$Html$Attributes$style, 'max-height', '20rem'),
+								A2($elm$html$Html$Attributes$style, 'min-height', '5rem'),
+								A2($elm$html$Html$Attributes$style, 'padding', '1rem 1rem 1rem 1rem'),
+								A2($elm$html$Html$Attributes$style, 'border-width', '1px')
+							]),
+							sharedAttributes
+						])),
+				_List_fromArray(
+					[
+						$author$project$ActivityForm$viewShape(model),
+						A2(
+						$author$project$Skeleton$column,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										A2(
+											$elm$core$Maybe$withDefault,
+											'Select Date',
+											A2(
+												$elm$core$Maybe$map,
+												$justinmimbs$date$Date$format('E MMM d'),
+												model.ai))),
+										A2(
+										$author$project$Skeleton$column,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'align-items', 'flex-end')
+											]),
+										_List_fromArray(
+											[$author$project$ActivityForm$submitButton]))
+									])),
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$input,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$type_('text'),
+												$elm$html$Html$Attributes$autocomplete(false),
+												$elm$html$Html$Attributes$placeholder('Description'),
+												$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
+												$elm$html$Html$Attributes$name('description'),
+												$elm$html$Html$Attributes$value(model.al),
+												A2($elm$html$Html$Attributes$style, 'width', '100%')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$author$project$Skeleton$row,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center')
+									]),
+								A2(
+									$elm$core$List$cons,
+									A2(
+										$author$project$Skeleton$compactColumn,
+										_List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
+											]),
+										_List_fromArray(
+											[
+												$author$project$ActivityForm$shapeSelect(model)
+											])),
+									A2(dataInputs, model.j, model.R))),
+								A2(
+								$author$project$Skeleton$row,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$author$project$ActivityForm$viewError(model.R)
+									]))
+							]))
+					]));
+		}
+	});
+var $author$project$Main$viewActivityM = function (activityState) {
+	switch (activityState.$) {
+		case 1:
+			var form = activityState.a;
+			return A2(
+				$author$project$ActivityForm$view,
+				$elm$core$Maybe$Nothing,
+				$elm$core$Maybe$Just(form));
+		case 2:
+			var activity = activityState.a;
+			var x = activityState.b;
+			var y = activityState.c;
+			return A2(
+				$author$project$Skeleton$row,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'left',
+						$elm$core$String$fromFloat(x) + 'px'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'top',
+						$elm$core$String$fromFloat(y) + 'px'),
+						A2($elm$html$Html$Attributes$style, 'z-index', '3')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$author$project$Skeleton$compactColumn,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
+							]),
+						_List_fromArray(
+							[
+								$author$project$ActivityShape$view(activity)
+							]))
+					]));
+		default:
+			return $elm$html$Html$text('');
+	}
+};
 var $author$project$Skeleton$viewIf = F2(
 	function (bool, html) {
 		return bool ? html : $elm$html$Html$text('');
@@ -14341,43 +14422,6 @@ var $author$project$Calendar$viewHeader = function (model) {
 					_List_fromArray(
 						['M', 'T', 'W', 'T', 'F', 'S', 'S'])))));
 };
-var $author$project$Main$viewMovingActivity = function (activityState) {
-	if (activityState.$ === 1) {
-		var activity = activityState.a;
-		var x = activityState.b;
-		var y = activityState.c;
-		return A2(
-			$author$project$Skeleton$row,
-			_List_fromArray(
-				[
-					A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'left',
-					$elm$core$String$fromFloat(x) + 'px'),
-					A2(
-					$elm$html$Html$Attributes$style,
-					'top',
-					$elm$core$String$fromFloat(y) + 'px'),
-					A2($elm$html$Html$Attributes$style, 'z-index', '3')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$author$project$Skeleton$compactColumn,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'flex-basis', '5rem')
-						]),
-					_List_fromArray(
-						[
-							$author$project$ActivityShape$view(activity)
-						]))
-				]));
-	} else {
-		return $elm$html$Html$text('');
-	}
-};
 var $author$project$Main$view = function (model) {
 	return A2(
 		$author$project$Skeleton$expandingRow,
@@ -14412,10 +14456,9 @@ var $author$project$Main$view = function (model) {
 						var _v1 = model.a;
 						var calendar = _v1.a;
 						var store = _v1.b;
-						var formM = _v1.c;
-						var activityM = _v1.d;
+						var activityM = _v1.c;
 						var events = function () {
-							if (activityM.$ === 1) {
+							if (activityM.$ === 2) {
 								return _List_fromArray(
 									[
 										A2($elm$html$Html$Events$on, 'pointermove', $author$project$Main$mouseMoveDecoder),
@@ -14444,13 +14487,9 @@ var $author$project$Main$view = function (model) {
 								events),
 							_List_fromArray(
 								[
-									A2(
-									$elm$html$Html$Lazy$lazy,
-									$author$project$ActivityForm$view(levelM),
-									formM),
 									A2($elm$html$Html$Lazy$lazy, $author$project$Calendar$viewHeader, calendar),
 									A4($elm$html$Html$Lazy$lazy3, $author$project$Calendar$view, calendar, activities, activityM),
-									A2($elm$html$Html$Lazy$lazy, $author$project$Main$viewMovingActivity, activityM)
+									A2($elm$html$Html$Lazy$lazy, $author$project$Main$viewActivityM, activityM)
 								]));
 				}
 			}()
