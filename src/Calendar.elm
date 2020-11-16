@@ -207,44 +207,18 @@ filterActivities date activities =
     List.filter (\a -> a.date == date) activities
 
 
-view : Model -> List Activity -> ActivityState -> Html Msg
-view model activities activityM =
+view : Model -> List Activity -> String -> Html Msg
+view model activities activeId =
     let
         (Model zoom start end selected today scrollCompleted) =
             model
-
-        activityState a =
-            case activityM of
-                Selected { id } ->
-                    if a.id == id then
-                        activityM
-
-                    else
-                        None
-
-                Editing { id } ->
-                    if a.id == id then
-                        activityM
-
-                    else
-                        None
-
-                Moving { id } _ _ ->
-                    if a.id == id then
-                        activityM
-
-                    else
-                        None
-
-                None ->
-                    None
 
         dayRows date =
             List.concat
                 [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
                 , filterActivities date activities
                     |> List.map
-                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (activityState activity) activity ))
+                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (activity.id == activeId) activity ))
                 , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
                 ]
 
@@ -477,8 +451,8 @@ viewDay isToday isSelected rataDie =
         [ text (Date.format "E MMM d" date) ]
 
 
-viewActivity : ActivityState -> Activity -> Html Msg
-viewActivity state activity =
+viewActivity : Bool -> Activity -> Html Msg
+viewActivity isActive activity =
     let
         level =
             Activity.mprLevel activity
@@ -489,36 +463,36 @@ viewActivity state activity =
         [ compactColumn
             [ Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity))
             , class "no-touching"
+            , attributeIf isActive (class "dynamic-shape")
             , style "flex-basis" "5rem"
             ]
             [ ActivityShape.view activity ]
-        , case state of
-            None ->
-                a [ onClick (SelectActivity activity), class "column expand", style "justify-content" "center" ]
-                    [ row [] [ text activity.description ]
-                    , row [ style "font-size" "0.8rem" ]
-                        [ column []
-                            [ text <|
-                                case activity.data of
-                                    Activity.Run mins pace_ _ ->
-                                        String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
+        , if not isActive then
+            a [ onClick (SelectActivity activity), class "column expand", style "justify-content" "center" ]
+                [ row [] [ text activity.description ]
+                , row [ style "font-size" "0.8rem" ]
+                    [ column []
+                        [ text <|
+                            case activity.data of
+                                Activity.Run mins pace_ _ ->
+                                    String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
 
-                                    Activity.Race mins _ _ ->
-                                        String.fromInt mins ++ " min "
+                                Activity.Race mins _ _ ->
+                                    String.fromInt mins ++ " min "
 
-                                    Activity.Other mins _ ->
-                                        String.fromInt mins ++ " min "
+                                Activity.Other mins _ ->
+                                    String.fromInt mins ++ " min "
 
-                                    _ ->
-                                        ""
-                            ]
-                        , compactColumn [ style "align-items" "flex-end" ] [ text level ]
+                                _ ->
+                                    ""
                         ]
+                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                     ]
+                ]
 
-            _ ->
-                column [ style "justify-content" "center" ]
-                    [ viewButtons activity ]
+          else
+            column [ style "justify-content" "center" ]
+                [ viewButtons activity ]
         ]
 
 

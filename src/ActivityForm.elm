@@ -333,7 +333,8 @@ viewShape model =
                 |> Maybe.withDefault (ActivityShape.viewDefault True (Activity.Run 30 Activity.Easy True))
     in
     compactColumn
-        [ style "flex-basis" "3.3rem"
+        [ class "dynamic-shape"
+        , style "flex-basis" "3.3rem"
         , style "justify-content" "center"
         , Html.Events.onClick CheckedCompleted
         ]

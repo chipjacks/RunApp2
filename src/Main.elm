@@ -188,11 +188,11 @@ update msg model =
                 NoOp ->
                     ( model, Cmd.none )
 
-                Create _ ->
-                    updateStore msg (State calendar store None) |> loaded
+                Create activity ->
+                    updateStore msg (State calendar store (Selected activity)) |> loaded
 
-                Update _ ->
-                    updateStore msg (State calendar store None) |> loaded
+                Update activity ->
+                    updateStore msg (State calendar store (Selected activity)) |> loaded
 
                 Move _ _ ->
                     updateStore msg state |> loaded
@@ -439,10 +439,24 @@ view model =
 
                             _ ->
                                 []
+
+                    activeId =
+                        case activityM of
+                            Selected { id } ->
+                                id
+
+                            Editing { id } ->
+                                id
+
+                            Moving { id } _ _ ->
+                                id
+
+                            None ->
+                                ""
                 in
                 column (style "position" "relative" :: events)
                     [ Html.Lazy.lazy Calendar.viewHeader calendar
-                    , Html.Lazy.lazy3 Calendar.view calendar activities activityM
+                    , Html.Lazy.lazy3 Calendar.view calendar activities activeId
                     , Html.Lazy.lazy viewActivityM activityM
                     ]
         ]
