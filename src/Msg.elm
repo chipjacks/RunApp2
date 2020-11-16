@@ -46,6 +46,7 @@ type Msg
     | VisibilityChange String
     | KeyPressed String
     | MouseMoved Float Float
+    | AutoScrollCalendar Float
     | MouseReleased
     | MoveTo Date
     | NoOp
