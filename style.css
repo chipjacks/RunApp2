@@ -74,6 +74,7 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
 .radio-buttons > button.selected { background-color: var(--highlight-gray); }
 
 .no-touching { pointer-action: none; touch-action: none; -webkit-user-select: none; }
+.dynamic-shape > div { transition: height 0.5s, width 0.5s; }
 
 /*
  * DROPDOWN
