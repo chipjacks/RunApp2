@@ -21,6 +21,7 @@ import Random
 import Skeleton exposing (borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
+import Time
 
 
 
@@ -162,8 +163,32 @@ update msg model =
                                     activityM
                     in
                     ( Loaded (State calendar store newActivityM)
-                    , Ports.scrollCalendarBy (round y)
+                    , Cmd.none
                     )
+
+                AutoScrollCalendar y ->
+                    let
+                        distance =
+                            50
+
+                        navbarHeight =
+                            50
+
+                        autoScrollCalendar =
+                            Dom.getViewportOf "calendar"
+                                |> Task.andThen
+                                    (\info ->
+                                        if y > (info.viewport.height * 0.9 + navbarHeight) then
+                                            Dom.setViewportOf "calendar" 0 (info.viewport.y + distance)
+
+                                        else if y < (info.viewport.height * 0.1 + navbarHeight) then
+                                            Dom.setViewportOf "calendar" 0 (info.viewport.y - distance)
+
+                                        else
+                                            Task.succeed ()
+                                    )
+                    in
+                    ( model, Task.attempt (\_ -> NoOp) autoScrollCalendar )
 
                 MouseReleased ->
                     let
@@ -511,6 +536,9 @@ subscriptions model =
 
                     Selected form ->
                         Events.onKeyPress keyPressDecoder
+
+                    Moving activity x y ->
+                        Time.every 100 (\_ -> AutoScrollCalendar y)
 
                     _ ->
                         Sub.none
