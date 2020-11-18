@@ -14,7 +14,7 @@ import Json.Decode as Decode
 import Msg exposing (ActivityState(..), Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
-import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
+import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, spinner, styleIf, viewIf, viewMaybe)
 import Task
 import Time exposing (Month(..))
 
@@ -32,7 +32,7 @@ get (Model zoom start end selected today scrollCompleted) =
 
 init : Zoom -> Date -> Date -> Model
 init zoom selected today =
-    Model zoom (Date.floor Date.Year selected) (Date.ceiling Date.Year selected) selected today True
+    Model zoom (Date.floor Date.Quarter selected) (Date.ceiling Date.Quarter selected) selected today True
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -228,7 +228,7 @@ view model activities activeId =
                     weekList start end
                         |> List.map
                             (\d ->
-                                ( Date.toIsoString d, Html.Lazy.lazy4 viewWeek activities today selected d )
+                                ( Date.toIsoString d, Html.Lazy.lazy5 viewWeek activities today selected d activeId )
                             )
 
                 Month ->
@@ -237,6 +237,9 @@ view model activities activeId =
 
                 Day ->
                     dayRows selected
+
+        loadingSpinner =
+            viewIf (zoom /= Day) (row [ style "justify-content" "center", style "padding" "1rem" ] [ spinner "2rem" ])
     in
     expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
         [ Html.Keyed.node "div"
@@ -247,7 +250,12 @@ view model activities activeId =
             , style "padding-right" "0.5rem"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             ]
-            body
+          <|
+            List.concat
+                [ [ ( "loadingup", loadingSpinner ) ]
+                , body
+                , [ ( "loadingdown", loadingSpinner ) ]
+                ]
         ]
 
 
@@ -320,12 +328,12 @@ viewHeader model =
             )
 
 
-viewWeek : List Activity -> Date -> Date -> Date -> Html Msg
-viewWeek allActivities today selected start =
+viewWeek : List Activity -> Date -> Date -> Date -> String -> Html Msg
+viewWeek allActivities today selected start activeId =
     let
         dayViews =
             daysOfWeek start
-                |> List.map (\d -> viewWeekDay ( d, filterActivities d allActivities ) (d == today) (d == selected))
+                |> List.map (\d -> viewWeekDay ( d, filterActivities d allActivities ) (d == today) (d == selected) activeId)
 
         activities =
             daysOfWeek start
@@ -356,24 +364,44 @@ viewWeek allActivities today selected start =
             :: dayViews
 
 
-viewWeekDay : ( Date, List Activity ) -> Bool -> Bool -> Html Msg
-viewWeekDay ( date, activities ) isToday isSelected =
+viewWeekDay : ( Date, List Activity ) -> Bool -> Bool -> String -> Html Msg
+viewWeekDay ( date, activities ) isToday isSelected activeId =
+    let
+        pointerEvent a =
+            if activeId == a.id then
+                MoveActivity a
+
+            else
+                EditActivity a
+    in
     column
-        [ onClick (ChangeZoom Month (Just date))
-        , attributeIf isSelected (id "selected-date")
+        [ attributeIf isSelected (id "selected-date")
         , style "min-height" "4rem"
         , style "padding-bottom" "1rem"
+        , Html.Events.on "pointerenter" (Decode.succeed (MoveTo date))
         ]
     <|
         row []
             [ a
-                [ attribute "data-date" (Date.toIsoString date)
+                [ onClick (ChangeZoom Month (Just date))
+                , attribute "data-date" (Date.toIsoString date)
                 , styleIf isToday "text-decoration" "underline"
                 ]
                 [ text (Date.format "d" date)
                 ]
             ]
-            :: List.map (\a -> row [ style "margin-bottom" "0.1rem", style "margin-right" "0.2rem" ] [ ActivityShape.view a ]) activities
+            :: List.map
+                (\a ->
+                    row
+                        [ Html.Events.on "pointerdown" (Decode.succeed (pointerEvent a))
+                        , class "no-touching"
+                        , style "margin-bottom" "0.1rem"
+                        , style "margin-right" "0.2rem"
+                        , attributeIf (a.id == activeId) (style "opacity" "0.5")
+                        ]
+                        [ ActivityShape.view a ]
+                )
+                activities
 
 
 titleWeek : Date -> ( Int, Int ) -> Html msg
@@ -468,7 +496,7 @@ viewActivity isActive activity =
             ]
             [ ActivityShape.view activity ]
         , if not isActive then
-            a [ onClick (SelectActivity activity), class "column expand", style "justify-content" "center" ]
+            a [ Html.Events.on "pointerdown" (Decode.succeed (EditActivity activity)), class "column expand", style "justify-content" "center" ]
                 [ row [] [ text activity.description ]
                 , row [ style "font-size" "0.8rem" ]
                     [ column []

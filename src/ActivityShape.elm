@@ -68,6 +68,7 @@ viewShape shape =
                 , style "height" <| String.fromFloat height ++ "rem"
                 , style "border" ("2px solid " ++ colorString color)
                 , style "border-radius" "2px"
+                , class "block"
                 , if completed then
                     style "background-color" (colorString color)
 

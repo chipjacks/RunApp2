@@ -1,4 +1,4 @@
-module Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, layout, row, styleIf, viewIf, viewMaybe)
+module Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, layout, row, spinner, styleIf, viewIf, viewMaybe)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -44,6 +44,17 @@ compactColumn attributes children =
     div
         (class "column compact" :: attributes)
         children
+
+
+spinner : String -> Html msg
+spinner fontSize =
+    i
+        [ class "fas fa-spinner"
+        , style "font-size" fontSize
+        , style "color" "var(--icon-gray)"
+        , style "animation" "rotation 2s infinite linear"
+        ]
+        []
 
 
 styleIf : Bool -> String -> String -> Html.Attribute msg
