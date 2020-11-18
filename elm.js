@@ -9181,7 +9181,7 @@ var $author$project$Calendar$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {$: 0, a: a, b: b, c: c, d: d, e: e, f: f};
 	});
-var $justinmimbs$date$Date$Year = 0;
+var $justinmimbs$date$Date$Quarter = 1;
 var $justinmimbs$date$Date$Months = 1;
 var $justinmimbs$date$Date$add = F3(
 	function (unit, n, _v0) {
@@ -9310,8 +9310,8 @@ var $author$project$Calendar$init = F3(
 		return A6(
 			$author$project$Calendar$Model,
 			zoom,
-			A2($justinmimbs$date$Date$floor, 0, selected),
-			A2($justinmimbs$date$Date$ceiling, 0, selected),
+			A2($justinmimbs$date$Date$floor, 1, selected),
+			A2($justinmimbs$date$Date$ceiling, 1, selected),
 			selected,
 			today,
 			true);
@@ -10171,7 +10171,7 @@ var $author$project$Main$update = F2(
 						var autoScrollCalendar = A2(
 							$elm$core$Task$andThen,
 							function (info) {
-								return (_Utils_cmp(y, (info.S.I * 0.9) + navbarHeight) > 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a4 + distance) : ((_Utils_cmp(y, (info.S.I * 0.1) + navbarHeight) < 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a4 - distance) : $elm$core$Task$succeed(0));
+								return (y < 0) ? $elm$core$Task$succeed(0) : ((_Utils_cmp(y, (info.S.I * 0.9) + navbarHeight) > 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a4 + distance) : ((_Utils_cmp(y, (info.S.I * 0.1) + navbarHeight) < 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a4 - distance) : $elm$core$Task$succeed(0)));
 							},
 							$elm$browser$Browser$Dom$getViewportOf('calendar'));
 						return _Utils_Tuple2(
@@ -10186,7 +10186,8 @@ var $author$project$Main$update = F2(
 						var newActivityM = function () {
 							if (activityM.$ === 2) {
 								var activity = activityM.a;
-								return $author$project$Msg$Selected(activity);
+								return $author$project$Msg$Editing(
+									$author$project$ActivityForm$init(activity));
 							} else {
 								return activityM;
 							}
@@ -10199,11 +10200,24 @@ var $author$project$Main$update = F2(
 						var date = msg.a;
 						if (activityM.$ === 2) {
 							var activity = activityM.a;
-							return $author$project$Main$loaded(
-								A2(
-									$author$project$Main$updateStore,
-									A2($author$project$Msg$Move, date, activity),
-									state));
+							var x = activityM.b;
+							var y = activityM.c;
+							if (_Utils_eq(activity.aj, date)) {
+								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+							} else {
+								var newActivityM = A3(
+									$author$project$Msg$Moving,
+									_Utils_update(
+										activity,
+										{aj: date}),
+									x,
+									y);
+								return $author$project$Main$loaded(
+									A2(
+										$author$project$Main$updateStore,
+										A2($author$project$Msg$Move, date, activity),
+										A3($author$project$Main$State, calendar, store, newActivityM)));
+							}
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
@@ -10669,6 +10683,7 @@ var $elm$html$Html$Events$on = F2(
 	});
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Msg$Day = 2;
 var $author$project$Skeleton$attributeIf = F2(
 	function (bool, attr) {
 		return bool ? attr : A2($elm$html$Html$Attributes$style, '', '');
@@ -10689,8 +10704,8 @@ var $author$project$Calendar$filterActivities = F2(
 	});
 var $elm$virtual_dom$VirtualDom$lazy2 = _VirtualDom_lazy2;
 var $elm$html$Html$Lazy$lazy2 = $elm$virtual_dom$VirtualDom$lazy2;
-var $elm$virtual_dom$VirtualDom$lazy4 = _VirtualDom_lazy4;
-var $elm$html$Html$Lazy$lazy4 = $elm$virtual_dom$VirtualDom$lazy4;
+var $elm$virtual_dom$VirtualDom$lazy5 = _VirtualDom_lazy5;
+var $elm$html$Html$Lazy$lazy5 = $elm$virtual_dom$VirtualDom$lazy5;
 var $justinmimbs$date$Date$Day = 11;
 var $justinmimbs$date$Date$rangeHelp = F5(
 	function (unit, step, until, revList, current) {
@@ -10808,15 +10823,28 @@ var $author$project$Calendar$scrollHandler = function (_v0) {
 			A3($justinmimbs$date$Date$add, 1, -2, start),
 			A3($justinmimbs$date$Date$add, 1, 2, end)));
 };
+var $elm$html$Html$i = _VirtualDom_node('i');
+var $author$project$Skeleton$spinner = function (fontSize) {
+	return A2(
+		$elm$html$Html$i,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('fas fa-spinner'),
+				A2($elm$html$Html$Attributes$style, 'font-size', fontSize),
+				A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)'),
+				A2($elm$html$Html$Attributes$style, 'animation', 'rotation 2s infinite linear')
+			]),
+		_List_Nil);
+};
 var $justinmimbs$date$Date$toRataDie = function (_v0) {
 	var rd = _v0;
 	return rd;
 };
+var $author$project$Msg$EditActivity = function (a) {
+	return {$: 25, a: a};
+};
 var $author$project$Msg$MoveActivity = function (a) {
 	return {$: 21, a: a};
-};
-var $author$project$Msg$SelectActivity = function (a) {
-	return {$: 24, a: a};
 };
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $author$project$Skeleton$compactColumn = F2(
@@ -10829,12 +10857,6 @@ var $author$project$Skeleton$compactColumn = F2(
 				attributes),
 			children);
 	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$ActivityShape$Block = F3(
 	function (a, b, c) {
@@ -12717,6 +12739,7 @@ var $author$project$ActivityShape$viewShape = function (shape) {
 						'border',
 						'2px solid ' + $author$project$ActivityShape$colorString(color)),
 						A2($elm$html$Html$Attributes$style, 'border-radius', '2px'),
+						$elm$html$Html$Attributes$class('block'),
 						completed ? A2(
 						$elm$html$Html$Attributes$style,
 						'background-color',
@@ -12822,14 +12845,16 @@ var $author$project$Msg$ClickedMove = function (a) {
 var $author$project$Msg$Delete = function (a) {
 	return {$: 13, a: a};
 };
-var $author$project$Msg$EditActivity = function (a) {
-	return {$: 25, a: a};
-};
 var $author$project$Msg$Shift = F2(
 	function (a, b) {
 		return {$: 12, a: a, b: b};
 	});
-var $elm$html$Html$i = _VirtualDom_node('i');
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $author$project$Calendar$viewButtons = function (activity) {
 	return A2(
 		$author$project$Skeleton$row,
@@ -13016,8 +13041,11 @@ var $author$project$Calendar$viewActivity = F2(
 					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Events$onClick(
-							$author$project$Msg$SelectActivity(activity)),
+							A2(
+							$elm$html$Html$Events$on,
+							'pointerdown',
+							$elm$json$Json$Decode$succeed(
+								$author$project$Msg$EditActivity(activity))),
 							$elm$html$Html$Attributes$class('column expand'),
 							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 						]),
@@ -13118,7 +13146,6 @@ var $author$project$Calendar$viewAddButton = function (date) {
 					]))
 			]));
 };
-var $author$project$Msg$Day = 2;
 var $author$project$Msg$MoveTo = function (a) {
 	return {$: 7, a: a};
 };
@@ -13175,6 +13202,10 @@ var $author$project$Calendar$viewDay = F3(
 					$elm$html$Html$text(
 					A2($justinmimbs$date$Date$format, 'E MMM d', date))
 				]));
+	});
+var $author$project$Skeleton$viewIf = F2(
+	function (bool, html) {
+		return bool ? html : $elm$html$Html$text('');
 	});
 var $author$project$Calendar$daysOfWeek = function (start) {
 	return A4(
@@ -13286,25 +13317,28 @@ var $author$project$Calendar$titleWeek = F2(
 						]))
 				]));
 	});
-var $author$project$Calendar$viewWeekDay = F3(
-	function (_v0, isToday, isSelected) {
+var $author$project$Calendar$viewWeekDay = F4(
+	function (_v0, isToday, isSelected, activeId) {
 		var date = _v0.a;
 		var activities = _v0.b;
+		var pointerEvent = function (a) {
+			return _Utils_eq(activeId, a.ax) ? $author$project$Msg$MoveActivity(a) : $author$project$Msg$EditActivity(a);
+		};
 		return A2(
 			$author$project$Skeleton$column,
 			_List_fromArray(
 				[
-					$elm$html$Html$Events$onClick(
-					A2(
-						$author$project$Msg$ChangeZoom,
-						1,
-						$elm$core$Maybe$Just(date))),
 					A2(
 					$author$project$Skeleton$attributeIf,
 					isSelected,
 					$elm$html$Html$Attributes$id('selected-date')),
 					A2($elm$html$Html$Attributes$style, 'min-height', '4rem'),
-					A2($elm$html$Html$Attributes$style, 'padding-bottom', '1rem')
+					A2($elm$html$Html$Attributes$style, 'padding-bottom', '1rem'),
+					A2(
+					$elm$html$Html$Events$on,
+					'pointerenter',
+					$elm$json$Json$Decode$succeed(
+						$author$project$Msg$MoveTo(date)))
 				]),
 			A2(
 				$elm$core$List$cons,
@@ -13317,6 +13351,11 @@ var $author$project$Calendar$viewWeekDay = F3(
 							$elm$html$Html$a,
 							_List_fromArray(
 								[
+									$elm$html$Html$Events$onClick(
+									A2(
+										$author$project$Msg$ChangeZoom,
+										1,
+										$elm$core$Maybe$Just(date))),
 									A2(
 									$elm$html$Html$Attributes$attribute,
 									'data-date',
@@ -13336,8 +13375,18 @@ var $author$project$Calendar$viewWeekDay = F3(
 							$author$project$Skeleton$row,
 							_List_fromArray(
 								[
+									A2(
+									$elm$html$Html$Events$on,
+									'pointerdown',
+									$elm$json$Json$Decode$succeed(
+										pointerEvent(a))),
+									$elm$html$Html$Attributes$class('no-touching'),
 									A2($elm$html$Html$Attributes$style, 'margin-bottom', '0.1rem'),
-									A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem')
+									A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+									A2(
+									$author$project$Skeleton$attributeIf,
+									_Utils_eq(a.ax, activeId),
+									A2($elm$html$Html$Attributes$style, 'opacity', '0.5'))
 								]),
 							_List_fromArray(
 								[
@@ -13346,18 +13395,19 @@ var $author$project$Calendar$viewWeekDay = F3(
 					},
 					activities)));
 	});
-var $author$project$Calendar$viewWeek = F4(
-	function (allActivities, today, selected, start) {
+var $author$project$Calendar$viewWeek = F5(
+	function (allActivities, today, selected, start, activeId) {
 		var dayViews = A2(
 			$elm$core$List$map,
 			function (d) {
-				return A3(
+				return A4(
 					$author$project$Calendar$viewWeekDay,
 					_Utils_Tuple2(
 						d,
 						A2($author$project$Calendar$filterActivities, d, allActivities)),
 					_Utils_eq(d, today),
-					_Utils_eq(d, selected));
+					_Utils_eq(d, selected),
+					activeId);
 			},
 			$author$project$Calendar$daysOfWeek(start));
 		var activities = $elm$core$List$concat(
@@ -13472,7 +13522,7 @@ var $author$project$Calendar$view = F3(
 						function (d) {
 							return _Utils_Tuple2(
 								$justinmimbs$date$Date$toIsoString(d),
-								A5($elm$html$Html$Lazy$lazy4, $author$project$Calendar$viewWeek, activities, today, selected, d));
+								A6($elm$html$Html$Lazy$lazy5, $author$project$Calendar$viewWeek, activities, today, selected, d, activeId));
 						},
 						A2($author$project$Calendar$weekList, start, end));
 				case 1:
@@ -13484,6 +13534,20 @@ var $author$project$Calendar$view = F3(
 					return dayRows(selected);
 			}
 		}();
+		var loadingSpinner = A2(
+			$author$project$Skeleton$viewIf,
+			zoom !== 2,
+			A2(
+				$author$project$Skeleton$row,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+						A2($elm$html$Html$Attributes$style, 'padding', '1rem')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Skeleton$spinner('2rem')
+					])));
 		return A2(
 			$author$project$Skeleton$expandingRow,
 			_List_fromArray(
@@ -13509,7 +13573,19 @@ var $author$project$Calendar$view = F3(
 							$author$project$Calendar$onScroll(
 								$author$project$Calendar$scrollHandler(model)))
 						]),
-					body)
+					$elm$core$List$concat(
+						_List_fromArray(
+							[
+								_List_fromArray(
+								[
+									_Utils_Tuple2('loadingup', loadingSpinner)
+								]),
+								body,
+								_List_fromArray(
+								[
+									_Utils_Tuple2('loadingdown', loadingSpinner)
+								])
+							])))
 				]));
 	});
 var $author$project$Msg$EditedDescription = function (a) {
@@ -14566,10 +14642,6 @@ var $author$project$Main$viewActivityM = function (activityState) {
 			return $elm$html$Html$text('');
 	}
 };
-var $author$project$Skeleton$viewIf = F2(
-	function (bool, html) {
-		return bool ? html : $elm$html$Html$text('');
-	});
 var $author$project$Calendar$viewHeader = function (model) {
 	return A2(
 		$author$project$Skeleton$viewIf,
@@ -14927,16 +14999,6 @@ var $author$project$Calendar$viewMenu = function (model) {
 			]));
 };
 var $author$project$Main$viewNavbar = function (model) {
-	var spinner = A2(
-		$elm$html$Html$i,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('fas fa-spinner'),
-				A2($elm$html$Html$Attributes$style, 'font-size', '1.5rem'),
-				A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)'),
-				A2($elm$html$Html$Attributes$style, 'animation', 'rotation 2s infinite linear')
-			]),
-		_List_Nil);
 	var header = A2(
 		$author$project$Skeleton$compactColumn,
 		_List_fromArray(
@@ -14981,7 +15043,7 @@ var $author$project$Main$viewNavbar = function (model) {
 							A2(
 							$author$project$Skeleton$viewIf,
 							$author$project$Store$needsFlush(store),
-							spinner)
+							$author$project$Skeleton$spinner('1.5rem'))
 						]))
 				]));
 	} else {
@@ -15002,7 +15064,9 @@ var $author$project$Main$viewNavbar = function (model) {
 							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 						]),
 					_List_fromArray(
-						[spinner]))
+						[
+							$author$project$Skeleton$spinner('1.5rem')
+						]))
 				]));
 	}
 };
