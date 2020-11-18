@@ -178,7 +178,10 @@ update msg model =
                             Dom.getViewportOf "calendar"
                                 |> Task.andThen
                                     (\info ->
-                                        if y > (info.viewport.height * 0.9 + navbarHeight) then
+                                        if y < 0 then
+                                            Task.succeed ()
+
+                                        else if y > (info.viewport.height * 0.9 + navbarHeight) then
                                             Dom.setViewportOf "calendar" 0 (info.viewport.y + distance)
 
                                         else if y < (info.viewport.height * 0.1 + navbarHeight) then
@@ -195,7 +198,7 @@ update msg model =
                         newActivityM =
                             case activityM of
                                 Moving activity _ _ ->
-                                    Selected activity
+                                    Editing (ActivityForm.init activity)
 
                                 _ ->
                                     activityM
@@ -204,8 +207,16 @@ update msg model =
 
                 MoveTo date ->
                     case activityM of
-                        Moving activity _ _ ->
-                            updateStore (Move date activity) state |> loaded
+                        Moving activity x y ->
+                            if activity.date == date then
+                                ( model, Cmd.none )
+
+                            else
+                                let
+                                    newActivityM =
+                                        Moving { activity | date = date } x y
+                                in
+                                updateStore (Move date activity) (State calendar store newActivityM) |> loaded
 
                         _ ->
                             ( model, Cmd.none )
