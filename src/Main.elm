@@ -18,7 +18,7 @@ import Json.Decode as Decode
 import Msg exposing (ActivityForm, ActivityState(..), Msg(..))
 import Ports
 import Random
-import Skeleton exposing (borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
+import Skeleton exposing (borderStyle, column, compactColumn, expandingRow, row, spinner, styleIf, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
 import Time
@@ -68,22 +68,13 @@ viewNavbar model =
                 , style "padding-top" "0.1rem"
                 ]
                 [ text "RunApp2" ]
-
-        spinner =
-            i
-                [ class "fas fa-spinner"
-                , style "font-size" "1.5rem"
-                , style "color" "var(--icon-gray)"
-                , style "animation" "rotation 2s infinite linear"
-                ]
-                []
     in
     case model of
         Loaded (State calendar store _) ->
             row [ style "padding" "0.5rem" ]
                 [ column [] [ Calendar.viewMenu calendar ]
                 , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
-                    [ viewIf (Store.needsFlush store) spinner
+                    [ viewIf (Store.needsFlush store) (spinner "1.5rem")
                     ]
                 ]
 
@@ -91,7 +82,7 @@ viewNavbar model =
             row [ style "padding" "0.5rem" ]
                 [ header
                 , column [] []
-                , compactColumn [ style "justify-content" "center" ] [ spinner ]
+                , compactColumn [ style "justify-content" "center" ] [ spinner "1.5rem" ]
                 ]
 
 

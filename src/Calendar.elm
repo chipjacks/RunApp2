@@ -14,7 +14,7 @@ import Json.Decode as Decode
 import Msg exposing (ActivityState(..), Msg(..), Zoom(..))
 import Ports exposing (scrollToSelectedDate)
 import Process
-import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, styleIf, viewIf, viewMaybe)
+import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, spinner, styleIf, viewIf, viewMaybe)
 import Task
 import Time exposing (Month(..))
 
@@ -237,6 +237,9 @@ view model activities activeId =
 
                 Day ->
                     dayRows selected
+
+        loadingSpinner =
+            viewIf (zoom /= Day) (row [ style "justify-content" "center", style "padding" "1rem" ] [ spinner "2rem" ])
     in
     expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
         [ Html.Keyed.node "div"
@@ -247,7 +250,12 @@ view model activities activeId =
             , style "padding-right" "0.5rem"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             ]
-            body
+          <|
+            List.concat
+                [ [ ( "loadingup", loadingSpinner ) ]
+                , body
+                , [ ( "loadingdown", loadingSpinner ) ]
+                ]
         ]
 
 
