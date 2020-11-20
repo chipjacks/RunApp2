@@ -22,7 +22,7 @@ config =
         }
     , authHeader =
         { dev = "YXBpa2V5LTU2NGQ2NWMxNWNkNTRhYjRiOGVhOTUxMmU2YmU4MmE0OjI4YjgxMWZhMDExZGZiYjVlOThlNzdmNmYzMTdmMDZkM2Y1YTJmNGE="
-        , prod = "YXBpa2V5LWZiZTQyOTUwZWE2YzQxNGVhZjRiNGM4MmZkOGQ3MDgyOjNiNmRiMDMzZTM5NzlkZWQzMDhmNzM5YTgyNzdhZjNhZjM0YjdlZAo="
+        , prod = "YXBpa2V5LWZiZTQyOTUwZWE2YzQxNGVhZjRiNGM4MmZkOGQ3MDgyOjNiNmRiMDMzZTM5NzlkZWQzMDhmNzM5YTgyNzdhZjNhZjM0YjdlZDU="
         }
     }
 
