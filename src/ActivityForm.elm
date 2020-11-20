@@ -308,34 +308,35 @@ view levelM activityM =
             , style "background-color" "white"
             , style "z-index" "2"
             ]
+
+        openAttributes minHeight maxHeight =
+            [ style "transition" "max-height 1s, min-height 1s"
+            , style "max-height" maxHeight
+            , style "min-height" minHeight
+            , style "padding" "1rem 1rem 1rem 1rem"
+            , style "border-width" "1px"
+            ]
+                ++ sharedAttributes
+
+        closedAttributes =
+            [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
+            , style "min-height" "0"
+            , style "max-height" "0"
+            , style "border-width" "0px"
+            ]
+                ++ sharedAttributes
     in
     case activityM of
         Selected [ activity ] ->
-            row
-                (List.concat
-                    [ [ style "transition" "max-height 1s, min-height 1s"
-                      , style "max-height" "2rem"
-                      , style "min-height" "1rem"
-                      , style "padding" "1rem 1rem 1rem 1rem"
-                      , style "border-width" "1px"
-                      ]
-                    , sharedAttributes
-                    ]
-                )
+            row (openAttributes "1rem" "2rem")
                 [ column [] [ viewButtons activity ] ]
 
+        Selected activities ->
+            row (openAttributes "1rem" "2rem")
+                [ column [] [ viewMultiSelectButtons activities ] ]
+
         Editing model ->
-            row
-                (List.concat
-                    [ [ style "transition" "max-height 1s, min-height 1s"
-                      , style "max-height" "20rem"
-                      , style "min-height" "5rem"
-                      , style "padding" "1rem 1rem 1rem 1rem"
-                      , style "border-width" "1px"
-                      ]
-                    , sharedAttributes
-                    ]
-                )
+            row (openAttributes "5rem" "20rem")
                 [ viewShape model
                 , column []
                     [ row []
@@ -363,17 +364,7 @@ view levelM activityM =
                 ]
 
         _ ->
-            row
-                (List.concat
-                    [ [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
-                      , style "min-height" "0"
-                      , style "max-height" "0"
-                      , style "border-width" "0px"
-                      ]
-                    , sharedAttributes
-                    ]
-                )
-                []
+            row closedAttributes []
 
 
 viewButtons : Activity -> Html Msg
@@ -385,6 +376,14 @@ viewButtons activity =
         , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
         , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
         , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
+        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+        ]
+
+
+viewMultiSelectButtons : List Activity -> Html Msg
+viewMultiSelectButtons activities =
+    row [ style "flex-wrap" "wrap" ]
+        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedGroup ] [ i [ class "fas fa-align-left" ] [] ]
         , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
         ]
 

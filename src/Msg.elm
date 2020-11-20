@@ -55,6 +55,7 @@ type Msg
     | NoOp
       -- STORE
     | Create Activity
+    | Group (List Activity) Activity
     | Update Activity
     | Move Date Activity
     | Shift Bool Activity
@@ -84,4 +85,5 @@ type Msg
     | ClickedSubmit
     | ClickedCopy Activity
     | ClickedMove Activity
+    | ClickedGroup
     | NewId String

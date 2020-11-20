@@ -137,14 +137,6 @@ update msg model =
                             updateActivityForm ClickedSubmit state
                                 |> loaded
 
-                        "g" ->
-                            case activityM of
-                                Selected (a :: tail) ->
-                                    ( model, Cmd.batch (initSession a (a :: tail) :: List.map (\d -> Store.cmd (Delete d)) (a :: tail)) )
-
-                                _ ->
-                                    ( model, Cmd.none )
-
                         _ ->
                             ( model, Cmd.none )
 
@@ -222,6 +214,9 @@ update msg model =
 
                 Create activity ->
                     updateStore msg (State calendar store (Selected [ activity ])) |> loaded
+
+                Group activities session ->
+                    updateStore msg (State calendar store (Selected [ session ])) |> loaded
 
                 Update activity ->
                     updateStore msg (State calendar store (Selected [ activity ])) |> loaded
@@ -383,6 +378,14 @@ update msg model =
                     ( activityFormState, Cmd.batch [ calendarCmd, activityFormCmd ] )
                         |> loaded
 
+                ClickedGroup ->
+                    case activityM of
+                        Selected (a :: tail) ->
+                            ( model, initSession a (a :: tail) )
+
+                        _ ->
+                            ( model, Cmd.none )
+
                 NewId _ ->
                     updateActivityForm msg state
                         |> loaded
@@ -459,7 +462,7 @@ initSession : Activity -> List Activity -> Cmd Msg
 initSession head activities =
     Activity.newId
         |> Random.map (\id -> Activity id head.date "" (Activity.Session activities))
-        |> Random.generate NewActivity
+        |> Random.generate (Group activities)
 
 
 calculateLevel : List Activity -> Maybe Int

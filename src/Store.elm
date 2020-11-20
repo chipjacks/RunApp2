@@ -43,6 +43,16 @@ updateState msg state =
         Create activity ->
             { state | activities = updateActivity activity True state.activities }
 
+        Group activities session ->
+            let
+                ids =
+                    List.map .id activities
+
+                removeActivities =
+                    List.filter (\a -> not (List.member a.id ids)) state.activities
+            in
+            { state | activities = updateActivity session True removeActivities }
+
         Update activity ->
             { state | activities = updateActivity activity False state.activities }
 
