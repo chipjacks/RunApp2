@@ -52,7 +52,7 @@ init _ =
     ( Loading Nothing Nothing
     , Cmd.batch
         [ Task.perform Jump Date.today
-        , Task.attempt GotActivities Api.getActivities
+        , Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second)
         ]
     )
 
@@ -125,14 +125,11 @@ update msg model =
 
                 VisibilityChange visibility ->
                     case visibility of
-                        "visible" ->
-                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities Api.getActivities ] )
+                        Events.Visible ->
+                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second) ] )
 
-                        "hidden" ->
+                        Events.Hidden ->
                             ( model, Store.flush store )
-
-                        _ ->
-                            ( model, Cmd.none )
 
                 KeyPressed key ->
                     case key of
@@ -531,7 +528,7 @@ subscriptions model =
         Loaded (State _ _ activityM) ->
             Sub.batch
                 [ Ports.selectDateFromScroll ReceiveSelectDate
-                , Ports.visibilityChange VisibilityChange
+                , Events.onVisibilityChange VisibilityChange
                 , case activityM of
                     Editing form ->
                         Events.onKeyPress keyPressDecoder

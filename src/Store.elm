@@ -68,12 +68,12 @@ update msg (Model state msgs) =
     case msg of
         Posted sentMsgs result ->
             case result of
-                Ok activities ->
+                Ok True ->
                     ( Model state msgs
                     , Cmd.none
                     )
 
-                Err _ ->
+                _ ->
                     ( Model state (msgs ++ sentMsgs)
                     , Cmd.none
                     )
@@ -118,9 +118,9 @@ flush model =
 
         Model state msgs ->
             Api.getActivities
-                |> Task.map State
-                |> Task.map (\remoteState -> List.foldr (\msg rs -> updateState msg rs) remoteState msgs)
-                |> Task.andThen (\newRemoteState -> Api.postActivities newRemoteState.activities)
+                |> Task.map (Tuple.mapSecond State)
+                |> Task.map (Tuple.mapSecond (\remoteState -> List.foldr (\msg rs -> updateState msg rs) remoteState msgs))
+                |> Task.andThen (\( revision, newRemoteState ) -> Api.postActivities revision newRemoteState.activities)
                 |> Task.attempt (Posted msgs)
 
 

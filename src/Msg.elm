@@ -2,6 +2,7 @@ module Msg exposing (ActivityForm, ActivityState(..), DataForm(..), FormError(..
 
 import Activity exposing (Activity)
 import Browser.Dom as Dom
+import Browser.Events as Events
 import Date exposing (Date)
 import Http
 
@@ -43,7 +44,7 @@ type ActivityState
 type Msg
     = LoadToday Date
     | GotActivities (Result String (List Activity))
-    | VisibilityChange String
+    | VisibilityChange Events.Visibility
     | KeyPressed String
     | MouseMoved Float Float
     | AutoScrollCalendar Float
@@ -56,7 +57,7 @@ type Msg
     | Move Date Activity
     | Shift Bool Activity
     | Delete Activity
-    | Posted (List Msg) (Result String (List Activity))
+    | Posted (List Msg) (Result String Bool)
     | DebounceFlush Int
       -- CALENDAR
     | Jump Date

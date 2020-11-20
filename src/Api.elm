@@ -9,42 +9,70 @@ import Task exposing (Task)
 import Time exposing (Month(..), utc)
 
 
-getActivities : Task String (List Activity)
+
+-- CONFIG
+
+
+config =
+    { docId = "428e9b77627a652f297c35eedca65c95"
+    , url = "https://6483b615-f5bc-4f3d-8b78-188c8df679dc-bluemix.cloudantnosqldb.appdomain.cloud"
+    , database =
+        { dev = "runapp2_dev"
+        , prod = "runapp2"
+        }
+    , authHeader =
+        { dev = "YXBpa2V5LTU2NGQ2NWMxNWNkNTRhYjRiOGVhOTUxMmU2YmU4MmE0OjI4YjgxMWZhMDExZGZiYjVlOThlNzdmNmYzMTdmMDZkM2Y1YTJmNGE="
+        , prod = "YXBpa2V5LWZiZTQyOTUwZWE2YzQxNGVhZjRiNGM4MmZkOGQ3MDgyOjNiNmRiMDMzZTM5NzlkZWQzMDhmNzM5YTgyNzdhZjNhZjM0YjdlZAo="
+        }
+    }
+
+
+storeUrl =
+    String.join "/" [ config.url, config.database.dev, config.docId ]
+
+
+authHeader =
+    Http.header "Authorization" ("Basic " ++ config.authHeader.dev)
+
+
+
+-- ROUTES
+
+
+getActivities : Task String ( String, List Activity )
 getActivities =
     Http.task
         { method = "GET"
-        , headers = [ Http.header "Content-Type" "application/json" ]
-        , url = storeUrl ++ "/latest"
+        , headers = [ Http.header "Content-Type" "application/json", authHeader ]
+        , url = storeUrl
         , body = Http.emptyBody
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.list Activity.decoder
+                    Decode.map2 Tuple.pair
+                        (Decode.field "_rev" Decode.string)
+                        (Decode.field "activities" (Decode.list Activity.decoder))
         , timeout = Nothing
         }
 
 
-postActivities : List Activity -> Task String (List Activity)
-postActivities activities =
+postActivities : String -> List Activity -> Task String Bool
+postActivities revision activities =
     Http.task
         { method = "PUT"
-        , headers = []
+        , headers = [ Http.header "Content-Type" "application/json", authHeader ]
         , url = storeUrl
-        , body = Http.jsonBody (Encode.list Activity.encoder activities)
+        , body = Http.jsonBody (Encode.object [ ( "_rev", Encode.string revision ), ( "activities", Encode.list Activity.encoder activities ) ])
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.field "data" (Decode.list Activity.decoder)
+                    Decode.field "ok" Decode.bool
         , timeout = Nothing
         }
 
 
 
 -- INTERNAL
-
-
-storeUrl =
-    "https://api.jsonbin.io/b/5ce402ac0e7bd93ffac14a4c"
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result String a

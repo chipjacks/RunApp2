@@ -4,7 +4,7 @@ import Activity exposing (Activity, Pace(..))
 import Emoji
 import Html exposing (Html, div)
 import Html.Attributes exposing (class, style)
-import Skeleton exposing (column, row)
+import Skeleton exposing (column, row, styleIf)
 
 
 type Shape
