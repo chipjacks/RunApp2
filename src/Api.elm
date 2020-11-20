@@ -9,6 +9,36 @@ import Task exposing (Task)
 import Time exposing (Month(..), utc)
 
 
+
+-- CONFIG
+
+
+config =
+    { docId = "428e9b77627a652f297c35eedca65c95"
+    , url = "https://6483b615-f5bc-4f3d-8b78-188c8df679dc-bluemix.cloudantnosqldb.appdomain.cloud"
+    , database =
+        { dev = "runapp2_dev"
+        , prod = "runapp2"
+        }
+    , authHeader =
+        { dev = "YXBpa2V5LTU2NGQ2NWMxNWNkNTRhYjRiOGVhOTUxMmU2YmU4MmE0OjI4YjgxMWZhMDExZGZiYjVlOThlNzdmNmYzMTdmMDZkM2Y1YTJmNGE="
+        , prod = "YXBpa2V5LWZiZTQyOTUwZWE2YzQxNGVhZjRiNGM4MmZkOGQ3MDgyOjNiNmRiMDMzZTM5NzlkZWQzMDhmNzM5YTgyNzdhZjNhZjM0YjdlZAo="
+        }
+    }
+
+
+storeUrl =
+    String.join "/" [ config.url, config.database.dev, config.docId ]
+
+
+authHeader =
+    Http.header "Authorization" ("Basic " ++ config.authHeader.dev)
+
+
+
+-- ROUTES
+
+
 getActivities : Task String ( String, List Activity )
 getActivities =
     Http.task
@@ -43,14 +73,6 @@ postActivities revision activities =
 
 
 -- INTERNAL
-
-
-storeUrl =
-    "https://6483b615-f5bc-4f3d-8b78-188c8df679dc-bluemix.cloudantnosqldb.appdomain.cloud/runapp2/428e9b77627a652f297c35eedca65c95"
-
-
-authHeader =
-    Http.header "Authorization" "Basic YXBpa2V5LTNhZDlmYjFjYTE2MjQyNzZhZjFhNTYwMjc2ODhlY2M5OjA1ZmE1NTU0OTFhZjI2NzkyZmFmM2I1YTgwZjY0YmI4NjcwOGIzNjQ="
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result String a
