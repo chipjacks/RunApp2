@@ -47,8 +47,8 @@ init activity =
             Activity.Note emoji_ ->
                 NoteForm { emoji = emoji_ }
 
-            Activity.Session _ ->
-                SessionForm
+            Activity.Session activities ->
+                SessionForm activities
 
 
 initMove : Activity -> ActivityForm
@@ -159,7 +159,7 @@ update msg model =
                 Activity.Session activities ->
                     ( updateResult
                         { model
-                            | dataForm = SessionForm
+                            | dataForm = SessionForm activities
                         }
                     , Cmd.none
                     )
@@ -297,7 +297,7 @@ view levelM activityM =
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
 
-                SessionForm ->
+                SessionForm _ ->
                     []
 
         sharedAttributes =
@@ -425,16 +425,21 @@ shapeSelect model =
             , Activity.Other duration completed
             , Activity.Note emoji
             ]
+
+        typeStr =
+            toActivityData model.dataForm |> Activity.activityTypeToString
     in
     div [ class "dropdown medium" ]
         [ button [ class "button medium" ]
-            [ text (toActivityData model.dataForm |> Activity.activityTypeToString) ]
-        , div [ class "dropdown-content" ]
-            (List.map
-                (\aType ->
-                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text (Activity.activityTypeToString aType) ] ] ]
+            [ text typeStr ]
+        , viewIf (typeStr /= "Session")
+            (div [ class "dropdown-content" ]
+                (List.map
+                    (\aType ->
+                        a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text (Activity.activityTypeToString aType) ] ] ]
+                    )
+                    types
                 )
-                types
             )
         ]
 
@@ -529,8 +534,8 @@ toActivityData dataForm =
         NoteForm { emoji } ->
             Activity.Note emoji
 
-        SessionForm ->
-            Activity.Session []
+        SessionForm activities ->
+            Activity.Session activities
 
 
 submitButton : Html Msg

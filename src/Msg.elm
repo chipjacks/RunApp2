@@ -33,7 +33,7 @@ type DataForm
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
     | OtherForm { duration : String, completed : Bool }
     | NoteForm { emoji : String }
-    | SessionForm
+    | SessionForm (List Activity)
 
 
 type ActivityState
