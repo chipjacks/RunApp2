@@ -52,7 +52,7 @@ init _ =
     ( Loading Nothing Nothing
     , Cmd.batch
         [ Task.perform Jump Date.today
-        , Task.attempt GotActivities Api.getActivities
+        , Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second)
         ]
     )
 
@@ -126,7 +126,7 @@ update msg model =
                 VisibilityChange visibility ->
                     case visibility of
                         Events.Visible ->
-                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities Api.getActivities ] )
+                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second) ] )
 
                         Events.Hidden ->
                             ( model, Store.flush store )

@@ -9,32 +9,34 @@ import Task exposing (Task)
 import Time exposing (Month(..), utc)
 
 
-getActivities : Task String (List Activity)
+getActivities : Task String ( String, List Activity )
 getActivities =
     Http.task
         { method = "GET"
-        , headers = [ Http.header "Content-Type" "application/json" ]
-        , url = storeUrl ++ "/latest"
+        , headers = [ Http.header "Content-Type" "application/json", authHeader ]
+        , url = storeUrl
         , body = Http.emptyBody
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.list Activity.decoder
+                    Decode.map2 Tuple.pair
+                        (Decode.field "_rev" Decode.string)
+                        (Decode.field "activities" (Decode.list Activity.decoder))
         , timeout = Nothing
         }
 
 
-postActivities : List Activity -> Task String (List Activity)
-postActivities activities =
+postActivities : String -> List Activity -> Task String (List Activity)
+postActivities revision activities =
     Http.task
         { method = "PUT"
-        , headers = []
+        , headers = [ Http.header "Content-Type" "application/json", authHeader ]
         , url = storeUrl
-        , body = Http.jsonBody (Encode.list Activity.encoder activities)
+        , body = Http.jsonBody (Encode.object [ ( "_rev", Encode.string revision ), ( "activities", Encode.list Activity.encoder activities ) ])
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.field "data" (Decode.list Activity.decoder)
+                    Decode.field "activities" (Decode.list Activity.decoder)
         , timeout = Nothing
         }
 
@@ -44,7 +46,11 @@ postActivities activities =
 
 
 storeUrl =
-    "https://api.jsonbin.io/b/5e68d2b6243ad4332b54b78d"
+    "https://6483b615-f5bc-4f3d-8b78-188c8df679dc-bluemix.cloudantnosqldb.appdomain.cloud/runapp2/428e9b77627a652f297c35eedca65c95"
+
+
+authHeader =
+    Http.header "Authorization" "Basic YXBpa2V5LTNhZDlmYjFjYTE2MjQyNzZhZjFhNTYwMjc2ODhlY2M5OjA1ZmE1NTU0OTFhZjI2NzkyZmFmM2I1YTgwZjY0YmI4NjcwOGIzNjQ="
 
 
 handleJsonResponse : Decode.Decoder a -> Http.Response String -> Result String a
