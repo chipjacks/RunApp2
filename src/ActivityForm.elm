@@ -370,7 +370,13 @@ view levelM activityM =
 viewButtons : Activity -> Html Msg
 viewButtons activity =
     row [ style "flex-wrap" "wrap" ]
-        [ a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
+        [ case activity.data of
+            Activity.Session activities ->
+                a [ class "button small", style "margin-right" "0.2rem", onClick (Ungroup activities activity) ] [ i [ class "fas fa-align-left" ] [] ]
+
+            _ ->
+                Html.text ""
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
         , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
         , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
         , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]

@@ -56,6 +56,7 @@ type Msg
       -- STORE
     | Create Activity
     | Group (List Activity) Activity
+    | Ungroup (List Activity) Activity
     | Update Activity
     | Move Date Activity
     | Shift Bool Activity

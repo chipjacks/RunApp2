@@ -53,6 +53,13 @@ updateState msg state =
             in
             { state | activities = updateActivity session True removeActivities }
 
+        Ungroup activities session ->
+            let
+                ungrouped =
+                    List.foldr (\a b -> updateActivity { a | date = session.date } True b) state.activities activities
+            in
+            { state | activities = List.filter (\a -> a.id /= session.id) ungrouped }
+
         Update activity ->
             { state | activities = updateActivity activity False state.activities }
 

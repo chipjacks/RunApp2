@@ -218,6 +218,9 @@ update msg model =
                 Group activities session ->
                     updateStore msg (State calendar store (Selected [ session ])) |> loaded
 
+                Ungroup activities session ->
+                    updateStore msg (State calendar store (Selected activities)) |> loaded
+
                 Update activity ->
                     updateStore msg (State calendar store (Selected [ activity ])) |> loaded
 
