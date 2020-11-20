@@ -248,6 +248,7 @@ view model activities activeId =
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
+            , class "no-select"
             ]
           <|
             List.concat
@@ -393,7 +394,7 @@ viewWeekDay ( date, activities ) isToday isSelected activeId =
                 (\a ->
                     row
                         [ Html.Events.on "pointerdown" (Decode.succeed (pointerEvent a))
-                        , class "no-touching"
+                        , class "no-select"
                         , style "margin-bottom" "0.1rem"
                         , style "margin-right" "0.2rem"
                         , attributeIf (a.id == activeId) (style "opacity" "0.5")
@@ -492,7 +493,6 @@ viewActivity isActive activity =
         ]
         [ compactColumn
             [ attributeIf isActive (Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity)))
-            , class "no-touching"
             , attributeIf isActive (class "dynamic-shape")
             , style "flex-basis" "5rem"
             ]

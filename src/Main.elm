@@ -507,7 +507,8 @@ view model =
                             Moving _ _ _ ->
                                 [ Html.Events.on "pointermove" mouseMoveDecoder
                                 , Html.Events.on "pointerup" (Decode.succeed MouseReleased)
-                                , class "no-touching"
+                                , style "touch-action" "none"
+                                , style "pointer-action" "none"
                                 ]
 
                             _ ->
