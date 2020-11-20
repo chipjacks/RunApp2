@@ -194,7 +194,7 @@ update msg model =
                         newActivityM =
                             case activityM of
                                 Moving activity _ _ ->
-                                    Editing (ActivityForm.init activity)
+                                    Selected [ activity ]
 
                                 _ ->
                                     activityM
@@ -525,6 +525,7 @@ view model =
                     [ Html.Lazy.lazy Calendar.viewHeader calendar
                     , Html.Lazy.lazy3 Calendar.view calendar activities activeId
                     , Html.Lazy.lazy viewActivityM activityM
+                    , Html.Lazy.lazy2 ActivityForm.view levelM activityM
                     ]
         ]
 
@@ -532,9 +533,6 @@ view model =
 viewActivityM : ActivityState -> Html Msg
 viewActivityM activityState =
     case activityState of
-        Editing form ->
-            ActivityForm.view Nothing (Just form)
-
         Moving activity x y ->
             row
                 [ style "position" "fixed"

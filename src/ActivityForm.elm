@@ -12,7 +12,7 @@ import Html.Events exposing (on, onClick, onFocus, onInput)
 import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
-import Msg exposing (ActivityForm, DataForm(..), FormError(..), Msg(..))
+import Msg exposing (ActivityForm, ActivityState(..), DataForm(..), FormError(..), Msg(..))
 import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
@@ -267,8 +267,8 @@ updateResult model =
     { model | result = validate model }
 
 
-view : Maybe Int -> Maybe ActivityForm -> Html Msg
-view levelM modelM =
+view : Maybe Int -> ActivityState -> Html Msg
+view levelM activityM =
     let
         dataInputs form result =
             case form of
@@ -309,21 +309,22 @@ view levelM modelM =
             , style "z-index" "2"
             ]
     in
-    case modelM of
-        Nothing ->
+    case activityM of
+        Selected [ activity ] ->
             row
                 (List.concat
-                    [ [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
-                      , style "min-height" "0"
-                      , style "max-height" "0"
-                      , style "border-width" "0px"
+                    [ [ style "transition" "max-height 1s, min-height 1s"
+                      , style "max-height" "2rem"
+                      , style "min-height" "1rem"
+                      , style "padding" "1rem 1rem 1rem 1rem"
+                      , style "border-width" "1px"
                       ]
                     , sharedAttributes
                     ]
                 )
-                []
+                [ column [] [ viewButtons activity ] ]
 
-        Just model ->
+        Editing model ->
             row
                 (List.concat
                     [ [ style "transition" "max-height 1s, min-height 1s"
@@ -360,6 +361,32 @@ view levelM modelM =
                         [ viewError model.result ]
                     ]
                 ]
+
+        _ ->
+            row
+                (List.concat
+                    [ [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
+                      , style "min-height" "0"
+                      , style "max-height" "0"
+                      , style "border-width" "0px"
+                      ]
+                    , sharedAttributes
+                    ]
+                )
+                []
+
+
+viewButtons : Activity -> Html Msg
+viewButtons activity =
+    row [ style "flex-wrap" "wrap" ]
+        [ a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
+        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+        ]
 
 
 viewShape : ActivityForm -> Html Msg
