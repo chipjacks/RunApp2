@@ -57,7 +57,7 @@ type Msg
     | Move Date Activity
     | Shift Bool Activity
     | Delete Activity
-    | Posted (List Msg) (Result String (List Activity))
+    | Posted (List Msg) (Result String Bool)
     | DebounceFlush Int
       -- CALENDAR
     | Jump Date

@@ -56,7 +56,7 @@ getActivities =
         }
 
 
-postActivities : String -> List Activity -> Task String (List Activity)
+postActivities : String -> List Activity -> Task String Bool
 postActivities revision activities =
     Http.task
         { method = "PUT"
@@ -66,7 +66,7 @@ postActivities revision activities =
         , resolver =
             Http.stringResolver <|
                 handleJsonResponse <|
-                    Decode.field "activities" (Decode.list Activity.decoder)
+                    Decode.field "ok" Decode.bool
         , timeout = Nothing
         }
 

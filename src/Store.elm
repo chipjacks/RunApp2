@@ -68,12 +68,12 @@ update msg (Model state msgs) =
     case msg of
         Posted sentMsgs result ->
             case result of
-                Ok activities ->
+                Ok True ->
                     ( Model state msgs
                     , Cmd.none
                     )
 
-                Err _ ->
+                _ ->
                     ( Model state (msgs ++ sentMsgs)
                     , Cmd.none
                     )
