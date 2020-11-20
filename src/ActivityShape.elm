@@ -43,6 +43,9 @@ view activity =
             Emoji emoji
                 |> viewShape
 
+        Activity.Session activities ->
+            column [] (List.map view activities)
+
 
 viewDefault : Bool -> Activity.ActivityData -> Html msg
 viewDefault completed activityData =
@@ -65,6 +68,10 @@ viewDefault completed activityData =
 
         Activity.Note _ ->
             Emoji Emoji.default.name
+                |> viewShape
+
+        Activity.Session _ ->
+            Block Orange completed { width = 3, height = 1 }
                 |> viewShape
 
 

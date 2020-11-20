@@ -47,6 +47,9 @@ init activity =
             Activity.Note emoji_ ->
                 NoteForm { emoji = emoji_ }
 
+            Activity.Session _ ->
+                SessionForm
+
 
 initMove : Activity -> ActivityForm
 initMove activity =
@@ -149,6 +152,14 @@ update msg model =
                     ( updateResult
                         { model
                             | dataForm = NoteForm { emoji = emoji }
+                        }
+                    , Cmd.none
+                    )
+
+                Activity.Session activities ->
+                    ( updateResult
+                        { model
+                            | dataForm = SessionForm
                         }
                     , Cmd.none
                     )
@@ -285,6 +296,9 @@ view levelM modelM =
 
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
+
+                SessionForm ->
+                    []
 
         sharedAttributes =
             [ borderStyle "border-bottom"
@@ -482,6 +496,9 @@ toActivityData dataForm =
 
         NoteForm { emoji } ->
             Activity.Note emoji
+
+        SessionForm ->
+            Activity.Session []
 
 
 submitButton : Html Msg

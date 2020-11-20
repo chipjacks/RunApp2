@@ -24,6 +24,7 @@ type ActivityData
     | Race Minutes Distance Bool
     | Other Minutes Bool
     | Note String
+    | Session (List Activity)
 
 
 activityTypeToString : ActivityData -> String
@@ -43,6 +44,9 @@ activityTypeToString aType =
 
         Note _ ->
             "Note"
+
+        Session _ ->
+            "Session"
 
 
 newId : Random.Generator String
@@ -274,8 +278,8 @@ activityDataDecoder =
 encoder : Activity -> Encode.Value
 encoder activity =
     let
-        dataEncoder =
-            case activity.data of
+        dataEncoder data =
+            case data of
                 Run minutes pace_ completed ->
                     Encode.object
                         [ ( "type", Encode.string "run" )
@@ -312,12 +316,15 @@ encoder activity =
                         [ ( "type", Encode.string "note" )
                         , ( "emoji", Encode.string emoji )
                         ]
+
+                Session activities ->
+                    Encode.list dataEncoder (activities |> List.map .data)
     in
     Encode.object
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "data", dataEncoder )
+        , ( "data", dataEncoder activity.data )
         ]
 
 
