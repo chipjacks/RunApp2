@@ -37,7 +37,7 @@ type DataForm
 
 
 type ActivityState
-    = Selected Activity
+    = Selected (List Activity)
     | Editing ActivityForm
     | Moving Activity Float Float
     | None
@@ -71,7 +71,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
-    | SelectActivity Activity
+    | SelectActivity Activity Bool
     | EditActivity Activity
     | SelectedDate Date
     | SelectedShape Activity.ActivityData

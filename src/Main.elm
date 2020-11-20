@@ -137,6 +137,14 @@ update msg model =
                             updateActivityForm ClickedSubmit state
                                 |> loaded
 
+                        "g" ->
+                            case activityM of
+                                Selected (a :: tail) ->
+                                    ( model, Cmd.batch (initSession a (a :: tail) :: List.map (\d -> Store.cmd (Delete d)) (a :: tail)) )
+
+                                _ ->
+                                    ( model, Cmd.none )
+
                         _ ->
                             ( model, Cmd.none )
 
@@ -213,10 +221,10 @@ update msg model =
                     ( model, Cmd.none )
 
                 Create activity ->
-                    updateStore msg (State calendar store (Selected activity)) |> loaded
+                    updateStore msg (State calendar store (Selected [ activity ])) |> loaded
 
                 Update activity ->
-                    updateStore msg (State calendar store (Selected activity)) |> loaded
+                    updateStore msg (State calendar store (Selected [ activity ])) |> loaded
 
                 Move _ _ ->
                     updateStore msg state |> loaded
@@ -282,8 +290,36 @@ update msg model =
                     in
                     ( Loaded <| State calendar store (Editing form), Cmd.none )
 
-                SelectActivity activity ->
-                    ( Loaded <| State calendar store (Selected activity), Cmd.none )
+                SelectActivity activity shiftKey ->
+                    case ( activityM, shiftKey ) of
+                        ( Selected selected, True ) ->
+                            let
+                                indexedActivities =
+                                    List.filter (\a -> a.date == activity.date) (Store.get store .activities)
+                                        |> List.indexedMap Tuple.pair
+
+                                range =
+                                    indexedActivities
+                                        |> List.filter (\( _, a ) -> (activity :: selected) |> List.map .id |> List.member a.id)
+                                        |> List.unzip
+                                        |> Tuple.first
+                                        |> (\indexes -> ( List.minimum indexes, List.maximum indexes ))
+
+                                list =
+                                    case range of
+                                        ( Just start, Just end ) ->
+                                            indexedActivities
+                                                |> List.filter (\( i, _ ) -> i >= start && i <= end)
+                                                |> List.unzip
+                                                |> Tuple.second
+
+                                        _ ->
+                                            [ activity ]
+                            in
+                            ( Loaded <| State calendar store (Selected list), Cmd.none )
+
+                        _ ->
+                            ( Loaded <| State calendar store (Selected [ activity ]), Cmd.none )
 
                 MoveActivity activity ->
                     ( Loaded <| State calendar store (Moving activity -100 -100), Cmd.none )
@@ -419,6 +455,13 @@ initActivity today dateM =
         |> Random.generate NewActivity
 
 
+initSession : Activity -> List Activity -> Cmd Msg
+initSession head activities =
+    Activity.newId
+        |> Random.map (\id -> Activity id head.date "" (Activity.Session activities))
+        |> Random.generate NewActivity
+
+
 calculateLevel : List Activity -> Maybe Int
 calculateLevel activities =
     activities
@@ -466,8 +509,8 @@ view model =
 
                     activeId =
                         case activityM of
-                            Selected { id } ->
-                                id
+                            Selected list ->
+                                List.map .id list |> String.join " "
 
                             Editing { id } ->
                                 id

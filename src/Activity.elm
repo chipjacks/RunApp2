@@ -250,6 +250,10 @@ activityDataDecoder =
         noteDecoder =
             Decode.map Note
                 (Decode.field "emoji" Decode.string)
+
+        sessionDecoder =
+            Decode.map Session
+                (Decode.field "activities" (Decode.list (Decode.lazy (\a -> decoder))))
     in
     Decode.field "type" Decode.string
         |> Decode.andThen
@@ -269,6 +273,9 @@ activityDataDecoder =
 
                     "note" ->
                         noteDecoder
+
+                    "session" ->
+                        sessionDecoder
 
                     _ ->
                         Decode.fail ("Invalid type: " ++ dataType)
@@ -318,7 +325,10 @@ encoder activity =
                         ]
 
                 Session activities ->
-                    Encode.list dataEncoder (activities |> List.map .data)
+                    Encode.object
+                        [ ( "type", Encode.string "session" )
+                        , ( "activities", Encode.list encoder activities )
+                        ]
     in
     Encode.object
         [ ( "id", Encode.string activity.id )

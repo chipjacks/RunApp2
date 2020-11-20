@@ -218,7 +218,7 @@ view model activities activeId =
                 [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
                 , filterActivities date activities
                     |> List.map
-                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (activity.id == activeId) activity ))
+                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (String.contains activity.id activeId) activity ))
                 , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
                 ]
 
@@ -496,7 +496,7 @@ viewActivity isActive activity =
             ]
             [ ActivityShape.view activity ]
         , if not isActive then
-            a [ Html.Events.on "pointerdown" (Decode.succeed (EditActivity activity)), class "column expand", style "justify-content" "center" ]
+            a [ Html.Events.on "pointerdown" (pointerDownDecoder activity), class "column expand", style "justify-content" "center" ]
                 [ row [] [ text activity.description ]
                 , row [ style "font-size" "0.8rem" ]
                     [ column []
@@ -525,6 +525,13 @@ viewActivity isActive activity =
             column [ style "justify-content" "center" ]
                 [ viewButtons activity ]
         ]
+
+
+pointerDownDecoder : Activity -> Decode.Decoder Msg
+pointerDownDecoder activity =
+    Decode.map
+        (SelectActivity activity)
+        (Decode.field "shiftKey" Decode.bool)
 
 
 viewAddButton : Date -> Html Msg
