@@ -527,10 +527,21 @@ view model =
 
                             None ->
                                 ""
+
+                    activeRataDie =
+                        case activityM of
+                            Editing { date } ->
+                                Maybe.map Date.toRataDie date |> Maybe.withDefault 0
+
+                            Selected (a :: _) ->
+                                Date.toRataDie a.date
+
+                            _ ->
+                                0
                 in
                 column (style "position" "relative" :: events)
                     [ Html.Lazy.lazy Calendar.viewHeader calendar
-                    , Html.Lazy.lazy3 Calendar.view calendar activities activeId
+                    , Html.Lazy.lazy4 Calendar.view calendar activities activeId activeRataDie
                     , Html.Lazy.lazy viewActivityM activityM
                     , Html.Lazy.lazy2 ActivityForm.view levelM activityM
                     ]

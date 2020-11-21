@@ -207,8 +207,8 @@ filterActivities date activities =
     List.filter (\a -> a.date == date) activities
 
 
-view : Model -> List Activity -> String -> Html Msg
-view model activities activeId =
+view : Model -> List Activity -> String -> Int -> Html Msg
+view model activities activeId activeRataDie =
     let
         (Model zoom start end selected today scrollCompleted) =
             model
@@ -218,7 +218,7 @@ view model activities activeId =
                 [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
                 , filterActivities date activities
                     |> List.map
-                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (String.contains activity.id activeId) activity ))
+                        (\activity -> ( activity.id, Html.Lazy.lazy3 viewActivity (String.contains activity.id activeId) (Date.toRataDie date == activeRataDie) activity ))
                 , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
                 ]
 
@@ -472,14 +472,15 @@ viewDay isToday isSelected rataDie =
         , attribute "data-date" (Date.toIsoString date)
         , style "padding" "1rem 0.5rem"
         , styleIf isToday "font-weight" "bold"
-        , onClick (ChangeZoom Day (Just date))
+
+        -- , onClick (ChangeZoom Day (Just date))
         , Html.Events.on "pointerenter" (Decode.succeed (MoveTo date))
         ]
         [ text (Date.format "E MMM d" date) ]
 
 
-viewActivity : Bool -> Activity -> Html Msg
-viewActivity isActive activity =
+viewActivity : Bool -> Bool -> Activity -> Html Msg
+viewActivity isActive isActiveDate activity =
     let
         level =
             Activity.mprLevel activity
@@ -494,6 +495,7 @@ viewActivity isActive activity =
             [ attributeIf isActive (Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity)))
             , attributeIf isActive (class "dynamic-shape")
             , style "flex-basis" "5rem"
+            , style "justify-content" "center"
             , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
             ]
             [ ActivityShape.view activity ]
@@ -526,18 +528,20 @@ viewActivity isActive activity =
                 ]
             ]
         , compactColumn
-            [ styleIf isActive "touch-action" "none"
-            , attributeIf (not isActive)
+            [ attributeIf (not isActive)
                 (Html.Events.on "pointerdown" (Decode.succeed (SelectActivity activity True)))
             , style "justify-content" "center"
+            , style "min-width" "1rem"
             , style "font-size" "0.5rem"
             , style "color" "var(--icon-gray)"
             ]
-            [ i
-                [ attributeIf isActive (class "fas fa-circle")
-                , attributeIf (not isActive) (class "far fa-circle")
-                ]
-                []
+            [ viewIf isActiveDate
+                (i
+                    [ attributeIf isActive (class "fas fa-circle")
+                    , attributeIf (not isActive) (class "far fa-circle")
+                    ]
+                    []
+                )
             ]
         ]
 

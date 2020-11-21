@@ -44,7 +44,7 @@ view activity =
                 |> viewShape
 
         Activity.Session activities ->
-            column [] (List.map view activities)
+            div [] (List.map view activities)
 
 
 viewDefault : Bool -> Activity.ActivityData -> Html msg
