@@ -16,6 +16,7 @@ type Shape
 type Color
     = Green
     | Orange
+    | Red
     | Gray
 
 
@@ -26,8 +27,12 @@ view activity =
             Block Green completed { width = toWidth pace, height = toHeight mins }
                 |> viewShape
 
+        Activity.Interval secs pace completed ->
+            Block Orange completed { width = toWidth pace, height = toIntervalHeight secs }
+                |> viewShape
+
         Activity.Race mins dist completed ->
-            Block Orange completed { width = toWidth (Maybe.withDefault Activity.Lactate Nothing), height = toHeight mins }
+            Block Red completed { width = toWidth (Maybe.withDefault Activity.Lactate Nothing), height = toHeight mins }
                 |> viewShape
 
         Activity.Other mins completed ->
@@ -38,6 +43,9 @@ view activity =
             Emoji emoji
                 |> viewShape
 
+        Activity.Session activities ->
+            div [] (List.map view activities)
+
 
 viewDefault : Bool -> Activity.ActivityData -> Html msg
 viewDefault completed activityData =
@@ -46,8 +54,12 @@ viewDefault completed activityData =
             Block Green completed { width = 3, height = 1 }
                 |> viewShape
 
-        Activity.Race _ _ _ ->
+        Activity.Interval _ _ _ ->
             Block Orange completed { width = 3, height = 1 }
+                |> viewShape
+
+        Activity.Race _ _ _ ->
+            Block Red completed { width = 3, height = 1 }
                 |> viewShape
 
         Activity.Other _ _ ->
@@ -56,6 +68,10 @@ viewDefault completed activityData =
 
         Activity.Note _ ->
             Emoji Emoji.default.name
+                |> viewShape
+
+        Activity.Session _ ->
+            Block Orange completed { width = 3, height = 1 }
                 |> viewShape
 
 
@@ -111,6 +127,9 @@ colorString color =
         Orange ->
             "var(--activity-orange)"
 
+        Red ->
+            "red"
+
         Gray ->
             "var(--activity-gray)"
 
@@ -118,6 +137,11 @@ colorString color =
 toHeight : Activity.Minutes -> Float
 toHeight duration =
     toFloat duration / 10
+
+
+toIntervalHeight : Activity.Seconds -> Float
+toIntervalHeight duration =
+    toFloat duration / 600
 
 
 toWidth : Activity.Pace -> Float

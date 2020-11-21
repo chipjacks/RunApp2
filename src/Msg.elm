@@ -29,13 +29,15 @@ type FormError
 
 type DataForm
     = RunForm { duration : String, pace : Activity.Pace, completed : Bool }
+    | IntervalForm { duration : String, pace : Activity.Pace, completed : Bool }
     | RaceForm { duration : String, distance : Activity.Distance, completed : Bool }
     | OtherForm { duration : String, completed : Bool }
     | NoteForm { emoji : String }
+    | SessionForm (List Activity)
 
 
 type ActivityState
-    = Selected Activity
+    = Selected (List Activity)
     | Editing ActivityForm
     | Moving Activity Float Float
     | None
@@ -53,6 +55,8 @@ type Msg
     | NoOp
       -- STORE
     | Create Activity
+    | Group (List Activity) Activity
+    | Ungroup (List Activity) Activity
     | Update Activity
     | Move Date Activity
     | Shift Bool Activity
@@ -69,7 +73,7 @@ type Msg
       -- ACTIVITY FORM
     | ClickedNewActivity Date
     | NewActivity Activity
-    | SelectActivity Activity
+    | SelectActivity Activity Bool
     | EditActivity Activity
     | SelectedDate Date
     | SelectedShape Activity.ActivityData
@@ -82,4 +86,5 @@ type Msg
     | ClickedSubmit
     | ClickedCopy Activity
     | ClickedMove Activity
+    | ClickedGroup
     | NewId String

@@ -186,7 +186,7 @@ update msg model =
                         newActivityM =
                             case activityM of
                                 Moving activity _ _ ->
-                                    Editing (ActivityForm.init activity)
+                                    Selected [ activity ]
 
                                 _ ->
                                     activityM
@@ -213,10 +213,16 @@ update msg model =
                     ( model, Cmd.none )
 
                 Create activity ->
-                    updateStore msg (State calendar store (Selected activity)) |> loaded
+                    updateStore msg (State calendar store (Selected [ activity ])) |> loaded
+
+                Group activities session ->
+                    updateStore msg (State calendar store (Selected [ session ])) |> loaded
+
+                Ungroup activities session ->
+                    updateStore msg (State calendar store (Selected activities)) |> loaded
 
                 Update activity ->
-                    updateStore msg (State calendar store (Selected activity)) |> loaded
+                    updateStore msg (State calendar store (Selected [ activity ])) |> loaded
 
                 Move _ _ ->
                     updateStore msg state |> loaded
@@ -282,8 +288,36 @@ update msg model =
                     in
                     ( Loaded <| State calendar store (Editing form), Cmd.none )
 
-                SelectActivity activity ->
-                    ( Loaded <| State calendar store (Selected activity), Cmd.none )
+                SelectActivity activity shiftKey ->
+                    case ( activityM, shiftKey ) of
+                        ( Selected selected, True ) ->
+                            let
+                                indexedActivities =
+                                    List.filter (\a -> a.date == activity.date) (Store.get store .activities)
+                                        |> List.indexedMap Tuple.pair
+
+                                range =
+                                    indexedActivities
+                                        |> List.filter (\( _, a ) -> (activity :: selected) |> List.map .id |> List.member a.id)
+                                        |> List.unzip
+                                        |> Tuple.first
+                                        |> (\indexes -> ( List.minimum indexes, List.maximum indexes ))
+
+                                list =
+                                    case range of
+                                        ( Just start, Just end ) ->
+                                            indexedActivities
+                                                |> List.filter (\( i, _ ) -> i >= start && i <= end)
+                                                |> List.unzip
+                                                |> Tuple.second
+
+                                        _ ->
+                                            [ activity ]
+                            in
+                            ( Loaded <| State calendar store (Selected list), Cmd.none )
+
+                        _ ->
+                            ( Loaded <| State calendar store (Selected [ activity ]), Cmd.none )
 
                 MoveActivity activity ->
                     ( Loaded <| State calendar store (Moving activity -100 -100), Cmd.none )
@@ -346,6 +380,14 @@ update msg model =
                     in
                     ( activityFormState, Cmd.batch [ calendarCmd, activityFormCmd ] )
                         |> loaded
+
+                ClickedGroup ->
+                    case activityM of
+                        Selected (a :: tail) ->
+                            ( model, initSession a (a :: tail) )
+
+                        _ ->
+                            ( model, Cmd.none )
 
                 NewId _ ->
                     updateActivityForm msg state
@@ -419,6 +461,13 @@ initActivity today dateM =
         |> Random.generate NewActivity
 
 
+initSession : Activity -> List Activity -> Cmd Msg
+initSession head activities =
+    Activity.newId
+        |> Random.map (\id -> Activity id head.date "" (Activity.Session activities))
+        |> Random.generate (Group activities)
+
+
 calculateLevel : List Activity -> Maybe Int
 calculateLevel activities =
     activities
@@ -458,7 +507,8 @@ view model =
                             Moving _ _ _ ->
                                 [ Html.Events.on "pointermove" mouseMoveDecoder
                                 , Html.Events.on "pointerup" (Decode.succeed MouseReleased)
-                                , class "no-touching"
+                                , style "touch-action" "none"
+                                , style "pointer-action" "none"
                                 ]
 
                             _ ->
@@ -466,8 +516,8 @@ view model =
 
                     activeId =
                         case activityM of
-                            Selected { id } ->
-                                id
+                            Selected list ->
+                                List.map .id list |> String.join " "
 
                             Editing { id } ->
                                 id
@@ -477,11 +527,23 @@ view model =
 
                             None ->
                                 ""
+
+                    activeRataDie =
+                        case activityM of
+                            Editing { date } ->
+                                Maybe.map Date.toRataDie date |> Maybe.withDefault 0
+
+                            Selected (a :: _) ->
+                                Date.toRataDie a.date
+
+                            _ ->
+                                0
                 in
                 column (style "position" "relative" :: events)
                     [ Html.Lazy.lazy Calendar.viewHeader calendar
-                    , Html.Lazy.lazy3 Calendar.view calendar activities activeId
+                    , Html.Lazy.lazy4 Calendar.view calendar activities activeId activeRataDie
                     , Html.Lazy.lazy viewActivityM activityM
+                    , Html.Lazy.lazy2 ActivityForm.view levelM activityM
                     ]
         ]
 
@@ -489,9 +551,6 @@ view model =
 viewActivityM : ActivityState -> Html Msg
 viewActivityM activityState =
     case activityState of
-        Editing form ->
-            ActivityForm.view Nothing (Just form)
-
         Moving activity x y ->
             row
                 [ style "position" "fixed"

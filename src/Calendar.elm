@@ -207,8 +207,8 @@ filterActivities date activities =
     List.filter (\a -> a.date == date) activities
 
 
-view : Model -> List Activity -> String -> Html Msg
-view model activities activeId =
+view : Model -> List Activity -> String -> Int -> Html Msg
+view model activities activeId activeRataDie =
     let
         (Model zoom start end selected today scrollCompleted) =
             model
@@ -218,7 +218,7 @@ view model activities activeId =
                 [ [ ( Date.toIsoString date, Html.Lazy.lazy3 viewDay (date == today) (date == selected) (Date.toRataDie date) ) ]
                 , filterActivities date activities
                     |> List.map
-                        (\activity -> ( activity.id, Html.Lazy.lazy2 viewActivity (activity.id == activeId) activity ))
+                        (\activity -> ( activity.id, Html.Lazy.lazy3 viewActivity (String.contains activity.id activeId) (Date.toRataDie date == activeRataDie) activity ))
                 , [ ( Date.toIsoString date ++ "+", Html.Lazy.lazy viewAddButton date ) ]
                 ]
 
@@ -241,14 +241,14 @@ view model activities activeId =
         loadingSpinner =
             viewIf (zoom /= Day) (row [ style "justify-content" "center", style "padding" "1rem" ] [ spinner "2rem" ])
     in
-    expandingRow [ style "overflow" "hidden", style "margin-left" "1rem" ]
+    expandingRow [ style "overflow" "hidden" ]
         [ Html.Keyed.node "div"
             [ id "calendar"
             , class "column expand"
             , style "overflow-y" "scroll"
             , style "overflow-x" "hidden"
-            , style "padding-right" "0.5rem"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
+            , class "no-select"
             ]
           <|
             List.concat
@@ -359,7 +359,7 @@ viewWeek allActivities today selected start activeId =
                     )
                 |> List.foldl (\( r, o ) ( sr, so ) -> ( sr + r, so + o )) ( 0, 0 )
     in
-    row [] <|
+    row [ style "padding" "0 0.5rem" ] <|
         titleWeek start ( runDuration, otherDuration )
             :: dayViews
 
@@ -394,7 +394,7 @@ viewWeekDay ( date, activities ) isToday isSelected activeId =
                 (\a ->
                     row
                         [ Html.Events.on "pointerdown" (Decode.succeed (pointerEvent a))
-                        , class "no-touching"
+                        , class "no-select"
                         , style "margin-bottom" "0.1rem"
                         , style "margin-right" "0.2rem"
                         , attributeIf (a.id == activeId) (style "opacity" "0.5")
@@ -470,63 +470,92 @@ viewDay isToday isSelected rataDie =
         [ attributeIf (Date.day date == 1) (class "month-header")
         , attributeIf isSelected (id "selected-date")
         , attribute "data-date" (Date.toIsoString date)
-        , style "margin-bottom" "1rem"
-        , style "margin-top" "1rem"
+        , style "padding" "1rem 0.5rem"
         , styleIf isToday "font-weight" "bold"
-        , onClick (ChangeZoom Day (Just date))
+
+        -- , onClick (ChangeZoom Day (Just date))
         , Html.Events.on "pointerenter" (Decode.succeed (MoveTo date))
         ]
         [ text (Date.format "E MMM d" date) ]
 
 
-viewActivity : Bool -> Activity -> Html Msg
-viewActivity isActive activity =
+viewActivity : Bool -> Bool -> Activity -> Html Msg
+viewActivity isActive isActiveDate activity =
     let
         level =
             Activity.mprLevel activity
                 |> Maybe.map (\l -> "level " ++ String.fromInt l)
                 |> Maybe.withDefault ""
     in
-    row [ style "margin-bottom" "1rem" ]
+    row
+        [ style "padding" "0.5rem 0.5rem"
+        , styleIf isActive "background-color" "var(--highlight-gray)"
+        ]
         [ compactColumn
-            [ Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity))
-            , class "no-touching"
+            [ attributeIf isActive (Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity)))
             , attributeIf isActive (class "dynamic-shape")
             , style "flex-basis" "5rem"
+            , style "justify-content" "center"
+            , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
             ]
             [ ActivityShape.view activity ]
-        , if not isActive then
-            a [ Html.Events.on "pointerdown" (Decode.succeed (EditActivity activity)), class "column expand", style "justify-content" "center" ]
-                [ row [] [ text activity.description ]
-                , row [ style "font-size" "0.8rem" ]
-                    [ column []
-                        [ text <|
-                            case activity.data of
-                                Activity.Run mins pace_ _ ->
-                                    String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
+        , a
+            [ class "column expand"
+            , style "justify-content" "center"
+            , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
+            ]
+            [ row [] [ text activity.description ]
+            , row [ style "font-size" "0.8rem" ]
+                [ column []
+                    [ text <|
+                        case activity.data of
+                            Activity.Run mins pace_ _ ->
+                                String.fromInt mins ++ " min " ++ String.toLower (Activity.pace.toString pace_)
 
-                                Activity.Race mins _ _ ->
-                                    String.fromInt mins ++ " min "
+                            Activity.Interval secs pace_ _ ->
+                                String.fromInt secs ++ " secs " ++ String.toLower (Activity.pace.toString pace_)
 
-                                Activity.Other mins _ ->
-                                    String.fromInt mins ++ " min "
+                            Activity.Race mins _ _ ->
+                                String.fromInt mins ++ " min "
 
-                                _ ->
-                                    ""
-                        ]
-                    , compactColumn [ style "align-items" "flex-end" ] [ text level ]
+                            Activity.Other mins _ ->
+                                String.fromInt mins ++ " min "
+
+                            _ ->
+                                ""
                     ]
+                , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                 ]
-
-          else
-            column [ style "justify-content" "center" ]
-                [ viewButtons activity ]
+            ]
+        , compactColumn
+            [ attributeIf (not isActive)
+                (Html.Events.on "pointerdown" (Decode.succeed (SelectActivity activity True)))
+            , style "justify-content" "center"
+            , style "min-width" "1rem"
+            , style "font-size" "0.5rem"
+            , style "color" "var(--icon-gray)"
+            ]
+            [ viewIf isActiveDate
+                (i
+                    [ attributeIf isActive (class "fas fa-circle")
+                    , attributeIf (not isActive) (class "far fa-circle")
+                    ]
+                    []
+                )
+            ]
         ]
+
+
+pointerDownDecoder : Activity -> Decode.Decoder Msg
+pointerDownDecoder activity =
+    Decode.map
+        (SelectActivity activity)
+        (Decode.field "shiftKey" Decode.bool)
 
 
 viewAddButton : Date -> Html Msg
 viewAddButton date =
-    row [ style "margin-bottom" "1rem" ]
+    row [ style "padding" "0.5rem 0.5rem" ]
         [ compactColumn []
             [ a
                 [ onClick (ClickedNewActivity date)
@@ -543,16 +572,3 @@ viewAddButton date =
 listDays : Date -> Date -> List Date
 listDays start end =
     Date.range Date.Day 1 start end
-
-
-viewButtons : Activity -> Html Msg
-viewButtons activity =
-    row [ style "flex-wrap" "wrap" ]
-        [ a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
-        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
-        ]

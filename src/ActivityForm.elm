@@ -12,7 +12,7 @@ import Html.Events exposing (on, onClick, onFocus, onInput)
 import Http
 import Json.Decode as Decode
 import MPRLevel exposing (stripTimeStr)
-import Msg exposing (ActivityForm, DataForm(..), FormError(..), Msg(..))
+import Msg exposing (ActivityForm, ActivityState(..), DataForm(..), FormError(..), Msg(..))
 import Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, row, viewIf, viewMaybe)
 import Store
 import Task exposing (Task)
@@ -35,6 +35,9 @@ init activity =
             Activity.Run minutes pace_ completed ->
                 RunForm { duration = String.fromInt minutes, pace = pace_, completed = completed }
 
+            Activity.Interval seconds pace_ completed ->
+                IntervalForm { duration = String.fromInt seconds, pace = pace_, completed = completed }
+
             Activity.Race minutes distance_ completed ->
                 RaceForm { duration = String.fromInt minutes, distance = distance_, completed = completed }
 
@@ -43,6 +46,9 @@ init activity =
 
             Activity.Note emoji_ ->
                 NoteForm { emoji = emoji_ }
+
+            Activity.Session activities ->
+                SessionForm activities
 
 
 initMove : Activity -> ActivityForm
@@ -118,6 +124,14 @@ update msg model =
                     , Cmd.none
                     )
 
+                Activity.Interval secs pace_ completed ->
+                    ( updateResult
+                        { model
+                            | dataForm = IntervalForm { duration = String.fromInt secs, pace = pace_, completed = completed }
+                        }
+                    , Cmd.none
+                    )
+
                 Activity.Race mins dist completed ->
                     ( updateResult
                         { model
@@ -138,6 +152,14 @@ update msg model =
                     ( updateResult
                         { model
                             | dataForm = NoteForm { emoji = emoji }
+                        }
+                    , Cmd.none
+                    )
+
+                Activity.Session activities ->
+                    ( updateResult
+                        { model
+                            | dataForm = SessionForm activities
                         }
                     , Cmd.none
                     )
@@ -185,6 +207,9 @@ updateCompleted dataForm =
         RunForm data ->
             RunForm { data | completed = not data.completed }
 
+        IntervalForm data ->
+            IntervalForm { data | completed = not data.completed }
+
         RaceForm data ->
             RaceForm { data | completed = not data.completed }
 
@@ -201,6 +226,9 @@ updateDuration duration dataForm =
         RunForm data ->
             RunForm { data | duration = duration }
 
+        IntervalForm data ->
+            IntervalForm { data | duration = duration }
+
         RaceForm data ->
             RaceForm { data | duration = duration }
 
@@ -216,6 +244,9 @@ updatePace paceStr dataForm =
     case dataForm of
         RunForm data ->
             RunForm { data | pace = Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace) }
+
+        IntervalForm data ->
+            IntervalForm { data | pace = Activity.pace.fromString paceStr |> Maybe.withDefault (defaults dataForm |> .pace) }
 
         _ ->
             dataForm
@@ -236,18 +267,23 @@ updateResult model =
     { model | result = validate model }
 
 
-view : Maybe Int -> Maybe ActivityForm -> Html Msg
-view levelM modelM =
+view : Maybe Int -> ActivityState -> Html Msg
+view levelM activityM =
     let
         dataInputs form result =
             case form of
                 RunForm { duration, pace } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ]
+                    , compactColumn [] [ paceSelect levelM SelectedPace pace ]
+                    ]
+
+                IntervalForm { duration, pace } ->
+                    [ compactColumn [] [ durationInput EditedDuration True duration ]
                     , compactColumn [] [ paceSelect levelM SelectedPace pace ]
                     ]
 
                 RaceForm { duration, distance } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ]
                     , compactColumn [] [ distanceSelect SelectedDistance distance ]
                     , compactColumn []
                         [ viewMaybe (Result.toMaybe result |> Maybe.andThen Activity.mprLevel)
@@ -256,10 +292,13 @@ view levelM modelM =
                     ]
 
                 OtherForm { duration } ->
-                    [ compactColumn [] [ durationInput EditedDuration duration ] ]
+                    [ compactColumn [] [ durationInput EditedDuration False duration ] ]
 
                 NoteForm { emoji } ->
                     [ compactColumn [] [ emojiSelect SelectedEmoji emoji ] ]
+
+                SessionForm _ ->
+                    []
 
         sharedAttributes =
             [ borderStyle "border-bottom"
@@ -269,33 +308,35 @@ view levelM modelM =
             , style "background-color" "white"
             , style "z-index" "2"
             ]
-    in
-    case modelM of
-        Nothing ->
-            row
-                (List.concat
-                    [ [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
-                      , style "min-height" "0"
-                      , style "max-height" "0"
-                      , style "border-width" "0px"
-                      ]
-                    , sharedAttributes
-                    ]
-                )
-                []
 
-        Just model ->
-            row
-                (List.concat
-                    [ [ style "transition" "max-height 1s, min-height 1s"
-                      , style "max-height" "20rem"
-                      , style "min-height" "5rem"
-                      , style "padding" "1rem 1rem 1rem 1rem"
-                      , style "border-width" "1px"
-                      ]
-                    , sharedAttributes
-                    ]
-                )
+        openAttributes minHeight maxHeight =
+            [ style "transition" "max-height 1s, min-height 1s"
+            , style "max-height" maxHeight
+            , style "min-height" minHeight
+            , style "padding" "1rem 1rem 1rem 1rem"
+            , style "border-width" "1px"
+            ]
+                ++ sharedAttributes
+
+        closedAttributes =
+            [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
+            , style "min-height" "0"
+            , style "max-height" "0"
+            , style "border-width" "0px"
+            ]
+                ++ sharedAttributes
+    in
+    case activityM of
+        Selected [ activity ] ->
+            row (openAttributes "1rem" "2rem")
+                [ column [] [ viewButtons activity ] ]
+
+        Selected activities ->
+            row (openAttributes "1rem" "2rem")
+                [ column [] [ viewMultiSelectButtons activities ] ]
+
+        Editing model ->
+            row (openAttributes "5rem" "20rem")
                 [ viewShape model
                 , column []
                     [ row []
@@ -321,6 +362,36 @@ view levelM modelM =
                         [ viewError model.result ]
                     ]
                 ]
+
+        _ ->
+            row closedAttributes []
+
+
+viewButtons : Activity -> Html Msg
+viewButtons activity =
+    row [ style "flex-wrap" "wrap" ]
+        [ case activity.data of
+            Activity.Session activities ->
+                a [ class "button small", style "margin-right" "0.2rem", onClick (Ungroup activities activity) ] [ i [ class "fas fa-align-left" ] [] ]
+
+            _ ->
+                Html.text ""
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
+        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+        ]
+
+
+viewMultiSelectButtons : List Activity -> Html Msg
+viewMultiSelectButtons activities =
+    row [ style "flex-wrap" "wrap" ]
+        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedGroup ] [ i [ class "fas fa-align-left" ] [] ]
+        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+        ]
 
 
 viewShape : ActivityForm -> Html Msg
@@ -349,20 +420,26 @@ shapeSelect model =
 
         types =
             [ Activity.Run duration pace completed
+            , Activity.Interval duration pace completed
             , Activity.Race duration distance completed
             , Activity.Other duration completed
             , Activity.Note emoji
             ]
+
+        typeStr =
+            toActivityData model.dataForm |> Activity.activityTypeToString
     in
     div [ class "dropdown medium" ]
         [ button [ class "button medium" ]
-            [ text (toActivityData model.dataForm |> Activity.activityTypeToString) ]
-        , div [ class "dropdown-content" ]
-            (List.map
-                (\aType ->
-                    a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text (Activity.activityTypeToString aType) ] ] ]
+            [ text typeStr ]
+        , viewIf (typeStr /= "Session")
+            (div [ class "dropdown-content" ]
+                (List.map
+                    (\aType ->
+                        a [ onClick (SelectedShape aType) ] [ row [] [ ActivityShape.viewDefault True aType, compactColumn [ style "margin-left" "0.5rem", style "margin-top" "0.1rem" ] [ text (Activity.activityTypeToString aType) ] ] ]
+                    )
+                    types
                 )
-                types
             )
         ]
 
@@ -445,6 +522,9 @@ toActivityData dataForm =
         RunForm { duration, pace, completed } ->
             Activity.Run (parseDuration duration) pace completed
 
+        IntervalForm { duration, pace, completed } ->
+            Activity.Interval (parseDuration duration) pace completed
+
         RaceForm { duration, distance, completed } ->
             Activity.Race (parseDuration duration) distance completed
 
@@ -453,6 +533,9 @@ toActivityData dataForm =
 
         NoteForm { emoji } ->
             Activity.Note emoji
+
+        SessionForm activities ->
+            Activity.Session activities
 
 
 submitButton : Html Msg
@@ -510,11 +593,17 @@ emojiSelect msg emoji =
         ]
 
 
-durationInput : (String -> Msg) -> String -> Html Msg
-durationInput msg duration =
+durationInput : (String -> Msg) -> Bool -> String -> Html Msg
+durationInput msg isSeconds duration =
     input
         [ type_ "number"
-        , placeholder "Mins"
+        , placeholder
+            (if isSeconds then
+                "Secs"
+
+             else
+                "Mins"
+            )
         , onInput msg
         , onFocus (msg "")
         , name "duration"

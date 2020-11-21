@@ -1,4 +1,4 @@
-module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
+module Activity exposing (Activity, ActivityData(..), Distance(..), Id, Minutes, Pace(..), Seconds, activityTypeToString, decoder, distance, encoder, mprLevel, newId, pace)
 
 import Date exposing (Date)
 import Emoji
@@ -20,9 +20,11 @@ type alias Activity =
 
 type ActivityData
     = Run Minutes Pace Bool
+    | Interval Seconds Pace Bool
     | Race Minutes Distance Bool
     | Other Minutes Bool
     | Note String
+    | Session (List Activity)
 
 
 activityTypeToString : ActivityData -> String
@@ -30,6 +32,9 @@ activityTypeToString aType =
     case aType of
         Run _ _ _ ->
             "Run"
+
+        Interval _ _ _ ->
+            "Interval"
 
         Race _ _ _ ->
             "Race"
@@ -39,6 +44,9 @@ activityTypeToString aType =
 
         Note _ ->
             "Note"
+
+        Session _ ->
+            "Session"
 
 
 newId : Random.Generator String
@@ -71,6 +79,10 @@ type alias Id =
 
 
 type alias Minutes =
+    Int
+
+
+type alias Seconds =
     Int
 
 
@@ -218,6 +230,12 @@ activityDataDecoder =
                 (Decode.field "pace" pace.decoder)
                 (Decode.field "completed" Decode.bool)
 
+        intervalDecoder =
+            Decode.map3 Interval
+                (Decode.field "duration" Decode.int)
+                (Decode.field "pace" pace.decoder)
+                (Decode.field "completed" Decode.bool)
+
         raceDecoder =
             Decode.map3 Race
                 (Decode.field "duration" Decode.int)
@@ -232,6 +250,10 @@ activityDataDecoder =
         noteDecoder =
             Decode.map Note
                 (Decode.field "emoji" Decode.string)
+
+        sessionDecoder =
+            Decode.map Session
+                (Decode.field "activities" (Decode.list (Decode.lazy (\a -> decoder))))
     in
     Decode.field "type" Decode.string
         |> Decode.andThen
@@ -239,6 +261,9 @@ activityDataDecoder =
                 case dataType of
                     "run" ->
                         runDecoder
+
+                    "interval" ->
+                        intervalDecoder
 
                     "race" ->
                         raceDecoder
@@ -249,6 +274,9 @@ activityDataDecoder =
                     "note" ->
                         noteDecoder
 
+                    "session" ->
+                        sessionDecoder
+
                     _ ->
                         Decode.fail ("Invalid type: " ++ dataType)
             )
@@ -257,12 +285,20 @@ activityDataDecoder =
 encoder : Activity -> Encode.Value
 encoder activity =
     let
-        dataEncoder =
-            case activity.data of
+        dataEncoder data =
+            case data of
                 Run minutes pace_ completed ->
                     Encode.object
                         [ ( "type", Encode.string "run" )
                         , ( "duration", Encode.int minutes )
+                        , ( "pace", pace.encode pace_ )
+                        , ( "completed", Encode.bool completed )
+                        ]
+
+                Interval seconds pace_ completed ->
+                    Encode.object
+                        [ ( "type", Encode.string "interval" )
+                        , ( "duration", Encode.int seconds )
                         , ( "pace", pace.encode pace_ )
                         , ( "completed", Encode.bool completed )
                         ]
@@ -287,12 +323,18 @@ encoder activity =
                         [ ( "type", Encode.string "note" )
                         , ( "emoji", Encode.string emoji )
                         ]
+
+                Session activities ->
+                    Encode.object
+                        [ ( "type", Encode.string "session" )
+                        , ( "activities", Encode.list encoder activities )
+                        ]
     in
-    Encode.object <|
+    Encode.object
         [ ( "id", Encode.string activity.id )
         , ( "date", Encode.string (Date.toIsoString activity.date) )
         , ( "description", Encode.string activity.description )
-        , ( "data", dataEncoder )
+        , ( "data", dataEncoder activity.data )
         ]
 
 
