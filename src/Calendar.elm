@@ -489,15 +489,19 @@ viewActivity isActive activity =
     row
         [ style "padding" "0.5rem 0.5rem"
         , styleIf isActive "background-color" "var(--highlight-gray)"
-        , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
         ]
         [ compactColumn
             [ attributeIf isActive (Html.Events.on "pointerdown" (Decode.succeed (MoveActivity activity)))
             , attributeIf isActive (class "dynamic-shape")
             , style "flex-basis" "5rem"
+            , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
             ]
             [ ActivityShape.view activity ]
-        , a [ class "column expand", style "justify-content" "center" ]
+        , a
+            [ class "column expand"
+            , style "justify-content" "center"
+            , attributeIf (not isActive) (Html.Events.on "pointerdown" (pointerDownDecoder activity))
+            ]
             [ row [] [ text activity.description ]
             , row [ style "font-size" "0.8rem" ]
                 [ column []
@@ -520,6 +524,20 @@ viewActivity isActive activity =
                     ]
                 , compactColumn [ style "align-items" "flex-end" ] [ text level ]
                 ]
+            ]
+        , compactColumn
+            [ styleIf isActive "touch-action" "none"
+            , attributeIf (not isActive)
+                (Html.Events.on "pointerdown" (Decode.succeed (SelectActivity activity True)))
+            , style "justify-content" "center"
+            , style "font-size" "0.5rem"
+            , style "color" "var(--icon-gray)"
+            ]
+            [ i
+                [ attributeIf isActive (class "fas fa-circle")
+                , attributeIf (not isActive) (class "far fa-circle")
+                ]
+                []
             ]
         ]
 
