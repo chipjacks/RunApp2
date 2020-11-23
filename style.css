@@ -26,6 +26,8 @@ html, body { height: 100%; margin: 0; }
 .navbar { border-bottom: 1px solid var(--border-gray) }
 
 @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(359deg); } }
+@keyframes slidein-left { from { transform: translate(-100%); } to { transform: translate(0%); } }
+@keyframes slidein-right { from { transform: translate(100%); } to { transform: translate(0%); opacity: 1; } }
 
 /* FLEXBOX PARENTS */
 .row { display: flex; flex-direction: row; }
