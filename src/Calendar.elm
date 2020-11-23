@@ -249,6 +249,10 @@ view model activities activeId activeRataDie =
             , style "overflow-x" "hidden"
             , attributeIf scrollCompleted (onScroll <| scrollHandler model)
             , class "no-select"
+            , styleIf (zoom == Year) "animation" "slidein-left 0.5s"
+            , styleIf (zoom == Month) "animation" "slidein-right 0.5s 0.01ms"
+            , styleIf (zoom == Month) "opacity" "0"
+            , styleIf (zoom == Month) "animation-fill-mode" "forwards"
             ]
           <|
             List.concat
