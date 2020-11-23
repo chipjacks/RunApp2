@@ -14670,6 +14670,10 @@ var $author$project$Skeleton$spinner = function (fontSize) {
 			]),
 		_List_Nil);
 };
+var $author$project$Skeleton$styleIf = F3(
+	function (bool, name, value) {
+		return bool ? A2($elm$html$Html$Attributes$style, name, value) : A2($elm$html$Html$Attributes$style, '', '');
+	});
 var $author$project$Msg$MoveActivity = function (a) {
 	return {$: 23, a: a};
 };
@@ -14683,10 +14687,6 @@ var $author$project$Calendar$pointerDownDecoder = function (activity) {
 		$author$project$Msg$SelectActivity(activity),
 		A2($elm$json$Json$Decode$field, 'shiftKey', $elm$json$Json$Decode$bool));
 };
-var $author$project$Skeleton$styleIf = F3(
-	function (bool, name, value) {
-		return bool ? A2($elm$html$Html$Attributes$style, name, value) : A2($elm$html$Html$Attributes$style, '', '');
-	});
 var $author$project$Calendar$viewActivity = F3(
 	function (isActive, isActiveDate, activity) {
 		var level = A2(
@@ -15297,7 +15297,11 @@ var $author$project$Calendar$view = F4(
 							scrollCompleted,
 							$author$project$Calendar$onScroll(
 								$author$project$Calendar$scrollHandler(model))),
-							$elm$html$Html$Attributes$class('no-select')
+							$elm$html$Html$Attributes$class('no-select'),
+							A3($author$project$Skeleton$styleIf, !zoom, 'animation', 'slidein-left 0.5s'),
+							A3($author$project$Skeleton$styleIf, zoom === 1, 'animation', 'slidein-right 0.5s 0.01ms'),
+							A3($author$project$Skeleton$styleIf, zoom === 1, 'opacity', '0'),
+							A3($author$project$Skeleton$styleIf, zoom === 1, 'animation-fill-mode', 'forwards')
 						]),
 					$elm$core$List$concat(
 						_List_fromArray(
