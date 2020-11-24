@@ -24,17 +24,17 @@
         navigator.serviceWorker
           .register('/service-worker.js')
           .then(function() { console.log("Service Worker Registered"); });
-      }
 
-      let refreshing;
-      navigator.serviceWorker.addEventListener('controllerchange', function () {
-        if (refreshing) return;
-        const conf = window.confirm('An update is available. Reload?')
-        if (conf) {
-          window.location.reload();
-          refreshing = true;
-        }
-      });
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          if (refreshing) return;
+          const conf = window.confirm('An update is available. Reload?')
+          if (conf) {
+            window.location.reload();
+            refreshing = true;
+          }
+        });
+      }
 
        function handleCalendarScroll(event) {
          const calendar = document.getElementById('calendar');
