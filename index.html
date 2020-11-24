@@ -26,6 +26,16 @@
           .then(function() { console.log("Service Worker Registered"); });
       }
 
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (refreshing) return;
+        const conf = window.confirm('An update is available. Reload?')
+        if (conf) {
+          window.location.reload();
+          refreshing = true;
+        }
+      });
+
        function handleCalendarScroll(event) {
          const calendar = document.getElementById('calendar');
          if (calendar.scrollTop < 100 || (calendar.scrollHeight - calendar.scrollTop === calendar.clientHeight)) {
