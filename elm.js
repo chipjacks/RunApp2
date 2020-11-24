@@ -9155,7 +9155,7 @@ var $author$project$Store$updateState = F2(
 				var activities = msg.a;
 				var session = msg.b;
 				var ungrouped = A3(
-					$elm$core$List$foldr,
+					$elm$core$List$foldl,
 					F2(
 						function (a, b) {
 							return A3(
