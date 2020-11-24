@@ -1,5 +1,5 @@
 
-const VERSION = '0.1.3';
+const VERSION = '0.1.4';
 
 const cacheName = `runapp2 v${VERSION}`;
 
