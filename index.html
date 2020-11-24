@@ -37,17 +37,23 @@
       }
 
       document.addEventListener('visibilitychange', () => {
-        if ('serviceWorker' in navigator && document.visibilityState === 'visible') {
-          navigator.serviceWorker
-            .getRegistration()
-            .then((reg) => {
+        if (document.visibilityState === 'visible') {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+              .getRegistration()
+              .then((reg) => {
 
-              if (!reg) {
-                return null;
-              }
+                if (!reg) {
+                  return null;
+                }
 
-              reg.update();
-            });
+                reg.update();
+              });
+          }
+
+          if (scrollFail) {
+            scrollToSelectedDate();
+          }
         }
       });
 
@@ -65,19 +71,15 @@
         }
       };
 
-      let observer;
-      function reloadObserver() {
-        if (observer) {
-          observer.disconnect();
-        }
-        observer = new IntersectionObserver(handleIntersect, {root: document.querySelector('#calendar'), threshold: 1});
-        const elements = Array.from(document.getElementsByClassName('month-header'))
-        elements.map(e => observer.observe(e));
-      }
-
-      app.ports.scrollToSelectedDate.subscribe(function() {
+      let scrollFail = false;
+      function scrollToSelectedDate() {
         setTimeout(() => {
-          document.getElementById('calendar').removeEventListener('scroll', handleCalendarScroll);
+          try {
+            document.getElementById('calendar').removeEventListener('scroll', handleCalendarScroll);
+          } catch (e) {
+            scrollFail = true;
+            return;
+          }
           const element = document.getElementById('selected-date')
           if (element) {
             element.scrollIntoView();
@@ -86,7 +88,9 @@
             document.getElementById('calendar').addEventListener('scroll', handleCalendarScroll);
           }, 500);
         }, 100);
-      });
+      }
+
+      app.ports.scrollToSelectedDate.subscribe(scrollToSelectedDate);
 
       document.addEventListener('gotpointercapture', (e) => {
         e.target.releasePointerCapture(e.pointerId)
