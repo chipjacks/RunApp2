@@ -36,6 +36,21 @@
         });
       }
 
+      document.addEventListener('visibilitychange', () => {
+        if ('serviceWorker' in navigator && document.visibilityState === 'visible') {
+          navigator.serviceWorker
+            .getRegistration()
+            .then((reg) => {
+
+              if (!reg) {
+                return null;
+              }
+
+              reg.update();
+            });
+        }
+      });
+
        function handleCalendarScroll(event) {
          const calendar = document.getElementById('calendar');
          if (calendar.scrollTop < 100 || (calendar.scrollHeight - calendar.scrollTop === calendar.clientHeight)) {
