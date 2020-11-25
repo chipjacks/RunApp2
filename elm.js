@@ -15526,7 +15526,7 @@ var $author$project$Skeleton$logo = A2(
 	_List_fromArray(
 		[
 			A2($elm$html$Html$Attributes$style, 'height', '2rem'),
-			$elm$html$Html$Attributes$src('/logo.svg')
+			$elm$html$Html$Attributes$src('logo.svg')
 		]),
 	_List_Nil);
 var $elm$core$List$isEmpty = function (xs) {
