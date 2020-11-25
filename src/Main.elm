@@ -31,7 +31,7 @@ import Time
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "RunApp2", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
+        , view = \model -> { title = "Runa", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
         , update = update
         , subscriptions = subscriptions
         }
@@ -61,13 +61,8 @@ viewNavbar : Model -> Html Msg
 viewNavbar model =
     let
         header =
-            compactColumn
-                [ style "font-size" "1.5rem"
-                , style "font-style" "italic"
-                , style "color" "var(--header-blue)"
-                , style "padding-top" "0.1rem"
-                ]
-                [ text "RunApp2" ]
+            compactColumn []
+                [ Skeleton.logo ]
     in
     case model of
         Loaded (State calendar store _) ->
@@ -80,7 +75,7 @@ viewNavbar model =
 
         _ ->
             row [ style "padding" "0.5rem" ]
-                [ header
+                [ compactColumn [] [ Skeleton.logo ]
                 , column [] []
                 , compactColumn [ style "justify-content" "center" ] [ spinner "1.5rem" ]
                 ]

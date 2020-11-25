@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="693px" height="206px" viewBox="0 0 693 206" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>logo</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-9.000000, -16.000000)">
+            <g id="Group" transform="translate(45.000000, 38.000000)">
+                <ellipse id="Oval" fill="#D8D8D8" cx="108" cy="110.5" rx="52" ry="51.5"></ellipse>
+                <rect id="Rectangle" fill="#32CD32" x="0" y="0" width="39" height="162" rx="13"></rect>
+                <rect id="Rectangle" fill="#FFA500" x="0" y="0" width="160" height="39" rx="13"></rect>
+            </g>
+            <text id="runa" font-family="SFProRounded-Regular, SF Pro Rounded" font-size="200" font-weight="normal" letter-spacing="-3.19999993" fill="#3D3D3D">
+                <tspan x="280.523047" y="178">runa</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

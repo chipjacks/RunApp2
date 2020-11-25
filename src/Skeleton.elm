@@ -1,4 +1,4 @@
-module Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, layout, row, spinner, styleIf, viewIf, viewMaybe)
+module Skeleton exposing (attributeIf, borderStyle, column, compactColumn, expandingRow, layout, row, spinner, styleIf, viewIf, viewMaybe, logo)
 
 import Html exposing (Html, div, i, img, text)
 import Html.Attributes exposing (class, src, style)
@@ -16,6 +16,11 @@ layout navbar page =
                 [ page ]
             ]
         ]
+
+
+logo : Html msg
+logo =
+    Html.img [ style "height" "2rem", Html.Attributes.src "/logo.svg" ] []
 
 
 row : List (Html.Attribute msg) -> List (Html msg) -> Html msg

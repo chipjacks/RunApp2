@@ -1,7 +1,7 @@
 
-const VERSION = '0.1.7';
+const VERSION = '0.1.0';
 
-const cacheName = `runapp2 v${VERSION}`;
+const cacheName = `runa v${VERSION}`;
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
@@ -14,6 +14,7 @@ self.addEventListener('install', function(e) {
         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         'https://code.jquery.com/pep/0.4.3/pep.min.js',
         '/icon.png',
+        '/logo.png',
         '/manifest.json',
       ]);
     })

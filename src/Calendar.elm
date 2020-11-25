@@ -120,7 +120,7 @@ viewBackButton model =
     in
     case zoom of
         Year ->
-            text ""
+            Skeleton.logo
 
         Month ->
             a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Year Nothing) ]
