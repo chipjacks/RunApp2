@@ -1,7 +1,6 @@
 {
   "scripts": {
     "start": "elm-live src/Main.elm -u -- --output=elm.js",
-    "test": "cypress run",
     "seed": "curl --header 'Content-Type: application/json' --request PUT --data @cypress/fixtures/activities.json https://api.jsonbin.io/b/5e68d2b6243ad4332b54b78d/",
     "make": "elm make --optimize --output=elm.js src/Main.elm"
   },
@@ -9,7 +8,6 @@
     "elm": "^0.19.1"
   },
   "devDependencies": {
-    "cypress": "^3.1.5",
-    "elm-live": "^3.4.0"
+    "elm-live": "^4.0.2"
   }
 }
