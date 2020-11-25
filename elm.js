@@ -15514,6 +15514,21 @@ var $author$project$Main$view = function (model) {
 			}()
 			]));
 };
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Skeleton$logo = A2(
+	$elm$html$Html$img,
+	_List_fromArray(
+		[
+			A2($elm$html$Html$Attributes$style, 'height', '2rem'),
+			$elm$html$Html$Attributes$src('/logo.svg')
+		]),
+	_List_Nil);
 var $elm$core$List$isEmpty = function (xs) {
 	if (!xs.b) {
 		return true;
@@ -15535,7 +15550,7 @@ var $author$project$Calendar$viewBackButton = function (model) {
 	var scrollCompleted = _v0.f;
 	switch (zoom) {
 		case 0:
-			return $elm$html$Html$text('');
+			return $author$project$Skeleton$logo;
 		case 1:
 			return A2(
 				$elm$html$Html$a,
@@ -15748,17 +15763,9 @@ var $author$project$Calendar$viewMenu = function (model) {
 var $author$project$Main$viewNavbar = function (model) {
 	var header = A2(
 		$author$project$Skeleton$compactColumn,
+		_List_Nil,
 		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'font-size', '1.5rem'),
-				A2($elm$html$Html$Attributes$style, 'font-style', 'italic'),
-				A2($elm$html$Html$Attributes$style, 'color', 'var(--header-blue)'),
-				A2($elm$html$Html$Attributes$style, 'padding-top', '0.1rem')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('RunApp2')
-			]));
+			[$author$project$Skeleton$logo]));
 	if (model.$ === 1) {
 		var _v1 = model.a;
 		var calendar = _v1.a;
@@ -15802,7 +15809,11 @@ var $author$project$Main$viewNavbar = function (model) {
 				]),
 			_List_fromArray(
 				[
-					header,
+					A2(
+					$author$project$Skeleton$compactColumn,
+					_List_Nil,
+					_List_fromArray(
+						[$author$project$Skeleton$logo])),
 					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
 					A2(
 					$author$project$Skeleton$compactColumn,
@@ -15831,7 +15842,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 						$author$project$Main$viewNavbar(model),
 						$author$project$Main$view(model))
 					]),
-				bG: 'RunApp2'
+				bG: 'Runa'
 			};
 		}
 	});
