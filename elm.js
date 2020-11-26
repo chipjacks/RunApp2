@@ -15842,7 +15842,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 						$author$project$Main$viewNavbar(model),
 						$author$project$Main$view(model))
 					]),
-				bG: 'Runa'
+				bG: 'Rhinolog'
 			};
 		}
 	});
