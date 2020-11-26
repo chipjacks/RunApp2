@@ -1,9 +1,9 @@
 {
-  "short_name": "Runa",
-  "name": "Runa",
+  "short_name": "Rhinolog",
+  "name": "Rhinolog",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "icon@480w.png",
       "sizes": "480x480",
       "type": "image/png"
     }
