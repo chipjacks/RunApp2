@@ -1,7 +1,7 @@
 
 const VERSION = '0.1.0';
 
-const cacheName = `runa v${VERSION}`;
+const cacheName = `rhinolog v${VERSION}`;
 
 self.addEventListener('install', function(e) {
   e.waitUntil(
@@ -13,8 +13,9 @@ self.addEventListener('install', function(e) {
         '/style.css',
         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         'https://code.jquery.com/pep/0.4.3/pep.min.js',
-        '/icon.png',
-        '/logo.png',
+        '/icon@128w.svg',
+        '/icon@480w.png',
+        '/logo.svg',
         '/manifest.json',
       ]);
     })

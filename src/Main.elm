@@ -31,7 +31,7 @@ import Time
 main =
     Browser.document
         { init = init
-        , view = \model -> { title = "Runa", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
+        , view = \model -> { title = "Rhinolog", body = [ Skeleton.layout (viewNavbar model) (view model) ] }
         , update = update
         , subscriptions = subscriptions
         }
