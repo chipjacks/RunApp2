@@ -20,7 +20,7 @@ layout navbar page =
 
 logo : Html msg
 logo =
-    Html.img [ style "height" "2rem", Html.Attributes.src "logo.svg" ] []
+    Html.img [ style "height" "2rem", Html.Attributes.src "icon.svg" ] []
 
 
 row : List (Html.Attribute msg) -> List (Html msg) -> Html msg
