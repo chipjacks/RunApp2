@@ -13,7 +13,7 @@ self.addEventListener('install', function(e) {
         '/style.css',
         'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
         'https://code.jquery.com/pep/0.4.3/pep.min.js',
-        '/icon@128w.svg',
+        '/icon.svg',
         '/icon@480w.png',
         '/logo.svg',
         '/manifest.json',

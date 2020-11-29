@@ -98,7 +98,7 @@ viewMenu model =
             model
     in
     row []
-        [ compactColumn [] [ viewBackButton model ]
+        [ compactColumn [ style "justify-content" "center" ] [ viewBackButton model ]
         , column []
             [ row [ style "justify-content" "center" ]
                 [ viewDatePicker model
