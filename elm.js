@@ -15526,7 +15526,7 @@ var $author$project$Skeleton$logo = A2(
 	_List_fromArray(
 		[
 			A2($elm$html$Html$Attributes$style, 'height', '2rem'),
-			$elm$html$Html$Attributes$src('logo.svg')
+			$elm$html$Html$Attributes$src('icon.svg')
 		]),
 	_List_Nil);
 var $elm$core$List$isEmpty = function (xs) {
@@ -15725,7 +15725,10 @@ var $author$project$Calendar$viewMenu = function (model) {
 			[
 				A2(
 				$author$project$Skeleton$compactColumn,
-				_List_Nil,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
+					]),
 				_List_fromArray(
 					[
 						$author$project$Calendar$viewBackButton(model)
@@ -15761,11 +15764,6 @@ var $author$project$Calendar$viewMenu = function (model) {
 			]));
 };
 var $author$project$Main$viewNavbar = function (model) {
-	var header = A2(
-		$author$project$Skeleton$compactColumn,
-		_List_Nil,
-		_List_fromArray(
-			[$author$project$Skeleton$logo]));
 	if (model.$ === 1) {
 		var _v1 = model.a;
 		var calendar = _v1.a;
@@ -15811,7 +15809,10 @@ var $author$project$Main$viewNavbar = function (model) {
 				[
 					A2(
 					$author$project$Skeleton$compactColumn,
-					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
+						]),
 					_List_fromArray(
 						[$author$project$Skeleton$logo])),
 					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
@@ -15842,7 +15843,7 @@ var $author$project$Main$main = $elm$browser$Browser$document(
 						$author$project$Main$viewNavbar(model),
 						$author$project$Main$view(model))
 					]),
-				bG: 'Rhinolog'
+				bG: 'Rhino Log'
 			};
 		}
 	});
