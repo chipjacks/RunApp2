@@ -307,7 +307,6 @@ view levelM activityM =
             , style "right" "0"
             , style "background-color" "white"
             , style "z-index" "2"
-            , style "overflow-y" "hidden"
             ]
 
         openAttributes minHeight maxHeight =
@@ -323,23 +322,27 @@ view levelM activityM =
             [ style "transition" "max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s"
             , style "min-height" "0"
             , style "max-height" "0"
-            , style "border-width" "0px"
+            , style "border-width" "0"
             ]
                 ++ sharedAttributes
     in
     case activityM of
         Selected [ activity ] ->
             row (openAttributes "1rem" "2rem")
-                [ viewButtons activity False ]
+                [ column []
+                    [ viewButtons activity False ]
+                ]
 
         Selected activities ->
             row (openAttributes "1rem" "2rem")
-                [ viewMultiSelectButtons activities ]
+                [ column []
+                    [ viewMultiSelectButtons activities ]
+                ]
 
         Editing model ->
             row (openAttributes "5rem" "20rem")
-                [ column [ style "overflow" "hidden" ]
-                    [ row [ style "overflow" "scroll" ]
+                [ column []
+                    [ row []
                         [ viewMaybe (Result.toMaybe model.result)
                             (\activity ->
                                 column [ style "margin-bottom" "1rem" ]
@@ -382,28 +385,41 @@ viewButtons : Activity -> Bool -> Html Msg
 viewButtons activity editing =
     row []
         [ if editing then
-            a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+            toolbarButton ClickedSubmit "fas fa-check" True
 
           else
-            a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "far fa-calendar" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
+            toolbarButton (EditActivity activity) "fas fa-edit" False
+        , toolbarButton (ClickedCopy activity) "far fa-clone" False
+        , toolbarButton (ClickedMove activity) "far fa-calendar" False
+        , toolbarButton (Shift True activity) "fas fa-arrow-up" False
+        , toolbarButton (Shift False activity) "fas fa-arrow-down" False
         , case activity.data of
             Activity.Session activities ->
-                a [ class "button small", style "margin-right" "0.2rem", onClick (Ungroup activities activity) ] [ i [ class "fas fa-align-left" ] [] ]
+                toolbarButton (Ungroup activities activity) "fas fa-align-left" False
 
             _ ->
                 Html.text ""
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "far fa-trash-alt" ] [] ]
+        , toolbarButton (Delete activity) "far fa-trash-alt" False
         ]
+
+
+toolbarButton : Msg -> String -> Bool -> Html Msg
+toolbarButton onClickMsg iconClass primary =
+    a
+        [ class "button small expand"
+        , attributeIf primary (class "primary")
+        , style "margin-right" "0.2rem"
+        , style "text-align" "center"
+        , style "max-width" "3rem"
+        , onClick onClickMsg
+        ]
+        [ i [ class iconClass ] [] ]
 
 
 viewMultiSelectButtons : List Activity -> Html Msg
 viewMultiSelectButtons activities =
-    row [ style "flex-wrap" "wrap" ]
-        [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedGroup ] [ i [ class "fas fa-align-left" ] [] ]
+    row []
+        [ toolbarButton ClickedGroup "fas fa-align-left" False
         ]
 
 

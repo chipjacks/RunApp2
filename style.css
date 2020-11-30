@@ -64,8 +64,7 @@ button, .button {
   text-decoration: none;
   color: black;
 }
-.button.tiny { padding: 0rem 0.3rem; }
-.button.small { padding: 0rem 1rem; }
+.button.small { padding: 0rem 0.6rem; }
 .button.medium { padding: 0.45rem 1rem; }
 button:hover, .button:hover { background-color: var(--highlight-gray); }
 .primary { background-color: #2185d0; color: #fff; }
