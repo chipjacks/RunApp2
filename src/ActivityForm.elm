@@ -307,13 +307,14 @@ view levelM activityM =
             , style "right" "0"
             , style "background-color" "white"
             , style "z-index" "2"
+            , style "overflow-y" "hidden"
             ]
 
         openAttributes minHeight maxHeight =
-            [ style "transition" "max-height 1s, min-height 1s"
+            [ style "transition" "max-height 0.5s, min-height 0.5s"
             , style "max-height" maxHeight
             , style "min-height" minHeight
-            , style "padding" "1rem 1rem 1rem 1rem"
+            , style "padding" "0.5rem 1rem"
             , style "border-width" "1px"
             ]
                 ++ sharedAttributes
@@ -329,37 +330,47 @@ view levelM activityM =
     case activityM of
         Selected [ activity ] ->
             row (openAttributes "1rem" "2rem")
-                [ column [] [ viewButtons activity ] ]
+                [ viewButtons activity False ]
 
         Selected activities ->
             row (openAttributes "1rem" "2rem")
-                [ column [] [ viewMultiSelectButtons activities ] ]
+                [ viewMultiSelectButtons activities ]
 
         Editing model ->
             row (openAttributes "5rem" "20rem")
-                [ viewShape model
-                , column []
-                    [ row []
-                        [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date")
-                        , column [ style "align-items" "flex-end" ] [ submitButton ]
+                [ column [ style "overflow" "hidden" ]
+                    [ row [ style "overflow" "scroll" ]
+                        [ viewMaybe (Result.toMaybe model.result)
+                            (\activity ->
+                                column [ style "margin-bottom" "1rem" ]
+                                    [ viewButtons activity True ]
+                            )
                         ]
                     , row []
-                        [ input
-                            [ type_ "text"
-                            , Html.Attributes.autocomplete False
-                            , placeholder "Description"
-                            , onInput EditedDescription
-                            , name "description"
-                            , value model.description
-                            , style "width" "100%"
+                        [ viewShape model
+                        , column []
+                            [ row []
+                                [ text (Maybe.map (Date.format "E MMM d") model.date |> Maybe.withDefault "Select Date")
+                                ]
+                            , row []
+                                [ input
+                                    [ type_ "text"
+                                    , Html.Attributes.autocomplete False
+                                    , placeholder "Description"
+                                    , onInput EditedDescription
+                                    , name "description"
+                                    , value model.description
+                                    , style "width" "100%"
+                                    ]
+                                    []
+                                ]
+                            , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
+                                compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
+                                    :: dataInputs model.dataForm model.result
+                            , row []
+                                [ viewError model.result ]
                             ]
-                            []
                         ]
-                    , row [ style "flex-wrap" "wrap", style "align-items" "center" ] <|
-                        compactColumn [ style "margin-right" "0.2rem" ] [ shapeSelect model ]
-                            :: dataInputs model.dataForm model.result
-                    , row []
-                        [ viewError model.result ]
                     ]
                 ]
 
@@ -367,22 +378,25 @@ view levelM activityM =
             row closedAttributes []
 
 
-viewButtons : Activity -> Html Msg
-viewButtons activity =
-    row [ style "flex-wrap" "wrap" ]
-        [ case activity.data of
+viewButtons : Activity -> Bool -> Html Msg
+viewButtons activity editing =
+    row []
+        [ if editing then
+            a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+
+          else
+            a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "far fa-calendar" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
+        , case activity.data of
             Activity.Session activities ->
                 a [ class "button small", style "margin-right" "0.2rem", onClick (Ungroup activities activity) ] [ i [ class "fas fa-align-left" ] [] ]
 
             _ ->
                 Html.text ""
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (EditActivity activity) ] [ i [ class "fas fa-edit" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedCopy activity) ] [ i [ class "far fa-clone" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift True activity) ] [ i [ class "fas fa-arrow-up" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Shift False activity) ] [ i [ class "fas fa-arrow-down" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (ClickedMove activity) ] [ i [ class "fas fa-arrow-right" ] [] ]
-        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "fas fa-times" ] [] ]
-        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
+        , a [ class "button small", style "margin-right" "0.2rem", onClick (Delete activity) ] [ i [ class "far fa-trash-alt" ] [] ]
         ]
 
 
@@ -390,7 +404,6 @@ viewMultiSelectButtons : List Activity -> Html Msg
 viewMultiSelectButtons activities =
     row [ style "flex-wrap" "wrap" ]
         [ a [ class "button small", style "margin-right" "0.2rem", onClick ClickedGroup ] [ i [ class "fas fa-align-left" ] [] ]
-        , a [ class "button small primary", style "margin-right" "0.2rem", onClick ClickedSubmit ] [ i [ class "fas fa-check" ] [] ]
         ]
 
 

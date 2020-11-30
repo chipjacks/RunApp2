@@ -582,7 +582,7 @@ subscriptions model =
                     Editing form ->
                         Events.onKeyPress keyPressDecoder
 
-                    Selected form ->
+                    Selected _ ->
                         Events.onKeyPress keyPressDecoder
 
                     Moving activity x y ->
