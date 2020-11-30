@@ -13863,7 +13863,38 @@ var $author$project$Msg$Ungroup = F2(
 	function (a, b) {
 		return {$: 11, a: a, b: b};
 	});
+var $author$project$Skeleton$attributeIf = F2(
+	function (bool, attr) {
+		return bool ? attr : A2($elm$html$Html$Attributes$style, '', '');
+	});
 var $elm$html$Html$i = _VirtualDom_node('i');
+var $author$project$ActivityForm$toolbarButton = F3(
+	function (onClickMsg, iconClass, primary) {
+		return A2(
+			$elm$html$Html$a,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('button small expand'),
+					A2(
+					$author$project$Skeleton$attributeIf,
+					primary,
+					$elm$html$Html$Attributes$class('primary')),
+					A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
+					A2($elm$html$Html$Attributes$style, 'text-align', 'center'),
+					A2($elm$html$Html$Attributes$style, 'max-width', '3rem'),
+					$elm$html$Html$Events$onClick(onClickMsg)
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$i,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class(iconClass)
+						]),
+					_List_Nil)
+				]));
+	});
 var $author$project$ActivityForm$viewButtons = F2(
 	function (activity, editing) {
 		return A2(
@@ -13871,164 +13902,49 @@ var $author$project$ActivityForm$viewButtons = F2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					editing ? A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small primary'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick($author$project$Msg$ClickedSubmit)
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('fas fa-check')
-								]),
-							_List_Nil)
-						])) : A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Msg$EditActivity(activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('fas fa-edit')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Msg$ClickedCopy(activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('far fa-clone')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Msg$ClickedMove(activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('far fa-calendar')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							A2($author$project$Msg$Shift, true, activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('fas fa-arrow-up')
-								]),
-							_List_Nil)
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							A2($author$project$Msg$Shift, false, activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('fas fa-arrow-down')
-								]),
-							_List_Nil)
-						])),
+					editing ? A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedSubmit, 'fas fa-check', true) : A3(
+					$author$project$ActivityForm$toolbarButton,
+					$author$project$Msg$EditActivity(activity),
+					'fas fa-edit',
+					false),
+					A3(
+					$author$project$ActivityForm$toolbarButton,
+					$author$project$Msg$ClickedCopy(activity),
+					'far fa-clone',
+					false),
+					A3(
+					$author$project$ActivityForm$toolbarButton,
+					$author$project$Msg$ClickedMove(activity),
+					'far fa-calendar',
+					false),
+					A3(
+					$author$project$ActivityForm$toolbarButton,
+					A2($author$project$Msg$Shift, true, activity),
+					'fas fa-arrow-up',
+					false),
+					A3(
+					$author$project$ActivityForm$toolbarButton,
+					A2($author$project$Msg$Shift, false, activity),
+					'fas fa-arrow-down',
+					false),
 					function () {
 					var _v0 = activity.V;
 					if (_v0.$ === 5) {
 						var activities = _v0.a;
-						return A2(
-							$elm$html$Html$a,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('button small'),
-									A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-									$elm$html$Html$Events$onClick(
-									A2($author$project$Msg$Ungroup, activities, activity))
-								]),
-							_List_fromArray(
-								[
-									A2(
-									$elm$html$Html$i,
-									_List_fromArray(
-										[
-											$elm$html$Html$Attributes$class('fas fa-align-left')
-										]),
-									_List_Nil)
-								]));
+						return A3(
+							$author$project$ActivityForm$toolbarButton,
+							A2($author$project$Msg$Ungroup, activities, activity),
+							'fas fa-align-left',
+							false);
 					} else {
 						return $elm$html$Html$text('');
 					}
 				}(),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button small'),
-							A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-							$elm$html$Html$Events$onClick(
-							$author$project$Msg$Delete(activity))
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$i,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('far fa-trash-alt')
-								]),
-							_List_Nil)
-						]))
+					A3(
+					$author$project$ActivityForm$toolbarButton,
+					$author$project$Msg$Delete(activity),
+					'far fa-trash-alt',
+					false)
 				]));
 	});
 var $author$project$ActivityForm$errorMessage = function (error) {
@@ -14076,30 +13992,10 @@ var $author$project$Msg$ClickedGroup = {$: 39};
 var $author$project$ActivityForm$viewMultiSelectButtons = function (activities) {
 	return A2(
 		$author$project$Skeleton$row,
+		_List_Nil,
 		_List_fromArray(
 			[
-				A2($elm$html$Html$Attributes$style, 'flex-wrap', 'wrap')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('button small'),
-						A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
-						$elm$html$Html$Events$onClick($author$project$Msg$ClickedGroup)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$i,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('fas fa-align-left')
-							]),
-						_List_Nil)
-					]))
+				A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedGroup, 'fas fa-align-left', false)
 			]));
 };
 var $author$project$Msg$CheckedCompleted = {$: 32};
@@ -14229,8 +14125,7 @@ var $author$project$ActivityForm$view = F2(
 				A2($elm$html$Html$Attributes$style, 'left', '0'),
 				A2($elm$html$Html$Attributes$style, 'right', '0'),
 				A2($elm$html$Html$Attributes$style, 'background-color', 'white'),
-				A2($elm$html$Html$Attributes$style, 'z-index', '2'),
-				A2($elm$html$Html$Attributes$style, 'overflow-y', 'hidden')
+				A2($elm$html$Html$Attributes$style, 'z-index', '2')
 			]);
 		var openAttributes = F2(
 			function (minHeight, maxHeight) {
@@ -14358,7 +14253,7 @@ var $author$project$ActivityForm$view = F2(
 					A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s, border-width 0.5s 0.1s'),
 					A2($elm$html$Html$Attributes$style, 'min-height', '0'),
 					A2($elm$html$Html$Attributes$style, 'max-height', '0'),
-					A2($elm$html$Html$Attributes$style, 'border-width', '0px')
+					A2($elm$html$Html$Attributes$style, 'border-width', '0')
 				]),
 			sharedAttributes);
 		switch (activityM.$) {
@@ -14371,7 +14266,13 @@ var $author$project$ActivityForm$view = F2(
 						A2(openAttributes, '1rem', '2rem'),
 						_List_fromArray(
 							[
-								A2($author$project$ActivityForm$viewButtons, activity, false)
+								A2(
+								$author$project$Skeleton$column,
+								_List_Nil,
+								_List_fromArray(
+									[
+										A2($author$project$ActivityForm$viewButtons, activity, false)
+									]))
 							]));
 				} else {
 					var activities = activityM.a;
@@ -14380,7 +14281,13 @@ var $author$project$ActivityForm$view = F2(
 						A2(openAttributes, '1rem', '2rem'),
 						_List_fromArray(
 							[
-								$author$project$ActivityForm$viewMultiSelectButtons(activities)
+								A2(
+								$author$project$Skeleton$column,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$author$project$ActivityForm$viewMultiSelectButtons(activities)
+									]))
 							]));
 				}
 			case 1:
@@ -14392,18 +14299,12 @@ var $author$project$ActivityForm$view = F2(
 						[
 							A2(
 							$author$project$Skeleton$column,
-							_List_fromArray(
-								[
-									A2($elm$html$Html$Attributes$style, 'overflow', 'hidden')
-								]),
+							_List_Nil,
 							_List_fromArray(
 								[
 									A2(
 									$author$project$Skeleton$row,
-									_List_fromArray(
-										[
-											A2($elm$html$Html$Attributes$style, 'overflow', 'scroll')
-										]),
+									_List_Nil,
 									_List_fromArray(
 										[
 											A2(
@@ -14502,10 +14403,6 @@ var $author$project$ActivityForm$view = F2(
 		}
 	});
 var $author$project$Msg$Day = 2;
-var $author$project$Skeleton$attributeIf = F2(
-	function (bool, attr) {
-		return bool ? attr : A2($elm$html$Html$Attributes$style, '', '');
-	});
 var $elm$core$List$concatMap = F2(
 	function (f, list) {
 		return $elm$core$List$concat(
