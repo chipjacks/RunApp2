@@ -313,7 +313,7 @@ view levelM activityM =
             [ style "transition" "max-height 0.5s, min-height 0.5s"
             , style "max-height" maxHeight
             , style "min-height" minHeight
-            , style "padding" "0.5rem 1rem"
+            , style "padding" "0.5rem 0.5rem"
             , style "border-width" "1px"
             ]
                 ++ sharedAttributes
@@ -390,16 +390,20 @@ viewButtons activity editing =
           else
             toolbarButton (EditActivity activity) "fas fa-edit" False
         , toolbarButton (ClickedCopy activity) "far fa-clone" False
+        , toolbarButton (Delete activity) "far fa-trash-alt" False
+        , column [] []
         , toolbarButton (ClickedMove activity) "far fa-calendar" False
         , toolbarButton (Shift True activity) "fas fa-arrow-up" False
         , toolbarButton (Shift False activity) "fas fa-arrow-down" False
+        , column [] []
         , case activity.data of
             Activity.Session activities ->
                 toolbarButton (Ungroup activities activity) "fas fa-align-left" False
 
             _ ->
                 Html.text ""
-        , toolbarButton (Delete activity) "far fa-trash-alt" False
+        , column [] []
+        , toolbarButton ClickedClose "fas fa-times" False
         ]
 
 

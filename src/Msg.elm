@@ -87,4 +87,5 @@ type Msg
     | ClickedCopy Activity
     | ClickedMove Activity
     | ClickedGroup
+    | ClickedClose
     | NewId String
