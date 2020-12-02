@@ -10907,6 +10907,11 @@ var $author$project$Main$update = F2(
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
+					case 40:
+						return _Utils_Tuple2(
+							$author$project$Main$Loaded(
+								A3($author$project$Main$State, calendar, store, $author$project$Msg$None)),
+							$elm$core$Platform$Cmd$none);
 					default:
 						return $author$project$Main$loaded(
 							A2($author$project$Main$updateActivityForm, msg, state));
@@ -13843,6 +13848,7 @@ var $author$project$ActivityForm$shapeSelect = function (model) {
 						types)))
 			]));
 };
+var $author$project$Msg$ClickedClose = {$: 40};
 var $author$project$Msg$ClickedCopy = function (a) {
 	return {$: 37, a: a};
 };
@@ -13902,31 +13908,38 @@ var $author$project$ActivityForm$viewButtons = F2(
 			_List_Nil,
 			_List_fromArray(
 				[
-					editing ? A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedSubmit, 'fas fa-check', true) : A3(
+					editing ? A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedSubmit, 'mi-check', true) : A3(
 					$author$project$ActivityForm$toolbarButton,
 					$author$project$Msg$EditActivity(activity),
-					'fas fa-edit',
+					'mi-edit',
 					false),
 					A3(
 					$author$project$ActivityForm$toolbarButton,
 					$author$project$Msg$ClickedCopy(activity),
-					'far fa-clone',
+					'mi-copy',
 					false),
 					A3(
 					$author$project$ActivityForm$toolbarButton,
+					$author$project$Msg$Delete(activity),
+					'mi-delete',
+					false),
+					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
+					A3(
+					$author$project$ActivityForm$toolbarButton,
 					$author$project$Msg$ClickedMove(activity),
-					'far fa-calendar',
+					'mi-calendar',
 					false),
 					A3(
 					$author$project$ActivityForm$toolbarButton,
 					A2($author$project$Msg$Shift, true, activity),
-					'fas fa-arrow-up',
+					'mi-arrow-up',
 					false),
 					A3(
 					$author$project$ActivityForm$toolbarButton,
 					A2($author$project$Msg$Shift, false, activity),
-					'fas fa-arrow-down',
+					'mi-arrow-down',
 					false),
+					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
 					function () {
 					var _v0 = activity.V;
 					if (_v0.$ === 5) {
@@ -13934,17 +13947,14 @@ var $author$project$ActivityForm$viewButtons = F2(
 						return A3(
 							$author$project$ActivityForm$toolbarButton,
 							A2($author$project$Msg$Ungroup, activities, activity),
-							'fas fa-align-left',
+							'mi-folder',
 							false);
 					} else {
 						return $elm$html$Html$text('');
 					}
 				}(),
-					A3(
-					$author$project$ActivityForm$toolbarButton,
-					$author$project$Msg$Delete(activity),
-					'far fa-trash-alt',
-					false)
+					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
+					A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedClose, 'mi-close', false)
 				]));
 	});
 var $author$project$ActivityForm$errorMessage = function (error) {
@@ -13995,7 +14005,7 @@ var $author$project$ActivityForm$viewMultiSelectButtons = function (activities) 
 		_List_Nil,
 		_List_fromArray(
 			[
-				A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedGroup, 'fas fa-align-left', false)
+				A3($author$project$ActivityForm$toolbarButton, $author$project$Msg$ClickedGroup, 'mi-folder', false)
 			]));
 };
 var $author$project$Msg$CheckedCompleted = {$: 32};
@@ -14135,7 +14145,7 @@ var $author$project$ActivityForm$view = F2(
 							A2($elm$html$Html$Attributes$style, 'transition', 'max-height 0.5s, min-height 0.5s'),
 							A2($elm$html$Html$Attributes$style, 'max-height', maxHeight),
 							A2($elm$html$Html$Attributes$style, 'min-height', minHeight),
-							A2($elm$html$Html$Attributes$style, 'padding', '0.5rem 1rem'),
+							A2($elm$html$Html$Attributes$style, 'padding', '0.5rem 0.5rem'),
 							A2($elm$html$Html$Attributes$style, 'border-width', '1px')
 						]),
 					sharedAttributes);
@@ -14536,13 +14546,12 @@ var $author$project$Calendar$scrollHandler = function (_v0) {
 };
 var $author$project$Skeleton$spinner = function (fontSize) {
 	return A2(
-		$elm$html$Html$i,
+		$elm$html$Html$div,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('fas fa-spinner'),
-				A2($elm$html$Html$Attributes$style, 'font-size', fontSize),
-				A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)'),
-				A2($elm$html$Html$Attributes$style, 'animation', 'rotation 2s infinite linear')
+				$elm$html$Html$Attributes$class('spinner'),
+				A2($elm$html$Html$Attributes$style, 'width', fontSize),
+				A2($elm$html$Html$Attributes$style, 'height', fontSize)
 			]),
 		_List_Nil);
 };
@@ -14698,30 +14707,28 @@ var $author$project$Calendar$viewActivity = F3(
 								'pointerdown',
 								$elm$json$Json$Decode$succeed(
 									A2($author$project$Msg$SelectActivity, activity, true)))),
-							A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-							A2($elm$html$Html$Attributes$style, 'min-width', '1rem'),
-							A2($elm$html$Html$Attributes$style, 'font-size', '0.5rem'),
-							A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)')
+							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							$author$project$Skeleton$viewIf,
-							isActiveDate,
-							A2(
-								$elm$html$Html$i,
-								_List_fromArray(
-									[
-										A2(
-										$author$project$Skeleton$attributeIf,
-										isActive,
-										$elm$html$Html$Attributes$class('fas fa-circle')),
-										A2(
-										$author$project$Skeleton$attributeIf,
-										!isActive,
-										$elm$html$Html$Attributes$class('far fa-circle'))
-									]),
-								_List_Nil))
+							$author$project$Skeleton$row,
+							_List_fromArray(
+								[
+									A2($elm$html$Html$Attributes$style, 'width', '0.4rem'),
+									A2($elm$html$Html$Attributes$style, 'height', '0.4rem'),
+									A2($elm$html$Html$Attributes$style, 'border-radius', '50%'),
+									A2($elm$html$Html$Attributes$style, 'border', '2px solid transparent'),
+									A2(
+									$author$project$Skeleton$attributeIf,
+									isActiveDate || isActive,
+									$author$project$Skeleton$borderStyle('border')),
+									A2(
+									$author$project$Skeleton$attributeIf,
+									isActive,
+									A2($elm$html$Html$Attributes$style, 'background-color', 'var(--icon-gray)'))
+								]),
+							_List_Nil)
 						]))
 				]));
 	});
@@ -14748,12 +14755,21 @@ var $author$project$Calendar$viewAddButton = function (date) {
 							[
 								$elm$html$Html$Events$onClick(
 								$author$project$Msg$ClickedNewActivity(date)),
-								$elm$html$Html$Attributes$class('button tiny fas fa-plus'),
-								A2($elm$html$Html$Attributes$style, 'font-size', '0.6rem'),
-								A2($elm$html$Html$Attributes$style, 'padding', '0.3rem'),
+								$elm$html$Html$Attributes$class('button small'),
+								A2($elm$html$Html$Attributes$style, 'font-size', '0.8rem'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0.05rem 0.25rem'),
 								A2($elm$html$Html$Attributes$style, 'color', 'var(--icon-gray)')
 							]),
-						_List_Nil)
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$i,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('mi-add')
+									]),
+								_List_Nil)
+							]))
 					]))
 			]));
 };
@@ -15443,8 +15459,7 @@ var $author$project$Calendar$viewBackButton = function (model) {
 						$elm$html$Html$i,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('fas fa-arrow-left'),
-								A2($elm$html$Html$Attributes$style, 'margin-right', '1rem')
+								$elm$html$Html$Attributes$class('mi-chevron-left')
 							]),
 						_List_Nil),
 						$elm$html$Html$text(
@@ -15466,8 +15481,7 @@ var $author$project$Calendar$viewBackButton = function (model) {
 						$elm$html$Html$i,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('fas fa-arrow-left'),
-								A2($elm$html$Html$Attributes$style, 'margin-right', '1rem')
+								$elm$html$Html$Attributes$class('mi-chevron-left')
 							]),
 						_List_Nil),
 						$elm$html$Html$text(
