@@ -379,6 +379,9 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
+                ClickedClose ->
+                    ( Loaded (State calendar store None), Cmd.none )
+
                 NewId _ ->
                     updateActivityForm msg state
                         |> loaded

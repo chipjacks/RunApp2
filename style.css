@@ -25,7 +25,6 @@ html, body { height: 100%; margin: 0; }
 .container-y {  min-height: 450px; height: 100%; overflow: hidden; }
 .navbar { border-bottom: 1px solid var(--border-gray) }
 
-@keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(359deg); } }
 @keyframes slidein-left { from { transform: translate(-100%); } to { transform: translate(0%); } }
 @keyframes slidein-right { from { transform: translate(100%); } to { transform: translate(0%); opacity: 1; } }
 
@@ -121,3 +120,22 @@ button:hover, .button:hover { background-color: var(--highlight-gray); }
     background-repeat: no-repeat;
     background-size: 1254px;
 }
+
+
+/*
+ * LOADING SPINNER
+*/
+
+.spinner:after {
+  content: " ";
+  display: block;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border: 2px solid var(--icon-gray);
+  border-right-color: transparent;
+  animation: rotation 1.2s linear infinite;
+}
+
+@keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+

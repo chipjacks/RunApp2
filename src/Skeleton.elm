@@ -53,13 +53,7 @@ compactColumn attributes children =
 
 spinner : String -> Html msg
 spinner fontSize =
-    i
-        [ class "fas fa-spinner"
-        , style "font-size" fontSize
-        , style "color" "var(--icon-gray)"
-        , style "animation" "rotation 2s infinite linear"
-        ]
-        []
+    div [ class "spinner", style "width" fontSize, style "height" fontSize ] []
 
 
 styleIf : Bool -> String -> String -> Html.Attribute msg
