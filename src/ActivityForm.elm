@@ -385,25 +385,25 @@ viewButtons : Activity -> Bool -> Html Msg
 viewButtons activity editing =
     row []
         [ if editing then
-            toolbarButton ClickedSubmit "fas fa-check" True
+            toolbarButton ClickedSubmit "mi-check" True
 
           else
-            toolbarButton (EditActivity activity) "fas fa-edit" False
-        , toolbarButton (ClickedCopy activity) "far fa-clone" False
-        , toolbarButton (Delete activity) "far fa-trash-alt" False
+            toolbarButton (EditActivity activity) "mi-edit" False
+        , toolbarButton (ClickedCopy activity) "mi-copy" False
+        , toolbarButton (Delete activity) "mi-delete" False
         , column [] []
-        , toolbarButton (ClickedMove activity) "far fa-calendar" False
-        , toolbarButton (Shift True activity) "fas fa-arrow-up" False
-        , toolbarButton (Shift False activity) "fas fa-arrow-down" False
+        , toolbarButton (ClickedMove activity) "mi-calendar" False
+        , toolbarButton (Shift True activity) "mi-arrow-up" False
+        , toolbarButton (Shift False activity) "mi-arrow-down" False
         , column [] []
         , case activity.data of
             Activity.Session activities ->
-                toolbarButton (Ungroup activities activity) "fas fa-align-left" False
+                toolbarButton (Ungroup activities activity) "mi-folder" False
 
             _ ->
                 Html.text ""
         , column [] []
-        , toolbarButton ClickedClose "fas fa-times" False
+        , toolbarButton ClickedClose "mi-close" False
         ]
 
 
@@ -423,7 +423,7 @@ toolbarButton onClickMsg iconClass primary =
 viewMultiSelectButtons : List Activity -> Html Msg
 viewMultiSelectButtons activities =
     row []
-        [ toolbarButton ClickedGroup "fas fa-align-left" False
+        [ toolbarButton ClickedGroup "mi-folder" False
         ]
 
 
@@ -569,17 +569,6 @@ toActivityData dataForm =
 
         SessionForm activities ->
             Activity.Session activities
-
-
-submitButton : Html Msg
-submitButton =
-    a
-        [ class "button small"
-        , class "primary"
-        , type_ "submit"
-        , onClick ClickedSubmit
-        ]
-        [ i [ class "fas fa-check" ] [] ]
 
 
 emojiSelect : (String -> Msg) -> String -> Html Msg

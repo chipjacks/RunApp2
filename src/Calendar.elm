@@ -124,13 +124,13 @@ viewBackButton model =
 
         Month ->
             a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Year Nothing) ]
-                [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
+                [ i [ class "mi-chevron-left" ] []
                 , text (Date.format "yyyy" selected)
                 ]
 
         Day ->
             a [ class "button", style "margin-right" "0.2rem", onClick (ChangeZoom Month Nothing) ]
-                [ i [ class "fas fa-arrow-left", style "margin-right" "1rem" ] []
+                [ i [ class "mi-chevron-left" ] []
                 , text (Date.format "MMMM yyyy" selected)
                 ]
 
@@ -535,17 +535,16 @@ viewActivity isActive isActiveDate activity =
             [ attributeIf (not isActive)
                 (Html.Events.on "pointerdown" (Decode.succeed (SelectActivity activity True)))
             , style "justify-content" "center"
-            , style "min-width" "1rem"
-            , style "font-size" "0.5rem"
-            , style "color" "var(--icon-gray)"
             ]
-            [ viewIf isActiveDate
-                (i
-                    [ attributeIf isActive (class "fas fa-circle")
-                    , attributeIf (not isActive) (class "far fa-circle")
-                    ]
-                    []
-                )
+            [ row
+                [ style "width" "0.4rem"
+                , style "height" "0.4rem"
+                , style "border-radius" "50%"
+                , style "border" "2px solid transparent"
+                , attributeIf (isActiveDate || isActive) (borderStyle "border")
+                , attributeIf isActive (style "background-color" "var(--icon-gray)")
+                ]
+                []
             ]
         ]
 
@@ -563,12 +562,12 @@ viewAddButton date =
         [ compactColumn []
             [ a
                 [ onClick (ClickedNewActivity date)
-                , class "button tiny fas fa-plus"
-                , style "font-size" "0.6rem"
-                , style "padding" "0.3rem"
+                , class "button small"
+                , style "font-size" "0.8rem"
+                , style "padding" "0.05rem 0.25rem"
                 , style "color" "var(--icon-gray)"
                 ]
-                []
+                [ i [ class "mi-add" ] [] ]
             ]
         ]
 
