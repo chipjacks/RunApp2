@@ -3,7 +3,6 @@ module Main exposing (main)
 import Activity exposing (Activity)
 import ActivityForm
 import ActivityShape
-import Api
 import Browser
 import Browser.Dom as Dom
 import Browser.Events as Events
@@ -62,16 +61,11 @@ viewNavbar model =
         Loaded (State calendar store _) ->
             row [ style "padding" "0.5rem" ]
                 [ column [] [ Calendar.viewMenu calendar ]
-                , compactColumn [ style "min-width" "1.5rem", style "justify-content" "center" ]
-                    [ viewIf (Store.needsFlush store) (spinner "1.5rem")
-                    ]
                 ]
 
         _ ->
             row [ style "padding" "0.5rem" ]
                 [ compactColumn [ style "justify-content" "center" ] [ Skeleton.logo ]
-                , column [] []
-                , compactColumn [ style "justify-content" "center" ] [ spinner "1.5rem" ]
                 ]
 
 
@@ -113,7 +107,7 @@ update msg model =
                 VisibilityChange visibility ->
                     case visibility of
                         Events.Visible ->
-                            ( model, Cmd.batch [ Task.perform LoadToday Date.today, Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second) ] )
+                            ( model, Cmd.batch [ Task.perform LoadToday Date.today ] )
 
                         Events.Hidden ->
                             ( model, Store.flush store )

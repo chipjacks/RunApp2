@@ -1,7 +1,6 @@
 module Store exposing (Model, cmd, flush, get, init, needsFlush, update)
 
 import Activity exposing (Activity)
-import Api
 import Date exposing (Date)
 import Http
 import Msg exposing (Msg(..))
@@ -134,11 +133,7 @@ flush model =
             Cmd.none
 
         Model state msgs ->
-            Api.getActivities
-                |> Task.map (Tuple.mapSecond State)
-                |> Task.map (Tuple.mapSecond (\remoteState -> List.foldr (\msg rs -> updateState msg rs) remoteState msgs))
-                |> Task.andThen (\( revision, newRemoteState ) -> Api.postActivities revision newRemoteState.activities)
-                |> Task.attempt (Posted msgs)
+            Cmd.none
 
 
 updateActivity : Activity -> Bool -> List Activity -> List Activity

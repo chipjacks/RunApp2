@@ -2,7 +2,6 @@ module ActivityForm exposing (init, initMove, isEditing, update, view)
 
 import Activity exposing (Activity, ActivityData, Minutes)
 import ActivityShape
-import Api
 import Array exposing (Array)
 import Date exposing (Date)
 import Emoji
