@@ -9,6 +9,7 @@ import Browser.Dom as Dom
 import Browser.Events as Events
 import Calendar
 import Date exposing (Date)
+import ExampleData
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
@@ -52,7 +53,6 @@ init _ =
     ( Loading Nothing Nothing
     , Cmd.batch
         [ Task.perform Jump Date.today
-        , Task.attempt GotActivities (Api.getActivities |> Task.map Tuple.second)
         ]
     )
 
@@ -89,14 +89,9 @@ update msg model =
                     Loading (Just date) activitiesM
                         |> updateLoading
 
-                GotActivities activitiesR ->
-                    case activitiesR of
-                        Ok activities ->
-                            Loading dateM (Just activities)
-                                |> updateLoading
-
-                        Err err ->
-                            ( Error err, Cmd.none )
+                LoadExampleActivities activities ->
+                    Loading dateM (Just activities)
+                        |> updateLoading
 
                 _ ->
                     ( model, Cmd.none )
@@ -112,6 +107,9 @@ update msg model =
             case msg of
                 GotActivities _ ->
                     updateStore msg state |> loaded
+
+                LoadExampleActivities _ ->
+                    ( model, Cmd.none )
 
                 VisibilityChange visibility ->
                     case visibility of
@@ -481,8 +479,17 @@ view model =
         , borderStyle "border-right"
         ]
         [ case model of
-            Loading _ _ ->
-                column [] [ text "Loading" ]
+            Loading Nothing _ ->
+                column []
+                    [ text "Loading"
+                    ]
+
+            Loading (Just date) _ ->
+                column []
+                    [ row [ class "center" ] [ text "Examples" ]
+                    , row [ class "center" ] [ button [ class "button", onClick (LoadExampleActivities []) ] [ text "Blank" ] ]
+                    , row [ class "center" ] [ button [ class "button", onClick (LoadExampleActivities (ExampleData.marathon date)) ] [ text "Marathon" ] ]
+                    ]
 
             Error errorString ->
                 column [] [ text errorString ]

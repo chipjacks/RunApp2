@@ -45,6 +45,7 @@ type ActivityState
 
 type Msg
     = LoadToday Date
+    | LoadExampleActivities (List Activity)
     | GotActivities (Result String (List Activity))
     | VisibilityChange Events.Visibility
     | KeyPressed String
