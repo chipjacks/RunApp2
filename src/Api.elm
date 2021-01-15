@@ -58,17 +58,7 @@ getActivities =
 
 postActivities : String -> List Activity -> Task String Bool
 postActivities revision activities =
-    Http.task
-        { method = "PUT"
-        , headers = [ Http.header "Content-Type" "application/json", authHeader ]
-        , url = storeUrl
-        , body = Http.jsonBody (Encode.object [ ( "_rev", Encode.string revision ), ( "activities", Encode.list Activity.encoder activities ) ])
-        , resolver =
-            Http.stringResolver <|
-                handleJsonResponse <|
-                    Decode.field "ok" Decode.bool
-        , timeout = Nothing
-        }
+    Task.succeed True
 
 
 
