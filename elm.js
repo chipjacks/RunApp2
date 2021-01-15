@@ -519,11 +519,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.bA.K === region.bf.K)
+	if (region.bv.K === region.bc.K)
 	{
-		return 'on line ' + region.bA.K;
+		return 'on line ' + region.bv.K;
 	}
-	return 'on lines ' + region.bA.K + ' through ' + region.bf.K;
+	return 'on lines ' + region.bv.K + ' through ' + region.bc.K;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bl,
-		impl.bJ,
+		impl.bh,
 		impl.bE,
+		impl.bz,
 		function() { return function() {} }
 	);
 });
@@ -2660,8 +2660,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		v: func(record.v),
-		ag: record.ag,
-		ae: record.ae
+		af: record.af,
+		ad: record.ad
 	}
 });
 
@@ -2930,10 +2930,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.v;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.ag;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.af;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.ae) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.ad) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3883,11 +3883,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bl,
-		impl.bJ,
+		impl.bh,
 		impl.bE,
+		impl.bz,
 		function(sendToApp, initialModel) {
-			var view = impl.bK;
+			var view = impl.bF;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3919,12 +3919,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.bl,
-		impl.bJ,
+		impl.bh,
 		impl.bE,
+		impl.bz,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.af && impl.af(sendToApp)
-			var view = impl.bK;
+			var divertHrefToApp = impl.ae && impl.ae(sendToApp)
+			var view = impl.bF;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3932,12 +3932,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ba);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.a7);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.bG) && (_VirtualDom_doc.title = title = doc.bG);
+				(title !== doc.bB) && (_VirtualDom_doc.title = title = doc.bB);
 			});
 		}
 	);
@@ -3993,12 +3993,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.br;
-	var onUrlRequest = impl.bs;
+	var onUrlChange = impl.bn;
+	var onUrlRequest = impl.bo;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		af: function(sendToApp)
+		ae: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4014,9 +4014,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.aP === next.aP
-							&& curr.aB === next.aB
-							&& curr.aL.a === next.aL.a
+							&& curr.aL === next.aL
+							&& curr.ax === next.ax
+							&& curr.aH.a === next.aH.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4024,13 +4024,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		bl: function(flags)
+		bh: function(flags)
 		{
-			return A3(impl.bl, flags, _Browser_getUrl(), key);
+			return A3(impl.bh, flags, _Browser_getUrl(), key);
 		},
-		bK: impl.bK,
-		bJ: impl.bJ,
-		bE: impl.bE
+		bF: impl.bF,
+		bE: impl.bE,
+		bz: impl.bz
 	});
 }
 
@@ -4096,17 +4096,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { bi: 'hidden', bc: 'visibilitychange' }
+		? { be: 'hidden', a9: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { bi: 'mozHidden', bc: 'mozvisibilitychange' }
+		? { be: 'mozHidden', a9: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { bi: 'msHidden', bc: 'msvisibilitychange' }
+		? { be: 'msHidden', a9: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { bi: 'webkitHidden', bc: 'webkitvisibilitychange' }
-		: { bi: 'hidden', bc: 'visibilitychange' };
+		? { be: 'webkitHidden', a9: 'webkitvisibilitychange' }
+		: { be: 'hidden', a9: 'visibilitychange' };
 }
 
 
@@ -4187,10 +4187,10 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		aW: _Browser_getScene(),
-		T: {
-			a4: _Browser_window.pageXOffset,
-			a5: _Browser_window.pageYOffset,
+		aT: _Browser_getScene(),
+		S: {
+			a1: _Browser_window.pageXOffset,
+			a2: _Browser_window.pageYOffset,
 			y: _Browser_doc.documentElement.clientWidth,
 			u: _Browser_doc.documentElement.clientHeight
 		}
@@ -4226,13 +4226,13 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			aW: {
+			aT: {
 				y: node.scrollWidth,
 				u: node.scrollHeight
 			},
-			T: {
-				a4: node.scrollLeft,
-				a5: node.scrollTop,
+			S: {
+				a1: node.scrollLeft,
+				a2: node.scrollTop,
 				y: node.clientWidth,
 				u: node.clientHeight
 			}
@@ -4264,16 +4264,16 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			aW: _Browser_getScene(),
-			T: {
-				a4: x,
-				a5: y,
+			aT: _Browser_getScene(),
+			S: {
+				a1: x,
+				a2: y,
 				y: _Browser_doc.documentElement.clientWidth,
 				u: _Browser_doc.documentElement.clientHeight
 			},
-			be: {
-				a4: x + rect.left,
-				a5: y + rect.top,
+			bb: {
+				a1: x + rect.left,
+				a2: y + rect.top,
 				y: rect.width,
 				u: rect.height
 			}
@@ -4356,6 +4356,43 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
 
 
 
@@ -4485,218 +4522,6 @@ var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString
 	}
 
 	return _Utils_Tuple3(newOffset, row, col);
-});
-
-
-
-// SEND REQUEST
-
-var _Http_toTask = F3(function(router, toTask, request)
-{
-	return _Scheduler_binding(function(callback)
-	{
-		function done(response) {
-			callback(toTask(request.Y.a(response)));
-		}
-
-		var xhr = new XMLHttpRequest();
-		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
-		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.Y.b, xhr)); });
-		$elm$core$Maybe$isJust(request.a0) && _Http_track(router, xhr, request.a0.a);
-
-		try {
-			xhr.open(request.bo, request.ah, true);
-		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.ah));
-		}
-
-		_Http_configureRequest(xhr, request);
-
-		request.ba.a && xhr.setRequestHeader('Content-Type', request.ba.a);
-		xhr.send(request.ba.b);
-
-		return function() { xhr.c = true; xhr.abort(); };
-	});
-});
-
-
-// CONFIGURE
-
-function _Http_configureRequest(xhr, request)
-{
-	for (var headers = request.bh; headers.b; headers = headers.b) // WHILE_CONS
-	{
-		xhr.setRequestHeader(headers.a.a, headers.a.b);
-	}
-	xhr.timeout = request.bF.a || 0;
-	xhr.responseType = request.Y.d;
-	xhr.withCredentials = request.a8;
-}
-
-
-// RESPONSES
-
-function _Http_toResponse(toBody, xhr)
-{
-	return A2(
-		200 <= xhr.status && xhr.status < 300 ? $elm$http$Http$GoodStatus_ : $elm$http$Http$BadStatus_,
-		_Http_toMetadata(xhr),
-		toBody(xhr.response)
-	);
-}
-
-
-// METADATA
-
-function _Http_toMetadata(xhr)
-{
-	return {
-		ah: xhr.responseURL,
-		bB: xhr.status,
-		bC: xhr.statusText,
-		bh: _Http_parseHeaders(xhr.getAllResponseHeaders())
-	};
-}
-
-
-// HEADERS
-
-function _Http_parseHeaders(rawHeaders)
-{
-	if (!rawHeaders)
-	{
-		return $elm$core$Dict$empty;
-	}
-
-	var headers = $elm$core$Dict$empty;
-	var headerPairs = rawHeaders.split('\r\n');
-	for (var i = headerPairs.length; i--; )
-	{
-		var headerPair = headerPairs[i];
-		var index = headerPair.indexOf(': ');
-		if (index > 0)
-		{
-			var key = headerPair.substring(0, index);
-			var value = headerPair.substring(index + 2);
-
-			headers = A3($elm$core$Dict$update, key, function(oldValue) {
-				return $elm$core$Maybe$Just($elm$core$Maybe$isJust(oldValue)
-					? value + ', ' + oldValue.a
-					: value
-				);
-			}, headers);
-		}
-	}
-	return headers;
-}
-
-
-// EXPECT
-
-var _Http_expect = F3(function(type, toBody, toValue)
-{
-	return {
-		$: 0,
-		d: type,
-		b: toBody,
-		a: toValue
-	};
-});
-
-var _Http_mapExpect = F2(function(func, expect)
-{
-	return {
-		$: 0,
-		d: expect.d,
-		b: expect.b,
-		a: function(x) { return func(expect.a(x)); }
-	};
-});
-
-function _Http_toDataView(arrayBuffer)
-{
-	return new DataView(arrayBuffer);
-}
-
-
-// BODY and PARTS
-
-var _Http_emptyBody = { $: 0 };
-var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
-
-function _Http_toFormData(parts)
-{
-	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
-	{
-		var part = parts.a;
-		formData.append(part.a, part.b);
-	}
-	return formData;
-}
-
-var _Http_bytesToBlob = F2(function(mime, bytes)
-{
-	return new Blob([bytes], { type: mime });
-});
-
-
-// PROGRESS
-
-function _Http_track(router, xhr, tracker)
-{
-	// TODO check out lengthComputable on loadstart event
-
-	xhr.upload.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			bz: event.loaded,
-			aY: event.total
-		}))));
-	});
-	xhr.addEventListener('progress', function(event) {
-		if (xhr.c) { return; }
-		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			bu: event.loaded,
-			aY: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
-		}))));
-	});
-}
-
-
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
 });
 var $elm$core$List$cons = _List_cons;
 var $elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -5202,7 +5027,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {az: fragment, aB: host, aJ: path, aL: port_, aP: protocol, aQ: query};
+		return {au: fragment, ax: host, aF: path, aH: port_, aL: protocol, aM: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5592,7 +5417,7 @@ var $elm$time$Time$toAdjustedMinutesHelp = F3(
 			} else {
 				var era = eras.a;
 				var olderEras = eras.b;
-				if (_Utils_cmp(era.bA, posixMinutes) < 0) {
+				if (_Utils_cmp(era.bv, posixMinutes) < 0) {
 					return posixMinutes + era.b;
 				} else {
 					var $temp$defaultOffset = defaultOffset,
@@ -5633,15 +5458,15 @@ var $elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		ar: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		aH: month,
-		a6: year + ((month <= 2) ? 1 : 0)
+		ao: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		aD: month,
+		a3: year + ((month <= 2) ? 1 : 0)
 	};
 };
 var $elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).ar;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).ao;
 	});
 var $elm$time$Time$Apr = 3;
 var $elm$time$Time$Aug = 7;
@@ -5658,7 +5483,7 @@ var $elm$time$Time$Sep = 8;
 var $elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _v0 = $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aH;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aD;
 		switch (_v0) {
 			case 1:
 				return 0;
@@ -5689,7 +5514,7 @@ var $elm$time$Time$toMonth = F2(
 var $elm$time$Time$toYear = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).a6;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).a3;
 	});
 var $justinmimbs$date$Date$fromPosix = F2(
 	function (zone, posix) {
@@ -5823,7 +5648,7 @@ var $elm$time$Time$Every = F2(
 	});
 var $elm$time$Time$State = F2(
 	function (taggers, processes) {
-		return {aO: processes, a$: taggers};
+		return {aK: processes, aY: taggers};
 	});
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: -2};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
@@ -6104,7 +5929,7 @@ var $elm$time$Time$spawnHelp = F3(
 	});
 var $elm$time$Time$onEffects = F3(
 	function (router, subs, _v0) {
-		var processes = _v0.aO;
+		var processes = _v0.aK;
 		var rightStep = F3(
 			function (_v6, id, _v7) {
 				var spawns = _v7.a;
@@ -6170,7 +5995,7 @@ var $elm$time$Time$onEffects = F3(
 	});
 var $elm$time$Time$onSelfMsg = F3(
 	function (router, interval, state) {
-		var _v0 = A2($elm$core$Dict$get, interval, state.a$);
+		var _v0 = A2($elm$core$Dict$get, interval, state.aY);
 		if (_v0.$ === 1) {
 			return $elm$core$Task$succeed(state);
 		} else {
@@ -6233,7 +6058,7 @@ var $elm$browser$Browser$Events$MySub = F3(
 	});
 var $elm$browser$Browser$Events$State = F2(
 	function (subs, pids) {
-		return {aK: pids, a_: subs};
+		return {aG: pids, aX: subs};
 	});
 var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
 	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
@@ -6267,7 +6092,7 @@ var $elm$core$Dict$fromList = function (assocs) {
 };
 var $elm$browser$Browser$Events$Event = F2(
 	function (key, event) {
-		return {aw: event, aG: key};
+		return {ar: event, aC: key};
 	});
 var $elm$browser$Browser$Events$spawn = F3(
 	function (router, key, _v0) {
@@ -6341,7 +6166,7 @@ var $elm$browser$Browser$Events$onEffects = F3(
 			stepLeft,
 			stepBoth,
 			stepRight,
-			state.aK,
+			state.aG,
 			$elm$core$Dict$fromList(newSubs),
 			_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
 		var deadPids = _v0.a;
@@ -6387,8 +6212,8 @@ var $elm$core$List$filterMap = F2(
 	});
 var $elm$browser$Browser$Events$onSelfMsg = F3(
 	function (router, _v0, state) {
-		var key = _v0.aG;
-		var event = _v0.aw;
+		var key = _v0.aC;
+		var event = _v0.ar;
 		var toMessage = function (_v2) {
 			var subKey = _v2.a;
 			var _v3 = _v2.b;
@@ -6397,7 +6222,7 @@ var $elm$browser$Browser$Events$onSelfMsg = F3(
 			var decoder = _v3.c;
 			return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
 		};
-		var messages = A2($elm$core$List$filterMap, toMessage, state.a_);
+		var messages = A2($elm$core$List$filterMap, toMessage, state.aX);
 		return A2(
 			$elm$core$Task$andThen,
 			function (_v1) {
@@ -6441,14 +6266,14 @@ var $elm$browser$Browser$Events$onVisibilityChange = function (func) {
 	return A3(
 		$elm$browser$Browser$Events$on,
 		0,
-		info.bc,
+		info.a9,
 		A2(
 			$elm$json$Json$Decode$map,
 			$elm$browser$Browser$Events$withHidden(func),
 			A2(
 				$elm$json$Json$Decode$field,
 				'target',
-				A2($elm$json$Json$Decode$field, info.bi, $elm$json$Json$Decode$bool))));
+				A2($elm$json$Json$Decode$field, info.be, $elm$json$Json$Decode$bool))));
 };
 var $author$project$Ports$selectDateFromScroll = _Platform_incomingPort('selectDateFromScroll', $elm$json$Json$Decode$string);
 var $author$project$Main$subscriptions = function (model) {
@@ -6496,9 +6321,6 @@ var $author$project$Msg$Create = function (a) {
 };
 var $author$project$Msg$Editing = function (a) {
 	return {$: 1, a: a};
-};
-var $author$project$Msg$GotActivities = function (a) {
-	return {$: 2, a: a};
 };
 var $author$project$Msg$LoadToday = function (a) {
 	return {$: 0, a: a};
@@ -6560,28 +6382,1076 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $author$project$Msg$Posted = F2(
-	function (a, b) {
-		return {$: 17, a: a, b: b};
-	});
-var $author$project$Store$State = function (activities) {
-	return {aj: activities};
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Store$flush = function (model) {
+	if (!model.b.b) {
+		var state = model.a;
+		return $elm$core$Platform$Cmd$none;
+	} else {
+		var state = model.a;
+		var msgs = model.b;
+		return $elm$core$Platform$Cmd$none;
+	}
 };
-var $author$project$Api$config = {
-	al: {at: 'YXBpa2V5LTU2NGQ2NWMxNWNkNTRhYjRiOGVhOTUxMmU2YmU4MmE0OjI4YjgxMWZhMDExZGZiYjVlOThlNzdmNmYzMTdmMDZkM2Y1YTJmNGE=', S: 'YXBpa2V5LWZiZTQyOTUwZWE2YzQxNGVhZjRiNGM4MmZkOGQ3MDgyOjNiNmRiMDMzZTM5NzlkZWQzMDhmNzM5YTgyNzdhZjNhZjM0YjdlZDU='},
-	ap: {at: 'runapp2_dev', S: 'runapp2'},
-	av: '428e9b77627a652f297c35eedca65c95',
-	ah: 'https://6483b615-f5bc-4f3d-8b78-188c8df679dc-bluemix.cloudantnosqldb.appdomain.cloud'
-};
-var $elm$http$Http$Header = F2(
+var $elm$random$Random$Generate = $elm$core$Basics$identity;
+var $elm$random$Random$Seed = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
 	});
-var $elm$http$Http$header = $elm$http$Http$Header;
-var $author$project$Api$authHeader = A2($elm$http$Http$header, 'Authorization', 'Basic ' + $author$project$Api$config.al.S);
+var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var $elm$random$Random$next = function (_v0) {
+	var state0 = _v0.a;
+	var incr = _v0.b;
+	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
+};
+var $elm$random$Random$initialSeed = function (x) {
+	var _v0 = $elm$random$Random$next(
+		A2($elm$random$Random$Seed, 0, 1013904223));
+	var state1 = _v0.a;
+	var incr = _v0.b;
+	var state2 = (state1 + x) >>> 0;
+	return $elm$random$Random$next(
+		A2($elm$random$Random$Seed, state2, incr));
+};
+var $elm$random$Random$init = A2(
+	$elm$core$Task$andThen,
+	function (time) {
+		return $elm$core$Task$succeed(
+			$elm$random$Random$initialSeed(
+				$elm$time$Time$posixToMillis(time)));
+	},
+	$elm$time$Time$now);
+var $elm$random$Random$step = F2(
+	function (_v0, seed) {
+		var generator = _v0;
+		return generator(seed);
+	});
+var $elm$random$Random$onEffects = F3(
+	function (router, commands, seed) {
+		if (!commands.b) {
+			return $elm$core$Task$succeed(seed);
+		} else {
+			var generator = commands.a;
+			var rest = commands.b;
+			var _v1 = A2($elm$random$Random$step, generator, seed);
+			var value = _v1.a;
+			var newSeed = _v1.b;
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$random$Random$onEffects, router, rest, newSeed);
+				},
+				A2($elm$core$Platform$sendToApp, router, value));
+		}
+	});
+var $elm$random$Random$onSelfMsg = F3(
+	function (_v0, _v1, seed) {
+		return $elm$core$Task$succeed(seed);
+	});
+var $elm$random$Random$Generator = $elm$core$Basics$identity;
+var $elm$random$Random$map = F2(
+	function (func, _v0) {
+		var genA = _v0;
+		return function (seed0) {
+			var _v1 = genA(seed0);
+			var a = _v1.a;
+			var seed1 = _v1.b;
+			return _Utils_Tuple2(
+				func(a),
+				seed1);
+		};
+	});
+var $elm$random$Random$cmdMap = F2(
+	function (func, _v0) {
+		var generator = _v0;
+		return A2($elm$random$Random$map, func, generator);
+	});
+_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
+var $elm$random$Random$command = _Platform_leaf('Random');
+var $elm$random$Random$generate = F2(
+	function (tagger, generator) {
+		return $elm$random$Random$command(
+			A2($elm$random$Random$map, tagger, generator));
+	});
+var $author$project$Calendar$get = function (_v0) {
+	var zoom = _v0.a;
+	var start = _v0.b;
+	var end = _v0.c;
+	var selected = _v0.d;
+	var today = _v0.e;
+	var scrollCompleted = _v0.f;
+	return {bc: end, bs: scrollCompleted, bt: selected, bv: start, bD: today, a4: zoom};
+};
+var $author$project$Store$get = F2(
+	function (_v0, f) {
+		var state = _v0.a;
+		return f(state);
+	});
+var $elm$browser$Browser$Dom$getViewportOf = _Browser_getViewportOf;
+var $author$project$Msg$ActivityForm = F5(
+	function (id, date, description, result, dataForm) {
+		return {g: dataForm, an: date, ap: description, ay: id, L: result};
+	});
+var $author$project$Msg$IntervalForm = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$Msg$NoteForm = function (a) {
+	return {$: 4, a: a};
+};
+var $author$project$Msg$OtherForm = function (a) {
+	return {$: 3, a: a};
+};
+var $author$project$Msg$RaceForm = function (a) {
+	return {$: 2, a: a};
+};
+var $author$project$Msg$RunForm = function (a) {
+	return {$: 0, a: a};
+};
+var $author$project$Msg$SessionForm = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$ActivityForm$init = function (activity) {
+	var baseModel = A4(
+		$author$project$Msg$ActivityForm,
+		activity.ay,
+		$elm$core$Maybe$Just(activity.an),
+		activity.ap,
+		$elm$core$Result$Ok(activity));
+	return baseModel(
+		function () {
+			var _v0 = activity.T;
+			switch (_v0.$) {
+				case 0:
+					var minutes = _v0.a;
+					var pace_ = _v0.b;
+					var completed = _v0.c;
+					return $author$project$Msg$RunForm(
+						{
+							e: completed,
+							f: $elm$core$String$fromInt(minutes),
+							l: pace_
+						});
+				case 1:
+					var seconds = _v0.a;
+					var pace_ = _v0.b;
+					var completed = _v0.c;
+					return $author$project$Msg$IntervalForm(
+						{
+							e: completed,
+							f: $elm$core$String$fromInt(seconds),
+							l: pace_
+						});
+				case 2:
+					var minutes = _v0.a;
+					var distance_ = _v0.b;
+					var completed = _v0.c;
+					return $author$project$Msg$RaceForm(
+						{
+							e: completed,
+							p: distance_,
+							f: $elm$core$String$fromInt(minutes)
+						});
+				case 3:
+					var minutes = _v0.a;
+					var completed = _v0.b;
+					return $author$project$Msg$OtherForm(
+						{
+							e: completed,
+							f: $elm$core$String$fromInt(minutes)
+						});
+				case 4:
+					var emoji_ = _v0.a;
+					return $author$project$Msg$NoteForm(
+						{t: emoji_});
+				default:
+					var activities = _v0.a;
+					return $author$project$Msg$SessionForm(activities);
+			}
+		}());
+};
+var $author$project$Calendar$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {$: 0, a: a, b: b, c: c, d: d, e: e, f: f};
+	});
+var $justinmimbs$date$Date$Quarter = 1;
+var $justinmimbs$date$Date$Months = 1;
+var $elm$core$Basics$min = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) < 0) ? x : y;
+	});
+var $justinmimbs$date$Date$monthToNumber = function (m) {
+	switch (m) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		case 6:
+			return 7;
+		case 7:
+			return 8;
+		case 8:
+			return 9;
+		case 9:
+			return 10;
+		case 10:
+			return 11;
+		default:
+			return 12;
+	}
+};
+var $justinmimbs$date$Date$numberToMonth = function (mn) {
+	var _v0 = A2($elm$core$Basics$max, 1, mn);
+	switch (_v0) {
+		case 1:
+			return 0;
+		case 2:
+			return 1;
+		case 3:
+			return 2;
+		case 4:
+			return 3;
+		case 5:
+			return 4;
+		case 6:
+			return 5;
+		case 7:
+			return 6;
+		case 8:
+			return 7;
+		case 9:
+			return 8;
+		case 10:
+			return 9;
+		case 11:
+			return 10;
+		default:
+			return 11;
+	}
+};
+var $justinmimbs$date$Date$toCalendarDateHelp = F3(
+	function (y, m, d) {
+		toCalendarDateHelp:
+		while (true) {
+			var monthDays = A2($justinmimbs$date$Date$daysInMonth, y, m);
+			var mn = $justinmimbs$date$Date$monthToNumber(m);
+			if ((mn < 12) && (_Utils_cmp(d, monthDays) > 0)) {
+				var $temp$y = y,
+					$temp$m = $justinmimbs$date$Date$numberToMonth(mn + 1),
+					$temp$d = d - monthDays;
+				y = $temp$y;
+				m = $temp$m;
+				d = $temp$d;
+				continue toCalendarDateHelp;
+			} else {
+				return {ao: d, aD: m, a3: y};
+			}
+		}
+	});
+var $justinmimbs$date$Date$divWithRemainder = F2(
+	function (a, b) {
+		return _Utils_Tuple2(
+			A2($justinmimbs$date$Date$floorDiv, a, b),
+			A2($elm$core$Basics$modBy, b, a));
+	});
+var $justinmimbs$date$Date$year = function (_v0) {
+	var rd = _v0;
+	var _v1 = A2($justinmimbs$date$Date$divWithRemainder, rd, 146097);
+	var n400 = _v1.a;
+	var r400 = _v1.b;
+	var _v2 = A2($justinmimbs$date$Date$divWithRemainder, r400, 36524);
+	var n100 = _v2.a;
+	var r100 = _v2.b;
+	var _v3 = A2($justinmimbs$date$Date$divWithRemainder, r100, 1461);
+	var n4 = _v3.a;
+	var r4 = _v3.b;
+	var _v4 = A2($justinmimbs$date$Date$divWithRemainder, r4, 365);
+	var n1 = _v4.a;
+	var r1 = _v4.b;
+	var n = (!r1) ? 0 : 1;
+	return ((((n400 * 400) + (n100 * 100)) + (n4 * 4)) + n1) + n;
+};
+var $justinmimbs$date$Date$toOrdinalDate = function (_v0) {
+	var rd = _v0;
+	var y = $justinmimbs$date$Date$year(rd);
+	return {
+		ac: rd - $justinmimbs$date$Date$daysBeforeYear(y),
+		a3: y
+	};
+};
+var $justinmimbs$date$Date$toCalendarDate = function (_v0) {
+	var rd = _v0;
+	var date = $justinmimbs$date$Date$toOrdinalDate(rd);
+	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.a3, 0, date.ac);
+};
+var $justinmimbs$date$Date$add = F3(
+	function (unit, n, _v0) {
+		var rd = _v0;
+		switch (unit) {
+			case 0:
+				return A3($justinmimbs$date$Date$add, 1, 12 * n, rd);
+			case 1:
+				var date = $justinmimbs$date$Date$toCalendarDate(rd);
+				var wholeMonths = ((12 * (date.a3 - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aD) - 1)) + n;
+				var m = $justinmimbs$date$Date$numberToMonth(
+					A2($elm$core$Basics$modBy, 12, wholeMonths) + 1);
+				var y = A2($justinmimbs$date$Date$floorDiv, wholeMonths, 12) + 1;
+				return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + A2(
+					$elm$core$Basics$min,
+					date.ao,
+					A2($justinmimbs$date$Date$daysInMonth, y, m));
+			case 2:
+				return rd + (7 * n);
+			default:
+				return rd + n;
+		}
+	});
+var $elm$time$Time$Fri = 4;
+var $elm$time$Time$Mon = 0;
+var $elm$time$Time$Sat = 5;
+var $elm$time$Time$Sun = 6;
+var $elm$time$Time$Thu = 3;
+var $elm$time$Time$Tue = 1;
+var $elm$time$Time$Wed = 2;
+var $justinmimbs$date$Date$weekdayNumber = function (_v0) {
+	var rd = _v0;
+	var _v1 = A2($elm$core$Basics$modBy, 7, rd);
+	if (!_v1) {
+		return 7;
+	} else {
+		var n = _v1;
+		return n;
+	}
+};
+var $justinmimbs$date$Date$weekdayToNumber = function (wd) {
+	switch (wd) {
+		case 0:
+			return 1;
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		default:
+			return 7;
+	}
+};
+var $justinmimbs$date$Date$daysSincePreviousWeekday = F2(
+	function (wd, date) {
+		return A2(
+			$elm$core$Basics$modBy,
+			7,
+			($justinmimbs$date$Date$weekdayNumber(date) + 7) - $justinmimbs$date$Date$weekdayToNumber(wd));
+	});
+var $justinmimbs$date$Date$firstOfMonth = F2(
+	function (y, m) {
+		return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1;
+	});
+var $justinmimbs$date$Date$firstOfYear = function (y) {
+	return $justinmimbs$date$Date$daysBeforeYear(y) + 1;
+};
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $justinmimbs$date$Date$month = A2(
+	$elm$core$Basics$composeR,
+	$justinmimbs$date$Date$toCalendarDate,
+	function ($) {
+		return $.aD;
+	});
+var $justinmimbs$date$Date$monthToQuarter = function (m) {
+	return (($justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
+};
+var $justinmimbs$date$Date$quarter = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$month, $justinmimbs$date$Date$monthToQuarter);
+var $justinmimbs$date$Date$quarterToMonth = function (q) {
+	return $justinmimbs$date$Date$numberToMonth((q * 3) - 2);
+};
+var $justinmimbs$date$Date$floor = F2(
+	function (interval, date) {
+		var rd = date;
+		switch (interval) {
+			case 0:
+				return $justinmimbs$date$Date$firstOfYear(
+					$justinmimbs$date$Date$year(date));
+			case 1:
+				return A2(
+					$justinmimbs$date$Date$firstOfMonth,
+					$justinmimbs$date$Date$year(date),
+					$justinmimbs$date$Date$quarterToMonth(
+						$justinmimbs$date$Date$quarter(date)));
+			case 2:
+				return A2(
+					$justinmimbs$date$Date$firstOfMonth,
+					$justinmimbs$date$Date$year(date),
+					$justinmimbs$date$Date$month(date));
+			case 3:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
+			case 4:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
+			case 5:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 1, date);
+			case 6:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 2, date);
+			case 7:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 3, date);
+			case 8:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 4, date);
+			case 9:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 5, date);
+			case 10:
+				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 6, date);
+			default:
+				return date;
+		}
+	});
+var $justinmimbs$date$Date$Days = 3;
+var $justinmimbs$date$Date$Weeks = 2;
+var $justinmimbs$date$Date$Years = 0;
+var $justinmimbs$date$Date$intervalToUnits = function (interval) {
+	switch (interval) {
+		case 0:
+			return _Utils_Tuple2(1, 0);
+		case 1:
+			return _Utils_Tuple2(3, 1);
+		case 2:
+			return _Utils_Tuple2(1, 1);
+		case 11:
+			return _Utils_Tuple2(1, 3);
+		default:
+			var week = interval;
+			return _Utils_Tuple2(1, 2);
+	}
+};
+var $justinmimbs$date$Date$ceiling = F2(
+	function (interval, date) {
+		var floored = A2($justinmimbs$date$Date$floor, interval, date);
+		if (_Utils_eq(date, floored)) {
+			return date;
+		} else {
+			var _v0 = $justinmimbs$date$Date$intervalToUnits(interval);
+			var n = _v0.a;
+			var unit = _v0.b;
+			return A3($justinmimbs$date$Date$add, unit, n, floored);
+		}
+	});
+var $author$project$Calendar$init = F3(
+	function (zoom, selected, today) {
+		return A6(
+			$author$project$Calendar$Model,
+			zoom,
+			A2($justinmimbs$date$Date$floor, 1, selected),
+			A2($justinmimbs$date$Date$ceiling, 1, selected),
+			selected,
+			today,
+			true);
+	});
+var $author$project$Store$Model = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $author$project$Store$State = function (activities) {
+	return {ai: activities};
+};
+var $author$project$Store$init = function (activities) {
+	return A2(
+		$author$project$Store$Model,
+		$author$project$Store$State(activities),
+		_List_Nil);
+};
 var $author$project$Activity$Activity = F4(
 	function (id, date, description, data) {
-		return {U: data, aq: date, as: description, aC: id};
+		return {T: data, an: date, ap: description, ay: id};
+	});
+var $author$project$Activity$Easy = 0;
+var $author$project$Activity$Run = F3(
+	function (a, b, c) {
+		return {$: 0, a: a, b: b, c: c};
+	});
+var $justinmimbs$date$Date$compare = F2(
+	function (_v0, _v1) {
+		var a = _v0;
+		var b = _v1;
+		return A2($elm$core$Basics$compare, a, b);
+	});
+var $elm$core$Bitwise$and = _Bitwise_and;
+var $elm$core$Bitwise$xor = _Bitwise_xor;
+var $elm$random$Random$peel = function (_v0) {
+	var state = _v0.a;
+	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var $elm$random$Random$int = F2(
+	function (a, b) {
+		return function (seed0) {
+			var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
+			var lo = _v0.a;
+			var hi = _v0.b;
+			var range = (hi - lo) + 1;
+			if (!((range - 1) & range)) {
+				return _Utils_Tuple2(
+					(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
+					$elm$random$Random$next(seed0));
+			} else {
+				var threshhold = (((-range) >>> 0) % range) >>> 0;
+				var accountForBias = function (seed) {
+					accountForBias:
+					while (true) {
+						var x = $elm$random$Random$peel(seed);
+						var seedN = $elm$random$Random$next(seed);
+						if (_Utils_cmp(x, threshhold) < 0) {
+							var $temp$seed = seedN;
+							seed = $temp$seed;
+							continue accountForBias;
+						} else {
+							return _Utils_Tuple2((x % range) + lo, seedN);
+						}
+					}
+				};
+				return accountForBias(seed0);
+			}
+		};
+	});
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0;
+		return function (seed) {
+			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+		};
+	});
+var $author$project$Activity$newId = function () {
+	var digitsToString = function (digits) {
+		return A2(
+			$elm$core$String$join,
+			'',
+			A2($elm$core$List$map, $elm$core$String$fromInt, digits));
+	};
+	return A2(
+		$elm$random$Random$map,
+		digitsToString,
+		A2(
+			$elm$random$Random$list,
+			10,
+			A2($elm$random$Random$int, 0, 9)));
+}();
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$Main$initActivity = F2(
+	function (today, dateM) {
+		var date = A2($elm$core$Maybe$withDefault, today, dateM);
+		var completed = (!A2($justinmimbs$date$Date$compare, date, today)) || _Utils_eq(date, today);
+		return A2(
+			$elm$random$Random$generate,
+			$author$project$Msg$NewActivity,
+			A2(
+				$elm$random$Random$map,
+				function (id) {
+					return A4(
+						$author$project$Activity$Activity,
+						id,
+						date,
+						'',
+						A3($author$project$Activity$Run, 30, 0, completed));
+				},
+				$author$project$Activity$newId));
+	});
+var $author$project$ActivityForm$initMove = function (activity) {
+	var model = $author$project$ActivityForm$init(activity);
+	return _Utils_update(
+		model,
+		{an: $elm$core$Maybe$Nothing});
+};
+var $author$project$Msg$Group = F2(
+	function (a, b) {
+		return {$: 11, a: a, b: b};
+	});
+var $author$project$Activity$Session = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$Main$initSession = F2(
+	function (head, activities) {
+		return A2(
+			$elm$random$Random$generate,
+			$author$project$Msg$Group(activities),
+			A2(
+				$elm$random$Random$map,
+				function (id) {
+					return A4(
+						$author$project$Activity$Activity,
+						id,
+						head.an,
+						'',
+						$author$project$Activity$Session(activities));
+				},
+				$author$project$Activity$newId));
+	});
+var $elm$core$Tuple$mapFirst = F2(
+	function (func, _v0) {
+		var x = _v0.a;
+		var y = _v0.b;
+		return _Utils_Tuple2(
+			func(x),
+			y);
+	});
+var $author$project$Main$loaded = function (stateTuple) {
+	return A2($elm$core$Tuple$mapFirst, $author$project$Main$Loaded, stateTuple);
+};
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$List$maximum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$List$any = F2(
+	function (isOkay, list) {
+		any:
+		while (true) {
+			if (!list.b) {
+				return false;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (isOkay(x)) {
+					return true;
+				} else {
+					var $temp$isOkay = isOkay,
+						$temp$list = xs;
+					isOkay = $temp$isOkay;
+					list = $temp$list;
+					continue any;
+				}
+			}
+		}
+	});
+var $elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			$elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var $elm$core$List$minimum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$min, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var $elm$core$Tuple$second = function (_v0) {
+	var y = _v0.b;
+	return y;
+};
+var $elm$browser$Browser$Dom$setViewportOf = _Browser_setViewportOf;
+var $elm$core$List$unzip = function (pairs) {
+	var step = F2(
+		function (_v0, _v1) {
+			var x = _v0.a;
+			var y = _v0.b;
+			var xs = _v1.a;
+			var ys = _v1.b;
+			return _Utils_Tuple2(
+				A2($elm$core$List$cons, x, xs),
+				A2($elm$core$List$cons, y, ys));
+		});
+	return A3(
+		$elm$core$List$foldr,
+		step,
+		_Utils_Tuple2(_List_Nil, _List_Nil),
+		pairs);
+};
+var $author$project$Msg$Update = function (a) {
+	return {$: 13, a: a};
+};
+var $author$project$ActivityForm$apply = F2(
+	function (toMsg, _v0) {
+		var result = _v0.L;
+		if (!result.$) {
+			var activity = result.a;
+			return toMsg(activity);
+		} else {
+			return $author$project$Msg$NoOp;
+		}
+	});
+var $author$project$Store$cmd = function (msg) {
+	return A2(
+		$elm$core$Task$perform,
+		function (_v0) {
+			return msg;
+		},
+		$elm$core$Task$succeed(0));
+};
+var $elm$core$Basics$not = _Basics_not;
+var $author$project$ActivityForm$updateCompleted = function (dataForm) {
+	switch (dataForm.$) {
+		case 0:
+			var data = dataForm.a;
+			return $author$project$Msg$RunForm(
+				_Utils_update(
+					data,
+					{e: !data.e}));
+		case 1:
+			var data = dataForm.a;
+			return $author$project$Msg$IntervalForm(
+				_Utils_update(
+					data,
+					{e: !data.e}));
+		case 2:
+			var data = dataForm.a;
+			return $author$project$Msg$RaceForm(
+				_Utils_update(
+					data,
+					{e: !data.e}));
+		case 3:
+			var data = dataForm.a;
+			return $author$project$Msg$OtherForm(
+				_Utils_update(
+					data,
+					{e: !data.e}));
+		default:
+			return dataForm;
+	}
+};
+var $author$project$ActivityForm$Defaults = F5(
+	function (duration, pace, distance, completed, emoji) {
+		return {e: completed, p: distance, f: duration, t: emoji, l: pace};
+	});
+var $author$project$Activity$FiveK = 0;
+var $author$project$Emoji$EmojiData = F3(
+	function (name, x, y) {
+		return {aa: name, a1: x, a2: y};
+	});
+var $author$project$Emoji$default = A3($author$project$Emoji$EmojiData, 'smiley', 30, 38);
+var $author$project$ActivityForm$parseDuration = function (str) {
+	return $elm$core$String$isEmpty(str) ? 0 : A2(
+		$elm$core$Maybe$withDefault,
+		0,
+		$elm$core$String$toInt(str));
+};
+var $author$project$ActivityForm$defaults = function (dataForm) {
+	var pace_ = function () {
+		if (!dataForm.$) {
+			var pace = dataForm.a.l;
+			return pace;
+		} else {
+			return 0;
+		}
+	}();
+	var emoji_ = function () {
+		if (dataForm.$ === 4) {
+			var emoji = dataForm.a.t;
+			return emoji;
+		} else {
+			return $author$project$Emoji$default.aa;
+		}
+	}();
+	var duration_ = $author$project$ActivityForm$parseDuration(
+		function () {
+			switch (dataForm.$) {
+				case 0:
+					var duration = dataForm.a.f;
+					return duration;
+				case 2:
+					var duration = dataForm.a.f;
+					return duration;
+				case 3:
+					var duration = dataForm.a.f;
+					return duration;
+				default:
+					return '30';
+			}
+		}());
+	var distance_ = function () {
+		if (dataForm.$ === 2) {
+			var distance = dataForm.a.p;
+			return distance;
+		} else {
+			return 0;
+		}
+	}();
+	var completed_ = function () {
+		switch (dataForm.$) {
+			case 0:
+				var completed = dataForm.a.e;
+				return completed;
+			case 2:
+				var completed = dataForm.a.e;
+				return completed;
+			case 3:
+				var completed = dataForm.a.e;
+				return completed;
+			default:
+				return true;
+		}
+	}();
+	return A5($author$project$ActivityForm$Defaults, duration_, pace_, distance_, completed_, emoji_);
+};
+var $author$project$Activity$EightK = 1;
+var $author$project$Activity$FifteenK = 4;
+var $author$project$Activity$FiveMile = 2;
+var $author$project$Activity$HalfMarathon = 7;
+var $author$project$Activity$Marathon = 10;
+var $author$project$Activity$TenK = 3;
+var $author$project$Activity$TenMile = 5;
+var $author$project$Activity$ThirtyK = 9;
+var $author$project$Activity$TwentyFiveK = 8;
+var $author$project$Activity$TwentyK = 6;
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $author$project$Enum$create = F2(
+	function (list, toStr) {
+		var list2 = A2(
+			$elm$core$List$map,
+			function (a) {
+				return _Utils_Tuple2(
+					toStr(a),
+					a);
+			},
+			list);
+		var dict = $elm$core$Dict$fromList(list2);
+		return {
+			V: A2(
+				$elm$json$Json$Decode$andThen,
+				function (string) {
+					var _v0 = A2($elm$core$Dict$get, string, dict);
+					if (!_v0.$) {
+						var a = _v0.a;
+						return $elm$json$Json$Decode$succeed(a);
+					} else {
+						return $elm$json$Json$Decode$fail('Missing enum: ' + string);
+					}
+				},
+				$elm$json$Json$Decode$string),
+			aq: dict,
+			W: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
+			Y: function (string) {
+				return A2($elm$core$Dict$get, string, dict);
+			},
+			Q: list2,
+			bC: toStr
+		};
+	});
+var $author$project$Activity$distance = A2(
+	$author$project$Enum$create,
+	_List_fromArray(
+		[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+	function (a) {
+		switch (a) {
+			case 0:
+				return '5k';
+			case 1:
+				return '8k';
+			case 2:
+				return '5 mile';
+			case 3:
+				return '10k';
+			case 4:
+				return '15k';
+			case 5:
+				return '10 mile';
+			case 6:
+				return '20k';
+			case 7:
+				return 'Half Marathon';
+			case 8:
+				return '25k';
+			case 9:
+				return '30k';
+			default:
+				return 'Marathon';
+		}
+	});
+var $author$project$ActivityForm$updateDistance = F2(
+	function (distanceStr, dataForm) {
+		if (dataForm.$ === 2) {
+			var data = dataForm.a;
+			return $author$project$Msg$RaceForm(
+				_Utils_update(
+					data,
+					{
+						p: A2(
+							$elm$core$Maybe$withDefault,
+							$author$project$ActivityForm$defaults(dataForm).p,
+							$author$project$Activity$distance.Y(distanceStr))
+					}));
+		} else {
+			return dataForm;
+		}
+	});
+var $author$project$ActivityForm$updateDuration = F2(
+	function (duration, dataForm) {
+		switch (dataForm.$) {
+			case 0:
+				var data = dataForm.a;
+				return $author$project$Msg$RunForm(
+					_Utils_update(
+						data,
+						{f: duration}));
+			case 1:
+				var data = dataForm.a;
+				return $author$project$Msg$IntervalForm(
+					_Utils_update(
+						data,
+						{f: duration}));
+			case 2:
+				var data = dataForm.a;
+				return $author$project$Msg$RaceForm(
+					_Utils_update(
+						data,
+						{f: duration}));
+			case 3:
+				var data = dataForm.a;
+				return $author$project$Msg$OtherForm(
+					_Utils_update(
+						data,
+						{f: duration}));
+			default:
+				return dataForm;
+		}
+	});
+var $author$project$Activity$Aerobic = 4;
+var $author$project$Activity$Brisk = 3;
+var $author$project$Activity$Fast = 8;
+var $author$project$Activity$Groove = 6;
+var $author$project$Activity$Lactate = 5;
+var $author$project$Activity$Moderate = 1;
+var $author$project$Activity$Steady = 2;
+var $author$project$Activity$VO2 = 7;
+var $author$project$Activity$pace = A2(
+	$author$project$Enum$create,
+	_List_fromArray(
+		[0, 1, 2, 3, 4, 5, 6, 7, 8]),
+	function (a) {
+		switch (a) {
+			case 0:
+				return 'Easy';
+			case 1:
+				return 'Moderate';
+			case 2:
+				return 'Steady';
+			case 3:
+				return 'Brisk';
+			case 4:
+				return 'Aerobic';
+			case 5:
+				return 'Lactate';
+			case 6:
+				return 'Groove';
+			case 7:
+				return 'VO2';
+			default:
+				return 'Fast';
+		}
+	});
+var $author$project$ActivityForm$updatePace = F2(
+	function (paceStr, dataForm) {
+		switch (dataForm.$) {
+			case 0:
+				var data = dataForm.a;
+				return $author$project$Msg$RunForm(
+					_Utils_update(
+						data,
+						{
+							l: A2(
+								$elm$core$Maybe$withDefault,
+								$author$project$ActivityForm$defaults(dataForm).l,
+								$author$project$Activity$pace.Y(paceStr))
+						}));
+			case 1:
+				var data = dataForm.a;
+				return $author$project$Msg$IntervalForm(
+					_Utils_update(
+						data,
+						{
+							l: A2(
+								$elm$core$Maybe$withDefault,
+								$author$project$ActivityForm$defaults(dataForm).l,
+								$author$project$Activity$pace.Y(paceStr))
+						}));
+			default:
+				return dataForm;
+		}
+	});
+var $elm$core$Result$map2 = F3(
+	function (func, ra, rb) {
+		if (ra.$ === 1) {
+			var x = ra.a;
+			return $elm$core$Result$Err(x);
+		} else {
+			var a = ra.a;
+			if (rb.$ === 1) {
+				var x = rb.a;
+				return $elm$core$Result$Err(x);
+			} else {
+				var b = rb.a;
+				return $elm$core$Result$Ok(
+					A2(func, a, b));
+			}
+		}
 	});
 var $author$project$Activity$Interval = F3(
 	function (a, b, c) {
@@ -6598,15 +7468,291 @@ var $author$project$Activity$Race = F3(
 	function (a, b, c) {
 		return {$: 2, a: a, b: b, c: c};
 	});
-var $author$project$Activity$Run = F3(
-	function (a, b, c) {
-		return {$: 0, a: a, b: b, c: c};
-	});
-var $author$project$Activity$Session = function (a) {
-	return {$: 5, a: a};
+var $author$project$ActivityForm$toActivityData = function (dataForm) {
+	switch (dataForm.$) {
+		case 0:
+			var duration = dataForm.a.f;
+			var pace = dataForm.a.l;
+			var completed = dataForm.a.e;
+			return A3(
+				$author$project$Activity$Run,
+				$author$project$ActivityForm$parseDuration(duration),
+				pace,
+				completed);
+		case 1:
+			var duration = dataForm.a.f;
+			var pace = dataForm.a.l;
+			var completed = dataForm.a.e;
+			return A3(
+				$author$project$Activity$Interval,
+				$author$project$ActivityForm$parseDuration(duration),
+				pace,
+				completed);
+		case 2:
+			var duration = dataForm.a.f;
+			var distance = dataForm.a.p;
+			var completed = dataForm.a.e;
+			return A3(
+				$author$project$Activity$Race,
+				$author$project$ActivityForm$parseDuration(duration),
+				distance,
+				completed);
+		case 3:
+			var duration = dataForm.a.f;
+			var completed = dataForm.a.e;
+			return A2(
+				$author$project$Activity$Other,
+				$author$project$ActivityForm$parseDuration(duration),
+				completed);
+		case 4:
+			var emoji = dataForm.a.t;
+			return $author$project$Activity$Note(emoji);
+		default:
+			var activities = dataForm.a;
+			return $author$project$Activity$Session(activities);
+	}
 };
-var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $elm$json$Json$Decode$fail = _Json_fail;
+var $author$project$Msg$EmptyFieldError = function (a) {
+	return {$: 1, a: a};
+};
+var $author$project$ActivityForm$validateFieldExists = F2(
+	function (fieldM, fieldName) {
+		if (!fieldM.$) {
+			var field = fieldM.a;
+			return $elm$core$Result$Ok(field);
+		} else {
+			return $elm$core$Result$Err(
+				$author$project$Msg$EmptyFieldError(fieldName));
+		}
+	});
+var $author$project$ActivityForm$validate = function (model) {
+	return A3(
+		$elm$core$Result$map2,
+		F2(
+			function (date, description) {
+				return A4(
+					$author$project$Activity$Activity,
+					model.ay,
+					date,
+					description,
+					$author$project$ActivityForm$toActivityData(model.g));
+			}),
+		A2($author$project$ActivityForm$validateFieldExists, model.an, 'date'),
+		A2(
+			$author$project$ActivityForm$validateFieldExists,
+			$elm$core$Maybe$Just(model.ap),
+			'description'));
+};
+var $author$project$ActivityForm$updateResult = function (model) {
+	return _Utils_update(
+		model,
+		{
+			L: $author$project$ActivityForm$validate(model)
+		});
+};
+var $author$project$ActivityForm$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 29:
+				var date = msg.a;
+				var _v1 = model.an;
+				if (_v1.$ === 1) {
+					var newModel = $author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								an: $elm$core$Maybe$Just(date)
+							}));
+					return _Utils_Tuple2(
+						newModel,
+						$author$project$Store$cmd(
+							A2(
+								$author$project$ActivityForm$apply,
+								$author$project$Msg$Move(date),
+								newModel)));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 30:
+				var activityData = msg.a;
+				switch (activityData.$) {
+					case 0:
+						var mins = activityData.a;
+						var pace_ = activityData.b;
+						var completed = activityData.c;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$RunForm(
+											{
+												e: completed,
+												f: $elm$core$String$fromInt(mins),
+												l: pace_
+											})
+									})),
+							$elm$core$Platform$Cmd$none);
+					case 1:
+						var secs = activityData.a;
+						var pace_ = activityData.b;
+						var completed = activityData.c;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$IntervalForm(
+											{
+												e: completed,
+												f: $elm$core$String$fromInt(secs),
+												l: pace_
+											})
+									})),
+							$elm$core$Platform$Cmd$none);
+					case 2:
+						var mins = activityData.a;
+						var dist = activityData.b;
+						var completed = activityData.c;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$RaceForm(
+											{
+												e: completed,
+												p: dist,
+												f: $elm$core$String$fromInt(mins)
+											})
+									})),
+							$elm$core$Platform$Cmd$none);
+					case 3:
+						var mins = activityData.a;
+						var completed = activityData.b;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$OtherForm(
+											{
+												e: completed,
+												f: $elm$core$String$fromInt(mins)
+											})
+									})),
+							$elm$core$Platform$Cmd$none);
+					case 4:
+						var emoji = activityData.a;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$NoteForm(
+											{t: emoji})
+									})),
+							$elm$core$Platform$Cmd$none);
+					default:
+						var activities = activityData.a;
+						return _Utils_Tuple2(
+							$author$project$ActivityForm$updateResult(
+								_Utils_update(
+									model,
+									{
+										g: $author$project$Msg$SessionForm(activities)
+									})),
+							$elm$core$Platform$Cmd$none);
+				}
+			case 31:
+				var desc = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{ap: desc})),
+					$elm$core$Platform$Cmd$none);
+			case 32:
+				var _char = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								g: $author$project$Msg$NoteForm(
+									{t: _char})
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 33:
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								g: $author$project$ActivityForm$updateCompleted(model.g)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 34:
+				var str = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								g: A2($author$project$ActivityForm$updateDuration, str, model.g)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 35:
+				var str = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								g: A2($author$project$ActivityForm$updatePace, str, model.g)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 36:
+				var str = msg.a;
+				return _Utils_Tuple2(
+					$author$project$ActivityForm$updateResult(
+						_Utils_update(
+							model,
+							{
+								g: A2($author$project$ActivityForm$updateDistance, str, model.g)
+							})),
+					$elm$core$Platform$Cmd$none);
+			case 37:
+				return _Utils_Tuple2(
+					model,
+					$author$project$Store$cmd(
+						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
+			default:
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Main$updateActivityForm = F2(
+	function (msg, _v0) {
+		var calendar = _v0.a;
+		var store = _v0.b;
+		var activityM = _v0.c;
+		var _v1 = function () {
+			if (activityM.$ === 1) {
+				var form = activityM.a;
+				return A2(
+					$elm$core$Tuple$mapFirst,
+					$author$project$Msg$Editing,
+					A2($author$project$ActivityForm$update, msg, form));
+			} else {
+				return _Utils_Tuple2(activityM, $elm$core$Platform$Cmd$none);
+			}
+		}();
+		var newActivityM = _v1.a;
+		var cmd = _v1.b;
+		return _Utils_Tuple2(
+			A3($author$project$Main$State, calendar, store, newActivityM),
+			cmd);
+	});
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
@@ -6657,7 +7803,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {ao: col, bd: contextStack, aM: problem, aV: row};
+		return {am: col, ba: contextStack, aI: problem, aS: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -6665,7 +7811,7 @@ var $elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.aV, s.ao, x, s.c));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.aS, s.am, x, s.c));
 	});
 var $elm$parser$Parser$Advanced$isSubChar = _Parser_isSubChar;
 var $elm$parser$Parser$Advanced$chompIf = F2(
@@ -6679,23 +7825,18 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ao: 1, c: s.c, d: s.d, b: s.b + 1, aV: s.aV + 1, a: s.a}) : A3(
+				{am: 1, c: s.c, d: s.d, b: s.b + 1, aS: s.aS + 1, a: s.a}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{ao: s.ao + 1, c: s.c, d: s.d, b: newOffset, aV: s.aV, a: s.a}));
+				{am: s.am + 1, c: s.c, d: s.d, b: newOffset, aS: s.aS, a: s.a}));
 		};
 	});
 var $elm$parser$Parser$chompIf = function (isGood) {
 	return A2($elm$parser$Parser$Advanced$chompIf, isGood, $elm$parser$Parser$UnexpectedChar);
 };
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
 var $justinmimbs$date$Date$deadEndToString = function (_v0) {
-	var problem = _v0.aM;
+	var problem = _v0.aI;
 	if (problem.$ === 12) {
 		var message = problem.a;
 		return message;
@@ -6889,15 +8030,6 @@ var $elm$parser$Parser$Advanced$mapChompedString = F2(
 		};
 	});
 var $elm$parser$Parser$mapChompedString = $elm$parser$Parser$Advanced$mapChompedString;
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (!maybe.$) {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
 var $justinmimbs$date$Date$int1 = A2(
 	$elm$parser$Parser$mapChompedString,
 	F2(
@@ -6963,13 +8095,12 @@ var $elm$parser$Parser$toToken = function (str) {
 		$elm$parser$Parser$Expecting(str));
 };
 var $elm$parser$Parser$Advanced$isSubString = _Parser_isSubString;
-var $elm$core$Basics$not = _Basics_not;
 var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var str = _v0.a;
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aV, s.ao, s.a);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.aS, s.am, s.a);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -6980,7 +8111,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{ao: newCol, c: s.c, d: s.d, b: newOffset, aV: newRow, a: s.a});
+			{am: newCol, c: s.c, d: s.d, b: newOffset, aS: newRow, a: s.a});
 	};
 };
 var $elm$parser$Parser$token = function (str) {
@@ -7083,35 +8214,6 @@ var $justinmimbs$date$Date$isBetweenInt = F3(
 	function (a, b, x) {
 		return (_Utils_cmp(a, x) < 1) && (_Utils_cmp(x, b) < 1);
 	});
-var $justinmimbs$date$Date$numberToMonth = function (mn) {
-	var _v0 = A2($elm$core$Basics$max, 1, mn);
-	switch (_v0) {
-		case 1:
-			return 0;
-		case 2:
-			return 1;
-		case 3:
-			return 2;
-		case 4:
-			return 3;
-		case 5:
-			return 4;
-		case 6:
-			return 5;
-		case 7:
-			return 6;
-		case 8:
-			return 7;
-		case 9:
-			return 8;
-		case 10:
-			return 9;
-		case 11:
-			return 10;
-		default:
-			return 11;
-	}
-};
 var $justinmimbs$date$Date$fromCalendarParts = F3(
 	function (y, mn, d) {
 		return (A3($justinmimbs$date$Date$isBetweenInt, 1, 12, mn) && A3(
@@ -7134,22 +8236,9 @@ var $justinmimbs$date$Date$fromOrdinalParts = F2(
 			$justinmimbs$date$Date$daysBeforeYear(y) + od) : $elm$core$Result$Err(
 			'Invalid ordinal date (' + ($elm$core$String$fromInt(y) + (', ' + ($elm$core$String$fromInt(od) + ')'))));
 	});
-var $justinmimbs$date$Date$weekdayNumber = function (_v0) {
-	var rd = _v0;
-	var _v1 = A2($elm$core$Basics$modBy, 7, rd);
-	if (!_v1) {
-		return 7;
-	} else {
-		var n = _v1;
-		return n;
-	}
-};
 var $justinmimbs$date$Date$daysBeforeWeekYear = function (y) {
 	var jan4 = $justinmimbs$date$Date$daysBeforeYear(y) + 4;
 	return jan4 - $justinmimbs$date$Date$weekdayNumber(jan4);
-};
-var $justinmimbs$date$Date$firstOfYear = function (y) {
-	return $justinmimbs$date$Date$daysBeforeYear(y) + 1;
 };
 var $justinmimbs$date$Date$is53WeekYear = function (y) {
 	var wdnJan1 = $justinmimbs$date$Date$weekdayNumber(
@@ -7212,10 +8301,6 @@ var $justinmimbs$date$Date$int4 = A2(
 				$elm$parser$Parser$chompIf($elm$core$Char$isDigit)),
 			$elm$parser$Parser$chompIf($elm$core$Char$isDigit)),
 		$elm$parser$Parser$chompIf($elm$core$Char$isDigit)));
-var $elm$core$Tuple$pair = F2(
-	function (a, b) {
-		return _Utils_Tuple2(a, b);
-	});
 var $elm$parser$Parser$Problem = function (a) {
 	return {$: 12, a: a};
 };
@@ -7252,10 +8337,10 @@ var $justinmimbs$date$Date$parser = A2(
 		$justinmimbs$date$Date$dayOfYear));
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {ao: col, aM: problem, aV: row};
+		return {am: col, aI: problem, aS: row};
 	});
 var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.aV, p.ao, p.aM);
+	return A3($elm$parser$Parser$DeadEnd, p.aS, p.am, p.aI);
 };
 var $elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -7287,7 +8372,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{ao: 1, c: _List_Nil, d: 1, b: 0, aV: 1, a: src});
+			{am: 1, c: _List_Nil, d: 1, b: 0, aS: 1, a: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -7339,2124 +8424,6 @@ var $justinmimbs$date$Date$fromIsoString = A2(
 			$elm$core$Basics$composeR,
 			$elm$core$List$map($justinmimbs$date$Date$deadEndToString),
 			$elm$core$String$join('; '))));
-var $author$project$Activity$dateDecoder = function () {
-	var isoStringDecoder = function (str) {
-		var _v0 = $justinmimbs$date$Date$fromIsoString(str);
-		if (!_v0.$) {
-			var date = _v0.a;
-			return $elm$json$Json$Decode$succeed(date);
-		} else {
-			return $elm$json$Json$Decode$fail('Invalid date string');
-		}
-	};
-	return A2($elm$json$Json$Decode$andThen, isoStringDecoder, $elm$json$Json$Decode$string);
-}();
-var $author$project$Activity$EightK = 1;
-var $author$project$Activity$FifteenK = 4;
-var $author$project$Activity$FiveK = 0;
-var $author$project$Activity$FiveMile = 2;
-var $author$project$Activity$HalfMarathon = 7;
-var $author$project$Activity$Marathon = 10;
-var $author$project$Activity$TenK = 3;
-var $author$project$Activity$TenMile = 5;
-var $author$project$Activity$ThirtyK = 9;
-var $author$project$Activity$TwentyFiveK = 8;
-var $author$project$Activity$TwentyK = 6;
-var $author$project$Enum$create = F2(
-	function (list, toStr) {
-		var list2 = A2(
-			$elm$core$List$map,
-			function (a) {
-				return _Utils_Tuple2(
-					toStr(a),
-					a);
-			},
-			list);
-		var dict = $elm$core$Dict$fromList(list2);
-		return {
-			W: A2(
-				$elm$json$Json$Decode$andThen,
-				function (string) {
-					var _v0 = A2($elm$core$Dict$get, string, dict);
-					if (!_v0.$) {
-						var a = _v0.a;
-						return $elm$json$Json$Decode$succeed(a);
-					} else {
-						return $elm$json$Json$Decode$fail('Missing enum: ' + string);
-					}
-				},
-				$elm$json$Json$Decode$string),
-			au: dict,
-			X: A2($elm$core$Basics$composeR, toStr, $elm$json$Json$Encode$string),
-			Z: function (string) {
-				return A2($elm$core$Dict$get, string, dict);
-			},
-			Q: list2,
-			bH: toStr
-		};
-	});
-var $author$project$Activity$distance = A2(
-	$author$project$Enum$create,
-	_List_fromArray(
-		[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-	function (a) {
-		switch (a) {
-			case 0:
-				return '5k';
-			case 1:
-				return '8k';
-			case 2:
-				return '5 mile';
-			case 3:
-				return '10k';
-			case 4:
-				return '15k';
-			case 5:
-				return '10 mile';
-			case 6:
-				return '20k';
-			case 7:
-				return 'Half Marathon';
-			case 8:
-				return '25k';
-			case 9:
-				return '30k';
-			default:
-				return 'Marathon';
-		}
-	});
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$lazy = function (thunk) {
-	return A2(
-		$elm$json$Json$Decode$andThen,
-		thunk,
-		$elm$json$Json$Decode$succeed(0));
-};
-var $elm$json$Json$Decode$list = _Json_decodeList;
-var $elm$json$Json$Decode$map3 = _Json_map3;
-var $elm$json$Json$Decode$map4 = _Json_map4;
-var $author$project$Activity$Aerobic = 4;
-var $author$project$Activity$Brisk = 3;
-var $author$project$Activity$Easy = 0;
-var $author$project$Activity$Fast = 8;
-var $author$project$Activity$Groove = 6;
-var $author$project$Activity$Lactate = 5;
-var $author$project$Activity$Moderate = 1;
-var $author$project$Activity$Steady = 2;
-var $author$project$Activity$VO2 = 7;
-var $author$project$Activity$pace = A2(
-	$author$project$Enum$create,
-	_List_fromArray(
-		[0, 1, 2, 3, 4, 5, 6, 7, 8]),
-	function (a) {
-		switch (a) {
-			case 0:
-				return 'Easy';
-			case 1:
-				return 'Moderate';
-			case 2:
-				return 'Steady';
-			case 3:
-				return 'Brisk';
-			case 4:
-				return 'Aerobic';
-			case 5:
-				return 'Lactate';
-			case 6:
-				return 'Groove';
-			case 7:
-				return 'VO2';
-			default:
-				return 'Fast';
-		}
-	});
-function $author$project$Activity$cyclic$decoder() {
-	return A5(
-		$elm$json$Json$Decode$map4,
-		$author$project$Activity$Activity,
-		A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$string),
-		A2($elm$json$Json$Decode$field, 'date', $author$project$Activity$dateDecoder),
-		A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
-		A2(
-			$elm$json$Json$Decode$field,
-			'data',
-			$author$project$Activity$cyclic$activityDataDecoder()));
-}
-function $author$project$Activity$cyclic$activityDataDecoder() {
-	var sessionDecoder = A2(
-		$elm$json$Json$Decode$map,
-		$author$project$Activity$Session,
-		A2(
-			$elm$json$Json$Decode$field,
-			'activities',
-			$elm$json$Json$Decode$list(
-				$elm$json$Json$Decode$lazy(
-					function (a) {
-						return $author$project$Activity$cyclic$decoder();
-					}))));
-	var runDecoder = A4(
-		$elm$json$Json$Decode$map3,
-		$author$project$Activity$Run,
-		A2($elm$json$Json$Decode$field, 'duration', $elm$json$Json$Decode$int),
-		A2($elm$json$Json$Decode$field, 'pace', $author$project$Activity$pace.W),
-		A2($elm$json$Json$Decode$field, 'completed', $elm$json$Json$Decode$bool));
-	var raceDecoder = A4(
-		$elm$json$Json$Decode$map3,
-		$author$project$Activity$Race,
-		A2($elm$json$Json$Decode$field, 'duration', $elm$json$Json$Decode$int),
-		A2($elm$json$Json$Decode$field, 'distance', $author$project$Activity$distance.W),
-		A2($elm$json$Json$Decode$field, 'completed', $elm$json$Json$Decode$bool));
-	var otherDecoder = A3(
-		$elm$json$Json$Decode$map2,
-		$author$project$Activity$Other,
-		A2($elm$json$Json$Decode$field, 'duration', $elm$json$Json$Decode$int),
-		A2($elm$json$Json$Decode$field, 'completed', $elm$json$Json$Decode$bool));
-	var noteDecoder = A2(
-		$elm$json$Json$Decode$map,
-		$author$project$Activity$Note,
-		A2($elm$json$Json$Decode$field, 'emoji', $elm$json$Json$Decode$string));
-	var intervalDecoder = A4(
-		$elm$json$Json$Decode$map3,
-		$author$project$Activity$Interval,
-		A2($elm$json$Json$Decode$field, 'duration', $elm$json$Json$Decode$int),
-		A2($elm$json$Json$Decode$field, 'pace', $author$project$Activity$pace.W),
-		A2($elm$json$Json$Decode$field, 'completed', $elm$json$Json$Decode$bool));
-	return A2(
-		$elm$json$Json$Decode$andThen,
-		function (dataType) {
-			switch (dataType) {
-				case 'run':
-					return runDecoder;
-				case 'interval':
-					return intervalDecoder;
-				case 'race':
-					return raceDecoder;
-				case 'other':
-					return otherDecoder;
-				case 'note':
-					return noteDecoder;
-				case 'session':
-					return sessionDecoder;
-				default:
-					return $elm$json$Json$Decode$fail('Invalid type: ' + dataType);
-			}
-		},
-		A2($elm$json$Json$Decode$field, 'type', $elm$json$Json$Decode$string));
-}
-var $author$project$Activity$decoder = $author$project$Activity$cyclic$decoder();
-$author$project$Activity$cyclic$decoder = function () {
-	return $author$project$Activity$decoder;
-};
-var $author$project$Activity$activityDataDecoder = $author$project$Activity$cyclic$activityDataDecoder();
-$author$project$Activity$cyclic$activityDataDecoder = function () {
-	return $author$project$Activity$activityDataDecoder;
-};
-var $elm$http$Http$BadStatus_ = F2(
-	function (a, b) {
-		return {$: 3, a: a, b: b};
-	});
-var $elm$http$Http$BadUrl_ = function (a) {
-	return {$: 0, a: a};
-};
-var $elm$http$Http$GoodStatus_ = F2(
-	function (a, b) {
-		return {$: 4, a: a, b: b};
-	});
-var $elm$http$Http$NetworkError_ = {$: 2};
-var $elm$http$Http$Receiving = function (a) {
-	return {$: 1, a: a};
-};
-var $elm$http$Http$Sending = function (a) {
-	return {$: 0, a: a};
-};
-var $elm$http$Http$Timeout_ = {$: 1};
-var $elm$core$Maybe$isJust = function (maybe) {
-	if (!maybe.$) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $elm$core$Dict$getMin = function (dict) {
-	getMin:
-	while (true) {
-		if ((dict.$ === -1) && (dict.d.$ === -1)) {
-			var left = dict.d;
-			var $temp$dict = left;
-			dict = $temp$dict;
-			continue getMin;
-		} else {
-			return dict;
-		}
-	}
-};
-var $elm$core$Dict$moveRedLeft = function (dict) {
-	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
-		if ((dict.e.d.$ === -1) && (!dict.e.d.a)) {
-			var clr = dict.a;
-			var k = dict.b;
-			var v = dict.c;
-			var _v1 = dict.d;
-			var lClr = _v1.a;
-			var lK = _v1.b;
-			var lV = _v1.c;
-			var lLeft = _v1.d;
-			var lRight = _v1.e;
-			var _v2 = dict.e;
-			var rClr = _v2.a;
-			var rK = _v2.b;
-			var rV = _v2.c;
-			var rLeft = _v2.d;
-			var _v3 = rLeft.a;
-			var rlK = rLeft.b;
-			var rlV = rLeft.c;
-			var rlL = rLeft.d;
-			var rlR = rLeft.e;
-			var rRight = _v2.e;
-			return A5(
-				$elm$core$Dict$RBNode_elm_builtin,
-				0,
-				rlK,
-				rlV,
-				A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					rlL),
-				A5($elm$core$Dict$RBNode_elm_builtin, 1, rK, rV, rlR, rRight));
-		} else {
-			var clr = dict.a;
-			var k = dict.b;
-			var v = dict.c;
-			var _v4 = dict.d;
-			var lClr = _v4.a;
-			var lK = _v4.b;
-			var lV = _v4.c;
-			var lLeft = _v4.d;
-			var lRight = _v4.e;
-			var _v5 = dict.e;
-			var rClr = _v5.a;
-			var rK = _v5.b;
-			var rV = _v5.c;
-			var rLeft = _v5.d;
-			var rRight = _v5.e;
-			if (clr === 1) {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
-			}
-		}
-	} else {
-		return dict;
-	}
-};
-var $elm$core$Dict$moveRedRight = function (dict) {
-	if (((dict.$ === -1) && (dict.d.$ === -1)) && (dict.e.$ === -1)) {
-		if ((dict.d.d.$ === -1) && (!dict.d.d.a)) {
-			var clr = dict.a;
-			var k = dict.b;
-			var v = dict.c;
-			var _v1 = dict.d;
-			var lClr = _v1.a;
-			var lK = _v1.b;
-			var lV = _v1.c;
-			var _v2 = _v1.d;
-			var _v3 = _v2.a;
-			var llK = _v2.b;
-			var llV = _v2.c;
-			var llLeft = _v2.d;
-			var llRight = _v2.e;
-			var lRight = _v1.e;
-			var _v4 = dict.e;
-			var rClr = _v4.a;
-			var rK = _v4.b;
-			var rV = _v4.c;
-			var rLeft = _v4.d;
-			var rRight = _v4.e;
-			return A5(
-				$elm$core$Dict$RBNode_elm_builtin,
-				0,
-				lK,
-				lV,
-				A5($elm$core$Dict$RBNode_elm_builtin, 1, llK, llV, llLeft, llRight),
-				A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					lRight,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight)));
-		} else {
-			var clr = dict.a;
-			var k = dict.b;
-			var v = dict.c;
-			var _v5 = dict.d;
-			var lClr = _v5.a;
-			var lK = _v5.b;
-			var lV = _v5.c;
-			var lLeft = _v5.d;
-			var lRight = _v5.e;
-			var _v6 = dict.e;
-			var rClr = _v6.a;
-			var rK = _v6.b;
-			var rV = _v6.c;
-			var rLeft = _v6.d;
-			var rRight = _v6.e;
-			if (clr === 1) {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					1,
-					k,
-					v,
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, 0, rK, rV, rLeft, rRight));
-			}
-		}
-	} else {
-		return dict;
-	}
-};
-var $elm$core$Dict$removeHelpPrepEQGT = F7(
-	function (targetKey, dict, color, key, value, left, right) {
-		if ((left.$ === -1) && (!left.a)) {
-			var _v1 = left.a;
-			var lK = left.b;
-			var lV = left.c;
-			var lLeft = left.d;
-			var lRight = left.e;
-			return A5(
-				$elm$core$Dict$RBNode_elm_builtin,
-				color,
-				lK,
-				lV,
-				lLeft,
-				A5($elm$core$Dict$RBNode_elm_builtin, 0, key, value, lRight, right));
-		} else {
-			_v2$2:
-			while (true) {
-				if ((right.$ === -1) && (right.a === 1)) {
-					if (right.d.$ === -1) {
-						if (right.d.a === 1) {
-							var _v3 = right.a;
-							var _v4 = right.d;
-							var _v5 = _v4.a;
-							return $elm$core$Dict$moveRedRight(dict);
-						} else {
-							break _v2$2;
-						}
-					} else {
-						var _v6 = right.a;
-						var _v7 = right.d;
-						return $elm$core$Dict$moveRedRight(dict);
-					}
-				} else {
-					break _v2$2;
-				}
-			}
-			return dict;
-		}
-	});
-var $elm$core$Dict$removeMin = function (dict) {
-	if ((dict.$ === -1) && (dict.d.$ === -1)) {
-		var color = dict.a;
-		var key = dict.b;
-		var value = dict.c;
-		var left = dict.d;
-		var lColor = left.a;
-		var lLeft = left.d;
-		var right = dict.e;
-		if (lColor === 1) {
-			if ((lLeft.$ === -1) && (!lLeft.a)) {
-				var _v3 = lLeft.a;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					key,
-					value,
-					$elm$core$Dict$removeMin(left),
-					right);
-			} else {
-				var _v4 = $elm$core$Dict$moveRedLeft(dict);
-				if (_v4.$ === -1) {
-					var nColor = _v4.a;
-					var nKey = _v4.b;
-					var nValue = _v4.c;
-					var nLeft = _v4.d;
-					var nRight = _v4.e;
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						$elm$core$Dict$removeMin(nLeft),
-						nRight);
-				} else {
-					return $elm$core$Dict$RBEmpty_elm_builtin;
-				}
-			}
-		} else {
-			return A5(
-				$elm$core$Dict$RBNode_elm_builtin,
-				color,
-				key,
-				value,
-				$elm$core$Dict$removeMin(left),
-				right);
-		}
-	} else {
-		return $elm$core$Dict$RBEmpty_elm_builtin;
-	}
-};
-var $elm$core$Dict$removeHelp = F2(
-	function (targetKey, dict) {
-		if (dict.$ === -2) {
-			return $elm$core$Dict$RBEmpty_elm_builtin;
-		} else {
-			var color = dict.a;
-			var key = dict.b;
-			var value = dict.c;
-			var left = dict.d;
-			var right = dict.e;
-			if (_Utils_cmp(targetKey, key) < 0) {
-				if ((left.$ === -1) && (left.a === 1)) {
-					var _v4 = left.a;
-					var lLeft = left.d;
-					if ((lLeft.$ === -1) && (!lLeft.a)) {
-						var _v6 = lLeft.a;
-						return A5(
-							$elm$core$Dict$RBNode_elm_builtin,
-							color,
-							key,
-							value,
-							A2($elm$core$Dict$removeHelp, targetKey, left),
-							right);
-					} else {
-						var _v7 = $elm$core$Dict$moveRedLeft(dict);
-						if (_v7.$ === -1) {
-							var nColor = _v7.a;
-							var nKey = _v7.b;
-							var nValue = _v7.c;
-							var nLeft = _v7.d;
-							var nRight = _v7.e;
-							return A5(
-								$elm$core$Dict$balance,
-								nColor,
-								nKey,
-								nValue,
-								A2($elm$core$Dict$removeHelp, targetKey, nLeft),
-								nRight);
-						} else {
-							return $elm$core$Dict$RBEmpty_elm_builtin;
-						}
-					}
-				} else {
-					return A5(
-						$elm$core$Dict$RBNode_elm_builtin,
-						color,
-						key,
-						value,
-						A2($elm$core$Dict$removeHelp, targetKey, left),
-						right);
-				}
-			} else {
-				return A2(
-					$elm$core$Dict$removeHelpEQGT,
-					targetKey,
-					A7($elm$core$Dict$removeHelpPrepEQGT, targetKey, dict, color, key, value, left, right));
-			}
-		}
-	});
-var $elm$core$Dict$removeHelpEQGT = F2(
-	function (targetKey, dict) {
-		if (dict.$ === -1) {
-			var color = dict.a;
-			var key = dict.b;
-			var value = dict.c;
-			var left = dict.d;
-			var right = dict.e;
-			if (_Utils_eq(targetKey, key)) {
-				var _v1 = $elm$core$Dict$getMin(right);
-				if (_v1.$ === -1) {
-					var minKey = _v1.b;
-					var minValue = _v1.c;
-					return A5(
-						$elm$core$Dict$balance,
-						color,
-						minKey,
-						minValue,
-						left,
-						$elm$core$Dict$removeMin(right));
-				} else {
-					return $elm$core$Dict$RBEmpty_elm_builtin;
-				}
-			} else {
-				return A5(
-					$elm$core$Dict$balance,
-					color,
-					key,
-					value,
-					left,
-					A2($elm$core$Dict$removeHelp, targetKey, right));
-			}
-		} else {
-			return $elm$core$Dict$RBEmpty_elm_builtin;
-		}
-	});
-var $elm$core$Dict$remove = F2(
-	function (key, dict) {
-		var _v0 = A2($elm$core$Dict$removeHelp, key, dict);
-		if ((_v0.$ === -1) && (!_v0.a)) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, 1, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
-var $elm$core$Dict$update = F3(
-	function (targetKey, alter, dictionary) {
-		var _v0 = alter(
-			A2($elm$core$Dict$get, targetKey, dictionary));
-		if (!_v0.$) {
-			var value = _v0.a;
-			return A3($elm$core$Dict$insert, targetKey, value, dictionary);
-		} else {
-			return A2($elm$core$Dict$remove, targetKey, dictionary);
-		}
-	});
-var $elm$http$Http$emptyBody = _Http_emptyBody;
-var $elm$json$Json$Decode$decodeString = _Json_runOnString;
-var $author$project$Api$handleJsonResponse = F2(
-	function (decoder, response) {
-		switch (response.$) {
-			case 0:
-				var url = response.a;
-				return $elm$core$Result$Err('Bad URL: ' + url);
-			case 1:
-				return $elm$core$Result$Err('Timeout');
-			case 3:
-				var statusCode = response.a.bB;
-				return $elm$core$Result$Err(
-					'Bad status code: ' + $elm$core$String$fromInt(statusCode));
-			case 2:
-				return $elm$core$Result$Err('Network error');
-			default:
-				var body = response.b;
-				var _v1 = A2($elm$json$Json$Decode$decodeString, decoder, body);
-				if (_v1.$ === 1) {
-					var decoderErr = _v1.a;
-					return $elm$core$Result$Err(
-						$elm$json$Json$Decode$errorToString(decoderErr));
-				} else {
-					var result = _v1.a;
-					return $elm$core$Result$Ok(result);
-				}
-		}
-	});
-var $author$project$Api$storeUrl = A2(
-	$elm$core$String$join,
-	'/',
-	_List_fromArray(
-		[$author$project$Api$config.ah, $author$project$Api$config.ap.S, $author$project$Api$config.av]));
-var $elm$http$Http$stringResolver = A2(_Http_expect, '', $elm$core$Basics$identity);
-var $elm$core$Task$fail = _Scheduler_fail;
-var $elm$http$Http$resultToTask = function (result) {
-	if (!result.$) {
-		var a = result.a;
-		return $elm$core$Task$succeed(a);
-	} else {
-		var x = result.a;
-		return $elm$core$Task$fail(x);
-	}
-};
-var $elm$http$Http$task = function (r) {
-	return A3(
-		_Http_toTask,
-		0,
-		$elm$http$Http$resultToTask,
-		{a8: false, ba: r.ba, Y: r.bv, bh: r.bh, bo: r.bo, bF: r.bF, a0: $elm$core$Maybe$Nothing, ah: r.ah});
-};
-var $author$project$Api$getActivities = $elm$http$Http$task(
-	{
-		ba: $elm$http$Http$emptyBody,
-		bh: _List_fromArray(
-			[
-				A2($elm$http$Http$header, 'Content-Type', 'application/json'),
-				$author$project$Api$authHeader
-			]),
-		bo: 'GET',
-		bv: $elm$http$Http$stringResolver(
-			$author$project$Api$handleJsonResponse(
-				A3(
-					$elm$json$Json$Decode$map2,
-					$elm$core$Tuple$pair,
-					A2($elm$json$Json$Decode$field, '_rev', $elm$json$Json$Decode$string),
-					A2(
-						$elm$json$Json$Decode$field,
-						'activities',
-						$elm$json$Json$Decode$list($author$project$Activity$decoder))))),
-		bF: $elm$core$Maybe$Nothing,
-		ah: $author$project$Api$storeUrl
-	});
-var $elm$core$Tuple$mapSecond = F2(
-	function (func, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			x,
-			func(y));
-	});
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Api$postActivities = F2(
-	function (revision, activities) {
-		return $elm$core$Task$succeed(true);
-	});
-var $elm$core$List$any = F2(
-	function (isOkay, list) {
-		any:
-		while (true) {
-			if (!list.b) {
-				return false;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				if (isOkay(x)) {
-					return true;
-				} else {
-					var $temp$isOkay = isOkay,
-						$temp$list = xs;
-					isOkay = $temp$isOkay;
-					list = $temp$list;
-					continue any;
-				}
-			}
-		}
-	});
-var $elm$core$List$member = F2(
-	function (x, xs) {
-		return A2(
-			$elm$core$List$any,
-			function (a) {
-				return _Utils_eq(a, x);
-			},
-			xs);
-	});
-var $justinmimbs$date$Date$compare = F2(
-	function (_v0, _v1) {
-		var a = _v0;
-		var b = _v1;
-		return A2($elm$core$Basics$compare, a, b);
-	});
-var $elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
-		}
-	});
-var $elm$core$List$concat = function (lists) {
-	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
-};
-var $elm$core$List$partition = F2(
-	function (pred, list) {
-		var step = F2(
-			function (x, _v0) {
-				var trues = _v0.a;
-				var falses = _v0.b;
-				return pred(x) ? _Utils_Tuple2(
-					A2($elm$core$List$cons, x, trues),
-					falses) : _Utils_Tuple2(
-					trues,
-					A2($elm$core$List$cons, x, falses));
-			});
-		return A3(
-			$elm$core$List$foldr,
-			step,
-			_Utils_Tuple2(_List_Nil, _List_Nil),
-			list);
-	});
-var $author$project$Store$updateActivity = F3(
-	function (activity, isNew, activities) {
-		return isNew ? function (_v0) {
-			var after = _v0.a;
-			var before = _v0.b;
-			return $elm$core$List$concat(
-				_List_fromArray(
-					[
-						before,
-						_List_fromArray(
-						[activity]),
-						after
-					]));
-		}(
-			A2(
-				$elm$core$List$partition,
-				function (a) {
-					return A2($justinmimbs$date$Date$compare, a.aq, activity.aq) === 2;
-				},
-				activities)) : A2(
-			$elm$core$List$map,
-			function (existing) {
-				return _Utils_eq(existing.aC, activity.aC) ? activity : existing;
-			},
-			activities);
-	});
-var $author$project$Store$moveActivity = F3(
-	function (activity, toDate, activities) {
-		return A3(
-			$author$project$Store$updateActivity,
-			_Utils_update(
-				activity,
-				{aq: toDate}),
-			true,
-			A2(
-				$elm$core$List$filter,
-				function (a) {
-					return !_Utils_eq(a.aC, activity.aC);
-				},
-				activities));
-	});
-var $author$project$Store$shiftUp = F2(
-	function (id, activities) {
-		if (activities.b && activities.b.b) {
-			var a = activities.a;
-			var _v1 = activities.b;
-			var b = _v1.a;
-			var tail = _v1.b;
-			return _Utils_eq(a.aC, id) ? activities : (_Utils_eq(b.aC, id) ? A2(
-				$elm$core$List$cons,
-				b,
-				A2($elm$core$List$cons, a, tail)) : A2(
-				$elm$core$List$cons,
-				a,
-				A2(
-					$author$project$Store$shiftUp,
-					id,
-					A2($elm$core$List$cons, b, tail))));
-		} else {
-			return activities;
-		}
-	});
-var $author$project$Store$shiftActivity = F3(
-	function (activity, moveUp, activities) {
-		var on = A2(
-			$elm$core$List$filter,
-			function (a) {
-				return _Utils_eq(a.aq, activity.aq);
-			},
-			activities);
-		var before = A2(
-			$elm$core$List$filter,
-			function (a) {
-				return !A2($justinmimbs$date$Date$compare, a.aq, activity.aq);
-			},
-			activities);
-		var after = A2(
-			$elm$core$List$filter,
-			function (a) {
-				return A2($justinmimbs$date$Date$compare, a.aq, activity.aq) === 2;
-			},
-			activities);
-		return moveUp ? $elm$core$List$concat(
-			_List_fromArray(
-				[
-					before,
-					A2($author$project$Store$shiftUp, activity.aC, on),
-					after
-				])) : $elm$core$List$concat(
-			_List_fromArray(
-				[
-					before,
-					$elm$core$List$reverse(
-					A2(
-						$author$project$Store$shiftUp,
-						activity.aC,
-						$elm$core$List$reverse(on))),
-					after
-				]));
-	});
-var $author$project$Store$updateState = F2(
-	function (msg, state) {
-		switch (msg.$) {
-			case 10:
-				var activity = msg.a;
-				return _Utils_update(
-					state,
-					{
-						aj: A3($author$project$Store$updateActivity, activity, true, state.aj)
-					});
-			case 11:
-				var activities = msg.a;
-				var session = msg.b;
-				var ids = A2(
-					$elm$core$List$map,
-					function ($) {
-						return $.aC;
-					},
-					activities);
-				var removeActivities = A2(
-					$elm$core$List$filter,
-					function (a) {
-						return !A2($elm$core$List$member, a.aC, ids);
-					},
-					state.aj);
-				return _Utils_update(
-					state,
-					{
-						aj: A3($author$project$Store$updateActivity, session, true, removeActivities)
-					});
-			case 12:
-				var activities = msg.a;
-				var session = msg.b;
-				var ungrouped = A3(
-					$elm$core$List$foldl,
-					F2(
-						function (a, b) {
-							return A3(
-								$author$project$Store$updateActivity,
-								_Utils_update(
-									a,
-									{aq: session.aq}),
-								true,
-								b);
-						}),
-					state.aj,
-					activities);
-				return _Utils_update(
-					state,
-					{
-						aj: A2(
-							$elm$core$List$filter,
-							function (a) {
-								return !_Utils_eq(a.aC, session.aC);
-							},
-							ungrouped)
-					});
-			case 13:
-				var activity = msg.a;
-				return _Utils_update(
-					state,
-					{
-						aj: A3($author$project$Store$updateActivity, activity, false, state.aj)
-					});
-			case 14:
-				var date = msg.a;
-				var activity = msg.b;
-				return _Utils_update(
-					state,
-					{
-						aj: A3($author$project$Store$moveActivity, activity, date, state.aj)
-					});
-			case 15:
-				var up = msg.a;
-				var activity = msg.b;
-				return _Utils_update(
-					state,
-					{
-						aj: A3($author$project$Store$shiftActivity, activity, up, state.aj)
-					});
-			case 16:
-				var activity = msg.a;
-				return _Utils_update(
-					state,
-					{
-						aj: A2(
-							$elm$core$List$filter,
-							function (a) {
-								return !_Utils_eq(a.aC, activity.aC);
-							},
-							state.aj)
-					});
-			default:
-				return state;
-		}
-	});
-var $author$project$Store$flush = function (model) {
-	if (!model.b.b) {
-		var state = model.a;
-		return $elm$core$Platform$Cmd$none;
-	} else {
-		var state = model.a;
-		var msgs = model.b;
-		return A2(
-			$elm$core$Task$attempt,
-			$author$project$Msg$Posted(msgs),
-			A2(
-				$elm$core$Task$andThen,
-				function (_v1) {
-					var revision = _v1.a;
-					var newRemoteState = _v1.b;
-					return A2($author$project$Api$postActivities, revision, newRemoteState.aj);
-				},
-				A2(
-					$elm$core$Task$map,
-					$elm$core$Tuple$mapSecond(
-						function (remoteState) {
-							return A3(
-								$elm$core$List$foldr,
-								F2(
-									function (msg, rs) {
-										return A2($author$project$Store$updateState, msg, rs);
-									}),
-								remoteState,
-								msgs);
-						}),
-					A2(
-						$elm$core$Task$map,
-						$elm$core$Tuple$mapSecond($author$project$Store$State),
-						$author$project$Api$getActivities))));
-	}
-};
-var $elm$random$Random$Generate = $elm$core$Basics$identity;
-var $elm$random$Random$Seed = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
-	});
-var $elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
-var $elm$random$Random$next = function (_v0) {
-	var state0 = _v0.a;
-	var incr = _v0.b;
-	return A2($elm$random$Random$Seed, ((state0 * 1664525) + incr) >>> 0, incr);
-};
-var $elm$random$Random$initialSeed = function (x) {
-	var _v0 = $elm$random$Random$next(
-		A2($elm$random$Random$Seed, 0, 1013904223));
-	var state1 = _v0.a;
-	var incr = _v0.b;
-	var state2 = (state1 + x) >>> 0;
-	return $elm$random$Random$next(
-		A2($elm$random$Random$Seed, state2, incr));
-};
-var $elm$random$Random$init = A2(
-	$elm$core$Task$andThen,
-	function (time) {
-		return $elm$core$Task$succeed(
-			$elm$random$Random$initialSeed(
-				$elm$time$Time$posixToMillis(time)));
-	},
-	$elm$time$Time$now);
-var $elm$random$Random$step = F2(
-	function (_v0, seed) {
-		var generator = _v0;
-		return generator(seed);
-	});
-var $elm$random$Random$onEffects = F3(
-	function (router, commands, seed) {
-		if (!commands.b) {
-			return $elm$core$Task$succeed(seed);
-		} else {
-			var generator = commands.a;
-			var rest = commands.b;
-			var _v1 = A2($elm$random$Random$step, generator, seed);
-			var value = _v1.a;
-			var newSeed = _v1.b;
-			return A2(
-				$elm$core$Task$andThen,
-				function (_v2) {
-					return A3($elm$random$Random$onEffects, router, rest, newSeed);
-				},
-				A2($elm$core$Platform$sendToApp, router, value));
-		}
-	});
-var $elm$random$Random$onSelfMsg = F3(
-	function (_v0, _v1, seed) {
-		return $elm$core$Task$succeed(seed);
-	});
-var $elm$random$Random$Generator = $elm$core$Basics$identity;
-var $elm$random$Random$map = F2(
-	function (func, _v0) {
-		var genA = _v0;
-		return function (seed0) {
-			var _v1 = genA(seed0);
-			var a = _v1.a;
-			var seed1 = _v1.b;
-			return _Utils_Tuple2(
-				func(a),
-				seed1);
-		};
-	});
-var $elm$random$Random$cmdMap = F2(
-	function (func, _v0) {
-		var generator = _v0;
-		return A2($elm$random$Random$map, func, generator);
-	});
-_Platform_effectManagers['Random'] = _Platform_createManager($elm$random$Random$init, $elm$random$Random$onEffects, $elm$random$Random$onSelfMsg, $elm$random$Random$cmdMap);
-var $elm$random$Random$command = _Platform_leaf('Random');
-var $elm$random$Random$generate = F2(
-	function (tagger, generator) {
-		return $elm$random$Random$command(
-			A2($elm$random$Random$map, tagger, generator));
-	});
-var $author$project$Calendar$get = function (_v0) {
-	var zoom = _v0.a;
-	var start = _v0.b;
-	var end = _v0.c;
-	var selected = _v0.d;
-	var today = _v0.e;
-	var scrollCompleted = _v0.f;
-	return {bf: end, bx: scrollCompleted, by: selected, bA: start, bI: today, a7: zoom};
-};
-var $author$project$Store$get = F2(
-	function (_v0, f) {
-		var state = _v0.a;
-		return f(state);
-	});
-var $elm$browser$Browser$Dom$getViewportOf = _Browser_getViewportOf;
-var $author$project$Msg$ActivityForm = F5(
-	function (id, date, description, result, dataForm) {
-		return {g: dataForm, aq: date, as: description, aC: id, L: result};
-	});
-var $author$project$Msg$IntervalForm = function (a) {
-	return {$: 1, a: a};
-};
-var $author$project$Msg$NoteForm = function (a) {
-	return {$: 4, a: a};
-};
-var $author$project$Msg$OtherForm = function (a) {
-	return {$: 3, a: a};
-};
-var $author$project$Msg$RaceForm = function (a) {
-	return {$: 2, a: a};
-};
-var $author$project$Msg$RunForm = function (a) {
-	return {$: 0, a: a};
-};
-var $author$project$Msg$SessionForm = function (a) {
-	return {$: 5, a: a};
-};
-var $author$project$ActivityForm$init = function (activity) {
-	var baseModel = A4(
-		$author$project$Msg$ActivityForm,
-		activity.aC,
-		$elm$core$Maybe$Just(activity.aq),
-		activity.as,
-		$elm$core$Result$Ok(activity));
-	return baseModel(
-		function () {
-			var _v0 = activity.U;
-			switch (_v0.$) {
-				case 0:
-					var minutes = _v0.a;
-					var pace_ = _v0.b;
-					var completed = _v0.c;
-					return $author$project$Msg$RunForm(
-						{
-							e: completed,
-							f: $elm$core$String$fromInt(minutes),
-							l: pace_
-						});
-				case 1:
-					var seconds = _v0.a;
-					var pace_ = _v0.b;
-					var completed = _v0.c;
-					return $author$project$Msg$IntervalForm(
-						{
-							e: completed,
-							f: $elm$core$String$fromInt(seconds),
-							l: pace_
-						});
-				case 2:
-					var minutes = _v0.a;
-					var distance_ = _v0.b;
-					var completed = _v0.c;
-					return $author$project$Msg$RaceForm(
-						{
-							e: completed,
-							p: distance_,
-							f: $elm$core$String$fromInt(minutes)
-						});
-				case 3:
-					var minutes = _v0.a;
-					var completed = _v0.b;
-					return $author$project$Msg$OtherForm(
-						{
-							e: completed,
-							f: $elm$core$String$fromInt(minutes)
-						});
-				case 4:
-					var emoji_ = _v0.a;
-					return $author$project$Msg$NoteForm(
-						{t: emoji_});
-				default:
-					var activities = _v0.a;
-					return $author$project$Msg$SessionForm(activities);
-			}
-		}());
-};
-var $author$project$Calendar$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {$: 0, a: a, b: b, c: c, d: d, e: e, f: f};
-	});
-var $justinmimbs$date$Date$Quarter = 1;
-var $justinmimbs$date$Date$Months = 1;
-var $elm$core$Basics$min = F2(
-	function (x, y) {
-		return (_Utils_cmp(x, y) < 0) ? x : y;
-	});
-var $justinmimbs$date$Date$monthToNumber = function (m) {
-	switch (m) {
-		case 0:
-			return 1;
-		case 1:
-			return 2;
-		case 2:
-			return 3;
-		case 3:
-			return 4;
-		case 4:
-			return 5;
-		case 5:
-			return 6;
-		case 6:
-			return 7;
-		case 7:
-			return 8;
-		case 8:
-			return 9;
-		case 9:
-			return 10;
-		case 10:
-			return 11;
-		default:
-			return 12;
-	}
-};
-var $justinmimbs$date$Date$toCalendarDateHelp = F3(
-	function (y, m, d) {
-		toCalendarDateHelp:
-		while (true) {
-			var monthDays = A2($justinmimbs$date$Date$daysInMonth, y, m);
-			var mn = $justinmimbs$date$Date$monthToNumber(m);
-			if ((mn < 12) && (_Utils_cmp(d, monthDays) > 0)) {
-				var $temp$y = y,
-					$temp$m = $justinmimbs$date$Date$numberToMonth(mn + 1),
-					$temp$d = d - monthDays;
-				y = $temp$y;
-				m = $temp$m;
-				d = $temp$d;
-				continue toCalendarDateHelp;
-			} else {
-				return {ar: d, aH: m, a6: y};
-			}
-		}
-	});
-var $justinmimbs$date$Date$divWithRemainder = F2(
-	function (a, b) {
-		return _Utils_Tuple2(
-			A2($justinmimbs$date$Date$floorDiv, a, b),
-			A2($elm$core$Basics$modBy, b, a));
-	});
-var $justinmimbs$date$Date$year = function (_v0) {
-	var rd = _v0;
-	var _v1 = A2($justinmimbs$date$Date$divWithRemainder, rd, 146097);
-	var n400 = _v1.a;
-	var r400 = _v1.b;
-	var _v2 = A2($justinmimbs$date$Date$divWithRemainder, r400, 36524);
-	var n100 = _v2.a;
-	var r100 = _v2.b;
-	var _v3 = A2($justinmimbs$date$Date$divWithRemainder, r100, 1461);
-	var n4 = _v3.a;
-	var r4 = _v3.b;
-	var _v4 = A2($justinmimbs$date$Date$divWithRemainder, r4, 365);
-	var n1 = _v4.a;
-	var r1 = _v4.b;
-	var n = (!r1) ? 0 : 1;
-	return ((((n400 * 400) + (n100 * 100)) + (n4 * 4)) + n1) + n;
-};
-var $justinmimbs$date$Date$toOrdinalDate = function (_v0) {
-	var rd = _v0;
-	var y = $justinmimbs$date$Date$year(rd);
-	return {
-		ad: rd - $justinmimbs$date$Date$daysBeforeYear(y),
-		a6: y
-	};
-};
-var $justinmimbs$date$Date$toCalendarDate = function (_v0) {
-	var rd = _v0;
-	var date = $justinmimbs$date$Date$toOrdinalDate(rd);
-	return A3($justinmimbs$date$Date$toCalendarDateHelp, date.a6, 0, date.ad);
-};
-var $justinmimbs$date$Date$add = F3(
-	function (unit, n, _v0) {
-		var rd = _v0;
-		switch (unit) {
-			case 0:
-				return A3($justinmimbs$date$Date$add, 1, 12 * n, rd);
-			case 1:
-				var date = $justinmimbs$date$Date$toCalendarDate(rd);
-				var wholeMonths = ((12 * (date.a6 - 1)) + ($justinmimbs$date$Date$monthToNumber(date.aH) - 1)) + n;
-				var m = $justinmimbs$date$Date$numberToMonth(
-					A2($elm$core$Basics$modBy, 12, wholeMonths) + 1);
-				var y = A2($justinmimbs$date$Date$floorDiv, wholeMonths, 12) + 1;
-				return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + A2(
-					$elm$core$Basics$min,
-					date.ar,
-					A2($justinmimbs$date$Date$daysInMonth, y, m));
-			case 2:
-				return rd + (7 * n);
-			default:
-				return rd + n;
-		}
-	});
-var $elm$time$Time$Fri = 4;
-var $elm$time$Time$Mon = 0;
-var $elm$time$Time$Sat = 5;
-var $elm$time$Time$Sun = 6;
-var $elm$time$Time$Thu = 3;
-var $elm$time$Time$Tue = 1;
-var $elm$time$Time$Wed = 2;
-var $justinmimbs$date$Date$weekdayToNumber = function (wd) {
-	switch (wd) {
-		case 0:
-			return 1;
-		case 1:
-			return 2;
-		case 2:
-			return 3;
-		case 3:
-			return 4;
-		case 4:
-			return 5;
-		case 5:
-			return 6;
-		default:
-			return 7;
-	}
-};
-var $justinmimbs$date$Date$daysSincePreviousWeekday = F2(
-	function (wd, date) {
-		return A2(
-			$elm$core$Basics$modBy,
-			7,
-			($justinmimbs$date$Date$weekdayNumber(date) + 7) - $justinmimbs$date$Date$weekdayToNumber(wd));
-	});
-var $justinmimbs$date$Date$firstOfMonth = F2(
-	function (y, m) {
-		return ($justinmimbs$date$Date$daysBeforeYear(y) + A2($justinmimbs$date$Date$daysBeforeMonth, y, m)) + 1;
-	});
-var $justinmimbs$date$Date$month = A2(
-	$elm$core$Basics$composeR,
-	$justinmimbs$date$Date$toCalendarDate,
-	function ($) {
-		return $.aH;
-	});
-var $justinmimbs$date$Date$monthToQuarter = function (m) {
-	return (($justinmimbs$date$Date$monthToNumber(m) + 2) / 3) | 0;
-};
-var $justinmimbs$date$Date$quarter = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$month, $justinmimbs$date$Date$monthToQuarter);
-var $justinmimbs$date$Date$quarterToMonth = function (q) {
-	return $justinmimbs$date$Date$numberToMonth((q * 3) - 2);
-};
-var $justinmimbs$date$Date$floor = F2(
-	function (interval, date) {
-		var rd = date;
-		switch (interval) {
-			case 0:
-				return $justinmimbs$date$Date$firstOfYear(
-					$justinmimbs$date$Date$year(date));
-			case 1:
-				return A2(
-					$justinmimbs$date$Date$firstOfMonth,
-					$justinmimbs$date$Date$year(date),
-					$justinmimbs$date$Date$quarterToMonth(
-						$justinmimbs$date$Date$quarter(date)));
-			case 2:
-				return A2(
-					$justinmimbs$date$Date$firstOfMonth,
-					$justinmimbs$date$Date$year(date),
-					$justinmimbs$date$Date$month(date));
-			case 3:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
-			case 4:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 0, date);
-			case 5:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 1, date);
-			case 6:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 2, date);
-			case 7:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 3, date);
-			case 8:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 4, date);
-			case 9:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 5, date);
-			case 10:
-				return rd - A2($justinmimbs$date$Date$daysSincePreviousWeekday, 6, date);
-			default:
-				return date;
-		}
-	});
-var $justinmimbs$date$Date$Days = 3;
-var $justinmimbs$date$Date$Weeks = 2;
-var $justinmimbs$date$Date$Years = 0;
-var $justinmimbs$date$Date$intervalToUnits = function (interval) {
-	switch (interval) {
-		case 0:
-			return _Utils_Tuple2(1, 0);
-		case 1:
-			return _Utils_Tuple2(3, 1);
-		case 2:
-			return _Utils_Tuple2(1, 1);
-		case 11:
-			return _Utils_Tuple2(1, 3);
-		default:
-			var week = interval;
-			return _Utils_Tuple2(1, 2);
-	}
-};
-var $justinmimbs$date$Date$ceiling = F2(
-	function (interval, date) {
-		var floored = A2($justinmimbs$date$Date$floor, interval, date);
-		if (_Utils_eq(date, floored)) {
-			return date;
-		} else {
-			var _v0 = $justinmimbs$date$Date$intervalToUnits(interval);
-			var n = _v0.a;
-			var unit = _v0.b;
-			return A3($justinmimbs$date$Date$add, unit, n, floored);
-		}
-	});
-var $author$project$Calendar$init = F3(
-	function (zoom, selected, today) {
-		return A6(
-			$author$project$Calendar$Model,
-			zoom,
-			A2($justinmimbs$date$Date$floor, 1, selected),
-			A2($justinmimbs$date$Date$ceiling, 1, selected),
-			selected,
-			today,
-			true);
-	});
-var $author$project$Store$Model = F2(
-	function (a, b) {
-		return {$: 0, a: a, b: b};
-	});
-var $author$project$Store$init = function (activities) {
-	return A2(
-		$author$project$Store$Model,
-		$author$project$Store$State(activities),
-		_List_Nil);
-};
-var $elm$core$Bitwise$and = _Bitwise_and;
-var $elm$core$Bitwise$xor = _Bitwise_xor;
-var $elm$random$Random$peel = function (_v0) {
-	var state = _v0.a;
-	var word = (state ^ (state >>> ((state >>> 28) + 4))) * 277803737;
-	return ((word >>> 22) ^ word) >>> 0;
-};
-var $elm$random$Random$int = F2(
-	function (a, b) {
-		return function (seed0) {
-			var _v0 = (_Utils_cmp(a, b) < 0) ? _Utils_Tuple2(a, b) : _Utils_Tuple2(b, a);
-			var lo = _v0.a;
-			var hi = _v0.b;
-			var range = (hi - lo) + 1;
-			if (!((range - 1) & range)) {
-				return _Utils_Tuple2(
-					(((range - 1) & $elm$random$Random$peel(seed0)) >>> 0) + lo,
-					$elm$random$Random$next(seed0));
-			} else {
-				var threshhold = (((-range) >>> 0) % range) >>> 0;
-				var accountForBias = function (seed) {
-					accountForBias:
-					while (true) {
-						var x = $elm$random$Random$peel(seed);
-						var seedN = $elm$random$Random$next(seed);
-						if (_Utils_cmp(x, threshhold) < 0) {
-							var $temp$seed = seedN;
-							seed = $temp$seed;
-							continue accountForBias;
-						} else {
-							return _Utils_Tuple2((x % range) + lo, seedN);
-						}
-					}
-				};
-				return accountForBias(seed0);
-			}
-		};
-	});
-var $elm$random$Random$listHelp = F4(
-	function (revList, n, gen, seed) {
-		listHelp:
-		while (true) {
-			if (n < 1) {
-				return _Utils_Tuple2(revList, seed);
-			} else {
-				var _v0 = gen(seed);
-				var value = _v0.a;
-				var newSeed = _v0.b;
-				var $temp$revList = A2($elm$core$List$cons, value, revList),
-					$temp$n = n - 1,
-					$temp$gen = gen,
-					$temp$seed = newSeed;
-				revList = $temp$revList;
-				n = $temp$n;
-				gen = $temp$gen;
-				seed = $temp$seed;
-				continue listHelp;
-			}
-		}
-	});
-var $elm$random$Random$list = F2(
-	function (n, _v0) {
-		var gen = _v0;
-		return function (seed) {
-			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
-		};
-	});
-var $author$project$Activity$newId = function () {
-	var digitsToString = function (digits) {
-		return A2(
-			$elm$core$String$join,
-			'',
-			A2($elm$core$List$map, $elm$core$String$fromInt, digits));
-	};
-	return A2(
-		$elm$random$Random$map,
-		digitsToString,
-		A2(
-			$elm$random$Random$list,
-			10,
-			A2($elm$random$Random$int, 0, 9)));
-}();
-var $author$project$Main$initActivity = F2(
-	function (today, dateM) {
-		var date = A2($elm$core$Maybe$withDefault, today, dateM);
-		var completed = (!A2($justinmimbs$date$Date$compare, date, today)) || _Utils_eq(date, today);
-		return A2(
-			$elm$random$Random$generate,
-			$author$project$Msg$NewActivity,
-			A2(
-				$elm$random$Random$map,
-				function (id) {
-					return A4(
-						$author$project$Activity$Activity,
-						id,
-						date,
-						'',
-						A3($author$project$Activity$Run, 30, 0, completed));
-				},
-				$author$project$Activity$newId));
-	});
-var $author$project$ActivityForm$initMove = function (activity) {
-	var model = $author$project$ActivityForm$init(activity);
-	return _Utils_update(
-		model,
-		{aq: $elm$core$Maybe$Nothing});
-};
-var $author$project$Msg$Group = F2(
-	function (a, b) {
-		return {$: 11, a: a, b: b};
-	});
-var $author$project$Main$initSession = F2(
-	function (head, activities) {
-		return A2(
-			$elm$random$Random$generate,
-			$author$project$Msg$Group(activities),
-			A2(
-				$elm$random$Random$map,
-				function (id) {
-					return A4(
-						$author$project$Activity$Activity,
-						id,
-						head.aq,
-						'',
-						$author$project$Activity$Session(activities));
-				},
-				$author$project$Activity$newId));
-	});
-var $elm$core$Tuple$mapFirst = F2(
-	function (func, _v0) {
-		var x = _v0.a;
-		var y = _v0.b;
-		return _Utils_Tuple2(
-			func(x),
-			y);
-	});
-var $author$project$Main$loaded = function (stateTuple) {
-	return A2($elm$core$Tuple$mapFirst, $author$project$Main$Loaded, stateTuple);
-};
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (!maybe.$) {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $elm$core$List$maximum = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(
-			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm$core$List$minimum = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(
-			A3($elm$core$List$foldl, $elm$core$Basics$min, x, xs));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm$core$Tuple$second = function (_v0) {
-	var y = _v0.b;
-	return y;
-};
-var $elm$browser$Browser$Dom$setViewportOf = _Browser_setViewportOf;
-var $elm$core$List$unzip = function (pairs) {
-	var step = F2(
-		function (_v0, _v1) {
-			var x = _v0.a;
-			var y = _v0.b;
-			var xs = _v1.a;
-			var ys = _v1.b;
-			return _Utils_Tuple2(
-				A2($elm$core$List$cons, x, xs),
-				A2($elm$core$List$cons, y, ys));
-		});
-	return A3(
-		$elm$core$List$foldr,
-		step,
-		_Utils_Tuple2(_List_Nil, _List_Nil),
-		pairs);
-};
-var $author$project$Msg$Update = function (a) {
-	return {$: 13, a: a};
-};
-var $author$project$ActivityForm$apply = F2(
-	function (toMsg, _v0) {
-		var result = _v0.L;
-		if (!result.$) {
-			var activity = result.a;
-			return toMsg(activity);
-		} else {
-			return $author$project$Msg$NoOp;
-		}
-	});
-var $author$project$Store$cmd = function (msg) {
-	return A2(
-		$elm$core$Task$perform,
-		function (_v0) {
-			return msg;
-		},
-		$elm$core$Task$succeed(0));
-};
-var $author$project$ActivityForm$updateCompleted = function (dataForm) {
-	switch (dataForm.$) {
-		case 0:
-			var data = dataForm.a;
-			return $author$project$Msg$RunForm(
-				_Utils_update(
-					data,
-					{e: !data.e}));
-		case 1:
-			var data = dataForm.a;
-			return $author$project$Msg$IntervalForm(
-				_Utils_update(
-					data,
-					{e: !data.e}));
-		case 2:
-			var data = dataForm.a;
-			return $author$project$Msg$RaceForm(
-				_Utils_update(
-					data,
-					{e: !data.e}));
-		case 3:
-			var data = dataForm.a;
-			return $author$project$Msg$OtherForm(
-				_Utils_update(
-					data,
-					{e: !data.e}));
-		default:
-			return dataForm;
-	}
-};
-var $author$project$ActivityForm$Defaults = F5(
-	function (duration, pace, distance, completed, emoji) {
-		return {e: completed, p: distance, f: duration, t: emoji, l: pace};
-	});
-var $author$project$Emoji$EmojiData = F3(
-	function (name, x, y) {
-		return {ab: name, a4: x, a5: y};
-	});
-var $author$project$Emoji$default = A3($author$project$Emoji$EmojiData, 'smiley', 30, 38);
-var $author$project$ActivityForm$parseDuration = function (str) {
-	return $elm$core$String$isEmpty(str) ? 0 : A2(
-		$elm$core$Maybe$withDefault,
-		0,
-		$elm$core$String$toInt(str));
-};
-var $author$project$ActivityForm$defaults = function (dataForm) {
-	var pace_ = function () {
-		if (!dataForm.$) {
-			var pace = dataForm.a.l;
-			return pace;
-		} else {
-			return 0;
-		}
-	}();
-	var emoji_ = function () {
-		if (dataForm.$ === 4) {
-			var emoji = dataForm.a.t;
-			return emoji;
-		} else {
-			return $author$project$Emoji$default.ab;
-		}
-	}();
-	var duration_ = $author$project$ActivityForm$parseDuration(
-		function () {
-			switch (dataForm.$) {
-				case 0:
-					var duration = dataForm.a.f;
-					return duration;
-				case 2:
-					var duration = dataForm.a.f;
-					return duration;
-				case 3:
-					var duration = dataForm.a.f;
-					return duration;
-				default:
-					return '30';
-			}
-		}());
-	var distance_ = function () {
-		if (dataForm.$ === 2) {
-			var distance = dataForm.a.p;
-			return distance;
-		} else {
-			return 0;
-		}
-	}();
-	var completed_ = function () {
-		switch (dataForm.$) {
-			case 0:
-				var completed = dataForm.a.e;
-				return completed;
-			case 2:
-				var completed = dataForm.a.e;
-				return completed;
-			case 3:
-				var completed = dataForm.a.e;
-				return completed;
-			default:
-				return true;
-		}
-	}();
-	return A5($author$project$ActivityForm$Defaults, duration_, pace_, distance_, completed_, emoji_);
-};
-var $author$project$ActivityForm$updateDistance = F2(
-	function (distanceStr, dataForm) {
-		if (dataForm.$ === 2) {
-			var data = dataForm.a;
-			return $author$project$Msg$RaceForm(
-				_Utils_update(
-					data,
-					{
-						p: A2(
-							$elm$core$Maybe$withDefault,
-							$author$project$ActivityForm$defaults(dataForm).p,
-							$author$project$Activity$distance.Z(distanceStr))
-					}));
-		} else {
-			return dataForm;
-		}
-	});
-var $author$project$ActivityForm$updateDuration = F2(
-	function (duration, dataForm) {
-		switch (dataForm.$) {
-			case 0:
-				var data = dataForm.a;
-				return $author$project$Msg$RunForm(
-					_Utils_update(
-						data,
-						{f: duration}));
-			case 1:
-				var data = dataForm.a;
-				return $author$project$Msg$IntervalForm(
-					_Utils_update(
-						data,
-						{f: duration}));
-			case 2:
-				var data = dataForm.a;
-				return $author$project$Msg$RaceForm(
-					_Utils_update(
-						data,
-						{f: duration}));
-			case 3:
-				var data = dataForm.a;
-				return $author$project$Msg$OtherForm(
-					_Utils_update(
-						data,
-						{f: duration}));
-			default:
-				return dataForm;
-		}
-	});
-var $author$project$ActivityForm$updatePace = F2(
-	function (paceStr, dataForm) {
-		switch (dataForm.$) {
-			case 0:
-				var data = dataForm.a;
-				return $author$project$Msg$RunForm(
-					_Utils_update(
-						data,
-						{
-							l: A2(
-								$elm$core$Maybe$withDefault,
-								$author$project$ActivityForm$defaults(dataForm).l,
-								$author$project$Activity$pace.Z(paceStr))
-						}));
-			case 1:
-				var data = dataForm.a;
-				return $author$project$Msg$IntervalForm(
-					_Utils_update(
-						data,
-						{
-							l: A2(
-								$elm$core$Maybe$withDefault,
-								$author$project$ActivityForm$defaults(dataForm).l,
-								$author$project$Activity$pace.Z(paceStr))
-						}));
-			default:
-				return dataForm;
-		}
-	});
-var $elm$core$Result$map2 = F3(
-	function (func, ra, rb) {
-		if (ra.$ === 1) {
-			var x = ra.a;
-			return $elm$core$Result$Err(x);
-		} else {
-			var a = ra.a;
-			if (rb.$ === 1) {
-				var x = rb.a;
-				return $elm$core$Result$Err(x);
-			} else {
-				var b = rb.a;
-				return $elm$core$Result$Ok(
-					A2(func, a, b));
-			}
-		}
-	});
-var $author$project$ActivityForm$toActivityData = function (dataForm) {
-	switch (dataForm.$) {
-		case 0:
-			var duration = dataForm.a.f;
-			var pace = dataForm.a.l;
-			var completed = dataForm.a.e;
-			return A3(
-				$author$project$Activity$Run,
-				$author$project$ActivityForm$parseDuration(duration),
-				pace,
-				completed);
-		case 1:
-			var duration = dataForm.a.f;
-			var pace = dataForm.a.l;
-			var completed = dataForm.a.e;
-			return A3(
-				$author$project$Activity$Interval,
-				$author$project$ActivityForm$parseDuration(duration),
-				pace,
-				completed);
-		case 2:
-			var duration = dataForm.a.f;
-			var distance = dataForm.a.p;
-			var completed = dataForm.a.e;
-			return A3(
-				$author$project$Activity$Race,
-				$author$project$ActivityForm$parseDuration(duration),
-				distance,
-				completed);
-		case 3:
-			var duration = dataForm.a.f;
-			var completed = dataForm.a.e;
-			return A2(
-				$author$project$Activity$Other,
-				$author$project$ActivityForm$parseDuration(duration),
-				completed);
-		case 4:
-			var emoji = dataForm.a.t;
-			return $author$project$Activity$Note(emoji);
-		default:
-			var activities = dataForm.a;
-			return $author$project$Activity$Session(activities);
-	}
-};
-var $author$project$Msg$EmptyFieldError = function (a) {
-	return {$: 1, a: a};
-};
-var $author$project$ActivityForm$validateFieldExists = F2(
-	function (fieldM, fieldName) {
-		if (!fieldM.$) {
-			var field = fieldM.a;
-			return $elm$core$Result$Ok(field);
-		} else {
-			return $elm$core$Result$Err(
-				$author$project$Msg$EmptyFieldError(fieldName));
-		}
-	});
-var $author$project$ActivityForm$validate = function (model) {
-	return A3(
-		$elm$core$Result$map2,
-		F2(
-			function (date, description) {
-				return A4(
-					$author$project$Activity$Activity,
-					model.aC,
-					date,
-					description,
-					$author$project$ActivityForm$toActivityData(model.g));
-			}),
-		A2($author$project$ActivityForm$validateFieldExists, model.aq, 'date'),
-		A2(
-			$author$project$ActivityForm$validateFieldExists,
-			$elm$core$Maybe$Just(model.as),
-			'description'));
-};
-var $author$project$ActivityForm$updateResult = function (model) {
-	return _Utils_update(
-		model,
-		{
-			L: $author$project$ActivityForm$validate(model)
-		});
-};
-var $author$project$ActivityForm$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 29:
-				var date = msg.a;
-				var _v1 = model.aq;
-				if (_v1.$ === 1) {
-					var newModel = $author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								aq: $elm$core$Maybe$Just(date)
-							}));
-					return _Utils_Tuple2(
-						newModel,
-						$author$project$Store$cmd(
-							A2(
-								$author$project$ActivityForm$apply,
-								$author$project$Msg$Move(date),
-								newModel)));
-				} else {
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				}
-			case 30:
-				var activityData = msg.a;
-				switch (activityData.$) {
-					case 0:
-						var mins = activityData.a;
-						var pace_ = activityData.b;
-						var completed = activityData.c;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$RunForm(
-											{
-												e: completed,
-												f: $elm$core$String$fromInt(mins),
-												l: pace_
-											})
-									})),
-							$elm$core$Platform$Cmd$none);
-					case 1:
-						var secs = activityData.a;
-						var pace_ = activityData.b;
-						var completed = activityData.c;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$IntervalForm(
-											{
-												e: completed,
-												f: $elm$core$String$fromInt(secs),
-												l: pace_
-											})
-									})),
-							$elm$core$Platform$Cmd$none);
-					case 2:
-						var mins = activityData.a;
-						var dist = activityData.b;
-						var completed = activityData.c;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$RaceForm(
-											{
-												e: completed,
-												p: dist,
-												f: $elm$core$String$fromInt(mins)
-											})
-									})),
-							$elm$core$Platform$Cmd$none);
-					case 3:
-						var mins = activityData.a;
-						var completed = activityData.b;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$OtherForm(
-											{
-												e: completed,
-												f: $elm$core$String$fromInt(mins)
-											})
-									})),
-							$elm$core$Platform$Cmd$none);
-					case 4:
-						var emoji = activityData.a;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$NoteForm(
-											{t: emoji})
-									})),
-							$elm$core$Platform$Cmd$none);
-					default:
-						var activities = activityData.a;
-						return _Utils_Tuple2(
-							$author$project$ActivityForm$updateResult(
-								_Utils_update(
-									model,
-									{
-										g: $author$project$Msg$SessionForm(activities)
-									})),
-							$elm$core$Platform$Cmd$none);
-				}
-			case 31:
-				var desc = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{as: desc})),
-					$elm$core$Platform$Cmd$none);
-			case 32:
-				var _char = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								g: $author$project$Msg$NoteForm(
-									{t: _char})
-							})),
-					$elm$core$Platform$Cmd$none);
-			case 33:
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								g: $author$project$ActivityForm$updateCompleted(model.g)
-							})),
-					$elm$core$Platform$Cmd$none);
-			case 34:
-				var str = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								g: A2($author$project$ActivityForm$updateDuration, str, model.g)
-							})),
-					$elm$core$Platform$Cmd$none);
-			case 35:
-				var str = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								g: A2($author$project$ActivityForm$updatePace, str, model.g)
-							})),
-					$elm$core$Platform$Cmd$none);
-			case 36:
-				var str = msg.a;
-				return _Utils_Tuple2(
-					$author$project$ActivityForm$updateResult(
-						_Utils_update(
-							model,
-							{
-								g: A2($author$project$ActivityForm$updateDistance, str, model.g)
-							})),
-					$elm$core$Platform$Cmd$none);
-			case 37:
-				return _Utils_Tuple2(
-					model,
-					$author$project$Store$cmd(
-						A2($author$project$ActivityForm$apply, $author$project$Msg$Update, model)));
-			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-		}
-	});
-var $author$project$Main$updateActivityForm = F2(
-	function (msg, _v0) {
-		var calendar = _v0.a;
-		var store = _v0.b;
-		var activityM = _v0.c;
-		var _v1 = function () {
-			if (activityM.$ === 1) {
-				var form = activityM.a;
-				return A2(
-					$elm$core$Tuple$mapFirst,
-					$author$project$Msg$Editing,
-					A2($author$project$ActivityForm$update, msg, form));
-			} else {
-				return _Utils_Tuple2(activityM, $elm$core$Platform$Cmd$none);
-			}
-		}();
-		var newActivityM = _v1.a;
-		var cmd = _v1.b;
-		return _Utils_Tuple2(
-			A3($author$project$Main$State, calendar, store, newActivityM),
-			cmd);
-	});
 var $author$project$Msg$ScrollCompleted = function (a) {
 	return {$: 22, a: a};
 };
@@ -9479,9 +8446,9 @@ var $author$project$Calendar$returnScroll = function (previousHeight) {
 					return $elm$core$Task$sequence(
 						_List_fromArray(
 							[
-								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aW.u - previousHeight),
+								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aT.u - previousHeight),
 								$elm$core$Process$sleep(100),
-								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aW.u - previousHeight)
+								A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.aT.u - previousHeight)
 							]));
 				},
 				$elm$browser$Browser$Dom$getViewportOf('calendar'))));
@@ -9581,6 +8548,231 @@ var $author$project$Store$debounceFlush = function (length) {
 		},
 		$elm$core$Process$sleep(5000));
 };
+var $elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3($elm$core$List$foldr, $elm$core$List$cons, ys, xs);
+		}
+	});
+var $elm$core$List$concat = function (lists) {
+	return A3($elm$core$List$foldr, $elm$core$List$append, _List_Nil, lists);
+};
+var $elm$core$List$partition = F2(
+	function (pred, list) {
+		var step = F2(
+			function (x, _v0) {
+				var trues = _v0.a;
+				var falses = _v0.b;
+				return pred(x) ? _Utils_Tuple2(
+					A2($elm$core$List$cons, x, trues),
+					falses) : _Utils_Tuple2(
+					trues,
+					A2($elm$core$List$cons, x, falses));
+			});
+		return A3(
+			$elm$core$List$foldr,
+			step,
+			_Utils_Tuple2(_List_Nil, _List_Nil),
+			list);
+	});
+var $author$project$Store$updateActivity = F3(
+	function (activity, isNew, activities) {
+		return isNew ? function (_v0) {
+			var after = _v0.a;
+			var before = _v0.b;
+			return $elm$core$List$concat(
+				_List_fromArray(
+					[
+						before,
+						_List_fromArray(
+						[activity]),
+						after
+					]));
+		}(
+			A2(
+				$elm$core$List$partition,
+				function (a) {
+					return A2($justinmimbs$date$Date$compare, a.an, activity.an) === 2;
+				},
+				activities)) : A2(
+			$elm$core$List$map,
+			function (existing) {
+				return _Utils_eq(existing.ay, activity.ay) ? activity : existing;
+			},
+			activities);
+	});
+var $author$project$Store$moveActivity = F3(
+	function (activity, toDate, activities) {
+		return A3(
+			$author$project$Store$updateActivity,
+			_Utils_update(
+				activity,
+				{an: toDate}),
+			true,
+			A2(
+				$elm$core$List$filter,
+				function (a) {
+					return !_Utils_eq(a.ay, activity.ay);
+				},
+				activities));
+	});
+var $author$project$Store$shiftUp = F2(
+	function (id, activities) {
+		if (activities.b && activities.b.b) {
+			var a = activities.a;
+			var _v1 = activities.b;
+			var b = _v1.a;
+			var tail = _v1.b;
+			return _Utils_eq(a.ay, id) ? activities : (_Utils_eq(b.ay, id) ? A2(
+				$elm$core$List$cons,
+				b,
+				A2($elm$core$List$cons, a, tail)) : A2(
+				$elm$core$List$cons,
+				a,
+				A2(
+					$author$project$Store$shiftUp,
+					id,
+					A2($elm$core$List$cons, b, tail))));
+		} else {
+			return activities;
+		}
+	});
+var $author$project$Store$shiftActivity = F3(
+	function (activity, moveUp, activities) {
+		var on = A2(
+			$elm$core$List$filter,
+			function (a) {
+				return _Utils_eq(a.an, activity.an);
+			},
+			activities);
+		var before = A2(
+			$elm$core$List$filter,
+			function (a) {
+				return !A2($justinmimbs$date$Date$compare, a.an, activity.an);
+			},
+			activities);
+		var after = A2(
+			$elm$core$List$filter,
+			function (a) {
+				return A2($justinmimbs$date$Date$compare, a.an, activity.an) === 2;
+			},
+			activities);
+		return moveUp ? $elm$core$List$concat(
+			_List_fromArray(
+				[
+					before,
+					A2($author$project$Store$shiftUp, activity.ay, on),
+					after
+				])) : $elm$core$List$concat(
+			_List_fromArray(
+				[
+					before,
+					$elm$core$List$reverse(
+					A2(
+						$author$project$Store$shiftUp,
+						activity.ay,
+						$elm$core$List$reverse(on))),
+					after
+				]));
+	});
+var $author$project$Store$updateState = F2(
+	function (msg, state) {
+		switch (msg.$) {
+			case 10:
+				var activity = msg.a;
+				return _Utils_update(
+					state,
+					{
+						ai: A3($author$project$Store$updateActivity, activity, true, state.ai)
+					});
+			case 11:
+				var activities = msg.a;
+				var session = msg.b;
+				var ids = A2(
+					$elm$core$List$map,
+					function ($) {
+						return $.ay;
+					},
+					activities);
+				var removeActivities = A2(
+					$elm$core$List$filter,
+					function (a) {
+						return !A2($elm$core$List$member, a.ay, ids);
+					},
+					state.ai);
+				return _Utils_update(
+					state,
+					{
+						ai: A3($author$project$Store$updateActivity, session, true, removeActivities)
+					});
+			case 12:
+				var activities = msg.a;
+				var session = msg.b;
+				var ungrouped = A3(
+					$elm$core$List$foldl,
+					F2(
+						function (a, b) {
+							return A3(
+								$author$project$Store$updateActivity,
+								_Utils_update(
+									a,
+									{an: session.an}),
+								true,
+								b);
+						}),
+					state.ai,
+					activities);
+				return _Utils_update(
+					state,
+					{
+						ai: A2(
+							$elm$core$List$filter,
+							function (a) {
+								return !_Utils_eq(a.ay, session.ay);
+							},
+							ungrouped)
+					});
+			case 13:
+				var activity = msg.a;
+				return _Utils_update(
+					state,
+					{
+						ai: A3($author$project$Store$updateActivity, activity, false, state.ai)
+					});
+			case 14:
+				var date = msg.a;
+				var activity = msg.b;
+				return _Utils_update(
+					state,
+					{
+						ai: A3($author$project$Store$moveActivity, activity, date, state.ai)
+					});
+			case 15:
+				var up = msg.a;
+				var activity = msg.b;
+				return _Utils_update(
+					state,
+					{
+						ai: A3($author$project$Store$shiftActivity, activity, up, state.ai)
+					});
+			case 16:
+				var activity = msg.a;
+				return _Utils_update(
+					state,
+					{
+						ai: A2(
+							$elm$core$List$filter,
+							function (a) {
+								return !_Utils_eq(a.ay, activity.ay);
+							},
+							state.ai)
+					});
+			default:
+				return state;
+		}
+	});
 var $author$project$Store$update = F2(
 	function (msg, _v0) {
 		var state = _v0.a;
@@ -9695,11 +8887,7 @@ var $author$project$Main$update = F2(
 								$elm$core$Platform$Cmd$batch(
 									_List_fromArray(
 										[
-											A2($elm$core$Task$perform, $author$project$Msg$LoadToday, $justinmimbs$date$Date$today),
-											A2(
-											$elm$core$Task$attempt,
-											$author$project$Msg$GotActivities,
-											A2($elm$core$Task$map, $elm$core$Tuple$second, $author$project$Api$getActivities))
+											A2($elm$core$Task$perform, $author$project$Msg$LoadToday, $justinmimbs$date$Date$today)
 										])));
 						} else {
 							return _Utils_Tuple2(
@@ -9736,7 +8924,7 @@ var $author$project$Main$update = F2(
 						var autoScrollCalendar = A2(
 							$elm$core$Task$andThen,
 							function (info) {
-								return (y < 0) ? $elm$core$Task$succeed(0) : ((_Utils_cmp(y, (info.T.u * 0.9) + navbarHeight) > 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.T.a5 + distance) : ((_Utils_cmp(y, (info.T.u * 0.1) + navbarHeight) < 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.T.a5 - distance) : $elm$core$Task$succeed(0)));
+								return (y < 0) ? $elm$core$Task$succeed(0) : ((_Utils_cmp(y, (info.S.u * 0.9) + navbarHeight) > 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a2 + distance) : ((_Utils_cmp(y, (info.S.u * 0.1) + navbarHeight) < 0) ? A3($elm$browser$Browser$Dom$setViewportOf, 'calendar', 0, info.S.a2 - distance) : $elm$core$Task$succeed(0)));
 							},
 							$elm$browser$Browser$Dom$getViewportOf('calendar'));
 						return _Utils_Tuple2(
@@ -9768,14 +8956,14 @@ var $author$project$Main$update = F2(
 							var activity = activityM.a;
 							var x = activityM.b;
 							var y = activityM.c;
-							if (_Utils_eq(activity.aq, date)) {
+							if (_Utils_eq(activity.an, date)) {
 								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 							} else {
 								var newActivityM = A3(
 									$author$project$Msg$Moving,
 									_Utils_update(
 										activity,
-										{aq: date}),
+										{an: date}),
 									x,
 									y);
 								return $author$project$Main$loaded(
@@ -9902,7 +9090,7 @@ var $author$project$Main$update = F2(
 							model,
 							A2(
 								$author$project$Main$initActivity,
-								$author$project$Calendar$get(calendar).bI,
+								$author$project$Calendar$get(calendar).bD,
 								$elm$core$Maybe$Just(date)));
 					case 26:
 						var activity = msg.a;
@@ -9939,13 +9127,13 @@ var $author$project$Main$update = F2(
 								A2(
 									$elm$core$List$filter,
 									function (a) {
-										return _Utils_eq(a.aq, activity.aq);
+										return _Utils_eq(a.an, activity.an);
 									},
 									A2(
 										$author$project$Store$get,
 										store,
 										function ($) {
-											return $.aj;
+											return $.ai;
 										})));
 							var range = function (indexes) {
 								return _Utils_Tuple2(
@@ -9959,11 +9147,11 @@ var $author$project$Main$update = F2(
 											var a = _v16.b;
 											return A2(
 												$elm$core$List$member,
-												a.aC,
+												a.ay,
 												A2(
 													$elm$core$List$map,
 													function ($) {
-														return $.aC;
+														return $.ay;
 													},
 													A2($elm$core$List$cons, activity, selected)));
 										},
@@ -10062,7 +9250,7 @@ var $author$project$Main$update = F2(
 									function (id) {
 										return _Utils_update(
 											activity,
-											{aC: id});
+											{ay: id});
 									},
 									$author$project$Activity$newId)));
 					case 39:
@@ -10161,6 +9349,7 @@ var $elm$core$Result$andThen = F2(
 	});
 var $author$project$MPRData$aerobicRace = '\n{"5k":["0:28:00","0:27:45","0:27:30","0:27:15","0:27:00","0:26:45","0:26:30","0:26:15","0:26:00","0:25:45","0:25:30","0:25:15","0:25:00","0:24:45","0:24:30","0:24:15","0:24:00","0:23:45","0:23:30","0:23:15","0:23:00","0:22:45","0:22:30","0:22:15","0:22:00","0:21:45","0:21:30","0:21:15","0:21:00","0:20:45","0:20:30","0:20:15","0:20:00","0:19:45","0:19:30","0:19:15","0:19:00","0:18:45","0:18:30","0:18:15","0:18:00","0:17:45","0:17:30","0:17:15","0:17:00","0:16:45","0:16:30","0:16:15","0:16:00","0:15:45","0:15:30","0:15:15","0:15:00","0:14:45","0:14:30","0:14:15","0:14:00","0:13:45","0:13:30","0:13:15","0:13:00"],"8k":["0:45:53","0:45:28","0:45:03","0:44:39","0:44:14","0:43:50","0:43:25","0:43:00","0:42:36","0:42:11","0:41:47","0:41:22","0:40:58","0:40:33","0:40:08","0:39:44","0:39:19","0:38:55","0:38:30","0:38:06","0:37:41","0:37:16","0:36:52","0:36:27","0:36:03","0:35:38","0:35:14","0:34:49","0:34:24","0:34:00","0:33:35","0:33:11","0:32:46","0:32:22","0:31:57","0:31:32","0:31:08","0:30:43","0:30:19","0:29:54","0:29:29","0:29:05","0:28:40","0:28:16","0:27:51","0:27:27","0:27:02","0:26:37","0:26:13","0:25:48","0:25:24","0:24:59","0:24:35","0:24:10","0:23:45","0:23:21","0:22:56","0:22:32","0:22:07","0:21:43","0:21:18"],"5 mile":["0:46:09","0:45:44","0:45:19","0:44:55","0:44:30","0:44:05","0:43:40","0:43:16","0:42:51","0:42:26","0:42:01","0:41:37","0:41:12","0:40:47","0:40:23","0:39:58","0:39:33","0:39:08","0:38:44","0:38:19","0:37:54","0:37:30","0:37:05","0:36:40","0:36:15","0:35:51","0:35:26","0:35:01","0:34:37","0:34:12","0:33:47","0:33:22","0:32:58","0:32:33","0:32:08","0:31:43","0:31:19","0:30:54","0:30:29","0:30:05","0:29:40","0:29:15","0:28:50","0:28:26","0:28:01","0:27:36","0:27:12","0:26:47","0:26:22","0:25:57","0:25:33","0:25:08","0:24:43","0:24:19","0:23:54","0:23:29","0:23:04","0:22:40","0:22:15","0:21:50","0:21:25"],"10k":["0:58:14","0:57:43","0:57:12","0:56:41","0:56:10","0:55:38","0:55:07","0:54:36","0:54:05","0:53:34","0:53:02","0:52:31","0:52:00","0:51:29","0:50:58","0:50:26","0:49:55","0:49:24","0:48:53","0:48:22","0:47:50","0:47:19","0:46:48","0:46:17","0:45:46","0:45:14","0:44:43","0:44:12","0:43:41","0:43:10","0:42:38","0:42:07","0:41:36","0:41:05","0:40:34","0:40:02","0:39:31","0:39:00","0:38:29","0:37:58","0:37:26","0:36:55","0:36:24","0:35:53","0:35:22","0:34:50","0:34:19","0:33:48","0:33:17","0:32:46","0:32:14","0:31:43","0:31:12","0:30:41","0:30:10","0:29:38","0:29:07","0:28:36","0:28:05","0:27:34","0:27:02"],"15k":["1:29:06","1:28:19","1:27:31","1:26:43","1:25:55","1:25:08","1:24:20","1:23:32","1:22:45","1:21:57","1:21:09","1:20:21","1:19:34","1:18:46","1:17:58","1:17:10","1:16:23","1:15:35","1:14:47","1:13:59","1:13:12","1:12:24","1:11:36","1:10:49","1:10:01","1:09:13","1:08:25","1:07:38","1:06:50","1:06:02","1:05:14","1:04:27","1:03:39","1:02:51","1:02:03","1:01:16","1:00:28","0:59:40","0:58:52","0:58:05","0:57:17","0:56:29","0:55:42","0:54:54","0:54:06","0:53:18","0:52:31","0:51:43","0:50:55","0:50:07","0:49:20","0:48:32","0:47:44","0:46:56","0:46:09","0:45:21","0:44:33","0:43:45","0:42:58","0:42:10","0:41:22"],"10 mile":["1:35:59","1:35:07","1:34:16","1:33:25","1:32:33","1:31:42","1:30:50","1:29:59","1:29:08","1:28:16","1:27:25","1:26:33","1:25:42","1:24:50","1:23:59","1:23:08","1:22:16","1:21:25","1:20:33","1:19:42","1:18:50","1:17:59","1:17:08","1:16:16","1:15:25","1:14:33","1:13:42","1:12:51","1:11:59","1:11:08","1:10:16","1:09:25","1:08:33","1:07:42","1:06:51","1:05:59","1:05:08","1:04:16","1:03:25","1:02:34","1:01:42","1:00:51","0:59:59","0:59:08","0:58:16","0:57:25","0:56:34","0:55:42","0:54:51","0:53:59","0:53:08","0:52:17","0:51:25","0:50:34","0:49:42","0:48:51","0:47:59","0:47:08","0:46:17","0:45:25","0:44:34"],"20k":["2:01:08","2:00:03","1:58:59","1:57:54","1:56:49","1:55:44","1:54:39","1:53:34","1:52:29","1:51:24","1:50:19","1:49:14","1:48:10","1:47:05","1:46:00","1:44:55","1:43:50","1:42:45","1:41:40","1:40:35","1:39:30","1:38:26","1:37:21","1:36:16","1:35:11","1:34:06","1:33:01","1:31:56","1:30:51","1:29:46","1:28:41","1:27:37","1:26:32","1:25:27","1:24:22","1:23:17","1:22:12","1:21:07","1:20:02","1:18:57","1:17:53","1:16:48","1:15:43","1:14:38","1:13:33","1:12:28","1:11:23","1:10:18","1:09:13","1:08:08","1:07:04","1:05:59","1:04:54","1:03:49","1:02:44","1:01:39","1:00:34","0:59:29","0:58:24","0:57:19","0:56:15"],"Half Marathon":["2:08:19","2:07:11","2:06:02","2:04:53","2:03:44","2:02:36","2:01:27","2:00:18","1:59:09","1:58:01","1:56:52","1:55:43","1:54:34","1:53:26","1:52:17","1:51:08","1:49:59","1:48:51","1:47:42","1:46:33","1:45:25","1:44:16","1:43:07","1:41:58","1:40:50","1:39:41","1:38:32","1:37:23","1:36:15","1:35:06","1:33:57","1:32:48","1:31:40","1:30:31","1:29:22","1:28:13","1:27:05","1:25:56","1:24:47","1:23:38","1:22:30","1:21:21","1:20:12","1:19:03","1:17:55","1:16:46","1:15:37","1:14:28","1:13:20","1:12:11","1:11:02","1:09:53","1:08:45","1:07:36","1:06:27","1:05:18","1:04:10","1:03:01","1:01:52","1:00:43","0:59:35"],"25k":["2:32:56","2:31:34","2:30:12","2:28:51","2:27:29","2:26:07","2:24:45","2:23:23","2:22:01","2:20:39","2:19:17","2:17:55","2:16:33","2:15:11","2:13:49","2:12:27","2:11:05","2:09:43","2:08:22","2:07:00","2:05:38","2:04:16","2:02:54","2:01:32","2:00:10","1:58:48","1:57:26","1:56:04","1:54:42","1:53:20","1:51:58","1:50:36","1:49:14","1:47:53","1:46:31","1:45:09","1:43:47","1:42:25","1:41:03","1:39:41","1:38:19","1:36:57","1:35:35","1:34:13","1:32:51","1:31:29","1:30:07","1:28:46","1:27:24","1:26:02","1:24:40","1:23:18","1:21:56","1:20:34","1:19:12","1:17:50","1:16:28","1:15:06","1:13:44","1:12:22","1:11:00"],"30k":["3:05:21","3:03:41","3:02:02","3:00:23","2:58:43","2:57:04","2:55:25","2:53:46","2:52:06","2:50:27","2:48:48","2:47:08","2:45:29","2:43:50","2:42:11","2:40:31","2:38:52","2:37:13","2:35:33","2:33:54","2:32:15","2:30:35","2:28:56","2:27:17","2:25:38","2:23:58","2:22:19","2:20:40","2:19:00","2:17:21","2:15:42","2:14:03","2:12:23","2:10:44","2:09:05","2:07:25","2:05:46","2:04:07","2:02:28","2:00:48","1:59:09","1:57:30","1:55:50","1:54:11","1:52:32","1:50:52","1:49:13","1:47:34","1:45:55","1:44:15","1:42:36","1:40:57","1:39:17","1:37:38","1:35:59","1:34:20","1:32:40","1:31:01","1:29:22","1:27:42","1:26:03"],"Marathon":["4:26:25","4:24:02","4:21:39","4:19:17","4:16:54","4:14:31","4:12:08","4:09:46","4:07:23","4:05:00","4:02:38","4:00:15","3:57:52","3:55:29","3:53:07","3:50:44","3:48:21","3:45:59","3:43:36","3:41:13","3:38:50","3:36:28","3:34:05","3:31:42","3:29:19","3:26:57","3:24:34","3:22:11","3:19:49","3:17:26","3:15:03","3:12:40","3:10:18","3:07:55","3:05:32","3:03:10","3:00:47","2:58:24","2:56:01","2:53:39","2:51:16","2:48:53","2:46:30","2:44:08","2:41:45","2:39:22","2:37:00","2:34:37","2:32:14","2:29:51","2:27:29","2:25:06","2:22:43","2:20:21","2:17:58","2:15:35","2:13:12","2:10:50","2:08:27","2:06:04","2:03:41"]}\n';
 var $elm$json$Json$Decode$array = _Json_decodeArray;
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
 var $elm$json$Json$Decode$dict = function (decoder) {
 	return A2(
@@ -10311,7 +9500,7 @@ var $elm$core$Result$toMaybe = function (result) {
 	}
 };
 var $author$project$Activity$mprLevel = function (activity) {
-	var _v0 = activity.U;
+	var _v0 = activity.T;
 	if (_v0.$ === 2) {
 		var minutes = _v0.a;
 		var distance_ = _v0.b;
@@ -10326,7 +9515,7 @@ var $author$project$Activity$mprLevel = function (activity) {
 				A3(
 					$author$project$MPRLevel$lookup,
 					0,
-					$author$project$Activity$distance.bH(distance_),
+					$author$project$Activity$distance.bC(distance_),
 					minutes * 60)));
 	} else {
 		return $elm$core$Maybe$Nothing;
@@ -10437,7 +9626,7 @@ var $author$project$ActivityForm$distanceSelect = F2(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$author$project$Activity$distance.bH(distance))
+							$author$project$Activity$distance.bC(distance))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -12290,12 +11479,12 @@ var $author$project$Emoji$filter = function (name) {
 	return $elm$core$String$isEmpty(name) ? $author$project$Emoji$recommended : A2(
 		$elm$core$List$sortBy,
 		function (e) {
-			return $elm$core$String$length(e.ab);
+			return $elm$core$String$length(e.aa);
 		},
 		A2(
 			$elm$core$List$filter,
 			function (emojiData) {
-				return A2($elm$core$String$contains, name, emojiData.ab);
+				return A2($elm$core$String$contains, name, emojiData.aa);
 			},
 			$author$project$Emoji$list));
 };
@@ -12430,9 +11619,9 @@ var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
 var $author$project$Emoji$view = function (_v0) {
-	var name = _v0.ab;
-	var x = _v0.a4;
-	var y = _v0.a5;
+	var name = _v0.aa;
+	var x = _v0.a1;
+	var y = _v0.a2;
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -12466,7 +11655,7 @@ var $author$project$ActivityForm$emojiSelect = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						msg(data.ab)),
+						msg(data.aa)),
 						A2($elm$html$Html$Attributes$style, 'text-align', 'left'),
 						padding,
 						A2($elm$html$Html$Attributes$style, 'white-space', 'nowrap')
@@ -12484,7 +11673,7 @@ var $author$project$ActivityForm$emojiSelect = F2(
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(data.ab)
+								$elm$html$Html$text(data.aa)
 							]))
 					]));
 		};
@@ -12556,14 +11745,14 @@ var $justinmimbs$date$Date$day = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toCalendarDate,
 	function ($) {
-		return $.ar;
+		return $.ao;
 	});
 var $justinmimbs$date$Date$monthNumber = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$month, $justinmimbs$date$Date$monthToNumber);
 var $justinmimbs$date$Date$ordinalDay = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toOrdinalDate,
 	function ($) {
-		return $.ad;
+		return $.ac;
 	});
 var $elm$core$String$cons = _String_cons;
 var $elm$core$String$fromChar = function (_char) {
@@ -12638,22 +11827,22 @@ var $justinmimbs$date$Date$toWeekDate = function (_v0) {
 	var wy = $justinmimbs$date$Date$year(rd + (4 - wdn));
 	var week1Day1 = $justinmimbs$date$Date$daysBeforeWeekYear(wy) + 1;
 	return {
-		a2: 1 + (((rd - week1Day1) / 7) | 0),
-		a3: wy,
-		bL: $justinmimbs$date$Date$numberToWeekday(wdn)
+		a$: 1 + (((rd - week1Day1) / 7) | 0),
+		a0: wy,
+		bG: $justinmimbs$date$Date$numberToWeekday(wdn)
 	};
 };
 var $justinmimbs$date$Date$weekNumber = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.a2;
+		return $.a$;
 	});
 var $justinmimbs$date$Date$weekYear = A2(
 	$elm$core$Basics$composeR,
 	$justinmimbs$date$Date$toWeekDate,
 	function ($) {
-		return $.a3;
+		return $.a0;
 	});
 var $justinmimbs$date$Date$weekday = A2($elm$core$Basics$composeR, $justinmimbs$date$Date$weekdayNumber, $justinmimbs$date$Date$numberToWeekday);
 var $justinmimbs$date$Date$ordinalSuffix = function (n) {
@@ -12751,7 +11940,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.R(
 							$justinmimbs$date$Date$month(date));
 					case 4:
-						return language.aa(
+						return language._(
 							$justinmimbs$date$Date$month(date));
 					case 5:
 						return A2(
@@ -12790,7 +11979,7 @@ var $justinmimbs$date$Date$formatField = F4(
 							$elm$core$String$fromInt(
 								$justinmimbs$date$Date$day(date)));
 					case 3:
-						return language.V(
+						return language.U(
 							$justinmimbs$date$Date$day(date));
 					default:
 						return '';
@@ -12829,7 +12018,7 @@ var $justinmimbs$date$Date$formatField = F4(
 						return language.D(
 							$justinmimbs$date$Date$weekday(date));
 					case 4:
-						return language.ai(
+						return language.ah(
 							$justinmimbs$date$Date$weekday(date));
 					case 5:
 						return A2(
@@ -12903,7 +12092,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.b, offset) < 0,
 					0,
-					{ao: col, c: s0.c, d: s0.d, b: offset, aV: row, a: s0.a});
+					{am: col, c: s0.c, d: s0.d, b: offset, aS: row, a: s0.a});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -12935,7 +12124,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aV, s.ao, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aS, s.am, s);
 	};
 };
 var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
@@ -13152,13 +12341,13 @@ var $justinmimbs$date$Date$weekdayToName = function (wd) {
 	}
 };
 var $justinmimbs$date$Date$language_en = {
-	V: $justinmimbs$date$Date$withOrdinalSuffix,
-	aa: $justinmimbs$date$Date$monthToName,
+	U: $justinmimbs$date$Date$withOrdinalSuffix,
+	_: $justinmimbs$date$Date$monthToName,
 	R: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$monthToName,
 		$elm$core$String$left(3)),
-	ai: $justinmimbs$date$Date$weekdayToName,
+	ah: $justinmimbs$date$Date$weekdayToName,
 	D: A2(
 		$elm$core$Basics$composeR,
 		$justinmimbs$date$Date$weekdayToName,
@@ -13250,6 +12439,7 @@ var $elm$core$Array$get = F2(
 var $author$project$MPRLevel$paceList = _List_fromArray(
 	['Easy', 'Moderate', 'Steady State', 'Brisk', 'Aerobic Threshold', 'Lactate Threshold', 'Groove', 'VO2 Max', 'Fast']);
 var $author$project$MPRData$aerobicTraining = '\n[[["0:11:12","0:12:19"],["0:10:49","0:10:55"],["0:10:27","0:10:32"],["0:10:04","0:10:10"],["0:09:42","0:09:47"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:35","0:08:39"],["0:08:13","0:08:17"]],[["0:11:06","0:12:12"],["0:10:44","0:10:49"],["0:10:21","0:10:27"],["0:09:59","0:10:04"],["0:09:37","0:09:42"],["0:09:15","0:09:20"],["0:08:53","0:08:57"],["0:08:30","0:08:35"],["0:08:08","0:08:13"]],[["0:11:00","0:12:06"],["0:10:38","0:10:44"],["0:10:16","0:10:21"],["0:09:54","0:09:59"],["0:09:32","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:30"],["0:08:04","0:08:08"]],[["0:10:54","0:11:59"],["0:10:32","0:10:38"],["0:10:10","0:10:16"],["0:09:49","0:09:54"],["0:09:27","0:09:32"],["0:09:05","0:09:10"],["0:08:43","0:08:48"],["0:08:21","0:08:26"],["0:08:00","0:08:04"]],[["0:10:48","0:11:53"],["0:10:27","0:10:32"],["0:10:05","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:27"],["0:09:00","0:09:05"],["0:08:39","0:08:43"],["0:08:17","0:08:21"],["0:07:55","0:08:00"]],[["0:10:42","0:11:47"],["0:10:21","0:10:27"],["0:10:00","0:10:05"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:55","0:09:00"],["0:08:34","0:08:39"],["0:08:12","0:08:17"],["0:07:51","0:07:55"]],[["0:10:37","0:11:40"],["0:10:15","0:10:21"],["0:09:54","0:10:00"],["0:09:33","0:09:38"],["0:09:12","0:09:17"],["0:08:50","0:08:55"],["0:08:29","0:08:34"],["0:08:08","0:08:12"],["0:07:47","0:07:51"]],[["0:10:31","0:11:34"],["0:10:10","0:10:15"],["0:09:49","0:09:54"],["0:09:28","0:09:33"],["0:09:07","0:09:12"],["0:08:46","0:08:50"],["0:08:25","0:08:29"],["0:08:03","0:08:08"],["0:07:42","0:07:47"]],[["0:10:25","0:11:27"],["0:10:04","0:10:10"],["0:09:43","0:09:49"],["0:09:22","0:09:28"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:20","0:08:25"],["0:07:59","0:08:03"],["0:07:38","0:07:42"]],[["0:10:19","0:11:21"],["0:09:58","0:10:04"],["0:09:38","0:09:43"],["0:09:17","0:09:22"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:15","0:08:20"],["0:07:55","0:07:59"],["0:07:34","0:07:38"]],[["0:10:13","0:11:14"],["0:09:53","0:09:58"],["0:09:32","0:09:38"],["0:09:12","0:09:17"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:10","0:08:15"],["0:07:50","0:07:55"],["0:07:30","0:07:34"]],[["0:10:07","0:11:08"],["0:09:47","0:09:53"],["0:09:27","0:09:32"],["0:09:07","0:09:12"],["0:08:46","0:08:51"],["0:08:26","0:08:31"],["0:08:06","0:08:10"],["0:07:46","0:07:50"],["0:07:25","0:07:30"]],[["0:10:01","0:11:02"],["0:09:41","0:09:47"],["0:09:21","0:09:27"],["0:09:01","0:09:07"],["0:08:41","0:08:46"],["0:08:21","0:08:26"],["0:08:01","0:08:06"],["0:07:41","0:07:46"],["0:07:21","0:07:25"]],[["0:09:56","0:10:55"],["0:09:36","0:09:41"],["0:09:16","0:09:21"],["0:08:56","0:09:01"],["0:08:36","0:08:41"],["0:08:16","0:08:21"],["0:07:56","0:08:01"],["0:07:37","0:07:41"],["0:07:17","0:07:21"]],[["0:09:50","0:10:49"],["0:09:30","0:09:36"],["0:09:10","0:09:16"],["0:08:51","0:08:56"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:52","0:07:56"],["0:07:32","0:07:37"],["0:07:12","0:07:17"]],[["0:09:44","0:10:42"],["0:09:24","0:09:30"],["0:09:05","0:09:10"],["0:08:45","0:08:51"],["0:08:26","0:08:31"],["0:08:07","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:32"],["0:07:08","0:07:12"]],[["0:09:38","0:10:36"],["0:09:19","0:09:24"],["0:08:59","0:09:05"],["0:08:40","0:08:45"],["0:08:21","0:08:26"],["0:08:02","0:08:07"],["0:07:42","0:07:47"],["0:07:23","0:07:28"],["0:07:04","0:07:08"]],[["0:09:32","0:10:29"],["0:09:13","0:09:19"],["0:08:54","0:08:59"],["0:08:35","0:08:40"],["0:08:16","0:08:21"],["0:07:57","0:08:02"],["0:07:38","0:07:42"],["0:07:19","0:07:23"],["0:07:00","0:07:04"]],[["0:09:26","0:10:23"],["0:09:07","0:09:13"],["0:08:48","0:08:54"],["0:08:30","0:08:35"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:38"],["0:07:14","0:07:19"],["0:06:55","0:07:00"]],[["0:09:20","0:10:16"],["0:09:02","0:09:07"],["0:08:43","0:08:48"],["0:08:24","0:08:30"],["0:08:06","0:08:11"],["0:07:47","0:07:52"],["0:07:28","0:07:33"],["0:07:10","0:07:14"],["0:06:51","0:06:55"]],[["0:09:15","0:10:10"],["0:08:56","0:09:02"],["0:08:38","0:08:43"],["0:08:19","0:08:24"],["0:08:01","0:08:06"],["0:07:42","0:07:47"],["0:07:24","0:07:28"],["0:07:05","0:07:10"],["0:06:47","0:06:51"]],[["0:09:09","0:10:04"],["0:08:50","0:08:56"],["0:08:32","0:08:38"],["0:08:14","0:08:19"],["0:07:56","0:08:01"],["0:07:37","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:05"],["0:06:42","0:06:47"]],[["0:09:03","0:09:57"],["0:08:45","0:08:50"],["0:08:27","0:08:32"],["0:08:09","0:08:14"],["0:07:50","0:07:56"],["0:07:32","0:07:37"],["0:07:14","0:07:19"],["0:06:56","0:07:01"],["0:06:38","0:06:42"]],[["0:08:57","0:09:51"],["0:08:39","0:08:45"],["0:08:21","0:08:27"],["0:08:03","0:08:09"],["0:07:45","0:07:50"],["0:07:27","0:07:32"],["0:07:10","0:07:14"],["0:06:52","0:06:56"],["0:06:34","0:06:38"]],[["0:08:51","0:09:44"],["0:08:33","0:08:39"],["0:08:16","0:08:21"],["0:07:58","0:08:03"],["0:07:40","0:07:45"],["0:07:23","0:07:27"],["0:07:05","0:07:10"],["0:06:47","0:06:52"],["0:06:29","0:06:34"]],[["0:08:45","0:09:38"],["0:08:28","0:08:33"],["0:08:10","0:08:16"],["0:07:53","0:07:58"],["0:07:35","0:07:40"],["0:07:18","0:07:23"],["0:07:00","0:07:05"],["0:06:43","0:06:47"],["0:06:25","0:06:29"]],[["0:08:39","0:09:31"],["0:08:22","0:08:28"],["0:08:05","0:08:10"],["0:07:47","0:07:53"],["0:07:30","0:07:35"],["0:07:13","0:07:18"],["0:06:56","0:07:00"],["0:06:38","0:06:43"],["0:06:21","0:06:25"]],[["0:08:34","0:09:25"],["0:08:16","0:08:22"],["0:07:59","0:08:05"],["0:07:42","0:07:47"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:38"],["0:06:17","0:06:21"]],[["0:08:28","0:09:18"],["0:08:11","0:08:16"],["0:07:54","0:07:59"],["0:07:37","0:07:42"],["0:07:20","0:07:25"],["0:07:03","0:07:08"],["0:06:46","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"]],[["0:08:22","0:09:12"],["0:08:05","0:08:11"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:15","0:07:20"],["0:06:58","0:07:03"],["0:06:41","0:06:46"],["0:06:25","0:06:29"],["0:06:08","0:06:12"]],[["0:08:16","0:09:06"],["0:07:59","0:08:05"],["0:07:43","0:07:48"],["0:07:26","0:07:32"],["0:07:10","0:07:15"],["0:06:53","0:06:58"],["0:06:37","0:06:41"],["0:06:20","0:06:25"],["0:06:04","0:06:08"]],[["0:08:10","0:08:59"],["0:07:54","0:07:59"],["0:07:37","0:07:43"],["0:07:21","0:07:26"],["0:07:05","0:07:10"],["0:06:48","0:06:53"],["0:06:32","0:06:37"],["0:06:16","0:06:20"],["0:05:59","0:06:04"]],[["0:08:04","0:08:53"],["0:07:48","0:07:54"],["0:07:32","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:48"],["0:06:27","0:06:32"],["0:06:11","0:06:16"],["0:05:55","0:05:59"]],[["0:07:58","0:08:46"],["0:07:42","0:07:48"],["0:07:26","0:07:32"],["0:07:11","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:23","0:06:27"],["0:06:07","0:06:11"],["0:05:51","0:05:55"]],[["0:07:53","0:08:40"],["0:07:37","0:07:42"],["0:07:21","0:07:26"],["0:07:05","0:07:11"],["0:06:50","0:06:55"],["0:06:34","0:06:39"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:47","0:05:51"]],[["0:07:47","0:08:33"],["0:07:31","0:07:37"],["0:07:16","0:07:21"],["0:07:00","0:07:05"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:18"],["0:05:58","0:06:02"],["0:05:42","0:05:47"]],[["0:07:41","0:08:27"],["0:07:25","0:07:31"],["0:07:10","0:07:16"],["0:06:55","0:07:00"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:42"]],[["0:07:35","0:08:20"],["0:07:20","0:07:25"],["0:07:05","0:07:10"],["0:06:49","0:06:55"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:49","0:05:53"],["0:05:34","0:05:38"]],[["0:07:29","0:08:14"],["0:07:14","0:07:20"],["0:06:59","0:07:05"],["0:06:44","0:06:49"],["0:06:29","0:06:34"],["0:06:14","0:06:19"],["0:05:59","0:06:04"],["0:05:44","0:05:49"],["0:05:29","0:05:34"]],[["0:07:23","0:08:08"],["0:07:08","0:07:14"],["0:06:54","0:06:59"],["0:06:39","0:06:44"],["0:06:24","0:06:29"],["0:06:09","0:06:14"],["0:05:55","0:05:59"],["0:05:40","0:05:44"],["0:05:25","0:05:29"]],[["0:07:17","0:08:01"],["0:07:03","0:07:08"],["0:06:48","0:06:54"],["0:06:34","0:06:39"],["0:06:19","0:06:24"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:35","0:05:40"],["0:05:21","0:05:25"]],[["0:07:12","0:07:55"],["0:06:57","0:07:03"],["0:06:43","0:06:48"],["0:06:28","0:06:34"],["0:06:14","0:06:19"],["0:06:00","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:35"],["0:05:16","0:05:21"]],[["0:07:06","0:07:48"],["0:06:51","0:06:57"],["0:06:37","0:06:43"],["0:06:23","0:06:28"],["0:06:09","0:06:14"],["0:05:55","0:06:00"],["0:05:41","0:05:45"],["0:05:26","0:05:31"],["0:05:12","0:05:16"]],[["0:07:00","0:07:42"],["0:06:46","0:06:51"],["0:06:32","0:06:37"],["0:06:18","0:06:23"],["0:06:04","0:06:09"],["0:05:50","0:05:55"],["0:05:36","0:05:41"],["0:05:22","0:05:26"],["0:05:08","0:05:12"]],[["0:06:54","0:07:35"],["0:06:40","0:06:46"],["0:06:26","0:06:32"],["0:06:13","0:06:18"],["0:05:59","0:06:04"],["0:05:45","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:04","0:05:08"]],[["0:06:48","0:07:29"],["0:06:35","0:06:40"],["0:06:21","0:06:26"],["0:06:07","0:06:13"],["0:05:54","0:05:59"],["0:05:40","0:05:45"],["0:05:26","0:05:31"],["0:05:13","0:05:17"],["0:04:59","0:05:04"]],[["0:06:42","0:07:22"],["0:06:29","0:06:35"],["0:06:15","0:06:21"],["0:06:02","0:06:07"],["0:05:49","0:05:54"],["0:05:35","0:05:40"],["0:05:22","0:05:26"],["0:05:08","0:05:13"],["0:04:55","0:04:59"]],[["0:06:36","0:07:16"],["0:06:23","0:06:29"],["0:06:10","0:06:15"],["0:05:57","0:06:02"],["0:05:44","0:05:49"],["0:05:30","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:08"],["0:04:51","0:04:55"]],[["0:06:31","0:07:10"],["0:06:18","0:06:23"],["0:06:05","0:06:10"],["0:05:51","0:05:57"],["0:05:38","0:05:44"],["0:05:25","0:05:30"],["0:05:12","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:51"]],[["0:06:25","0:07:03"],["0:06:12","0:06:18"],["0:05:59","0:06:05"],["0:05:46","0:05:51"],["0:05:33","0:05:38"],["0:05:21","0:05:25"],["0:05:08","0:05:12"],["0:04:55","0:04:59"],["0:04:42","0:04:46"]],[["0:06:19","0:06:57"],["0:06:06","0:06:12"],["0:05:54","0:05:59"],["0:05:41","0:05:46"],["0:05:28","0:05:33"],["0:05:16","0:05:21"],["0:05:03","0:05:08"],["0:04:50","0:04:55"],["0:04:38","0:04:42"]],[["0:06:13","0:06:50"],["0:06:01","0:06:06"],["0:05:48","0:05:54"],["0:05:36","0:05:41"],["0:05:23","0:05:28"],["0:05:11","0:05:16"],["0:04:58","0:05:03"],["0:04:46","0:04:50"],["0:04:34","0:04:38"]],[["0:06:07","0:06:44"],["0:05:55","0:06:01"],["0:05:43","0:05:48"],["0:05:30","0:05:36"],["0:05:18","0:05:23"],["0:05:06","0:05:11"],["0:04:54","0:04:58"],["0:04:41","0:04:46"],["0:04:29","0:04:34"]],[["0:06:01","0:06:37"],["0:05:49","0:05:55"],["0:05:37","0:05:43"],["0:05:25","0:05:30"],["0:05:13","0:05:18"],["0:05:01","0:05:06"],["0:04:49","0:04:54"],["0:04:37","0:04:41"],["0:04:25","0:04:29"]],[["0:05:55","0:06:31"],["0:05:44","0:05:49"],["0:05:32","0:05:37"],["0:05:20","0:05:25"],["0:05:08","0:05:13"],["0:04:56","0:05:01"],["0:04:44","0:04:49"],["0:04:32","0:04:37"],["0:04:21","0:04:25"]],[["0:05:50","0:06:25"],["0:05:38","0:05:44"],["0:05:26","0:05:32"],["0:05:15","0:05:20"],["0:05:03","0:05:08"],["0:04:51","0:04:56"],["0:04:40","0:04:44"],["0:04:28","0:04:32"],["0:04:16","0:04:21"]],[["0:05:44","0:06:18"],["0:05:32","0:05:38"],["0:05:21","0:05:26"],["0:05:09","0:05:15"],["0:04:58","0:05:03"],["0:04:46","0:04:51"],["0:04:35","0:04:40"],["0:04:24","0:04:28"],["0:04:12","0:04:16"]],[["0:05:38","0:06:12"],["0:05:27","0:05:32"],["0:05:15","0:05:21"],["0:05:04","0:05:09"],["0:04:53","0:04:58"],["0:04:42","0:04:46"],["0:04:30","0:04:35"],["0:04:19","0:04:24"],["0:04:08","0:04:12"]],[["0:05:32","0:06:05"],["0:05:21","0:05:27"],["0:05:10","0:05:15"],["0:04:59","0:05:04"],["0:04:48","0:04:53"],["0:04:37","0:04:42"],["0:04:26","0:04:30"],["0:04:15","0:04:19"],["0:04:03","0:04:08"]],[["0:05:26","0:05:59"],["0:05:15","0:05:21"],["0:05:04","0:05:10"],["0:04:54","0:04:59"],["0:04:43","0:04:48"],["0:04:32","0:04:37"],["0:04:21","0:04:26"],["0:04:10","0:04:15"],["0:03:59","0:04:03"]]]\n';
+var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$MPRData$neutralTraining = '\n[[["0:11:29","0:12:38"],["0:11:04","0:11:09"],["0:10:38","0:10:44"],["0:10:13","0:10:18"],["0:09:48","0:09:53"],["0:09:22","0:09:27"],["0:08:57","0:09:02"],["0:08:32","0:08:36"],["0:08:06","0:08:11"]],[["0:11:23","0:12:31"],["0:10:58","0:11:04"],["0:10:33","0:10:38"],["0:10:08","0:10:13"],["0:09:43","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:27","0:08:32"],["0:08:02","0:08:06"]],[["0:11:17","0:12:25"],["0:10:52","0:10:58"],["0:10:27","0:10:33"],["0:10:02","0:10:08"],["0:09:37","0:09:43"],["0:09:13","0:09:17"],["0:08:48","0:08:52"],["0:08:23","0:08:27"],["0:07:58","0:08:02"]],[["0:11:11","0:12:18"],["0:10:46","0:10:52"],["0:10:22","0:10:27"],["0:09:57","0:10:02"],["0:09:32","0:09:37"],["0:09:08","0:09:13"],["0:08:43","0:08:48"],["0:08:18","0:08:23"],["0:07:54","0:07:58"]],[["0:11:05","0:12:11"],["0:10:41","0:10:46"],["0:10:16","0:10:22"],["0:09:52","0:09:57"],["0:09:27","0:09:32"],["0:09:03","0:09:08"],["0:08:38","0:08:43"],["0:08:14","0:08:18"],["0:07:50","0:07:54"]],[["0:10:59","0:12:05"],["0:10:35","0:10:41"],["0:10:11","0:10:16"],["0:09:46","0:09:52"],["0:09:22","0:09:27"],["0:08:58","0:09:03"],["0:08:34","0:08:38"],["0:08:10","0:08:14"],["0:07:45","0:07:50"]],[["0:10:53","0:11:58"],["0:10:29","0:10:35"],["0:10:05","0:10:11"],["0:09:41","0:09:46"],["0:09:17","0:09:22"],["0:08:53","0:08:58"],["0:08:29","0:08:34"],["0:08:05","0:08:10"],["0:07:41","0:07:45"]],[["0:10:47","0:11:52"],["0:10:23","0:10:29"],["0:09:59","0:10:05"],["0:09:36","0:09:41"],["0:09:12","0:09:17"],["0:08:48","0:08:53"],["0:08:24","0:08:29"],["0:08:01","0:08:05"],["0:07:37","0:07:41"]],[["0:10:41","0:11:45"],["0:10:17","0:10:23"],["0:09:54","0:09:59"],["0:09:30","0:09:36"],["0:09:07","0:09:12"],["0:08:43","0:08:48"],["0:08:20","0:08:24"],["0:07:56","0:08:01"],["0:07:33","0:07:37"]],[["0:10:35","0:11:39"],["0:10:12","0:10:17"],["0:09:48","0:09:54"],["0:09:25","0:09:30"],["0:09:02","0:09:07"],["0:08:38","0:08:43"],["0:08:15","0:08:20"],["0:07:52","0:07:56"],["0:07:28","0:07:33"]],[["0:10:29","0:11:32"],["0:10:06","0:10:12"],["0:09:43","0:09:48"],["0:09:20","0:09:25"],["0:08:57","0:09:02"],["0:08:34","0:08:38"],["0:08:10","0:08:15"],["0:07:47","0:07:52"],["0:07:24","0:07:28"]],[["0:10:23","0:11:25"],["0:10:00","0:10:06"],["0:09:37","0:09:43"],["0:09:14","0:09:20"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:06","0:08:10"],["0:07:43","0:07:47"],["0:07:20","0:07:24"]],[["0:10:17","0:11:19"],["0:09:54","0:10:00"],["0:09:32","0:09:37"],["0:09:09","0:09:14"],["0:08:46","0:08:52"],["0:08:24","0:08:29"],["0:08:01","0:08:06"],["0:07:38","0:07:43"],["0:07:16","0:07:20"]],[["0:10:11","0:11:12"],["0:09:49","0:09:54"],["0:09:26","0:09:32"],["0:09:04","0:09:09"],["0:08:41","0:08:46"],["0:08:19","0:08:24"],["0:07:56","0:08:01"],["0:07:34","0:07:38"],["0:07:12","0:07:16"]],[["0:10:05","0:11:06"],["0:09:43","0:09:49"],["0:09:21","0:09:26"],["0:08:58","0:09:04"],["0:08:36","0:08:41"],["0:08:14","0:08:19"],["0:07:52","0:07:56"],["0:07:30","0:07:34"],["0:07:07","0:07:12"]],[["0:09:59","0:10:59"],["0:09:37","0:09:43"],["0:09:15","0:09:21"],["0:08:53","0:08:58"],["0:08:31","0:08:36"],["0:08:09","0:08:14"],["0:07:47","0:07:52"],["0:07:25","0:07:30"],["0:07:03","0:07:07"]],[["0:09:53","0:10:52"],["0:09:31","0:09:37"],["0:09:10","0:09:15"],["0:08:48","0:08:53"],["0:08:26","0:08:31"],["0:08:04","0:08:09"],["0:07:42","0:07:47"],["0:07:21","0:07:25"],["0:06:59","0:07:03"]],[["0:09:47","0:10:46"],["0:09:26","0:09:31"],["0:09:04","0:09:10"],["0:08:42","0:08:48"],["0:08:21","0:08:26"],["0:07:59","0:08:04"],["0:07:38","0:07:42"],["0:07:16","0:07:21"],["0:06:55","0:06:59"]],[["0:09:41","0:10:39"],["0:09:20","0:09:26"],["0:08:58","0:09:04"],["0:08:37","0:08:42"],["0:08:16","0:08:21"],["0:07:54","0:07:59"],["0:07:33","0:07:38"],["0:07:12","0:07:16"],["0:06:50","0:06:55"]],[["0:09:35","0:10:33"],["0:09:14","0:09:20"],["0:08:53","0:08:58"],["0:08:32","0:08:37"],["0:08:11","0:08:16"],["0:07:50","0:07:54"],["0:07:28","0:07:33"],["0:07:07","0:07:12"],["0:06:46","0:06:50"]],[["0:09:29","0:10:26"],["0:09:08","0:09:14"],["0:08:47","0:08:53"],["0:08:26","0:08:32"],["0:08:06","0:08:11"],["0:07:45","0:07:50"],["0:07:24","0:07:28"],["0:07:03","0:07:07"],["0:06:42","0:06:46"]],[["0:09:23","0:10:20"],["0:09:03","0:09:08"],["0:08:42","0:08:47"],["0:08:21","0:08:26"],["0:08:00","0:08:06"],["0:07:40","0:07:45"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:38","0:06:42"]],[["0:09:17","0:10:13"],["0:08:57","0:09:03"],["0:08:36","0:08:42"],["0:08:16","0:08:21"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:54","0:06:58"],["0:06:33","0:06:38"]],[["0:09:11","0:10:06"],["0:08:51","0:08:57"],["0:08:31","0:08:36"],["0:08:11","0:08:16"],["0:07:50","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:14"],["0:06:50","0:06:54"],["0:06:29","0:06:33"]],[["0:09:05","0:10:00"],["0:08:45","0:08:51"],["0:08:25","0:08:31"],["0:08:05","0:08:11"],["0:07:45","0:07:50"],["0:07:25","0:07:30"],["0:07:05","0:07:10"],["0:06:45","0:06:50"],["0:06:25","0:06:29"]],[["0:08:59","0:09:53"],["0:08:39","0:08:45"],["0:08:20","0:08:25"],["0:08:00","0:08:05"],["0:07:40","0:07:45"],["0:07:20","0:07:25"],["0:07:00","0:07:05"],["0:06:41","0:06:45"],["0:06:21","0:06:25"]],[["0:08:53","0:09:47"],["0:08:34","0:08:39"],["0:08:14","0:08:20"],["0:07:55","0:08:00"],["0:07:35","0:07:40"],["0:07:15","0:07:20"],["0:06:56","0:07:00"],["0:06:36","0:06:41"],["0:06:17","0:06:21"]],[["0:08:47","0:09:40"],["0:08:28","0:08:34"],["0:08:09","0:08:14"],["0:07:49","0:07:55"],["0:07:30","0:07:35"],["0:07:10","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:36"],["0:06:12","0:06:17"]],[["0:08:41","0:09:33"],["0:08:22","0:08:28"],["0:08:03","0:08:09"],["0:07:44","0:07:49"],["0:07:25","0:07:30"],["0:07:06","0:07:10"],["0:06:46","0:06:51"],["0:06:27","0:06:32"],["0:06:08","0:06:12"]],[["0:08:35","0:09:27"],["0:08:16","0:08:22"],["0:07:57","0:08:03"],["0:07:39","0:07:44"],["0:07:20","0:07:25"],["0:07:01","0:07:06"],["0:06:42","0:06:46"],["0:06:23","0:06:27"],["0:06:04","0:06:08"]],[["0:08:29","0:09:20"],["0:08:11","0:08:16"],["0:07:52","0:07:57"],["0:07:33","0:07:39"],["0:07:15","0:07:20"],["0:06:56","0:07:01"],["0:06:37","0:06:42"],["0:06:18","0:06:23"],["0:06:00","0:06:04"]],[["0:08:23","0:09:14"],["0:08:05","0:08:11"],["0:07:46","0:07:52"],["0:07:28","0:07:33"],["0:07:09","0:07:15"],["0:06:51","0:06:56"],["0:06:32","0:06:37"],["0:06:14","0:06:18"],["0:05:55","0:06:00"]],[["0:08:17","0:09:07"],["0:07:59","0:08:05"],["0:07:41","0:07:46"],["0:07:23","0:07:28"],["0:07:04","0:07:09"],["0:06:46","0:06:51"],["0:06:28","0:06:32"],["0:06:09","0:06:14"],["0:05:51","0:05:55"]],[["0:08:11","0:09:01"],["0:07:53","0:07:59"],["0:07:35","0:07:41"],["0:07:17","0:07:23"],["0:06:59","0:07:04"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:05","0:06:09"],["0:05:47","0:05:51"]],[["0:08:05","0:08:54"],["0:07:48","0:07:53"],["0:07:30","0:07:35"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:01","0:06:05"],["0:05:43","0:05:47"]],[["0:07:59","0:08:47"],["0:07:42","0:07:48"],["0:07:24","0:07:30"],["0:07:07","0:07:12"],["0:06:49","0:06:54"],["0:06:31","0:06:36"],["0:06:14","0:06:18"],["0:05:56","0:06:01"],["0:05:39","0:05:43"]],[["0:07:53","0:08:41"],["0:07:36","0:07:42"],["0:07:19","0:07:24"],["0:07:01","0:07:07"],["0:06:44","0:06:49"],["0:06:26","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:56"],["0:05:34","0:05:39"]],[["0:07:47","0:08:34"],["0:07:30","0:07:36"],["0:07:13","0:07:19"],["0:06:56","0:07:01"],["0:06:39","0:06:44"],["0:06:22","0:06:26"],["0:06:04","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:34"]],[["0:07:41","0:08:28"],["0:07:25","0:07:30"],["0:07:08","0:07:13"],["0:06:51","0:06:56"],["0:06:34","0:06:39"],["0:06:17","0:06:22"],["0:06:00","0:06:04"],["0:05:43","0:05:47"],["0:05:26","0:05:30"]],[["0:07:36","0:08:21"],["0:07:19","0:07:25"],["0:07:02","0:07:08"],["0:06:45","0:06:51"],["0:06:29","0:06:34"],["0:06:12","0:06:17"],["0:05:55","0:06:00"],["0:05:38","0:05:43"],["0:05:22","0:05:26"]],[["0:07:30","0:08:14"],["0:07:13","0:07:19"],["0:06:56","0:07:02"],["0:06:40","0:06:45"],["0:06:23","0:06:29"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:34","0:05:38"],["0:05:17","0:05:22"]],[["0:07:24","0:08:08"],["0:07:07","0:07:13"],["0:06:51","0:06:56"],["0:06:35","0:06:40"],["0:06:18","0:06:23"],["0:06:02","0:06:07"],["0:05:46","0:05:50"],["0:05:29","0:05:34"],["0:05:13","0:05:17"]],[["0:07:18","0:08:01"],["0:07:01","0:07:07"],["0:06:45","0:06:51"],["0:06:29","0:06:35"],["0:06:13","0:06:18"],["0:05:57","0:06:02"],["0:05:41","0:05:46"],["0:05:25","0:05:29"],["0:05:09","0:05:13"]],[["0:07:12","0:07:55"],["0:06:56","0:07:01"],["0:06:40","0:06:45"],["0:06:24","0:06:29"],["0:06:08","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:41"],["0:05:21","0:05:25"],["0:05:05","0:05:09"]],[["0:07:06","0:07:48"],["0:06:50","0:06:56"],["0:06:34","0:06:40"],["0:06:19","0:06:24"],["0:06:03","0:06:08"],["0:05:47","0:05:52"],["0:05:32","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:05"]],[["0:07:00","0:07:42"],["0:06:44","0:06:50"],["0:06:29","0:06:34"],["0:06:13","0:06:19"],["0:05:58","0:06:03"],["0:05:43","0:05:47"],["0:05:27","0:05:32"],["0:05:12","0:05:16"],["0:04:56","0:05:01"]],[["0:06:54","0:07:35"],["0:06:38","0:06:44"],["0:06:23","0:06:29"],["0:06:08","0:06:13"],["0:05:53","0:05:58"],["0:05:38","0:05:43"],["0:05:22","0:05:27"],["0:05:07","0:05:12"],["0:04:52","0:04:56"]],[["0:06:48","0:07:28"],["0:06:33","0:06:38"],["0:06:18","0:06:23"],["0:06:03","0:06:08"],["0:05:48","0:05:53"],["0:05:33","0:05:38"],["0:05:18","0:05:22"],["0:05:03","0:05:07"],["0:04:48","0:04:52"]],[["0:06:42","0:07:22"],["0:06:27","0:06:33"],["0:06:12","0:06:18"],["0:05:57","0:06:03"],["0:05:43","0:05:48"],["0:05:28","0:05:33"],["0:05:13","0:05:18"],["0:04:58","0:05:03"],["0:04:44","0:04:48"]],[["0:06:36","0:07:15"],["0:06:21","0:06:27"],["0:06:07","0:06:12"],["0:05:52","0:05:57"],["0:05:38","0:05:43"],["0:05:23","0:05:28"],["0:05:08","0:05:13"],["0:04:54","0:04:58"],["0:04:39","0:04:44"]],[["0:06:30","0:07:09"],["0:06:15","0:06:21"],["0:06:01","0:06:07"],["0:05:47","0:05:52"],["0:05:32","0:05:38"],["0:05:18","0:05:23"],["0:05:04","0:05:08"],["0:04:49","0:04:54"],["0:04:35","0:04:39"]],[["0:06:24","0:07:02"],["0:06:10","0:06:15"],["0:05:56","0:06:01"],["0:05:41","0:05:47"],["0:05:27","0:05:32"],["0:05:13","0:05:18"],["0:04:59","0:05:04"],["0:04:45","0:04:49"],["0:04:31","0:04:35"]],[["0:06:18","0:06:55"],["0:06:04","0:06:10"],["0:05:50","0:05:56"],["0:05:36","0:05:41"],["0:05:22","0:05:27"],["0:05:08","0:05:13"],["0:04:54","0:04:59"],["0:04:41","0:04:45"],["0:04:27","0:04:31"]],[["0:06:12","0:06:49"],["0:05:58","0:06:04"],["0:05:44","0:05:50"],["0:05:31","0:05:36"],["0:05:17","0:05:22"],["0:05:03","0:05:08"],["0:04:50","0:04:54"],["0:04:36","0:04:41"],["0:04:22","0:04:27"]],[["0:06:06","0:06:42"],["0:05:52","0:05:58"],["0:05:39","0:05:44"],["0:05:25","0:05:31"],["0:05:12","0:05:17"],["0:04:59","0:05:03"],["0:04:45","0:04:50"],["0:04:32","0:04:36"],["0:04:18","0:04:22"]],[["0:06:00","0:06:36"],["0:05:47","0:05:52"],["0:05:33","0:05:39"],["0:05:20","0:05:25"],["0:05:07","0:05:12"],["0:04:54","0:04:59"],["0:04:40","0:04:45"],["0:04:27","0:04:32"],["0:04:14","0:04:18"]],[["0:05:54","0:06:29"],["0:05:41","0:05:47"],["0:05:28","0:05:33"],["0:05:15","0:05:20"],["0:05:02","0:05:07"],["0:04:49","0:04:54"],["0:04:36","0:04:40"],["0:04:23","0:04:27"],["0:04:10","0:04:14"]],[["0:05:48","0:06:23"],["0:05:35","0:05:41"],["0:05:22","0:05:28"],["0:05:09","0:05:15"],["0:04:57","0:05:02"],["0:04:44","0:04:49"],["0:04:31","0:04:36"],["0:04:18","0:04:23"],["0:04:06","0:04:10"]],[["0:05:42","0:06:16"],["0:05:29","0:05:35"],["0:05:17","0:05:22"],["0:05:04","0:05:09"],["0:04:52","0:04:57"],["0:04:39","0:04:44"],["0:04:26","0:04:31"],["0:04:14","0:04:18"],["0:04:01","0:04:06"]],[["0:05:36","0:06:09"],["0:05:23","0:05:29"],["0:05:11","0:05:17"],["0:04:59","0:05:04"],["0:04:46","0:04:52"],["0:04:34","0:04:39"],["0:04:22","0:04:26"],["0:04:09","0:04:14"],["0:03:57","0:04:01"]]]\n';
 var $author$project$MPRData$speedTraining = '\n[[["0:11:46","0:12:57"],["0:11:18","0:11:24"],["0:10:50","0:10:55"],["0:10:22","0:10:27"],["0:09:53","0:09:58"],["0:09:25","0:09:30"],["0:08:57","0:09:01"],["0:08:29","0:08:33"],["0:08:00","0:08:04"]],[["0:11:40","0:12:50"],["0:11:12","0:11:18"],["0:10:44","0:10:50"],["0:10:16","0:10:22"],["0:09:48","0:09:53"],["0:09:20","0:09:25"],["0:08:52","0:08:57"],["0:08:24","0:08:29"],["0:07:56","0:08:00"]],[["0:11:34","0:12:43"],["0:11:06","0:11:12"],["0:10:39","0:10:44"],["0:10:11","0:10:16"],["0:09:43","0:09:48"],["0:09:15","0:09:20"],["0:08:47","0:08:52"],["0:08:20","0:08:24"],["0:07:52","0:07:56"]],[["0:11:28","0:12:37"],["0:11:00","0:11:06"],["0:10:33","0:10:39"],["0:10:05","0:10:11"],["0:09:38","0:09:43"],["0:09:10","0:09:15"],["0:08:43","0:08:47"],["0:08:15","0:08:20"],["0:07:48","0:07:52"]],[["0:11:22","0:12:30"],["0:10:55","0:11:00"],["0:10:27","0:10:33"],["0:10:00","0:10:05"],["0:09:33","0:09:38"],["0:09:05","0:09:10"],["0:08:38","0:08:43"],["0:08:11","0:08:15"],["0:07:44","0:07:48"]],[["0:11:16","0:12:23"],["0:10:49","0:10:55"],["0:10:22","0:10:27"],["0:09:55","0:10:00"],["0:09:28","0:09:33"],["0:09:01","0:09:05"],["0:08:34","0:08:38"],["0:08:07","0:08:11"],["0:07:39","0:07:44"]],[["0:11:10","0:12:17"],["0:10:43","0:10:49"],["0:10:16","0:10:22"],["0:09:49","0:09:55"],["0:09:22","0:09:28"],["0:08:56","0:09:01"],["0:08:29","0:08:34"],["0:08:02","0:08:07"],["0:07:35","0:07:39"]],[["0:11:03","0:12:10"],["0:10:37","0:10:43"],["0:10:10","0:10:16"],["0:09:44","0:09:49"],["0:09:17","0:09:22"],["0:08:51","0:08:56"],["0:08:24","0:08:29"],["0:07:58","0:08:02"],["0:07:31","0:07:35"]],[["0:10:57","0:12:03"],["0:10:31","0:10:37"],["0:10:05","0:10:10"],["0:09:38","0:09:44"],["0:09:12","0:09:17"],["0:08:46","0:08:51"],["0:08:20","0:08:24"],["0:07:53","0:07:58"],["0:07:27","0:07:31"]],[["0:10:51","0:11:56"],["0:10:25","0:10:31"],["0:09:59","0:10:05"],["0:09:33","0:09:38"],["0:09:07","0:09:12"],["0:08:41","0:08:46"],["0:08:15","0:08:20"],["0:07:49","0:07:53"],["0:07:23","0:07:27"]],[["0:10:45","0:11:50"],["0:10:19","0:10:25"],["0:09:54","0:09:59"],["0:09:28","0:09:33"],["0:09:02","0:09:07"],["0:08:36","0:08:41"],["0:08:10","0:08:15"],["0:07:45","0:07:49"],["0:07:19","0:07:23"]],[["0:10:39","0:11:43"],["0:10:13","0:10:19"],["0:09:48","0:09:54"],["0:09:22","0:09:28"],["0:08:57","0:09:02"],["0:08:31","0:08:36"],["0:08:06","0:08:10"],["0:07:40","0:07:45"],["0:07:15","0:07:19"]],[["0:10:33","0:11:36"],["0:10:08","0:10:13"],["0:09:42","0:09:48"],["0:09:17","0:09:22"],["0:08:52","0:08:57"],["0:08:26","0:08:31"],["0:08:01","0:08:06"],["0:07:36","0:07:40"],["0:07:10","0:07:15"]],[["0:10:27","0:11:29"],["0:10:02","0:10:08"],["0:09:37","0:09:42"],["0:09:12","0:09:17"],["0:08:47","0:08:52"],["0:08:21","0:08:26"],["0:07:56","0:08:01"],["0:07:31","0:07:36"],["0:07:06","0:07:10"]],[["0:10:21","0:11:23"],["0:09:56","0:10:02"],["0:09:31","0:09:37"],["0:09:06","0:09:12"],["0:08:41","0:08:47"],["0:08:17","0:08:21"],["0:07:52","0:07:56"],["0:07:27","0:07:31"],["0:07:02","0:07:06"]],[["0:10:15","0:11:16"],["0:09:50","0:09:56"],["0:09:25","0:09:31"],["0:09:01","0:09:06"],["0:08:36","0:08:41"],["0:08:12","0:08:17"],["0:07:47","0:07:52"],["0:07:22","0:07:27"],["0:06:58","0:07:02"]],[["0:10:08","0:11:09"],["0:09:44","0:09:50"],["0:09:20","0:09:25"],["0:08:55","0:09:01"],["0:08:31","0:08:36"],["0:08:07","0:08:12"],["0:07:42","0:07:47"],["0:07:18","0:07:22"],["0:06:54","0:06:58"]],[["0:10:02","0:11:03"],["0:09:38","0:09:44"],["0:09:14","0:09:20"],["0:08:50","0:08:55"],["0:08:26","0:08:31"],["0:08:02","0:08:07"],["0:07:38","0:07:42"],["0:07:14","0:07:18"],["0:06:50","0:06:54"]],[["0:09:56","0:10:56"],["0:09:32","0:09:38"],["0:09:09","0:09:14"],["0:08:45","0:08:50"],["0:08:21","0:08:26"],["0:07:57","0:08:02"],["0:07:33","0:07:38"],["0:07:09","0:07:14"],["0:06:45","0:06:50"]],[["0:09:50","0:10:49"],["0:09:27","0:09:32"],["0:09:03","0:09:09"],["0:08:39","0:08:45"],["0:08:16","0:08:21"],["0:07:52","0:07:57"],["0:07:28","0:07:33"],["0:07:05","0:07:09"],["0:06:41","0:06:45"]],[["0:09:44","0:10:42"],["0:09:21","0:09:27"],["0:08:57","0:09:03"],["0:08:34","0:08:39"],["0:08:11","0:08:16"],["0:07:47","0:07:52"],["0:07:24","0:07:28"],["0:07:00","0:07:05"],["0:06:37","0:06:41"]],[["0:09:38","0:10:36"],["0:09:15","0:09:21"],["0:08:52","0:08:57"],["0:08:29","0:08:34"],["0:08:05","0:08:11"],["0:07:42","0:07:47"],["0:07:19","0:07:24"],["0:06:56","0:07:00"],["0:06:33","0:06:37"]],[["0:09:32","0:10:29"],["0:09:09","0:09:15"],["0:08:46","0:08:52"],["0:08:23","0:08:29"],["0:08:00","0:08:05"],["0:07:37","0:07:42"],["0:07:15","0:07:19"],["0:06:52","0:06:56"],["0:06:29","0:06:33"]],[["0:09:26","0:10:22"],["0:09:03","0:09:09"],["0:08:40","0:08:46"],["0:08:18","0:08:23"],["0:07:55","0:08:00"],["0:07:33","0:07:37"],["0:07:10","0:07:15"],["0:06:47","0:06:52"],["0:06:25","0:06:29"]],[["0:09:20","0:10:16"],["0:08:57","0:09:03"],["0:08:35","0:08:40"],["0:08:12","0:08:18"],["0:07:50","0:07:55"],["0:07:28","0:07:33"],["0:07:05","0:07:10"],["0:06:43","0:06:47"],["0:06:20","0:06:25"]],[["0:09:13","0:10:09"],["0:08:51","0:08:57"],["0:08:29","0:08:35"],["0:08:07","0:08:12"],["0:07:45","0:07:50"],["0:07:23","0:07:28"],["0:07:01","0:07:05"],["0:06:38","0:06:43"],["0:06:16","0:06:20"]],[["0:09:07","0:10:02"],["0:08:45","0:08:51"],["0:08:24","0:08:29"],["0:08:02","0:08:07"],["0:07:40","0:07:45"],["0:07:18","0:07:23"],["0:06:56","0:07:01"],["0:06:34","0:06:38"],["0:06:12","0:06:16"]],[["0:09:01","0:09:55"],["0:08:40","0:08:45"],["0:08:18","0:08:24"],["0:07:56","0:08:02"],["0:07:35","0:07:40"],["0:07:13","0:07:18"],["0:06:51","0:06:56"],["0:06:30","0:06:34"],["0:06:08","0:06:12"]],[["0:08:55","0:09:49"],["0:08:34","0:08:40"],["0:08:12","0:08:18"],["0:07:51","0:07:56"],["0:07:29","0:07:35"],["0:07:08","0:07:13"],["0:06:47","0:06:51"],["0:06:25","0:06:30"],["0:06:04","0:06:08"]],[["0:08:49","0:09:42"],["0:08:28","0:08:34"],["0:08:07","0:08:12"],["0:07:46","0:07:51"],["0:07:24","0:07:29"],["0:07:03","0:07:08"],["0:06:42","0:06:47"],["0:06:21","0:06:25"],["0:06:00","0:06:04"]],[["0:08:43","0:09:35"],["0:08:22","0:08:28"],["0:08:01","0:08:07"],["0:07:40","0:07:46"],["0:07:19","0:07:24"],["0:06:58","0:07:03"],["0:06:37","0:06:42"],["0:06:16","0:06:21"],["0:05:56","0:06:00"]],[["0:08:37","0:09:28"],["0:08:16","0:08:22"],["0:07:55","0:08:01"],["0:07:35","0:07:40"],["0:07:14","0:07:19"],["0:06:53","0:06:58"],["0:06:33","0:06:37"],["0:06:12","0:06:16"],["0:05:51","0:05:56"]],[["0:08:31","0:09:22"],["0:08:10","0:08:16"],["0:07:50","0:07:55"],["0:07:29","0:07:35"],["0:07:09","0:07:14"],["0:06:49","0:06:53"],["0:06:28","0:06:33"],["0:06:08","0:06:12"],["0:05:47","0:05:51"]],[["0:08:25","0:09:15"],["0:08:04","0:08:10"],["0:07:44","0:07:50"],["0:07:24","0:07:29"],["0:07:04","0:07:09"],["0:06:44","0:06:49"],["0:06:23","0:06:28"],["0:06:03","0:06:08"],["0:05:43","0:05:47"]],[["0:08:18","0:09:08"],["0:07:58","0:08:04"],["0:07:39","0:07:44"],["0:07:19","0:07:24"],["0:06:59","0:07:04"],["0:06:39","0:06:44"],["0:06:19","0:06:23"],["0:05:59","0:06:03"],["0:05:39","0:05:43"]],[["0:08:12","0:09:02"],["0:07:53","0:07:58"],["0:07:33","0:07:39"],["0:07:13","0:07:19"],["0:06:54","0:06:59"],["0:06:34","0:06:39"],["0:06:14","0:06:19"],["0:05:54","0:05:59"],["0:05:35","0:05:39"]],[["0:08:06","0:08:55"],["0:07:47","0:07:53"],["0:07:27","0:07:33"],["0:07:08","0:07:13"],["0:06:48","0:06:54"],["0:06:29","0:06:34"],["0:06:10","0:06:14"],["0:05:50","0:05:54"],["0:05:31","0:05:35"]],[["0:08:00","0:08:48"],["0:07:41","0:07:47"],["0:07:22","0:07:27"],["0:07:02","0:07:08"],["0:06:43","0:06:48"],["0:06:24","0:06:29"],["0:06:05","0:06:10"],["0:05:46","0:05:50"],["0:05:26","0:05:31"]],[["0:07:54","0:08:41"],["0:07:35","0:07:41"],["0:07:16","0:07:22"],["0:06:57","0:07:02"],["0:06:38","0:06:43"],["0:06:19","0:06:24"],["0:06:00","0:06:05"],["0:05:41","0:05:46"],["0:05:22","0:05:26"]],[["0:07:48","0:08:35"],["0:07:29","0:07:35"],["0:07:10","0:07:16"],["0:06:52","0:06:57"],["0:06:33","0:06:38"],["0:06:14","0:06:19"],["0:05:56","0:06:00"],["0:05:37","0:05:41"],["0:05:18","0:05:22"]],[["0:07:42","0:08:28"],["0:07:23","0:07:29"],["0:07:05","0:07:10"],["0:06:46","0:06:52"],["0:06:28","0:06:33"],["0:06:09","0:06:14"],["0:05:51","0:05:56"],["0:05:32","0:05:37"],["0:05:14","0:05:18"]],[["0:07:36","0:08:21"],["0:07:17","0:07:23"],["0:06:59","0:07:05"],["0:06:41","0:06:46"],["0:06:23","0:06:28"],["0:06:04","0:06:09"],["0:05:46","0:05:51"],["0:05:28","0:05:32"],["0:05:10","0:05:14"]],[["0:07:30","0:08:14"],["0:07:12","0:07:17"],["0:06:54","0:06:59"],["0:06:36","0:06:41"],["0:06:18","0:06:23"],["0:06:00","0:06:04"],["0:05:42","0:05:46"],["0:05:24","0:05:28"],["0:05:06","0:05:10"]],[["0:07:23","0:08:08"],["0:07:06","0:07:12"],["0:06:48","0:06:54"],["0:06:30","0:06:36"],["0:06:12","0:06:18"],["0:05:55","0:06:00"],["0:05:37","0:05:42"],["0:05:19","0:05:24"],["0:05:02","0:05:06"]],[["0:07:17","0:08:01"],["0:07:00","0:07:06"],["0:06:42","0:06:48"],["0:06:25","0:06:30"],["0:06:07","0:06:12"],["0:05:50","0:05:55"],["0:05:32","0:05:37"],["0:05:15","0:05:19"],["0:04:57","0:05:02"]],[["0:07:11","0:07:54"],["0:06:54","0:07:00"],["0:06:37","0:06:42"],["0:06:19","0:06:25"],["0:06:02","0:06:07"],["0:05:45","0:05:50"],["0:05:28","0:05:32"],["0:05:10","0:05:15"],["0:04:53","0:04:57"]],[["0:07:05","0:07:48"],["0:06:48","0:06:54"],["0:06:31","0:06:37"],["0:06:14","0:06:19"],["0:05:57","0:06:02"],["0:05:40","0:05:45"],["0:05:23","0:05:28"],["0:05:06","0:05:10"],["0:04:49","0:04:53"]],[["0:06:59","0:07:41"],["0:06:42","0:06:48"],["0:06:25","0:06:31"],["0:06:09","0:06:14"],["0:05:52","0:05:57"],["0:05:35","0:05:40"],["0:05:18","0:05:23"],["0:05:02","0:05:06"],["0:04:45","0:04:49"]],[["0:06:53","0:07:34"],["0:06:36","0:06:42"],["0:06:20","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:52"],["0:05:30","0:05:35"],["0:05:14","0:05:18"],["0:04:57","0:05:02"],["0:04:41","0:04:45"]],[["0:06:47","0:07:27"],["0:06:30","0:06:36"],["0:06:14","0:06:20"],["0:05:58","0:06:03"],["0:05:42","0:05:47"],["0:05:25","0:05:30"],["0:05:09","0:05:14"],["0:04:53","0:04:57"],["0:04:37","0:04:41"]],[["0:06:41","0:07:21"],["0:06:25","0:06:30"],["0:06:09","0:06:14"],["0:05:53","0:05:58"],["0:05:37","0:05:42"],["0:05:20","0:05:25"],["0:05:04","0:05:09"],["0:04:48","0:04:53"],["0:04:32","0:04:37"]],[["0:06:34","0:07:14"],["0:06:19","0:06:25"],["0:06:03","0:06:09"],["0:05:47","0:05:53"],["0:05:31","0:05:37"],["0:05:16","0:05:20"],["0:05:00","0:05:04"],["0:04:44","0:04:48"],["0:04:28","0:04:32"]],[["0:06:28","0:07:07"],["0:06:13","0:06:19"],["0:05:57","0:06:03"],["0:05:42","0:05:47"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:55","0:05:00"],["0:04:40","0:04:44"],["0:04:24","0:04:28"]],[["0:06:22","0:07:00"],["0:06:07","0:06:13"],["0:05:52","0:05:57"],["0:05:36","0:05:42"],["0:05:21","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:55"],["0:04:35","0:04:40"],["0:04:20","0:04:24"]],[["0:06:16","0:06:54"],["0:06:01","0:06:07"],["0:05:46","0:05:52"],["0:05:31","0:05:36"],["0:05:16","0:05:21"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:31","0:04:35"],["0:04:16","0:04:20"]],[["0:06:10","0:06:47"],["0:05:55","0:06:01"],["0:05:40","0:05:46"],["0:05:26","0:05:31"],["0:05:11","0:05:16"],["0:04:56","0:05:01"],["0:04:41","0:04:46"],["0:04:26","0:04:31"],["0:04:12","0:04:16"]],[["0:06:04","0:06:40"],["0:05:49","0:05:55"],["0:05:35","0:05:40"],["0:05:20","0:05:26"],["0:05:06","0:05:11"],["0:04:51","0:04:56"],["0:04:37","0:04:41"],["0:04:22","0:04:26"],["0:04:07","0:04:12"]],[["0:05:58","0:06:34"],["0:05:43","0:05:49"],["0:05:29","0:05:35"],["0:05:15","0:05:20"],["0:05:01","0:05:06"],["0:04:46","0:04:51"],["0:04:32","0:04:37"],["0:04:18","0:04:22"],["0:04:03","0:04:07"]],[["0:05:52","0:06:27"],["0:05:38","0:05:43"],["0:05:24","0:05:29"],["0:05:09","0:05:15"],["0:04:55","0:05:01"],["0:04:41","0:04:46"],["0:04:27","0:04:32"],["0:04:13","0:04:18"],["0:03:59","0:04:03"]],[["0:05:46","0:06:20"],["0:05:32","0:05:38"],["0:05:18","0:05:24"],["0:05:04","0:05:09"],["0:04:50","0:04:55"],["0:04:36","0:04:41"],["0:04:23","0:04:27"],["0:04:09","0:04:13"],["0:03:55","0:03:59"]]]\n';
 var $author$project$MPRLevel$toTuple = function (l) {
@@ -13367,7 +12557,7 @@ var $author$project$ActivityForm$paceSelect = F3(
 					_List_fromArray(
 						[
 							$elm$html$Html$text(
-							$author$project$Activity$pace.bH(pace))
+							$author$project$Activity$pace.bC(pace))
 						])),
 					A2(
 					$elm$html$Html$div,
@@ -13566,7 +12756,7 @@ var $author$project$ActivityShape$viewDefault = F2(
 					A3($author$project$ActivityShape$Circle, 3, completed, $elm$core$Maybe$Nothing));
 			case 4:
 				return $author$project$ActivityShape$viewShape(
-					$author$project$ActivityShape$Emoji($author$project$Emoji$default.ab));
+					$author$project$ActivityShape$Emoji($author$project$Emoji$default.aa));
 			default:
 				return $author$project$ActivityShape$viewShape(
 					A3(
@@ -13753,7 +12943,7 @@ var $author$project$ActivityForm$viewButtons = F2(
 					false),
 					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
 					function () {
-					var _v0 = activity.U;
+					var _v0 = activity.T;
 					if (_v0.$ === 5) {
 						var activities = _v0.a;
 						return A3(
@@ -13850,7 +13040,7 @@ var $author$project$ActivityShape$toWidth = function (pace) {
 	}
 };
 var $author$project$ActivityShape$view = function (activity) {
-	var _v0 = activity.U;
+	var _v0 = activity.T;
 	switch (_v0.$) {
 		case 0:
 			var mins = _v0.a;
@@ -13901,7 +13091,7 @@ var $author$project$ActivityShape$view = function (activity) {
 					3,
 					completed,
 					$elm$core$List$head(
-						$elm$core$String$toList(activity.as))));
+						$elm$core$String$toList(activity.ap))));
 		case 4:
 			var emoji = _v0.a;
 			return $author$project$ActivityShape$viewShape(
@@ -14168,7 +13358,7 @@ var $author$project$ActivityForm$view = F2(
 																A2(
 																	$elm$core$Maybe$map,
 																	$justinmimbs$date$Date$format('E MMM d'),
-																	model.aq)))
+																	model.an)))
 														])),
 													A2(
 													$author$project$Skeleton$row,
@@ -14184,7 +13374,7 @@ var $author$project$ActivityForm$view = F2(
 																	$elm$html$Html$Attributes$placeholder('Description'),
 																	$elm$html$Html$Events$onInput($author$project$Msg$EditedDescription),
 																	$elm$html$Html$Attributes$name('description'),
-																	$elm$html$Html$Attributes$value(model.as),
+																	$elm$html$Html$Attributes$value(model.ap),
 																	A2($elm$html$Html$Attributes$style, 'width', '100%')
 																]),
 															_List_Nil)
@@ -14235,7 +13425,7 @@ var $author$project$Calendar$filterActivities = F2(
 		return A2(
 			$elm$core$List$filter,
 			function (a) {
-				return _Utils_eq(a.aq, date);
+				return _Utils_eq(a.an, date);
 			},
 			activities);
 	});
@@ -14293,6 +13483,8 @@ var $elm$virtual_dom$VirtualDom$keyedNode = function (tag) {
 		_VirtualDom_noScript(tag));
 };
 var $elm$html$Html$Keyed$node = $elm$virtual_dom$VirtualDom$keyedNode;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$map3 = _Json_map3;
 var $author$project$Calendar$onScroll = function (_v0) {
 	var loadPrevious = _v0.a;
 	var loadNext = _v0.b;
@@ -14456,7 +13648,7 @@ var $author$project$Calendar$viewActivity = F3(
 							_List_Nil,
 							_List_fromArray(
 								[
-									$elm$html$Html$text(activity.as)
+									$elm$html$Html$text(activity.ap)
 								])),
 							A2(
 							$author$project$Skeleton$row,
@@ -14473,18 +13665,18 @@ var $author$project$Calendar$viewActivity = F3(
 										[
 											$elm$html$Html$text(
 											function () {
-												var _v0 = activity.U;
+												var _v0 = activity.T;
 												switch (_v0.$) {
 													case 0:
 														var mins = _v0.a;
 														var pace_ = _v0.b;
 														return $elm$core$String$fromInt(mins) + (' min ' + $elm$core$String$toLower(
-															$author$project$Activity$pace.bH(pace_)));
+															$author$project$Activity$pace.bC(pace_)));
 													case 1:
 														var secs = _v0.a;
 														var pace_ = _v0.b;
 														return $elm$core$String$fromInt(secs) + (' secs ' + $elm$core$String$toLower(
-															$author$project$Activity$pace.bH(pace_)));
+															$author$project$Activity$pace.bC(pace_)));
 													case 2:
 														var mins = _v0.a;
 														return $elm$core$String$fromInt(mins) + ' min ';
@@ -14748,7 +13940,7 @@ var $author$project$Calendar$viewWeekDay = F4(
 		var date = _v0.a;
 		var activities = _v0.b;
 		var pointerEvent = function (a) {
-			return _Utils_eq(activeId, a.aC) ? $author$project$Msg$MoveActivity(a) : $author$project$Msg$EditActivity(a);
+			return _Utils_eq(activeId, a.ay) ? $author$project$Msg$MoveActivity(a) : $author$project$Msg$EditActivity(a);
 		};
 		return A2(
 			$author$project$Skeleton$column,
@@ -14811,7 +14003,7 @@ var $author$project$Calendar$viewWeekDay = F4(
 									A2($elm$html$Html$Attributes$style, 'margin-right', '0.2rem'),
 									A2(
 									$author$project$Skeleton$attributeIf,
-									_Utils_eq(a.aC, activeId),
+									_Utils_eq(a.ay, activeId),
 									A2($elm$html$Html$Attributes$style, 'opacity', '0.5'))
 								]),
 							_List_fromArray(
@@ -14857,7 +14049,7 @@ var $author$project$Calendar$viewWeek = F5(
 			A2(
 				$elm$core$List$map,
 				function (a) {
-					var _v1 = a.U;
+					var _v1 = a.T;
 					switch (_v1.$) {
 						case 0:
 							var mins = _v1.a;
@@ -14927,11 +14119,11 @@ var $author$project$Calendar$view = F4(
 						$elm$core$List$map,
 						function (activity) {
 							return _Utils_Tuple2(
-								activity.aC,
+								activity.ay,
 								A4(
 									$elm$html$Html$Lazy$lazy3,
 									$author$project$Calendar$viewActivity,
-									A2($elm$core$String$contains, activity.aC, activeId),
+									A2($elm$core$String$contains, activity.ay, activeId),
 									_Utils_eq(
 										$justinmimbs$date$Date$toRataDie(date),
 										activeRataDie),
@@ -15063,7 +14255,7 @@ var $author$project$Main$viewActivityM = function (activityState) {
 var $author$project$Calendar$viewHeader = function (model) {
 	return A2(
 		$author$project$Skeleton$viewIf,
-		!$author$project$Calendar$get(model).a7,
+		!$author$project$Calendar$get(model).a4,
 		A2(
 			$author$project$Skeleton$row,
 			_List_fromArray(
@@ -15194,7 +14386,7 @@ var $author$project$Main$view = function (model) {
 							$author$project$Store$get,
 							store,
 							function ($) {
-								return $.aj;
+								return $.ai;
 							});
 						var levelM = $author$project$Main$calculateLevel(activities);
 						var activeRataDie = function () {
@@ -15202,7 +14394,7 @@ var $author$project$Main$view = function (model) {
 							while (true) {
 								switch (activityM.$) {
 									case 1:
-										var date = activityM.a.aq;
+										var date = activityM.a.an;
 										return A2(
 											$elm$core$Maybe$withDefault,
 											0,
@@ -15211,7 +14403,7 @@ var $author$project$Main$view = function (model) {
 										if (activityM.a.b) {
 											var _v5 = activityM.a;
 											var a = _v5.a;
-											return $justinmimbs$date$Date$toRataDie(a.aq);
+											return $justinmimbs$date$Date$toRataDie(a.an);
 										} else {
 											break _v4$2;
 										}
@@ -15231,14 +14423,14 @@ var $author$project$Main$view = function (model) {
 										A2(
 											$elm$core$List$map,
 											function ($) {
-												return $.aC;
+												return $.ay;
 											},
 											list));
 								case 1:
-									var id = activityM.a.aC;
+									var id = activityM.a.ay;
 									return id;
 								case 2:
-									var id = activityM.a.aC;
+									var id = activityM.a.ay;
 									return id;
 								default:
 									return '';
@@ -15276,17 +14468,6 @@ var $author$project$Skeleton$logo = A2(
 			$elm$html$Html$Attributes$src('icon.svg')
 		]),
 	_List_Nil);
-var $elm$core$List$isEmpty = function (xs) {
-	if (!xs.b) {
-		return true;
-	} else {
-		return false;
-	}
-};
-var $author$project$Store$needsFlush = function (_v0) {
-	var msgs = _v0.b;
-	return !$elm$core$List$isEmpty(msgs);
-};
 var $author$project$Calendar$viewBackButton = function (model) {
 	var _v0 = model;
 	var zoom = _v0.a;
@@ -15527,20 +14708,6 @@ var $author$project$Main$viewNavbar = function (model) {
 					_List_fromArray(
 						[
 							$author$project$Calendar$viewMenu(calendar)
-						])),
-					A2(
-					$author$project$Skeleton$compactColumn,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'min-width', '1.5rem'),
-							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$author$project$Skeleton$viewIf,
-							$author$project$Store$needsFlush(store),
-							$author$project$Skeleton$spinner('1.5rem'))
 						]))
 				]));
 	} else {
@@ -15559,36 +14726,25 @@ var $author$project$Main$viewNavbar = function (model) {
 							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
 						]),
 					_List_fromArray(
-						[$author$project$Skeleton$logo])),
-					A2($author$project$Skeleton$column, _List_Nil, _List_Nil),
-					A2(
-					$author$project$Skeleton$compactColumn,
-					_List_fromArray(
-						[
-							A2($elm$html$Html$Attributes$style, 'justify-content', 'center')
-						]),
-					_List_fromArray(
-						[
-							$author$project$Skeleton$spinner('1.5rem')
-						]))
+						[$author$project$Skeleton$logo]))
 				]));
 	}
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
 	{
-		bl: $author$project$Main$init,
-		bE: $author$project$Main$subscriptions,
-		bJ: $author$project$Main$update,
-		bK: function (model) {
+		bh: $author$project$Main$init,
+		bz: $author$project$Main$subscriptions,
+		bE: $author$project$Main$update,
+		bF: function (model) {
 			return {
-				ba: _List_fromArray(
+				a7: _List_fromArray(
 					[
 						A2(
 						$author$project$Skeleton$layout,
 						$author$project$Main$viewNavbar(model),
 						$author$project$Main$view(model))
 					]),
-				bG: 'Rhino Log'
+				bB: 'Rhino Log'
 			};
 		}
 	});
