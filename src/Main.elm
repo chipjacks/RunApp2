@@ -9,7 +9,6 @@ import Browser.Dom as Dom
 import Browser.Events as Events
 import Calendar
 import Date exposing (Date)
-import ExampleData
 import Html exposing (Html, a, button, div, i, text)
 import Html.Attributes exposing (attribute, class, href, id, style)
 import Html.Events exposing (on, onClick)
@@ -488,7 +487,6 @@ view model =
                 column []
                     [ row [ class "center" ] [ text "Examples" ]
                     , row [ class "center" ] [ button [ class "button", onClick (LoadExampleActivities []) ] [ text "Blank" ] ]
-                    , row [ class "center" ] [ button [ class "button", onClick (LoadExampleActivities (ExampleData.marathon date)) ] [ text "Marathon" ] ]
                     ]
 
             Error errorString ->
